@@ -65,10 +65,31 @@ begin
             u.habilitado,
             u.primera_sesion
     from tb_usuario u where
-    u.correo = p_correo;
+    u.correo = p_correo
+	and u.eliminado = false;
 end $$
 delimiter ;
 */
+
+drop procedure if exists proc_get_usuario_to_auth;
+delimiter $$ 
+create procedure proc_get_usuario_to_auth(in p_field varchar(200))
+begin
+	set p_field = trim_and_lower(p_field);
+	if (!is_empty(p_field)) then
+		select u.id,
+				u.nombre,
+				u.admin,
+				u.habilitado,
+				u.primera_sesion,
+				u.clave
+		from tb_usuario u 
+		where u.correo = p_field or 
+				u.nombre_usuario = p_field
+		and u.eliminado = false;
+	end if;
+end $$
+delimiter ;
 
 /*
 drop procedure if exists `proc_add_usuario`;
