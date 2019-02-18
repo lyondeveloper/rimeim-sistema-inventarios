@@ -48,9 +48,8 @@
             $this->params = $url ? array_values($url) : [];
 
             // Call a callback with array of params
-            call_user_func_array([$this->currentController,
-                                $this->currentMethod], 
-                                $this->params);
+            $this->validateParametersInFunction();
+            call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
         }
 
         public function initController() {
@@ -71,6 +70,15 @@
 
         public function validateMethod($value) {
             if (in_array(strtoupper($value), $this->valid_request_methods)) {
+                notAuthorizedHeader(true);
+            }
+        }
+
+        private function validateParametersInFunction() {
+            $func = new ReflectionMethod($this->currentController, $this->currentMethod);
+            $count_parameter_required = $func->getNumberOfParameters();
+
+            if (count($this->params) < $count_parameter_required) {
                 notAuthorizedHeader(true);
             }
         }

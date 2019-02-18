@@ -24,8 +24,9 @@
              try {
                  $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
              } catch(PDOException $e) {
-                $this->error = $e->getMessage();
-                echo $this->error;
+                $this->error = $e;
+                errorLog($e->getMessage());
+                serverErrorHeader(true);
              }
          }
 
@@ -67,12 +68,17 @@
 
          // Get single record as object
          public function single() {
-             $this->execute();
-             $this->stmt->fetch(PDO::FETCH_OBJ);
+            $this->execute();
+            return $this->stmt->fetch(PDO::FETCH_OBJ);
          }
 
          public function rowCount() {
              return $this->stmt->rowCount();
+         }
+
+         public function success() {
+            $this->execute();
+            return $this->rowCount() > 0;
          }
      }
     

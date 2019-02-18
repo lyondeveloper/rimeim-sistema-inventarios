@@ -1,3 +1,69 @@
+/*
+drop function if exists func_exists_usuario_with_email_or_username;
+delimiter $$
+create function func_exists_usuario_with_email_or_username(p_correo varchar(200),
+															p_nombre_usuario varchar(100))
+returns bool
+begin
+	set @response = false;
+    
+    if (!is_empty(p_correo) and is_empty(p_nombre_usuario))  then
+		set @response = exists(select * from tb_usuario u 
+								where u.correo = p_correo);
+                
+	elseif (!is_empty(p_nombre_usuario) and is_empty(p_correo)) then
+		set @response = exists(select * from tb_usuario u 
+							where u.nombre_usuario = p_nombre_usuario);
+	else 
+		set @response = exists(select * from tb_usuario u 
+							where u.correo = p_correo or 
+                            u.nombre_usuario = p_nombre_usuario);
+    end if;
+	return @response;
+end $$
+delimiter ;
+*/
+
+/*
+drop function if exists func_exists_usuario_with_email;
+delimiter $$
+create function func_exists_usuario_with_email(p_correo varchar(200))
+returns bool
+begin
+	set @response = exists(select * from tb_usuario u 
+								where u.correo = p_correo);
+	return @response;
+end $$
+delimiter ;
+*/
+
+/*
+drop function if exists func_exists_usuario_with_username;
+delimiter $$
+create function func_exists_usuario_with_username(p_nombre_usuario varchar(100))
+returns bool
+begin
+	set @response = exists(select * from tb_usuario u 
+							where u.nombre_usuario = p_nombre_usuario);
+	
+	return @response;
+end $$
+delimiter ;
+*/
+
+drop function if exists func_exists_usuario_with_username_and_not_same;
+delimiter $$
+create function func_exists_usuario_with_username_and_not_same(p_nombre_usuario varchar(100),
+																p_id bigint)
+returns bool
+begin
+	set @response = exists(select * from tb_usuario u 
+							where u.nombre_usuario = p_nombre_usuario
+							and u.id != p_id);
+	
+	return @response;
+end $$
+delimiter ;
 
 /*
 drop function if exists func_get_id_usuario_by_email;
@@ -71,6 +137,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop procedure if exists proc_get_usuario_to_auth;
 delimiter $$ 
 create procedure proc_get_usuario_to_auth(in p_field varchar(200))
@@ -90,6 +157,7 @@ begin
 	end if;
 end $$
 delimiter ;
+*/
 
 /*
 drop procedure if exists `proc_add_usuario`;

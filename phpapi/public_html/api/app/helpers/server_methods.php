@@ -60,3 +60,26 @@
     function processLog($str) {
 
     }
+
+    function sendResponse($data = null, $error = null) {
+        if (!is_null($error)) {
+            switch($error) {
+                case 404:
+                    notFoundHeader();
+                break;
+
+                case 403:
+                    notAuthorizedHeader();
+                break;
+
+                case 500:
+                    serverErrorHeader();
+                break;
+            }
+        }
+        if (!is_null($data)) {
+            jsonHeader();
+            echo json_encode($data);
+        }
+        die();
+    }

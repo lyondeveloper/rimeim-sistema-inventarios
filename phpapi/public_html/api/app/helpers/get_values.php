@@ -18,3 +18,11 @@
         }
         return array_to_obj($values);
     }
+
+    function get_hash_password($password) {
+        $options = [
+            'cost' => 11,
+            'salt' => random_bytes(22)
+        ];
+        return password_hash($password, PASSWORD_BCRYPT, $options);
+    }
