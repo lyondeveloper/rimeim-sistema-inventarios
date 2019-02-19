@@ -56,15 +56,19 @@
             }   
         }
 
-        public function response($data, $error = null) {
-            if (!is_null($this->current_token)) {
-                if (is_object($data)) {
-                    $data->token = $this->get_updated_token();
-                } elseif(is_array($data)) {
-                    $data['token'] = $this->get_updated_token();
-                }
+        public function response($data = null, $error = null, $addToken = true) {
+            $data_response = [];
+            if ($addToken && !is_null($this->current_token)) {
+                $data_response['token'] = $this->get_updated_token();
             }
-            sendResponse($data, $error);
+            if (!is_null($data)) {
+                if (is_array($data) && isset($data['token'])) {
+                    $data_response['token'] = $data['token'];
+                    unset($data['token']);
+                }
+                $data_response['data'] = $data;
+            } 
+            sendResponse($data_response, $error);
         }
 
         private function get_updated_token() {
@@ -87,11 +91,16 @@
         public function private_route() {
             $token = $this->get_token_from_header();
             if (is_null($token)) {
-                sendResponse(null, 403);
+                $this->response(null, ERROR_FORBIDDEN);
             }
             $token = $this->get_decoded_token($token);
+            $userModel = $this->model('User');
+
+            if (!$userModel->is_user_enabled($token->id)) {
+                $this->response(['code' => 450], ERROR_FORBIDDEN, false);
+            }
             if ($token->dt_expire < curent_time()) {
-                sendResponse(['code' => 420], 403);
+                $this->response(['code' => 420], ERROR_FORBIDDEN);
             }
             $this->current_token = $token;
         }
@@ -116,23 +125,23 @@
             } catch(Exception $e) {
                 errorLog($e->getMessage());
             }
-            sendResponse(null, 403);
+            $this->response(null, ERROR_FORBIDDEN);
         }
 
         public function route_for_admin($userModel) {
             if (!$userModel->is_user_admin($this->get_current_user_id())) {
-                sendResponse(['code' => 430], 403);
+                $this->response(['code' => 430], ERROR_FORBIDDEN);
             }
         }
 
         public function route_for_admin_or_same_user($id, $userModel = null) {
             if (is_null($id)) {
-                sendResponse(['code' => 430], 403);
+                $this->response(['code' => 430], ERROR_FORBIDDEN);
             } elseif ($this->get_current_user_id() == $id) {
                 return;
             } elseif (is_null($userModel) || 
                         !$userModel->is_user_admin($this->get_current_user_id())) {
-                sendResponse(['code' => 430], 403);
+                $this->response(['code' => 430], ERROR_FORBIDDEN);
             }
         }
 

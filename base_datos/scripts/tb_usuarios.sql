@@ -51,6 +51,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop function if exists func_exists_usuario_with_username_and_not_same;
 delimiter $$
 create function func_exists_usuario_with_username_and_not_same(p_nombre_usuario varchar(100),
@@ -64,6 +65,27 @@ begin
 	return @response;
 end $$
 delimiter ;
+*/
+
+/*
+drop function if exists func_is_usuario_enabled;
+delimiter $$
+create function func_is_usuario_enabled(p_id bigint) 
+returns bool
+begin 
+	set @response = false;
+    
+    if (valid_int_id(p_id)) then
+		set @response = exists(select * from tb_usuario 
+								where eliminado = false and 
+                                habilitado = true and
+								id = p_id );
+    end if;
+    
+    return @response;
+end $$
+delimiter ;
+*/
 
 /*
 drop function if exists func_get_id_usuario_by_email;
@@ -285,9 +307,10 @@ create procedure proc_update_password_usuario_by_id(in p_id_usuario bigint,
 													in p_clave varchar(255))
 begin
 	if (is_empty(p_clave) = false and
-		int_valid_id(p_id_usuario)) then
+		valid_int_id(p_id_usuario)) then
 		update tb_usuario 
-        set clave = p_clave
+        set clave = p_clave,
+			primera_sesion = false
         where id = p_id_usuario
         and eliminado = false;
     end if;

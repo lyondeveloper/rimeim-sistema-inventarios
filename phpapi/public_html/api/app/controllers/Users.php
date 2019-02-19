@@ -1,9 +1,14 @@
 <?php 
 
+    /* 
+    Esta clase controla todas las peticiones de inicio de sesion, 
+    agregado de usuarios, eliminado, actualizaro.
+    */
+
     class Users extends Controller {
 
         public function __construct() {
-            $this->userModel = $this->model('user/Usuario');
+            $this->userModel = $this->model('User');
         }
         
         // ====== Login ======
@@ -15,7 +20,7 @@
             $this->validate_user_status($user, $data);
             $new_token = $this->get_new_token($user);
 
-            sendResponse([
+            $this->response([
                     'token' => $new_token, 
                     'primera_sesion' => $user->primera_sesion
                 ]);
@@ -37,16 +42,17 @@
             }
 
             if (count($errors) > 0) {
-                sendResponse($errors, 403);
+                $this->response($errors, ERROR_FORBIDDEN, false);
             }
         }
 
         private function validate_user_status($user, $data) {
-            if (is_null($user) || 
+            if (!$user || 
+                is_null($user) || 
                 !password_verify($data->password, $user->clave)) {
-                sendResponse(['password_error' => 'Usuario o clave incorrecta'], 404);
+                $this->response(['password_error' => 'Usuario o clave incorrecta'], ERROR_NOTFOUND, false);
             }  elseif (!$user->habilitado) {
-                sendResponse(['user_error' => 'Usuario invalido'], 403);
+                $this->response(['user_error' => 'Usuario invalido'], ERROR_FORBIDDEN, false);
             }
         }
         // ====== End Login ======
@@ -59,7 +65,9 @@
 
             $newUser = $this->validate_add_user_data(getJsonData());
             $success = $this->userModel->add_user($newUser);
-            $this->response(['success' => $success]);
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
         }
 
         private function validate_add_user_data($data) {
@@ -89,7 +97,7 @@
             }
 
             if (count($errors) > 0) {
-                sendResponse($errors, 403);
+                $this->response($errors, ERROR_FORBIDDEN, false);
             } 
             $data->password = get_hash_password($data->password);
             return $data;
@@ -104,7 +112,9 @@
             
             $data = $this->valid_update_user_data(getJsonData(), $id);
             $success = $this->userModel->update_user($data);
-            $this->response(['success' => $success]);
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
         }
 
         private function valid_update_user_data($data, $id) {
@@ -120,11 +130,92 @@
             }
 
             if (count($errors) > 0) {
-                sendResponse($errors, 403);
+                $this->response($errors, ERROR_FORBIDDEN, false);
             }
             $data->id = $id;
             return $data;
         }
         // ====== End Update User  ======
 
+        // ====== Update password  ======
+        public function update_password($id) {
+            $this->usePutRequest();
+            $this->private_route();
+            $this->route_for_admin_or_same_user($id, $this->userModel);
+
+            $data = $this->validate_update_password_data(getJsonData());
+            $data->id = $id;
+            $success = $this->userModel->update_user_password($data);
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+        }
+
+        private function validate_update_password_data($data) {
+            $errors = [];
+
+            if (empty_json_params($data, ['password'])) {
+                $errors['params_error'] = "Uno o mas parametros invalidos";
+            } else {
+                if(!isValidPassword($data->password)) {
+                    $errors['password_error'] = "Clave invalida";
+                }
+            }
+
+            if (count($errors) > 0) {
+                $this->response($errors, ERROR_FORBIDDEN);
+            }
+
+            $data->password = get_hash_password($data->password);
+
+            return $data;
+        }
+        // ====== End Update password ===
+
+
+        // ====== Update user to admin ===
+        public function update_to_admin($id) {
+            $this->usePutRequest();
+            $this->private_route();
+            $this->route_for_admin($this->userModel);
+            
+            $success = $this->userModel->update_user_to_admin($id, $this->get_current_user_id());
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+        }
+        // ====== End Update user to admin ===
+
+        public function disable($id) {
+            $this->usePutRequest();
+            $this->private_route();
+            $this->route_for_admin($this->userModel);
+
+            $success = $this->userModel->disable_user_by_id($id);
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+        }
+
+        public function enable($id) {
+            $this->usePutRequest();
+            $this->private_route();
+            $this->route_for_admin($this->userModel);
+
+            $success = $this->userModel->enable_user_by_id($id);
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+        }
+
+        public function delete($id) {
+            $this->useDeleteRequest();
+            $this->private_route();
+            $this->route_for_admin($this->userModel);
+
+            $success = $this->userModel->delete_user_by_id($id, $this->get_current_user_id());
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+        }
     }

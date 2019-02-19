@@ -11,6 +11,9 @@
     define('TOKEN_DURATION', $values->token_duration);
     unset($values);
 
+    define('ERROR_NOTFOUND', 404);
+    define('ERROR_FORBIDDEN', 403);
+    define('ERROR_SERVER', 500);
     define('URLROOT', 'http://localhost/');
-    define('SITENAME', 'TraversyMVC');
+    define('SITENAME', 'Rimeim');
 

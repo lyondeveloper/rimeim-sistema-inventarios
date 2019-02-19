@@ -30,10 +30,9 @@
             require_once '../app/controllers/'. $this->currentController . '.php';
             // Instantiate controller class
             $this->currentController = new $this->currentController;
-
+            
             // Check function
             if(isset($url[1])){
-                $this->validateMethod($url[1]);
                 if(method_exists($this->currentController, $url[1])) {
                     $this->currentMethod = $url[1];
                     unset($url[1]);
@@ -68,18 +67,12 @@
             }
         }
 
-        public function validateMethod($value) {
-            if (in_array(strtoupper($value), $this->valid_request_methods)) {
-                notAuthorizedHeader(true);
-            }
-        }
-
         private function validateParametersInFunction() {
             $func = new ReflectionMethod($this->currentController, $this->currentMethod);
             $count_parameter_required = $func->getNumberOfParameters();
 
             if (count($this->params) < $count_parameter_required) {
-                notAuthorizedHeader(true);
+                notFoundHeader(true);
             }
         }
 
