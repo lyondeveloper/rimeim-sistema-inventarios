@@ -32,6 +32,9 @@
             $this->currentController = new $this->currentController;
             
             // Check function
+            if (!isset($url[1])) {
+                $url[1] = getRequestMethod();
+            }
             if(isset($url[1])){
                 if(method_exists($this->currentController, $url[1])) {
                     $this->currentMethod = $url[1];
@@ -39,8 +42,6 @@
                 } else {
                     notFoundHeader(true);
                 }
-            } else {
-                notFoundHeader(true);
             }
 
             //Get params

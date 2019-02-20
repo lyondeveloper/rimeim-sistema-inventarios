@@ -1,18 +1,21 @@
 <?php 
 
     /*
-    Esta clase se encarga de resolver todas las solicitudes 
-    referentes a archivos locales y en base de datos
+    Descripcion: 
+        Esta clase se encarga de resolver todas las solicitudes 
+        referentes a archivos locales y en base de datos
 
-    Al ser una clase de uso unico para usuarios loggeados, la funcion private_route 
-    esta incluida en el constructor de clase
+        Al ser una clase de uso unico para usuarios loggeados, la funcion private_route 
+        esta incluida en el constructor de clase
+
+    Accesso: Solo a empleados - CTR_EMPLEADO
     */
 
     class Files extends Controller {
 
         public function __construct() {
-            $this->private_route();
-            $this->userModel = $this->model('User');
+            $this->initController(CTR_EMPLEADO);
+
             $this->dbFileModel = $this->model('DBFile');
             $this->localFileModel = $this->model('LFile');
         }

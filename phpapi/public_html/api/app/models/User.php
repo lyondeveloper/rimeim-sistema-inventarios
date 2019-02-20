@@ -54,6 +54,11 @@
             return $result->enabled;
         }
 
+        public function get_users() {
+            $this->db->query('call proc_get_usuarios();');
+            return $this->db->resultSet();
+        }
+
         public function add_user($params) {
             $this->db->query('call proc_add_usuario(:p_nombre,:p_nombre_usuario,:p_correo,:p_clave,:p_admin,:p_id_usuario_agregado_por);');
             $this->db->bind(':p_nombre', $params->nombre);

@@ -131,22 +131,6 @@ begin
 end $$
 delimiter ;
 
-drop procedure if exists proc_delete_cliente_by_id;
-delimiter $$
-create procedure proc_delete_cliente_by_id(in p_id bigint,
-											in p_id_usuario_eliminado_por bigint)
-begin
-	if(valid_int_id(p_id),
-		valid_int_id(p_id_usuario_eliminado_por)) then
-		update tb_usuario 
-        set eliminado = true,
-			id_usuario_eliminado_por = p_id_usuario_eliminado_por,
-            fecha_eliminado = current_timestamp()
-		where id = p_id;
-    end if;
-end $$
-delimiter ;
-
 drop procedure if exists `proc_add_cliente`;
 delimiter $$
 create procedure proc_add_cliente(in id_local_registrado bigint,

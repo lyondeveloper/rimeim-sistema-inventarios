@@ -17,3 +17,8 @@
     define('URLROOT', 'http://localhost/');
     define('SITENAME', 'Rimeim');
 
+    // Private Controller Types
+    define('CTR_PRIVATE', 'CTR_PRIVATE');
+    define('CTR_ADMIN', 'CONTROLLER_FOR_ADMIN');
+    define('CTR_ADMIN_SAME_USER', 'CONTROLLER_FOR_ADMIN_OR_SAME_USER');
+    define('CTR_EMPLEADO', 'CONTROLLER_FOR_EMPLEADO');

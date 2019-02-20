@@ -8,7 +8,7 @@
     class Users extends Controller {
 
         public function __construct() {
-            $this->userModel = $this->model('User');
+            $this->initController();
         }
         
         // ====== Login ======
@@ -57,11 +57,17 @@
         }
         // ====== End Login ======
 
+        public function get() {
+            $this->useGetRequest();
+            $this->private_route(CTR_ADMIN);
+            $users = $this->userModel->get_users();
+            $this->response($users);
+        }
+
         // ====== Add User ======
         public function add() {
             $this->usePostRequest();
-            $this->private_route();
-            $this->route_for_admin($this->userModel);
+            $this->private_route(CTR_ADMIN);
 
             $newUser = $this->validate_add_user_data(getJsonData());
             $success = $this->userModel->add_user($newUser);
@@ -78,7 +84,7 @@
                 $errors['params_error'] = "Uno o mas parametros invalidos";
             } else {
                 $data->nombre = trim($data->nombre);
-                $data->nombre_usuario = trim($data->nombre_usuario);
+                $data->nombre_usuario = trim(get_if_isset($data, 'nombre_usuario'));
                 $data->correo = trim($data->correo);
                 $data->password = trim($data->password);
                 $data->id_usuario_agregado_por = $this->get_current_user_id();
@@ -107,14 +113,14 @@
         // ====== Update User  ======
         public function update($id) {
             $this->usePutRequest();
-            $this->private_route();
-            $this->route_for_admin_or_same_user($id, $this->userModel);
-            
+            $this->private_route(CTR_ADMIN_SAME_USER, $id);
+
             $data = $this->valid_update_user_data(getJsonData(), $id);
             $success = $this->userModel->update_user($data);
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $this->response();
         }
 
         private function valid_update_user_data($data, $id) {
@@ -130,7 +136,7 @@
             }
 
             if (count($errors) > 0) {
-                $this->response($errors, ERROR_FORBIDDEN, false);
+                $this->response($errors, ERROR_FORBIDDEN);
             }
             $data->id = $id;
             return $data;
@@ -140,8 +146,7 @@
         // ====== Update password  ======
         public function update_password($id) {
             $this->usePutRequest();
-            $this->private_route();
-            $this->route_for_admin_or_same_user($id, $this->userModel);
+            $this->private_route(CTR_ADMIN_SAME_USER, $id);
 
             $data = $this->validate_update_password_data(getJsonData());
             $data->id = $id;
@@ -149,6 +154,7 @@
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $this->response();
         }
 
         private function validate_update_password_data($data) {
@@ -176,46 +182,46 @@
         // ====== Update user to admin ===
         public function update_to_admin($id) {
             $this->usePutRequest();
-            $this->private_route();
-            $this->route_for_admin($this->userModel);
+            $this->private_route(CTR_ADMIN);
             
             $success = $this->userModel->update_user_to_admin($id, $this->get_current_user_id());
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $this->response();
         }
         // ====== End Update user to admin ===
 
         public function disable($id) {
             $this->usePutRequest();
-            $this->private_route();
-            $this->route_for_admin($this->userModel);
+            $this->private_route(CTR_ADMIN);
 
             $success = $this->userModel->disable_user_by_id($id);
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $this->response();
         }
 
         public function enable($id) {
             $this->usePutRequest();
-            $this->private_route();
-            $this->route_for_admin($this->userModel);
+            $this->private_route(CTR_ADMIN);
 
             $success = $this->userModel->enable_user_by_id($id);
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $this->response();
         }
 
         public function delete($id) {
             $this->useDeleteRequest();
-            $this->private_route();
-            $this->route_for_admin($this->userModel);
+            $this->private_route(CTR_ADMIN);
 
             $success = $this->userModel->delete_user_by_id($id, $this->get_current_user_id());
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $this->response();
         }
     }

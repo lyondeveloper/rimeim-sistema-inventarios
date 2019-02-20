@@ -53,8 +53,14 @@
         return $data;
     }
 
-    function errorLog($str) {
+    function errorLog($error) {
+        $file_url = APP_ROOT . '/log/error.log';
+        $data_help = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a") . ": ";
+        //$file_content = file_get_contents($file_url);
 
+        $file_content = "\n" . $data_help . $error;
+        //file_put_contents($file_url, $file_content, FILE_APPEND);
+        file_put_contents($file_url, $file_content, FILE_APPEND | LOCK_EX);
     }
 
     function processLog($str) {

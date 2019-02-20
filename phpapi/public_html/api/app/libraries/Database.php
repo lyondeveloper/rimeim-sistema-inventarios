@@ -25,7 +25,7 @@
                  $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
              } catch(PDOException $e) {
                 $this->error = $e;
-                errorLog($e->getMessage());
+                $this->reportError();
                 serverErrorHeader(true);
              }
          }
@@ -37,6 +37,9 @@
 
          // Bind values
          public function bind($param, $value, $type = null) {
+             if(is_null($this->stmt)) {
+                return;
+             }
             if(is_null($type)) {
                 switch(true) {
                     case is_int($value):
@@ -57,29 +60,48 @@
          
          // Execute the prepared statement
          public function execute() {
-             return $this->stmt->execute();
+            if(is_null($this->stmt)) {
+                return;
+            }
+            try {
+                return $this->stmt->execute();
+            } catch (Exception $e) {
+                $this->error = $e;
+            }
          }
 
          // Get result set as array of objects
          public function resultSet() {
-             $this->execute();
-             $results = $this->stmt->fetchAll(PDO::FETCH_OBJ);
+             $results = null;
+             if ($this->execute()) {
+                $results = $this->stmt->fetchAll(PDO::FETCH_OBJ);
+             }
              return is_null($results) ? [] : $results;
          }
 
          // Get single record as object
          public function single() {
-            $this->execute();
-            return $this->stmt->fetch(PDO::FETCH_OBJ);
+            if($this->execute()) {
+                $result = $this->stmt->fetch(PDO::FETCH_OBJ);
+                return $result ? $result : null;
+            }
+            return null;
          }
 
          public function rowCount() {
-             return $this->stmt->rowCount();
+             return is_null($this->stmt) ? 0 : $this->stmt->rowCount();
          }
 
          public function success() {
             $this->execute();
             return $this->rowCount() > 0;
          }
+
+        private function reportError() {
+            if (is_null($this->error)) {
+                return;
+            }
+            errorLog("Database: " . $this->error->getMessage());
+        }
      }
     

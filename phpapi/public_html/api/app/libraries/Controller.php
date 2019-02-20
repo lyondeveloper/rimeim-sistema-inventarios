@@ -8,6 +8,16 @@
     class Controller {
 
         private $current_token = null;
+        public $userModel;
+
+        public function initController($private_type = null) {
+            $this->userModel = $this->model('User');
+
+            // Para la configuracion de controladores privados
+            if (!is_null($private_type)) {
+                $this->private_route($private_type);
+            }
+        }
         
         // Load model
         public function model($model) {
@@ -88,15 +98,23 @@
             return $token;
         }
 
-        public function private_route() {
+        public function private_route($private_type = null, $id_user_request = 0) {
+            $this->config_current_token();
+            $this->config_route($private_type, $id_user_request);
+        }
+
+        private function config_current_token() {
+            if (!is_null($this->current_token)) {
+                return;
+            } 
+
             $token = $this->get_token_from_header();
             if (is_null($token)) {
                 $this->response(null, ERROR_FORBIDDEN);
             }
             $token = $this->get_decoded_token($token);
-            $userModel = $this->model('User');
 
-            if (!$userModel->is_user_enabled($token->id)) {
+            if (!$this->userModel->is_user_enabled($token->id)) {
                 $this->response(['code' => 450], ERROR_FORBIDDEN, false);
             }
             if ($token->dt_expire < curent_time()) {
@@ -128,19 +146,22 @@
             $this->response(null, ERROR_FORBIDDEN);
         }
 
-        public function route_for_admin($userModel) {
-            if (!$userModel->is_user_admin($this->get_current_user_id())) {
+        public function route_for_admin() {
+            if (!$this->userModel->is_user_admin($this->get_current_user_id())) {
                 $this->response(['code' => 430], ERROR_FORBIDDEN);
             }
         }
 
-        public function route_for_admin_or_same_user($id, $userModel = null) {
+        public function route_for_empleado() {
+            
+        }
+
+        public function route_for_admin_or_same_user($id) {
             if (is_null($id)) {
                 $this->response(['code' => 430], ERROR_FORBIDDEN);
             } elseif ($this->get_current_user_id() == $id) {
                 return;
-            } elseif (is_null($userModel) || 
-                        !$userModel->is_user_admin($this->get_current_user_id())) {
+            } elseif (!$this->userModel->is_user_admin($this->get_current_user_id())) {
                 $this->response(['code' => 430], ERROR_FORBIDDEN);
             }
         }
@@ -148,5 +169,29 @@
         public function get_current_user_id() {
             return (!is_null($this->current_token) && 
                     isset($this->current_token->id)) ? $this->current_token->id : 0;
+        }
+
+        public function config_route($private_type, $id_user_request = 0) {
+            if (is_null($private_type) || 
+                !in_array($private_type, [CTR_EMPLEADO, CTR_ADMIN, CTR_ADMIN_SAME_USER])) {
+                return; 
+            } 
+
+            switch($private_type) {
+                case CTR_ADMIN:
+                    $this->route_for_admin();
+                break;
+
+                case CTR_EMPLEADO:
+                    $this->route_for_empleado();
+                break;
+
+                case CTR_ADMIN_SAME_USER:
+                    $this->route_for_admin_or_same_user($id_user_request);
+                break;
+
+                default:
+                break;
+            }
         }
     }

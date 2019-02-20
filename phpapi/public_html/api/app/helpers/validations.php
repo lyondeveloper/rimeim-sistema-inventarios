@@ -14,6 +14,15 @@
         return $empty_json;
     }
 
+    function set_empty_json_params($json_data, $params = []) {
+        foreach($params as $p) {
+            if (!isset($json_data->$p)) {
+                $json_data->$p = null;
+            }
+        }
+        return $json_data;
+    }
+
     function is_empty_array($array) {
         if (is_object($array)) {
             $array = (array)$array;

@@ -26,3 +26,21 @@
         ];
         return password_hash($password, PASSWORD_BCRYPT, $options);
     }
+
+    function get_if_isset($var, $key, $default = "") {
+        if (is_null($var)) {
+            return $default;
+        }
+
+        if (is_object($var)) {
+            if (!isset($var->$key)) {
+                return $default;
+            } 
+            return $var->$key;
+        } else {
+            if (!isset($var[$key])) {
+                return $default;
+            } 
+            return $var[$key];
+        }
+    }
