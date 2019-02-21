@@ -56,7 +56,7 @@
             $this->db->bind(':p_correo', $params->correo);
             $this->db->bind(':p_telefono', $params->telefono);
             $this->db->bind(':p_es_empresa', $params->es_empresa);
-            return $this->db->success();
+            return $this->db->newId();
         }
 
         public function update($params) {

@@ -171,6 +171,18 @@
                     isset($this->current_token->id)) ? $this->current_token->id : 0;
         }
 
+        public function get_current_id_local() {
+            // Necesita actualizacion
+            return (!is_null($this->current_token) && 
+                    isset($this->current_token->id_local)) ? $this->current_token->id_local : 1;
+        }
+
+        public function get_current_id_empleado() {
+            // Necesita actualizacion
+            return (!is_null($this->current_token) && 
+                    isset($this->current_token->id_empleado)) ? $this->current_token->id_empleado : 1;
+        }
+
         public function config_route($private_type, $id_user_request = 0) {
             if (is_null($private_type) || 
                 !in_array($private_type, [CTR_EMPLEADO, CTR_ADMIN, CTR_ADMIN_SAME_USER])) {

@@ -61,13 +61,19 @@
          // Execute the prepared statement
          public function execute() {
             if(is_null($this->stmt)) {
-                return;
+                return false;
             }
             try {
-                return $this->stmt->execute();
+                $success = $this->stmt->execute();
+                $this->error = null;
+                return $success;
+            } catch (PDOException $e) {
+                $this->error = $e;
             } catch (Exception $e) {
                 $this->error = $e;
             }
+            $this->reportError();
+            return false;
          }
 
          // Get result set as array of objects
@@ -82,10 +88,21 @@
          // Get single record as object
          public function single() {
             if($this->execute()) {
-                $result = $this->stmt->fetch(PDO::FETCH_OBJ);
+                $result = null;
+                try {
+                    $result = $this->stmt->fetch(PDO::FETCH_OBJ);
+                } catch(PDOException $e) {
+                    $this->error = $e;
+                    $this->reportError();
+                }
                 return $result ? $result : null;
             }
             return null;
+         }
+
+         public function newId() {
+            $result = $this->single();
+            return isset($result->id) ? $result->id : null;
          }
 
          public function rowCount() {

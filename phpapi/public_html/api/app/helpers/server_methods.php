@@ -18,6 +18,11 @@
         if ($endRequest) { die(); }
     }
 
+    function processErrorHeader($endRequest = false) {
+        header("HTTP/1.0 409 Conflict");
+        if ($endRequest) { die(); }
+    }
+
     function serverErrorHeader($endRequest = false) {
         header("HTTP/1.0 500 Internal Error");
         if ($endRequest) { die(); }
@@ -49,36 +54,45 @@
         $data = json_decode(file_get_contents('php://input'), true);
         if (!is_null($data)) {
             $data = array_to_obj($data);
+            foreach($data as &$value) {
+                if (is_string($value)) {
+                    $value = filter_var(trim($value), FILTER_SANITIZE_STRING);
+                }
+            }
         }
-        return $data;
+        return $data ? $data : null;
     }
 
     function errorLog($error) {
         $file_url = APP_ROOT . '/log/error.log';
         $data_help = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a") . ": ";
-        //$file_content = file_get_contents($file_url);
-
         $file_content = "\n" . $data_help . $error;
-        //file_put_contents($file_url, $file_content, FILE_APPEND);
         file_put_contents($file_url, $file_content, FILE_APPEND | LOCK_EX);
     }
 
     function processLog($str) {
-
+        $file_url = APP_ROOT . '/log/process.log';
+        $data_help = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a") . ": ";
+        $file_content = "\n" . $data_help . $error;
+        file_put_contents($file_url, $file_content, FILE_APPEND | LOCK_EX);
     }
 
     function sendResponse($data = null, $error = null) {
         if (!is_null($error)) {
             switch($error) {
-                case 404:
+                case ERROR_NOTFOUND:
                     notFoundHeader();
                 break;
 
-                case 403:
+                case ERROR_FORBIDDEN:
                     notAuthorizedHeader();
                 break;
 
-                case 500:
+                case ERROR_PROCESS:
+                    processErrorHeader();
+                break;
+
+                case ERROR_SERVER:
                     serverErrorHeader();
                 break;
             }

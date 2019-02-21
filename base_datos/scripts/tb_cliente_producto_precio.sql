@@ -70,13 +70,11 @@ delimiter ;
 /*
 drop procedure if exists `proc_update_cliente_producto_precio_by_idp_idc`;
 delimiter $$
-create procedure proc_update_cliente_producto_precio_by_idp_idc(in p_id bigint,
-																in p_id_cliente bigint,
+create procedure proc_update_cliente_producto_precio_by_idp_idc(in p_id_cliente bigint,
 																in p_id_producto bigint,
                                                                 in p_precio double)
 begin
-	if (valid_int_id(p_id) and
-		valid_int_id(p_id_cliente) and
+	if (valid_int_id(p_id_cliente) and
         valid_int_id(p_id_producto) and
         p_precio != null) then
 		

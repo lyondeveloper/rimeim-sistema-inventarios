@@ -31,6 +31,27 @@ begin
 end $$
 delimiter ;
 
+drop procedure if exists `proc_get_pedido_by_id`;
+delimiter $$
+create procedure proc_get_pedido_by_id(in p_id bigint)
+begin
+	if (valid_int_id(p_id)) then
+		select p.id,
+				p.id_empleado_creado_por,
+				p.id_local,
+				p.id_local_solicitado,
+				p.id_proveedor,
+				p.codigo,
+				p.es_compra,
+				p.recibido,
+				p.fecha_creado
+		from tb_pedido p 
+		where p.eliminado = false
+        and p.id = p_id;
+    end if;
+end $$
+delimiter ;
+
 drop procedure if exists `proc_get_pedidos_by_local`;
 delimiter $$
 create procedure proc_get_pedidos_by_local(in p_id_local bigint)
