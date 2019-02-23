@@ -60,6 +60,32 @@ begin
 end $$
 delimiter ;
 
+drop procedure if exists proc_get_venta_by_id_local;
+delimiter $$
+create procedure proc_get_venta_by_id_local(in p_id_local bigint)
+begin
+
+    if (valid_int_id(p_id_local)) then
+        select v.id,
+                v.id_local,
+                v.id_cliente,
+                v.id_empleado_creado_por,
+                v.codigo,
+                v.con_factura,
+                v.sub_total,
+                v.impuesto,
+                v.total,
+                v.metodo_pago,
+                v.fecha_creado
+        from tb_venta v 
+        where v.eliminado = false 
+        and v.id_local = p_id_local
+        and v.es_cotizacion = false;
+    end if;
+
+end $$
+delimiter ;
+
 drop procedure if exists proc_add_venta;
 delimiter $$
 create procedure proc_add_venta(in p_id_local bigint,
