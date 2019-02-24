@@ -34,6 +34,47 @@ begin
 end $$
 delimiter ;
 
+drop function if exists func_exists_local_with_code;
+delimiter $$
+create function func_exists_local_with_code(p_codigo varchar(100))
+returns boolean
+begin 
+	set @response = false;
+	set p_codigo = trim(p_codigo);
+	
+	if (!is_empty(p_codigo)) then
+		set @response = exists(
+			select * from tb_local l
+			where l.codigo = p_codigo
+		);
+	end if;	
+
+	return @response;
+end $$
+delimiter ;
+
+drop function if exists func_exists_local_with_code_and_not_same;
+delimiter $$
+create function func_exists_local_with_code_and_not_same(p_codigo varchar(100),
+														p_id bigint)
+returns boolean
+begin 
+	set @response = false;
+	set p_codigo = trim(p_codigo);
+	
+	if (!is_empty(p_codigo) and 
+		valid_int_id(p_id)) then
+		set @response = exists(
+			select * from tb_local l
+			where l.codigo = p_codigo
+			and l.id != p_id
+		);
+	end if;	
+
+	return @response;
+end $$
+delimiter ;
+
 drop procedure if exists proc_get_local_by_id;
 delimiter $$
 create procedure proc_get_local_by_id(in p_id bigint)

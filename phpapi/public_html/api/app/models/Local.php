@@ -11,6 +11,21 @@
             $this->db = new Database;
         }
 
+        public function exists_with_code($codigo) {
+            $this->db->query("select func_exists_local_with_code(:p_codigo) as 'exists';");
+            $this->db->bind(':p_codigo', $codigo);
+            $response = $this->db->single();
+            return $response->exists;
+        }
+
+        public function exists_with_code_and_not_same($codigo, $id) {
+            $this->db->query("select func_exists_local_with_code_and_not_same(:p_codigo, :p_id) as 'exists';");
+            $this->db->bind(':p_codigo', $codigo);
+            $this->db->bind(':p_id', $id);
+            $response = $this->db->single();
+            return $response->exists;
+        }
+
         public function get() {
             $this->db->query('call proc_get_locales();');
             return $this->db->resultSet();
@@ -19,7 +34,7 @@
         public function get_by_id($id) {
             $this->db->query('call proc_get_local_by_id(:p_id);');
             $this->db->bind(':p_id', $id);
-            return $this->db->result();
+            return $this->db->single();
         }
 
         public function add($params) {

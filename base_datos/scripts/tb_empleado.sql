@@ -14,6 +14,28 @@ begin
 end $$
 delimiter ;
 
+drop function if exists func_exists_user_in_local;
+delimiter $$
+create function func_exists_user_in_local(p_id_usuario bigint,
+											p_id_local bigint)
+returns boolean
+begin
+	set @response = false;
+    if (valid_int_id(p_id_usuario) and 
+		valid_int_id(p_id_local)) then
+		
+		set @response = exists(
+			select * from tb_empleado e 
+			where e.id_usuario = p_id_usuario and 
+			e.id_local = p_id_local
+		);
+
+    end if;
+    
+	return @response;
+end $$
+delimiter ;
+
 drop procedure if exists `proc_get_empleados`;
 delimiter $$
 create procedure proc_get_empleados()

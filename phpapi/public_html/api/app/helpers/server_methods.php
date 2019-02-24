@@ -60,7 +60,7 @@
                 }
             }
         }
-        return $data ? $data : null;
+        return ($data && is_object($data)) ? $data : null;
     }
 
     function errorLog($error) {

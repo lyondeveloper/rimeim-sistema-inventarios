@@ -33,7 +33,7 @@
             
             // Check function
             if (!isset($url[1])) {
-                $url[1] = getRequestMethod();
+                $url[1] = strtolower(getRequestMethod());
             }
             if(isset($url[1])){
                 if(method_exists($this->currentController, $url[1])) {

@@ -2,11 +2,11 @@
 
     /*
     Descripcion: 
-        Esta clase se encarga de resolver todas las solicitudes 
-        referentes a archivos locales y en base de datos
+    Esta clase se encarga de resolver todas las solicitudes 
+    referentes a archivos locales y en base de datos
 
-        Al ser una clase de uso unico para usuarios loggeados, la funcion private_route 
-        esta incluida en el constructor de clase
+    Al ser una clase de uso unico para usuarios loggeados, la funcion private_route 
+    esta incluida en el constructor de clase
 
     Accesso: Solo a empleados - CTR_EMPLEADO
     */

@@ -91,6 +91,7 @@
                 $result = null;
                 try {
                     $result = $this->stmt->fetch(PDO::FETCH_OBJ);
+                    $this->stmt->closeCursor();
                 } catch(PDOException $e) {
                     $this->error = $e;
                     $this->reportError();
@@ -118,7 +119,8 @@
             if (is_null($this->error)) {
                 return;
             }
-            errorLog("Database: " . $this->error->getMessage());
+            $query = is_null($this->stmt) ? "null" : $this->stmt->queryString; 
+            errorLog("Database: query -> " . $query . " : error -> " . $this->error->getMessage());
         }
      }
     

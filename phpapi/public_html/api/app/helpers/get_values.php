@@ -44,3 +44,15 @@
             return $var[$key];
         }
     }
+
+    function json_set_null_params_if_not_exists($json, $params = []) {
+        if (count($params) > 0 && 
+            is_object($json)) {
+            foreach($params as &$param) {
+                if (!isset($json->$param)) {
+                    $json->$param = null;
+                }
+            }
+        }
+        return $json;
+    }

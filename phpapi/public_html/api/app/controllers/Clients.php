@@ -1,7 +1,11 @@
 <?php 
     /*
+    Descripcion:
     Este clase se encarga de completar todas las peticiones 
     referentes a los Clientes en la base de datos
+
+    Acceso: 
+    Empleados CTR_EMPLEADO o administradores
     */
 
     class Clients extends Controller {

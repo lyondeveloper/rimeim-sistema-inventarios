@@ -10,6 +10,14 @@
             $this->db = new Database;
         }
 
+        public function exists_user_in_local($id_usuario, $id_local) {
+            $this->db->query("select func_exists_user_in_local(:p_id_usuario, :p_id_local) as 'exists';");
+            $this->db->bind(':p_id_usuario', $id_usuario);
+            $this->db->bind(':p_id_local', $id_local);
+            $result = $this->db->single();
+            return $result->exists;
+        }
+
         public function get() {
             $this->db->query('call proc_get_empleados();');
             return $this->db->resultSet();
@@ -37,7 +45,7 @@
             return $this->db->newId();
         }
 
-        public function update_by_id($params) {
+        public function update($params) {
             $this->db->query('call proc_update_empleado_by_id(:p_id, :p_id_local, :p_admin, :p_habilitado);');
             $this->db->bind(':p_id', $params->id);
             $this->db->bind(':p_id_local', $params->id_local);
@@ -46,7 +54,7 @@
             return $this->db->success();
         }
 
-        public function delete_by_id($id, $id_usuario_eliminado_por) {
+        public function delete($id, $id_usuario_eliminado_por) {
             $this->db->query('call proc_delete_empleado_by_id(:p_id, :p_id_usuario_eliminado_por);');
             $this->db->bind(':p_id', $id);
             $this->db->bind(':p_id_usuario_eliminado_por', $id_usuario_eliminado_por);
