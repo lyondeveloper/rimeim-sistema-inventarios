@@ -13,7 +13,6 @@
 
         public function __construct() {
             $this->initController(CTR_ADMIN);
-            $this->employeModel = $this->model('Employe');
             $this->localModel = $this->model('Local');
         }
 

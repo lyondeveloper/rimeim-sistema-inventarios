@@ -18,6 +18,13 @@
             return $result->exists;
         }
 
+        public function is_enabled_by_id($id) {
+            $this->db->query("select func_is_employe_enabled(:p_id) as 'enabled';");
+            $this->db->bind(':p_id', $id);
+            $result = $this->db->single();
+            return $result->enabled;
+        }
+
         public function get() {
             $this->db->query('call proc_get_empleados();');
             return $this->db->resultSet();
@@ -31,6 +38,12 @@
 
         public function get_by_id($id) {
             $this->db->query('call proc_get_empleado_by_id(:p_id);');
+            $this->db->bind(':p_id', $id);
+            return $this->db->single();
+        }
+
+        public function get_by_user_id($id) {
+            $this->db->query('call proc_get_empleado_by_user_id(:p_id);');
             $this->db->bind(':p_id', $id);
             return $this->db->single();
         }

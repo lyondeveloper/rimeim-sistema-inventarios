@@ -13,6 +13,7 @@
         public function __construct() {
             $this->initController(CTR_EMPLEADO);
             $this->clientModel = $this->model('Client');
+            $this->clientProductModel = $this->model('ClientProductPrice');
         }
 
         public function get() {
@@ -178,6 +179,74 @@
         public function delete($id) {
             $this->useDeleteRequest();
             $success = $this->clientModel->delete_by_id($id);
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+            $this->response();
+        }
+
+        // ========== ClientProducPrice =============
+        public function products_price($id_cliente) {
+            $this->useGetRequest();
+            $products_price = $this->clientProductModel->get($id_cliente);
+            $this->response($products_price);
+        }
+
+        public function product_price($id_cliente, $id_producto) {
+            $this->useGetRequest();
+            $product_price = $this->clientProductModel->get_by_idc_idp($id_cliente, $id_producto);
+            if (is_null($product_price)) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+            $this->response($product_price);
+        }
+
+        public function add_product_price() {
+            $this->usePostRequest();
+            $data = $this->validate_add_product_price_data(getJsonData());
+            $newId = $this->clientProductModel->add($data);
+            $this->checkNewId($newId);
+            $new_product_price =  $this->clientProductModel->get_by_id($newId);
+            $this->response($new_product_price);
+        }
+
+        private function validate_add_product_price_data($data) {
+            $errors = [];
+
+            if (!isset($data->id_cliente)) {
+                $errors['cliente_error'] = "Cliente invalido";
+            }
+            if (!isset($data->id_producto)) {
+                $errors['producto_error'] = "Producto invalido";
+            }
+            if (!isset($data->precio)) {
+                $errors['precio_error'] = "Precio invalido";
+            }
+            if (isset($data->id_cliente) && 
+                isset($data->id_producto)) {
+                $product_price = $this->clientProductModel->get_by_idc_idp($data->id_cliente, $data->id_producto);
+                if ($product_price) {
+                    $errors['producto_error'] = "Producto ya registrado";
+                }
+            }
+
+            $this->checkErrors($errors);
+            return $data;
+        }
+
+        public function update_product_price($id, $precio) {
+            $this->usePutRequest();
+            $success = $this->clientProductModel->update_by_id($id, $precio);
+            if(!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+            $updated_product_price = $this->clientProductModel->get_by_id($id);
+            $this->response($updated_product_price);
+        }
+
+        public function delete_product_price($id) {
+            $this->useDeleteRequest();
+            $success = $this->clientProductModel->delete_by_id($id);
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }

@@ -48,7 +48,7 @@ delimiter $$
 create procedure proc_add_marca(in p_nombre varchar(200),
                                 in p_descripcion text)
 begin
-    set p_nombre = trim_and_lower(p_nombre);
+    set p_nombre = trim(p_nombre);
     set p_descripcion = trim(p_descripcion);
     set @new_id = null;
 

@@ -36,6 +36,27 @@ begin
 end $$
 delimiter ;
 
+drop function if exists func_is_employe_enabled;
+delimiter $$
+create function func_is_employe_enabled(p_id_empleado bigint)
+returns boolean
+begin
+	set @response = false;
+    if (valid_int_id(p_id_empleado)) then
+		
+		set @response = exists(
+			select * from tb_empleado e 
+			where e.id = p_id_empleado 
+			and e.habilitado = true
+			and e.eliminado = false
+		);
+
+    end if;
+    
+	return @response;
+end $$
+delimiter ;
+
 drop procedure if exists `proc_get_empleados`;
 delimiter $$
 create procedure proc_get_empleados()
@@ -85,6 +106,25 @@ begin
 				e.fecha_creado
 		from tb_empleado e
 		where e.id = p_id 
+        and e.eliminado = false;
+    end if;
+end $$
+delimiter ;
+
+drop procedure if exists `proc_get_empleado_by_user_id`;
+delimiter $$
+create procedure proc_get_empleado_by_user_id(in p_id bigint)
+begin
+	if (valid_int_id(p_id)) then
+		select e.id,
+				e.id_local,
+				e.id_usuario,
+				e.id_usuario_creado_por,
+				e.admin,
+				e.habilitado,
+				e.fecha_creado
+		from tb_empleado e
+		where e.id_usuario = p_id 
         and e.eliminado = false;
     end if;
 end $$

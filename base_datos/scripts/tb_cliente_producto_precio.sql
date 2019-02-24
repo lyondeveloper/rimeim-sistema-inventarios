@@ -3,7 +3,7 @@
 
 
 
-/*
+
 drop function if exists func_get_next_cliente_producto_precio_id;
 delimiter $$
 create function func_get_next_cliente_producto_precio_id()
@@ -18,9 +18,57 @@ begin
     return @new_id;
 end $$
 delimiter ;
-*/
 
-/*
+
+drop procedure if exists proc_get_cliente_producto_precio;
+delimiter $$ 
+create procedure proc_get_cliente_producto_precio(in p_id bigint) 
+begin
+	if (valid_int_id(p_id)) then
+		select p.id,
+				p.id_producto,
+				p.precio
+		from tb_cliente_producto_precio p 
+		where p.id = p_id
+		and p.eliminado = false;
+	end if; 
+end $$
+delimiter ;
+
+drop procedure if exists proc_get_cliente_productos_precio;
+delimiter $$ 
+create procedure proc_get_cliente_productos_precio(in p_id_cliente bigint) 
+begin
+	if (valid_int_id(p_id_cliente)) then
+		select p.id,
+				p.id_producto,
+				p.precio
+		from tb_cliente_producto_precio p 
+		where p.id_cliente = p_id_cliente
+		and p.eliminado = false;
+	end if; 
+end $$
+delimiter ;
+
+drop procedure if exists proc_get_cliente_producto_precio_by_idc_idp;
+delimiter $$ 
+create procedure proc_get_cliente_producto_precio_by_idc_idp(in p_id_cliente bigint,
+															in p_id_producto bigint) 
+begin
+	if (valid_int_id(p_id_cliente) and 
+		valid_int_id(p_id_producto)) then
+		select p.id,
+				p.id_producto,
+				p.precio
+		from tb_cliente_producto_precio p 
+		where p.id_cliente = p_id_cliente
+		and p.id_producto = p_id_producto
+		and p.eliminado = false;
+	end if; 
+end $$
+delimiter ;
+
+
 drop procedure if exists proc_add_cliente_producto_precio;
 delimiter $$
 create procedure proc_add_cliente_producto_precio(in p_id_cliente bigint,
@@ -30,7 +78,7 @@ begin
 	set @new_id = null;
 	if (valid_int_id(p_id_cliente) and
 		valid_int_id(p_id_producto) and
-        precio != null) then
+        p_precio != null) then
         
         set @new_id = func_get_next_cliente_producto_precio_id();
         
@@ -48,9 +96,9 @@ begin
     select @new_id as 'id';
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_update_cliente_producto_precio_by_id`;
 delimiter $$
 create procedure proc_update_cliente_producto_precio_by_id(in p_id bigint,
@@ -65,9 +113,9 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_update_cliente_producto_precio_by_idp_idc`;
 delimiter $$
 create procedure proc_update_cliente_producto_precio_by_idp_idc(in p_id_cliente bigint,
@@ -86,9 +134,9 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_delete_cliente_producto_precio_by_id`;
 delimiter $$
 create procedure proc_delete_cliente_producto_precio_by_id(in p_id bigint)
@@ -101,9 +149,9 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_delete_cliente_producto_precio_by_idp_idc`;
 delimiter $$
 create procedure proc_delete_cliente_producto_precio_by_idp_idc(in p_id_cliente bigint,
@@ -118,6 +166,6 @@ begin
     end if;
 end $$
 delimiter ;
-*/
+
 
 

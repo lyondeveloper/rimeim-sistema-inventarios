@@ -11,6 +11,26 @@
             $this->db = new Database;
         }
 
+        public function get_by_id($id) {
+            $this->db->query('call proc_get_cliente_productos_precio(:p_id);');
+            $this->db->bind(':p_id', $id);
+            return $this->db->single();
+        }
+
+        public function get($id_cliente) {
+            $this->db->query('call proc_get_cliente_productos_precio(:p_id_cliente);');
+            $this->db->bind(':p_id_cliente', $id_cliente);
+            return $this->db->resultSet();
+        }
+
+        // Id cliente / Id producto
+        public function get_by_idc_idp($id_cliente, $id_producto) {
+            $this->db->query('call proc_get_cliente_producto_precio_by_idc_idp(:p_id_cliente,:p_id_producto);');
+            $this->db->bind(':p_id_cliente', $id_cliente);
+            $this->db->bind(':p_id_producto', $id_producto);
+            return $this->db->single();
+        }
+
         public function add($params) {
             $this->db->query('call proc_add_cliente_producto_precio(:p_id_cliente, :p_id_producto, :p_precio);');
             $this->db->bind(':p_id_cliente', $params->id_cliente);

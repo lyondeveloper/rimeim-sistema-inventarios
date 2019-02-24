@@ -9,10 +9,12 @@
 
         private $current_token = null;
         public $userModel;
+        public $employeModel;
 
         public function initController($private_type = null)
         {
             $this->userModel = $this->model('User');
+            $this->employeModel = $this->model('Employe');
 
             // Para la configuracion de controladores privados
             if (!is_null($private_type)) {
@@ -114,11 +116,16 @@
 
         public function get_new_token($user)
         {
+            $info_employe = $this->employeModel->get_by_user_id($user->id);
             $token_arr = [
                 'id' => $user->id,
                 'name' => $user->nombre,
                 'dt_expire' => strtotime("+" . TOKEN_DURATION . " seconds", curent_time())
             ];
+            if (!is_null($info_employe)) {
+                $token_arr['id_empleado'] = $info_employe->id;
+                $token_arr['id_local'] = $info_employe->id_local;
+            }
             $token = JWT::encode($token_arr, KEY_TOKEN);
             return $token;
         }
@@ -178,13 +185,17 @@
 
         public function route_for_admin()
         {
-            if (!$this->userModel->is_user_admin($this->get_current_user_id())) {
-                $this->response(['code' => 430], ERROR_FORBIDDEN);
+            if (!$this->is_current_user_admin()) {
+                $this->response(['error' => "InvalidPermissions"], ERROR_FORBIDDEN);
             }
         }
 
         public function route_for_empleado()
-        { }
+        { 
+            if (!$this->employeModel->is_enabled_by_id($this->get_current_employe_id())) {
+                $this->response(['error' => "InvalidPermissions"], ERROR_FORBIDDEN);
+            }  
+        }
 
         public function route_for_admin_or_same_user($id)
         {
@@ -192,7 +203,7 @@
                 $this->response(['error' => "NotFoundUser"], ERROR_FORBIDDEN);
             } elseif ($this->get_current_user_id() == $id) {
                 return;
-            } elseif (!$this->userModel->is_user_admin($this->get_current_user_id())) {
+            } elseif (!$this->is_current_user_admin()) {
                 $this->response(['error' => "NotValidUser"], ERROR_FORBIDDEN);
             }
         }
@@ -201,6 +212,12 @@
         {
             return (!is_null($this->current_token) &&
                 isset($this->current_token->id)) ? $this->current_token->id : 0;
+        }
+
+        public function get_current_employe_id()
+        {
+            return (!is_null($this->current_token) &&
+                isset($this->current_token->id_empleado)) ? $this->current_token->id_empleado : 0;
         }
 
         public function get_current_id_local()
@@ -227,10 +244,6 @@
             }
 
             switch ($private_type) {
-                case CTR_ADMIN:
-                    $this->route_for_admin();
-                    break;
-
                 case CTR_EMPLEADO:
                     $this->route_for_empleado();
                     break;
@@ -240,8 +253,13 @@
                     break;
 
                 default:
+                    $this->route_for_admin();
                     break;
             }
+        }
+
+        private function is_current_user_admin() {
+            return $this->userModel->is_user_admin($this->get_current_user_id());
         }
     }
 
