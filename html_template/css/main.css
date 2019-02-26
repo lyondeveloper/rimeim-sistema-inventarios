@@ -1,0 +1,110 @@
+#app {
+    height: 100vh;
+    width: 100%;
+}
+
+/* Corner radios */
+.border-radius-1 {
+    border-radius: 6px;
+}
+
+/* Color */
+.text-white {
+    color: white !important;
+}
+
+/* Texto tamanio */
+.font-size-1 {
+    font-size: 1rem;
+}
+
+.break-work {
+    word-wrap: break-word;
+}
+
+/* Altura */
+.minh-100 {
+    min-height: 100vh !important;
+}
+
+/* Margen */
+.m-auto {
+    margin: auto;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+/* Padding */
+.p-1 {
+    padding: 1rem !important;
+}
+
+.p-2 {
+    padding: 2rem !important;
+}
+
+.p-3 {
+    padding: 3rem !important;
+}
+
+.p-4 {
+    padding: 4rem !important;
+}
+
+/* Display */
+.d-block {
+    display: block;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* Textfield color */
+
+/* label focus color */
+/* .input-field input[type=text]:focus+label {
+    color: green !important;
+} */
+
+/* label underline focus color */
+.input-field input[type=text]:focus,
+.input-field input[type=password]:focus {
+    border-bottom: 1px solid #E53935 !important;
+    box-shadow: 0 1px 0 0 #E53935 !important;
+}
+
+/* valid color */
+/* .input-field input[type=text].valid {
+    border-bottom: 1px solid #000;
+    box-shadow: 0 1px 0 0 #000;
+} */
+
+/* invalid color */
+/* .input-field input[type=text].invalid {
+    border-bottom: 1px solid #000;
+    box-shadow: 0 1px 0 0 #000;
+} */
+
+/* icon prefix focus color */
+.input-field .prefix.active {
+    color: #E53935;
+}
+
+.input-field .prefix {
+    color: #9e9e9e;
+}
+
+
+
+/* Clases */
+.left-bar {
+    border: 1px solid rgb(184, 184, 184);
+}
+
+.logo-sidenav {
+    height: 90%;
+}
