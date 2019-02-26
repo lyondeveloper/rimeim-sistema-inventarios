@@ -3,6 +3,12 @@
     width: 100%;
 }
 
+/* Container */
+.small-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
 /* Corner radios */
 .border-radius-1 {
     border-radius: 6px;
@@ -97,6 +103,18 @@
 .input-field .prefix {
     color: #9e9e9e;
 }
+
+/* Navbar - sidenav fixed */
+header, main, footer {
+    padding-left: 300px;
+}
+
+@media only screen and (max-width : 992px) {
+    header, main, footer {
+      padding-left: 0;
+    }
+ }
+
 
 
 
