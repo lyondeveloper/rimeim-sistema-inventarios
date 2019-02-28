@@ -22,15 +22,13 @@
                 <div class="small-container">
                     <div class="nav-wrapper">
                         <a href="#!" class="brand-logo">
-                            Nueva venta
+                            Venta #codigo
                         </a>
                         <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                             <i class="material-icons">menu</i>
                         </a>
                         <ul class="right">
-                            <li><a href="#!">Guardar</a></li>
-                            <li><a href="#modal_buscar_producto" class="modal-trigger">Buscar</a></li>
-                            <li><a href="#1">Facturar</a></li>
+                            <li><a href="devolucion.html">Generar devolucion</a></li>
                         </ul>
                     </div>
                 </div>
@@ -46,7 +44,7 @@
                 </li>
                 <li class="no-padding">
                     <ul class="collapsible collapsible-accordion">
-                        <li class="bold">
+                        <li class="bold active">
                             <a class="collapsible-header waves-effect waves-teal" tabindex="0">
                                 <i class="material-icons">monetization_on</i>
                                 Ventas
@@ -54,9 +52,9 @@
                             <div class="collapsible-body">
                                 <ul>
                                     <li>
-                                        <a href="nueva_venta.html">Nueva</a>
+                                        <a href="#!">Nueva</a>
                                     </li>
-                                    <li><a href="historial_ventas.html">Historial</a></li>
+                                    <li><a href="#!">Historial</a></li>
                                     <li><a href="#!">Buscar</a></li>
                                 </ul>
                             </div>
@@ -156,136 +154,74 @@
         </header>
 
         <main>
-            <div class="row venta-productos">
-                <div class="col s12 no-padding">
-                    <table class="table-bordered header-fixed striped highlight">
-                        <thead>
-                            <tr>
-                                <th class="center">Codigo</th>
-                                <th class="center">Descripcion</th>
-                                <th class="center">Cantidad</th>
-                                <th class="center">Precio</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="row col-bordered venta-total">
-                <div class="col s4">
-                    <p class="d-block">Sub total</p>
-                    <p class="total-number">Lps <span>0.0</span></p>
-                </div>
-                <div class="col s4">
-                    <p>Impuesto</p>
-                    <p class="total-number">Lps <span>0.0</span></p>
-                </div>
-                <div class="col s4">
-                    <p>Total</p>
-                    <p class="total-number">Lps <span>0.0</span></p>
-                </div>
-            </div>
-
-            <!-- Modal Structure -->
-            <div id="modal_buscar_producto" class="modal">
-                <div class="modal-content">
-                    <h4>Buscar producto</h4>
-                    <p>A bunch of text</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
+            <div class="row">
+                <div class="col s12">
+                    <div class="card">
+                        <div class="card-content venta-factura">
+                            <span class="d-block bold">Rimeim
+                                <span class="right">#codigo</span>
+                            </span>
+                            <span class="d-block">
+                                Cliente:
+                                <a href="#!" class="blue-text text-darken-2">Nombre Cliente</a>
+                            </span>
+                            <span class="d-block">
+                                RTN:
+                                <a href="#!" class="blue-text text-darken-2">121212121244</a>
+                            </span>
+                            <span class="d-block">
+                                Vendedor:
+                                <a href="#!" class="blue-text text-darken-2">Nombre Vendedor</a>
+                            </span>
+                            <span class="d-block">
+                                Fecha:
+                                <span>1:45 PM 12/01/19</span>
+                            </span>
+                            <table class="table-bordered striped highlight">
+                                <thead>
+                                    <tr>
+                                        <th>Codigo</th>
+                                        <th>Descripcion</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <span class="d-block">
+                                Subtotal:
+                                <span>Lps 0.0</span>
+                            </span>
+                            <span class="d-block">
+                                <span>
+                                    ISV:
+                                    <span>Lps 0.0</span>
+                                </span>
+                                <span class="right">
+                                    C/F
+                                </span>
+                            </span>
+                            <span class="d-block">
+                                <span>
+                                    Total:
+                                    <span>Lps 0.0</span>
+                                </span>
+                                <span class="right">
+                                    Metodo de pago:
+                                    <span>
+                                        efectivo
+                                    </span>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
