@@ -14,6 +14,10 @@
     border-radius: 6px;
 }
 
+.border-bottom {
+    border-bottom: 1px solid #dddddd;
+}
+
 /* Color */
 .text-white {
     color: white !important;
@@ -32,6 +36,10 @@
     word-wrap: break-word;
 }
 
+.color-link {
+    color: rgb(0, 119, 255) !important;
+}
+
 /* Altura */
 .minh-100 {
     min-height: 100vh !important;
@@ -44,6 +52,10 @@
 
 .mb-0 {
     margin-bottom: 0;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
 }
 
 .mt-1 {
@@ -65,6 +77,11 @@
 
 .p-4 {
     padding: 4rem !important;
+}
+
+.px-2 {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
 }
 
 /* Display */
@@ -120,6 +137,15 @@
     border: 1px solid #dddddd;
 }
 
+.p-y1 {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.bordered {
+    border: 1px solid #dddddd;
+}
+
 /* Navbar - sidenav fixed */
 header,
 main,
@@ -136,6 +162,10 @@ footer {
     color: black;
 }
 
+.card-product {
+    overflow-y: hidden;
+    max-height: 180px;
+}
 
 
 /* Clases */
@@ -170,5 +200,13 @@ footer {
     main,
     footer {
         padding-left: 0;
+    }
+
+    .mobile-col1 {
+        order: 1;
+    }
+
+    .mobile-col2 {
+        order: 2;
     }
 }
