@@ -7,10 +7,8 @@
     <link type="text/css" rel="stylesheet" href="css/main.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Nueva venta | Rimeim </title>
+    <title>Tipo de vehiulo | Rimeim </title>
 
-    <!-- Adicional -->
-    <link rel="stylesheet" href="css/ventas.css">
 </head>
 
 <body>
@@ -22,13 +20,22 @@
                 <div class="small-container">
                     <div class="nav-wrapper">
                         <a href="#!" class="brand-logo">
-                            Inventario
+                            Tipo de vehiculo
                         </a>
                         <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                             <i class="material-icons">menu</i>
                         </a>
                         <ul class="right">
-                            <li><a href="#!">Buscar</a></li>
+                            <li>
+                                <a href="#modal_nuevo_tipo_vehiculo" class="modal-trigger">
+                                    <i class="material-icons">add</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#modal_buscar_tipo_vehiculo" class="modal-trigger">
+                                    <i class="material-icons">search</i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -132,19 +139,43 @@
                                 </ul>
                             </div>
                         </li>
-                        <div class="divider"></div>
                         <li class="bold">
                             <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">person</i>
-                                Angel Hernandez
+                                <i class="material-icons">perm_contact_calendar</i>
+                                Proveedor
                             </a>
                             <div class="collapsible-body">
                                 <ul>
                                     <li>
-                                        <a href="#!">Ajustes</a>
+                                        <a href="nuevo_proveedor.html">Nuevo</a>
                                     </li>
-                                    <li><a href="#!">Notificaciones</a></li>
-                                    <li><a href="#!">Cerrar sesion</a></li>
+                                    <li><a href="proveedores.html">Ver todos</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <div class="divider"></div>
+                        <li class="bold">
+                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
+                                <i class="material-icons notifications-active">notifications_active</i>
+                                Cuenta
+                            </a>
+                            <div class="collapsible-body">
+                                <ul>
+                                    <li>
+                                        <a href="#!">
+                                            <i class="material-icons notifications-active-color">notifications</i>
+                                            Notificaciones
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#!">
+                                            <i class="material-icons">settings</i>
+                                            Configuracion
+                                        </a>
+                                    </li>
+                                    <li><a href="index.html">
+                                            <i class="material-icons">exit_to_app</i>
+                                            Cerrar sesion</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -155,8 +186,61 @@
 
         <main>
             <div class="row">
-                <div class="col s12">
+                <div class="col s12 m6 l4">
+                    <div class="card hoverable">
+                        <a href="nuevo_producto.html">
+                            <div class="card-image border-bottom card-product">
+                                <img src="img/carro_audi.jpg">
+                            </div>
+                            <div class="card-content">
+                                <span class="d-block">Nombre</span>
+                                <span class="d-block">
+                                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid, autem.
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
+            <div class="modal" id="modal_buscar_tipo_vehiculo">
+                <div class="modal-content">
+                    <h5>Buscar</h5>
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="input-field">
+                                <input type="text" name="nombre" id="nombre">
+                                <label for="nombre">Nombre</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-close waves-effect waves-green btn-flat left">Cerrar</a>
+                    <a href="#!" class="modal-close waves-effect waves-green btn">Buscar</a>
+                </div>
+            </div>
+
+            <div class="modal" id="modal_nuevo_tipo_vehiculo">
+                <div class="modal-content">
+                    <h5>Nuevo</h5>
+                    <div class="row">
+                        <div class="col s12">
+                            <img src="img/carro_audi.jpg" class="responsive-img">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="input-field">
+                                <input type="text" name="nombre" id="nombre">
+                                <label for="nombre">Nombre</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-close waves-effect waves-green btn-flat left">Cerrar</a>
+                    <a href="#!" class="modal-close waves-effect waves-green btn">Guardar</a>
                 </div>
             </div>
 

@@ -26,7 +26,7 @@
                             <i class="material-icons">menu</i>
                         </a>
                         <ul class="right">
-                            <li><a href="#!">Buscar</a></li>
+                            <li><a href="#modal_buscar_pedido" class="modal-trigger">Buscar</a></li>
                         </ul>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
                                         <a href="nuevo_pedido.html">Nuevo</a>
                                     </li>
                                     <li><a href="pedidos.html">Historial</a></li>
-                                    <li><a href="buscar_pedido.html">Buscar</a></li>
+                                    <li><a href="#modal_buscar_pedido" class="modal-trigger">Buscar</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -130,19 +130,43 @@
                                 </ul>
                             </div>
                         </li>
-                        <div class="divider"></div>
                         <li class="bold">
                             <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">person</i>
-                                Angel Hernandez
+                                <i class="material-icons">perm_contact_calendar</i>
+                                Proveedor
                             </a>
                             <div class="collapsible-body">
                                 <ul>
                                     <li>
-                                        <a href="#!">Ajustes</a>
+                                        <a href="nuevo_proveedor.html">Nuevo</a>
                                     </li>
-                                    <li><a href="#!">Notificaciones</a></li>
-                                    <li><a href="#!">Cerrar sesion</a></li>
+                                    <li><a href="proveedores.html">Ver todos</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <div class="divider"></div>
+                        <li class="bold">
+                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
+                                <i class="material-icons notifications-active">notifications_active</i>
+                                Cuenta
+                            </a>
+                            <div class="collapsible-body">
+                                <ul>
+                                    <li>
+                                        <a href="#!">
+                                            <i class="material-icons notifications-active-color">notifications</i>
+                                            Notificaciones
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#!">
+                                            <i class="material-icons">settings</i>
+                                            Configuracion
+                                        </a>
+                                    </li>
+                                    <li><a href="index.html">
+                                            <i class="material-icons">exit_to_app</i>
+                                            Cerrar sesion</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -155,6 +179,54 @@
             <div class="row">
                 <div class="col s12">
 
+                </div>
+            </div>
+
+            <div class="modal" id="modal_buscar_pedido">
+                <div class="modal-content">
+                    <h5>Buscar pedido</h5>
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="input-field">
+                                <input type="text" id="codigo" name="codigo">
+                                <label for="codigo">Codigo</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="input-field">
+                                <input type="text" id="proveedor" name="proveedor">
+                                <label for="proveedor">Proveedor</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="input-field">
+                                <input type="text" id="local" name="local">
+                                <label for="local">Local</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12 m6">
+                            <div class="input-field">
+                                <input type="date" id="fecha_inicio" name="fecha_inicio" value="2019-02-01">
+                                <label for="fecha_inicio">Desde</label>
+                            </div>
+                        </div>
+                        <div class="col s12 m6">
+                            <div class="input-field">
+                                <input type="date" id="fecha_fin" name="fecha_fin" value="2019-02-01">
+                                <label for="fecha_fin">Hasta</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-close waves-effect waves-green btn-flat left">Cerrar</a>
+                    <a href="#!" class="modal-close waves-effect waves-green btn">Buscar</a>
                 </div>
             </div>
         </main>

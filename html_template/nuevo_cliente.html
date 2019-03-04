@@ -26,7 +26,11 @@
                             <i class="material-icons">menu</i>
                         </a>
                         <ul class="right">
-                            <li><a href="#!">Guardar</a></li>
+                            <li>
+                                <a href="#!">
+                                    <i class="material-icons">save</i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -130,19 +134,43 @@
                                 </ul>
                             </div>
                         </li>
-                        <div class="divider"></div>
                         <li class="bold">
                             <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">person</i>
-                                Angel Hernandez
+                                <i class="material-icons">perm_contact_calendar</i>
+                                Proveedor
                             </a>
                             <div class="collapsible-body">
                                 <ul>
                                     <li>
-                                        <a href="#!">Ajustes</a>
+                                        <a href="nuevo_proveedor.html">Nuevo</a>
                                     </li>
-                                    <li><a href="#!">Notificaciones</a></li>
-                                    <li><a href="#!">Cerrar sesion</a></li>
+                                    <li><a href="proveedores.html">Ver todos</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <div class="divider"></div>
+                        <li class="bold">
+                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
+                                <i class="material-icons notifications-active">notifications_active</i>
+                                Cuenta
+                            </a>
+                            <div class="collapsible-body">
+                                <ul>
+                                    <li>
+                                        <a href="#!">
+                                            <i class="material-icons notifications-active-color">notifications</i>
+                                            Notificaciones
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#!">
+                                            <i class="material-icons">settings</i>
+                                            Configuracion
+                                        </a>
+                                    </li>
+                                    <li><a href="index.html">
+                                            <i class="material-icons">exit_to_app</i>
+                                            Cerrar sesion</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -154,7 +182,67 @@
         <main>
             <div class="row">
                 <div class="col s12">
+                    <div class="card">
+                        <div class="card-content">
 
+                            <div class="row">
+                                <div class="col s12 m12 l5 center">
+                                    <img src="img/logo_rimeim.png" class="responsive-img bordered">
+                                    <div class="d-block">
+                                        <button class="btn">
+                                            Cambiar
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m12 l7">
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <div class="input-field">
+                                                <input type="text" id="nombre" name="nombre">
+                                                <label for="nombre">Nombre</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <div class="input-field">
+                                                <input type="text" id="rtn" name="rtn">
+                                                <label for="rtn">RTN</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col s12">
+                                    <div class="input-field">
+                                        <input type="text" id="Correo" name="Correo">
+                                        <label for="Correo">Correo</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <div class="input-field">
+                                        <input type="text" id="contacto" name="contacto">
+                                        <label for="contacto">Contacto</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <label>
+                                        <input type="checkbox" class="filled-in" checked="checked" id="es_empresa" />
+                                        <span>Es empresa</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>

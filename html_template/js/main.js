@@ -4,4 +4,5 @@ document.addEventListener('DOMContentLoaded', function () {
     M.Modal.init(document.querySelectorAll('.modal'), []);
     M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), []);
     M.FormSelect.init(document.querySelectorAll('select'), []);
+    M.updateTextFields();
 });
