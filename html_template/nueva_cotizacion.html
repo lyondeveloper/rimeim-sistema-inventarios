@@ -17,6 +17,22 @@
     <div id="app">
 
         <header>
+            <!-- Menu mobile -->
+            <ul id="dropdown_more" class="dropdown-content">
+                <li>
+                    <a href="#!">
+                        <i class="material-icons">print</i>
+                        Imprimir
+                    </a>
+                </li>
+                <li>
+                    <a href="#!">
+                        <i class="material-icons">save</i>
+                        Guardar
+                    </a>
+                </li>
+            </ul>
+
             <!-- Top navbar -->
             <nav class="red lighten-1 top-nav">
                 <div class="small-container">
@@ -27,9 +43,28 @@
                         <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                             <i class="material-icons">menu</i>
                         </a>
-                        <ul class="right">
-                            <li><a href="#!">Imprimir</a></li>
-                            <li><a href="#!">Guardar</a></li>
+
+                        <!-- Normal links -->
+                        <ul class="right hide-on-small-only">
+                            <li>
+                                <a href="#!" class="tooltipped" data-position="bottom" data-tooltip="Imprimir">
+                                    <i class="material-icons">print</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#!" class="tooltipped" data-position="bottom" data-tooltip="Guardar">
+                                    <i class="material-icons">save</i>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Mobile options -->
+                        <ul class="mobile-only right">
+                            <li>
+                                <a class="dropdown-trigger" href="#!" data-target="dropdown_more">
+                                    <i class="material-icons right">more_vert</i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

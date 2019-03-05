@@ -17,6 +17,22 @@
     <div id="app">
 
         <header>
+            <!-- Menu mobile -->
+            <ul id="dropdown_more" class="dropdown-content">
+                <li>
+                    <a href="#!">
+                        <i class="material-icons">add</i>
+                        Agegar inventario
+                    </a>
+                </li>
+                <li>
+                    <a href="#!" class="tooltipped" data-position="left" data-tooltip="Editar">
+                        <i class="material-icons">edit</i>
+                        Editar
+                    </a>
+                </li>
+            </ul>
+
             <!-- Top navbar -->
             <nav class="red lighten-1 top-nav">
                 <div class="small-container">
@@ -27,9 +43,27 @@
                         <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                             <i class="material-icons">menu</i>
                         </a>
-                        <ul class="right">
-                            <li><a href="#!">Agregar inventario</a></li>
-                            <li><a href="#!">Editar</a></li>
+
+                        <!-- Regular nav links -->
+                        <ul class="right hide-on-small-only">
+                            <li>
+                                <a href="#!" class="tooltipped" data-position="left" data-tooltip="Agregar inventario">
+                                    <i class="material-icons">add</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#!" class="tooltipped" data-position="left" data-tooltip="Editar">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <ul class="right mobile-only">
+                            <li>
+                                <a class="dropdown-trigger" href="#!" data-target="dropdown_more">
+                                    <i class="material-icons right">more_vert</i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

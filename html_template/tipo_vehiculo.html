@@ -15,6 +15,22 @@
     <div id="app">
 
         <header>
+
+            <!-- Menu mobile -->
+            <ul id="dropdown_more" class="dropdown-content">
+                <li>
+                    <a href="#modal_nuevo_tipo_vehiculo">
+                        <i class="material-icons">add</i>
+                        Nuevo
+                    </a>
+                </li>
+                <li>
+                    <a href="#modal_buscar_tipo_vehiculo">
+                        <i class="material-icons">search</i>
+                        Buscar
+                    </a>
+                </li>
+            </ul>
             <!-- Top navbar -->
             <nav class="red lighten-1 top-nav">
                 <div class="small-container">
@@ -25,15 +41,28 @@
                         <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                             <i class="material-icons">menu</i>
                         </a>
-                        <ul class="right">
+
+                        <!-- Regular links -->
+                        <ul class="right hide-on-small-only">
                             <li>
-                                <a href="#modal_nuevo_tipo_vehiculo" class="modal-trigger">
+                                <a href="#modal_nuevo_tipo_vehiculo" class="modal-trigger tooltipped" data-position="left"
+                                    data-tooltip="Nuevo">
                                     <i class="material-icons">add</i>
                                 </a>
                             </li>
                             <li>
-                                <a href="#modal_buscar_tipo_vehiculo" class="modal-trigger">
+                                <a href="#modal_buscar_tipo_vehiculo" class="modal-trigger tooltipped" data-position="left"
+                                    data-tooltip="Buscar">
                                     <i class="material-icons">search</i>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Right menu options mobile -->
+                        <ul class="right mobile-only">
+                            <li>
+                                <a class="dropdown-trigger" href="#!" data-target="dropdown_more">
+                                    <i class="material-icons right">more_vert</i>
                                 </a>
                             </li>
                         </ul>

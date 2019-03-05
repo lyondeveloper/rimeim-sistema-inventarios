@@ -11,15 +11,35 @@
 
     <!-- Adicional -->
     <link rel="stylesheet" href="css/ventas.css">
-
-    <style>
-    </style>
 </head>
 
 <body>
     <div id="app">
 
         <header>
+
+            <!-- Menu mobile -->
+            <ul id="dropdown_more" class="dropdown-content">
+                <li>
+                    <a href="#!">
+                        <i class="material-icons ">save</i>
+                        Guardar
+                    </a>
+                </li>
+                <li>
+                    <a href="#modal_buscar_producto">
+                        <i class="material-icons">search</i>
+                        Buscar
+                    </a>
+                </li>
+                <li>
+                    <a href="#!">
+                        <i class="material-icons">check</i>
+                        Facturar
+                    </a>
+                </li>
+            </ul>
+
             <!-- Top navbar -->
             <nav class="red lighten-1 top-nav">
                 <div class="small-container">
@@ -30,10 +50,32 @@
                         <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                             <i class="material-icons">menu</i>
                         </a>
-                        <ul class="right">
-                            <li><a href="#!">Guardar</a></li>
-                            <li><a href="#modal_buscar_producto" class="modal-trigger">Buscar</a></li>
-                            <li><a href="#1">Facturar</a></li>
+                        <ul class="right hide-on-small-only">
+                            <li>
+                                <a href="#!" class="tooltipped" data-position="bottom" data-tooltip="Guardar">
+                                    <i class="material-icons">save</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#modal_buscar_producto" class="modal-trigger tooltipped" data-position="bottom"
+                                    data-tooltip="Buscar producto">
+                                    <i class="material-icons">search</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#!" class="tooltipped" data-position="bottom" data-tooltip="Facturar">
+                                    <i class="material-icons">check</i>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Right menu options mobile -->
+                        <ul class="right mobile-only">
+                            <li>
+                                <a class="dropdown-trigger" href="#!" data-target="dropdown_more">
+                                    <i class="material-icons right">more_vert</i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

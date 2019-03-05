@@ -17,6 +17,16 @@
     <div id="app">
 
         <header>
+            <!-- Menu mobile -->
+            <ul id="dropdown_more" class="dropdown-content">
+                <li>
+                    <a href="devolucion.html">
+                        <i class="material-icons">money_off</i>
+                        Generar devolucion
+                    </a>
+                </li>
+            </ul>
+
             <!-- Top navbar -->
             <nav class="red lighten-1 top-nav">
                 <div class="small-container">
@@ -27,8 +37,21 @@
                         <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                             <i class="material-icons">menu</i>
                         </a>
-                        <ul class="right">
-                            <li><a href="devolucion.html">Generar devolucion</a></li>
+                        <ul class="right hide-on-small-only">
+                            <li>
+                                <a href="devolucion.html" class="tooltipped" data-position="left" data-tooltip="Generar devolucion">
+                                    <i class="material-icons">money_off</i>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Right menu options mobile -->
+                        <ul class="right mobile-only">
+                            <li>
+                                <a class="dropdown-trigger" href="#!" data-target="dropdown_more">
+                                    <i class="material-icons right">more_vert</i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

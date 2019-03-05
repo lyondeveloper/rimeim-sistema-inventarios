@@ -17,6 +17,22 @@
     <div id="app">
 
         <header>
+            <!-- Menu mobile -->
+            <ul id="dropdown_more" class="dropdown-content">
+                <li>
+                    <a href="#!">
+                        <i class="material-icons">add</i>
+                        Nueva
+                    </a>
+                </li>
+                <li>
+                    <a href="#modal_buscar_marca" class="modal-trigger">
+                        <i class="material-icons">search</i>
+                        Buscar
+                    </a>
+                </li>
+            </ul>
+
             <!-- Top navbar -->
             <nav class="red lighten-1 top-nav">
                 <div class="small-container">
@@ -27,10 +43,30 @@
                         <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                             <i class="material-icons">menu</i>
                         </a>
-                        <ul class="right">
-                            <li><a href="#!">Nueva</a></li>
+
+                        <!-- Normal links -->
+                        <ul class="right hide-on-small-only">
                             <li>
-                                <a href="#modal_buscar_marca" class="modal-trigger"><i class="material-icons">search</i></a>
+                                <a href="#!" class="tooltipped" data-position="bottom" data-tooltip="Nueva">
+                                    <i class="material-icons">add</i>
+
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#modal_buscar_marca" class="modal-trigger tooltipped" data-position="bottom"
+                                    data-tooltip="Buscar">
+                                    <i class="material-icons">search</i>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Mobile option -->
+                        <ul class="mobile-only right">
+                            <li>
+                                <a class="dropdown-trigger" href="#!" data-target="dropdown_more">
+                                    <i class="material-icons">more_vert</i>
+
+                                </a>
                             </li>
                         </ul>
                     </div>

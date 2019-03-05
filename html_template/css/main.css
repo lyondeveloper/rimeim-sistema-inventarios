@@ -501,6 +501,10 @@ footer {
     border: 1px solid #dddddd;
 }
 
+.mobile-only {
+    display: none;
+}
+
 @media only screen and (max-width : 992px) {
 
     header,
@@ -515,5 +519,11 @@ footer {
 
     .mobile-col2 {
         order: 2;
+    }
+}
+
+@media (min-width: 320px) and (max-width: 600px) {
+    .mobile-only {
+        display: block;
     }
 }
