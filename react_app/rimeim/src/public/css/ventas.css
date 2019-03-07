@@ -1,0 +1,64 @@
+.venta-productos {
+    margin-bottom: 0;
+}
+
+.venta-productos .col {
+    height: calc(100vh - 64px - 70px);
+}
+
+.venta-total {
+    height: 70px;
+    margin-bottom: 0;
+}
+
+.venta-total .col {
+    height: 70px;
+}
+
+.venta-total .col p {
+    margin: 0;
+}
+
+.venta-total .col .total-number {
+    font-size: 20px;
+    bottom: 0;
+    float: right;
+}
+
+/* Table */
+.header-fixed {
+    width: 100%
+}
+
+.header-fixed>thead,
+.header-fixed>tbody,
+.header-fixed>thead>tr,
+.header-fixed>tbody>tr,
+.header-fixed>thead>tr>th,
+.header-fixed>tbody>tr>td {
+    display: block;
+}
+
+.header-fixed>tbody>tr:after,
+.header-fixed>thead>tr:after {
+    content: '  ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+.header-fixed>tbody {
+    scrollbar-width: none;
+    overflow-y: auto;
+    height: calc(100vh - 64px - 70px - 54px);
+}
+
+.header-fixed>tbody>tr>td,
+.header-fixed>thead>tr>th {
+    width: 25%;
+    float: left;
+}
+
+.header-fixed>thead>tr>th {
+    white-space: nowrap;
+}

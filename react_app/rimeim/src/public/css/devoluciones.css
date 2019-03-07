@@ -1,0 +1,86 @@
+.checkbox-td label span {
+    display: none;
+    /* margin: 0 !important; */
+    padding: 12px !important;
+}
+
+.devolucion {
+    margin-bottom: 0;
+}
+
+.devolucion .col {
+    height: calc(100vh - 64px - 70px - 96px);
+}
+
+.devolucion-total {
+    height: 70px;
+    margin-bottom: 0;
+}
+
+.devolucion-total .col {
+    height: 70px;
+}
+
+.devolucion-total .col p {
+    margin: 0;
+}
+
+.devolucion-total .col .total-number {
+    font-size: 20px;
+    bottom: 0;
+    float: right;
+}
+
+/* Table */
+.header-fixed {
+    width: 100%
+}
+
+.header-fixed>thead,
+.header-fixed>tbody,
+.header-fixed>thead>tr,
+.header-fixed>tbody>tr,
+.header-fixed>thead>tr>th,
+.header-fixed>tbody>tr>td {
+    display: block;
+}
+
+.header-fixed>tbody>tr:after,
+.header-fixed>thead>tr:after {
+    content: '  ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+.header-fixed>tbody {
+    scrollbar-width: none;
+    overflow-y: auto;
+    height: calc(100vh - 64px - 70px - 54px - 96px);
+}
+
+.header-fixed>tbody>tr>td,
+.header-fixed>thead>tr>th {
+    width: calc(100% / 4 - 10px);
+    float: left;
+}
+
+.header-fixed>thead>tr>th {
+    white-space: nowrap;
+}
+
+.header-th {
+    height: 55px !important;
+    width: 30px !important;
+}
+
+.checkbox-td {
+    width: 30px !important;
+    padding: 0 !important;
+    padding-top: 1px !important;
+}
+
+.checkbox-td label {
+    margin-left: 4px;
+    padding-top: 5px !important;
+}
