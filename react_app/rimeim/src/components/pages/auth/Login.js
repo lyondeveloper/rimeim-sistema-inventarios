@@ -1,24 +1,48 @@
 import React, { Component } from 'react'
-import TextInputField from '../../inputfields/TextInputField'
+import TextInputField from '../../common/TextInputField'
+import ButtonField from "../../common/ButtonField"
 
 import img_logo from '../../../public/img/logo_rimeim.png'
+import axios from 'axios';
 
 class Login extends Component {
 
     state = {
-        usuario: "",
-        clave: ""
-    }
-
-    onSubmitEvent = (e) => {
-        e.preventDefault()
-        console.log(this.state)
+        user: "",
+        password: "",
+        errors: {}
     }
 
     onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
+    onSubmitEvent = (e) => {
+        e.preventDefault()
+        const { user, password } = this.state
+        axios.post('http://localhost/api/users/login',
+            { user, password }/*,
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }*/)
+            .then(response => {
+                console.log(response.data)
+            }).catch(error => {
+                console.log(error)
+            })
+    }
+
+    forgotPassword = () => {
+        this.setState({
+            errors: {}
+        })
+    }
+
     render() {
-        const { usuario, clave } = this.state
+        const {
+            user, password,
+            errors: { user_error, password_error }
+        } = this.state
 
         return (
             <div className="container">
@@ -35,29 +59,32 @@ class Login extends Component {
                                 <div className="col">
                                     <form onSubmit={this.onSubmitEvent} className="white bordered p-1 border-radius-1 hoverable minw-300px ">
                                         <div className="row">
-                                            <TextInputField id="usuario"
+                                            <TextInputField id="user"
                                                 label="Usuario o correo electronico"
                                                 icon="account_circle"
                                                 onchange={this.onChangeTextInput}
-                                                value={usuario} />
+                                                value={user}
+                                                error={user_error}
+                                                required />
                                         </div>
                                         <div className="row">
-                                            <TextInputField id="clave"
+                                            <TextInputField id="password"
                                                 label="Clave"
                                                 icon="lock"
                                                 type="password"
                                                 onchange={this.onChangeTextInput}
-                                                value={clave} />
+                                                value={password}
+                                                error={password_error}
+                                                required />
                                         </div>
-                                        <div>
-                                            <button className="btn waves-effect waveslight btn-block red darken-1" type="submit">
-                                                Aceptar
-                                            </button>
-                                            <button className="btn-flat waves-effect waveslight btn-block mt-1" type="button"
-                                            >
-                                                ¿Olvido su clave?
-                                            </button>
-                                        </div>
+
+                                        <ButtonField text="Aceptar"
+                                            className="btn waves-effect waveslight btn-block red darken-1"
+                                            type="submit" />
+
+                                        <ButtonField text="¿Olvido su clave?"
+                                            className="btn-flat waves-effect waveslight btn-block mt-1"
+                                            onClick={this.forgotPassword} />
                                     </form>
                                 </div>
                             </div>

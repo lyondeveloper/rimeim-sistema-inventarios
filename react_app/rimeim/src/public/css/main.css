@@ -58,6 +58,10 @@
    min-width: 300px;
 }
 
+.text-danger {
+    color: #e53935 !important;
+}
+
 @-webkit-keyframes ring {
     0% {
         -webkit-transform: rotateZ(0);
