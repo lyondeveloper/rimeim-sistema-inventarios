@@ -13,6 +13,9 @@ import "./public/css/main.css"
 // Pages 
 import Login from "./components/pages/auth/Login"
 
+// Custom functions
+import checkAppStatus from "./utils/checkAppStatus"
+checkAppStatus(store)
 
 class App extends Component {
 
