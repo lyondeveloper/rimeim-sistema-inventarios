@@ -30,3 +30,10 @@ export const setCurrentUser = (user) => {
         payload: user
     }
 }
+
+
+export const logoutUser = () => dispatch => {
+    localStorage.removeItem('rimeim_token')
+    setAuthToken(false)
+    dispatch(setCurrentUser({}))
+}

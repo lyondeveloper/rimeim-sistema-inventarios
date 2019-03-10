@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import M from 'materialize-css'
 
 // Redux configuration
 import { Provider } from 'react-redux'
@@ -12,6 +11,7 @@ import "./public/css/main.css"
 
 // Pages 
 import Login from "./components/pages/auth/Login"
+import NewSell from "./components/pages/sells/NewSell"
 
 // Custom functions
 import checkAppStatus from "./utils/checkAppStatus"
@@ -19,22 +19,13 @@ checkAppStatus(store)
 
 class App extends Component {
 
-  componentDidMount() {
-    M.Sidenav.init(document.querySelectorAll('.sidenav'), []);
-    M.Collapsible.init(document.querySelectorAll('.collapsible'), []);
-    M.Modal.init(document.querySelectorAll('.modal'), []);
-    M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), []);
-    M.FormSelect.init(document.querySelectorAll('select'), []);
-    M.Tooltip.init(document.querySelectorAll('.tooltipped'), []);
-    M.updateTextFields();
-  }
-
   render() {
     return (
       <Provider store={store}>
         <Router>
           <Switch>
             <Route exact path="/" component={Login} />
+            <Route exact path="/nueva_venta" component={NewSell} />
           </Switch>
         </Router>
       </Provider>

@@ -9,6 +9,9 @@ import ButtonField from "../../common/ButtonField"
 
 import img_logo from '../../../public/img/logo_rimeim.png'
 
+// Functions
+import configMaterialComponents from "../../../utils/configMaterialComponents"
+
 
 class Login extends Component {
 
@@ -16,6 +19,10 @@ class Login extends Component {
         user: "",
         password: "",
         errors: {}
+    }
+
+    componentDidMount() {
+        configMaterialComponents()
     }
 
     onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
@@ -32,8 +39,7 @@ class Login extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.auth.isLoggedIn) {
             this.setState({ errors: {} })
-            // this.props.history.push('')
-            return console.log('Inicio sesion')
+            this.props.history.push('nueva_venta')
         }
 
         if (nextProps.errors) {
@@ -111,7 +117,7 @@ Login.propTypes = {
     errors: PropTypes.object.isRequired
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
     auth: state.auth,
     errors: state.errors
 })
