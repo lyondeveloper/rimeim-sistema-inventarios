@@ -1,69 +1,110 @@
 import React, { Component } from 'react'
+import PropTypes from "prop-types"
+import { Link } from "react-router-dom"
 
 import logo_rimeim from "../../public/img/logo_rimeim.png"
+
+// Sells
+import NewSellMobile from "./mobilemenu/NewSellMobile"
+import NewSellWrapper from "./topnav/NewSellWrapper"
+import SellsWrapper from "./topnav/SellsWrapper"
+import SearchSellWrapper from "./topnav/SearchSellWrapper"
+
+// Quotations
+import NewQuotationMobile from "./mobilemenu/NewQuotationMobile"
+import QuotationsWrapper from "./topnav/QuotationsWrapper"
+import SearchQuotationsWrapper from "./topnav/SearchQuotationsWrapper"
+import NewQuotationWrapper from "./topnav/NewQuotationWrapper"
+
+// Devolutions
+import DevolutionsWrapper from "./topnav/DevolutionsWrapper"
+import SearchDevolutionWrapper from "./topnav/SearchDevolutionWrapper"
+import NewDevolutionWrapper from "./topnav/NewDevolutionWrapper"
+
+// Navbar Types
+import {
+    NEW_SELL,
+    SELLS,
+    SEARCH_SELL,
+    NEW_QUOTATION,
+    QUOTATIONS,
+    SEARCH_QUOTATION,
+    DEVOLUTIONS,
+    NEW_DEVOLUTION,
+    SEARCH_DEVOLUTION
+} from "./NavTypes"
 
 class Navbar extends Component {
 
     render() {
+
+        const { navtype } = this.props
+        var NavWrapper,
+            MobileMenu,
+            active_sells,
+            active_quotes,
+            active_devolutions = null
+
+        switch (navtype) {
+            case NEW_SELL:
+                MobileMenu = NewSellMobile
+                NavWrapper = NewSellWrapper
+                active_sells = true
+                break
+            case SELLS:
+                active_sells = true
+                NavWrapper = SellsWrapper
+                break
+            case SEARCH_SELL:
+                active_sells = true
+                NavWrapper = SearchSellWrapper
+                break
+
+            // Quotatios
+            case NEW_QUOTATION:
+                active_quotes = true
+                NavWrapper = NewQuotationWrapper
+                MobileMenu = NewQuotationMobile
+                break
+
+            case QUOTATIONS:
+                active_quotes = true
+                NavWrapper = QuotationsWrapper
+                break
+
+            case SEARCH_QUOTATION:
+                active_quotes = true
+                NavWrapper = SearchQuotationsWrapper
+                break
+
+            // Devolutions
+            case DEVOLUTIONS:
+                active_devolutions = true
+                NavWrapper = DevolutionsWrapper
+                break
+
+            case NEW_DEVOLUTION:
+                active_devolutions = true
+                NavWrapper = NewDevolutionWrapper
+                break
+
+            case SEARCH_DEVOLUTION:
+                active_devolutions = true
+                NavWrapper = SearchDevolutionWrapper
+                break
+            default:
+                break
+        }
+
         return (
             <header>
-                <ul id="dropdown_more" className="dropdown-content">
-                    <li>
-                        <a href="#!">
-                            <i className="material-icons ">save</i>
-                            Guardar
-                    </a>
-                    </li>
-                    <li>
-                        <a href="#modal_buscar_producto">
-                            <i className="material-icons">search</i>
-                            Buscar
-                    </a>
-                    </li>
-                    <li>
-                        <a href="#!">
-                            <i className="material-icons">check</i>
-                            Facturar
-                    </a>
-                    </li>
-                </ul>
+                {MobileMenu && (
+                    <MobileMenu />
+                )}
 
                 <nav className="red lighten-1 top-nav">
                     <div className="small-container">
-                        <div className="nav-wrapper">
-                            <a href="#!" className="brand-logo">
-                                Nueva venta
-                        </a>
-                            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
-                                <i className="material-icons">menu</i>
-                            </a>
-                            <ul className="right hide-on-small-only">
-                                <li>
-                                    <a href="#!" className="tooltipped" data-position="bottom" data-tooltip="Guardar">
-                                        <i className="material-icons">save</i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#modal_buscar_producto" className="modal-trigger tooltipped" data-position="bottom"
-                                        data-tooltip="Buscar producto">
-                                        <i className="material-icons">search</i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#!" className="tooltipped" data-position="bottom" data-tooltip="Facturar">
-                                        <i className="material-icons">check</i>
-                                    </a>
-                                </li>
-                            </ul>
-
-                            <ul className="right mobile-only">
-                                <li>
-                                    <a className="dropdown-trigger" href="#!" data-target="dropdown_more">
-                                        <i className="material-icons right">more_vert</i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        <NavWrapper />
                     </div>
                 </nav>
 
@@ -76,7 +117,7 @@ class Navbar extends Component {
                     </li>
                     <li className="no-padding">
                         <ul className="collapsible collapsible-accordion">
-                            <li className="bold active">
+                            <li className={`bold ${active_sells && ('active')}`}>
                                 <a className="collapsible-header" tabIndex="0" href="#!">
                                     <i className="material-icons">monetization_on</i>
                                     Ventas
@@ -84,38 +125,57 @@ class Navbar extends Component {
                                 <div className="collapsible-body">
                                     <ul>
                                         <li>
-                                            <a href="nueva_venta.html">Nueva</a>
+                                            <Link to="/nueva_venta"> Nueva </Link>
                                         </li>
-                                        <li><a href="historial_ventas.html">Historial</a></li>
-                                        <li><a href="buscar_venta.html">Buscar</a></li>
+                                        <li>
+                                            <Link to="/ventas"> Historial </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/buscar_venta">Buscar</Link>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
-                            <li className="bold">
+                            <li className={`bold ${active_quotes && ('active')}`}>
                                 <a className="collapsible-header" tabIndex="0" href="#!">
                                     <i className="material-icons">library_books</i>
                                     Cotizaciones</a>
                                 <div className="collapsible-body">
                                     <ul>
                                         <li>
-                                            <a href="nueva_cotizacion.html">Nueva</a>
+                                            <Link to="/nueva_cotizacion">
+                                                Nueva
+                                            </Link>
                                         </li>
-                                        <li><a href="cotizaciones.html">Historial</a></li>
-                                        <li><a href="buscar_cotizacion.html">Buscar</a></li>
+                                        <li>
+                                            <Link to="/cotizaciones">
+                                                Historial
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/buscar_cotizacion">
+                                                Buscar
+                                            </Link>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
-                            <li className="bold">
+                            <li className={`bold ${active_devolutions && ('active')}`}>
                                 <a className="collapsible-header" tabIndex="0" href="#!">
                                     <i className="material-icons">money_off</i>
                                     Devoluciones</a>
                                 <div className="collapsible-body">
                                     <ul>
                                         <li>
-                                            <a href="devolucion.html">Nueva</a>
+                                            <Link to="/devoluciones">
+                                                Historial
+                                            </Link>
                                         </li>
-                                        <li><a href="devoluciones.html">Historial</a></li>
-                                        <li><a href="buscar_devolucion.html">Buscar</a></li>
+                                        <li>
+                                            <Link to="/buscar_devolucion">
+                                                Buscar
+                                            </Link>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -210,6 +270,10 @@ class Navbar extends Component {
             </header>
         )
     }
+}
+
+Navbar.propTypes = {
+    navtype: PropTypes.string.isRequired
 }
 
 export default Navbar

@@ -10,7 +10,7 @@ import ButtonField from "../../common/ButtonField"
 import img_logo from '../../../public/img/logo_rimeim.png'
 
 // Functions
-import configMaterialComponents from "../../../utils/configMaterialComponents"
+import { configMaterialComponents } from "../../../utils/MaterialFunctions"
 
 
 class Login extends Component {

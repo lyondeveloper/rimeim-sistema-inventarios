@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
 
+import { SEARCH_QUOTATION } from "../../layout/NavTypes"
 import Navbar from "../../layout/Navbar"
-import { SEARCH_SELL } from "../../layout/NavTypes"
 
-// Functions
-// Functions
 import {
     configMaterialComponents,
     removeMaterialComponents
 } from "../../../utils/MaterialFunctions"
 
-class SearchSell extends Component {
+import "../../../public/css/cotizaciones.css"
+
+class SearchQuotation extends Component {
 
     componentWillMount() {
         removeMaterialComponents()
@@ -23,16 +23,18 @@ class SearchSell extends Component {
     render() {
         return (
             <React.Fragment >
-                <Navbar navtype={SEARCH_SELL} />
+                <Navbar navtype={SEARCH_QUOTATION} />
+                <main>
+                    <div className="row">
+                        <div className="col s12">
 
-                <div className="row">
-                    <div className="col s12">
-
+                        </div>
                     </div>
-                </div>
+                </main>
             </React.Fragment>
         )
     }
 }
 
-export default SearchSell
+
+export default SearchQuotation

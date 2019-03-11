@@ -3,11 +3,17 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import Navbar from "../../layout/Navbar"
 
+import { NEW_SELL } from "../../layout/NavTypes"
+
 // Custom components
 import SellColumnsDetails from "../../common/SellColumnsDetails"
 
 // Functions
-import configMaterialComponents from "../../../utils/configMaterialComponents"
+// Functions
+import {
+    configMaterialComponents,
+    removeMaterialComponents
+} from "../../../utils/MaterialFunctions"
 
 // Custom css
 import "../../../public/css/ventas.css"
@@ -18,15 +24,19 @@ class NewSell extends Component {
         products: []
     }
 
+    componentWillMount() {
+        removeMaterialComponents()
+    }
+
     componentDidMount() {
         configMaterialComponents()
     }
 
     render() {
-        let subtotal, impuesto = 0
+        var subtotal, impuesto = 0
         return (
             <React.Fragment>
-                <Navbar />
+                <Navbar navtype={NEW_SELL} />
 
                 <main>
                     <div className="row venta-productos">
@@ -139,7 +149,7 @@ class NewSell extends Component {
                     <div className="row col-bordered venta-total">
                         <SellColumnsDetails title="Sub total" value={subtotal} />
                         <SellColumnsDetails title="Impuesto" value={impuesto} />
-                        <SellColumnsDetails title="Total" value={subtotal + impuesto} />
+                        <SellColumnsDetails title="Total" value={0} />
                     </div>
                 </main>
             </React.Fragment>
