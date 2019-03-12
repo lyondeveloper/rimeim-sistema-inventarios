@@ -16,6 +16,7 @@ export const SEARCH_DEVOLUTION = 'SEARCH_DEVOLUTION'
 // Orders
 export const NEW_ORDER = 'NEW_ORDER'
 export const ORDERS = 'ORDERS'
+export const ORDER = 'ORDER'
 export const SEARCH_ORDER = 'SEARCH_ORDER'
 
 // Products

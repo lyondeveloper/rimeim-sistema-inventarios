@@ -21,6 +21,28 @@ import DevolutionsWrapper from "./topnav/DevolutionsWrapper"
 import SearchDevolutionWrapper from "./topnav/SearchDevolutionWrapper"
 import NewDevolutionWrapper from "./topnav/NewDevolutionWrapper"
 
+// Orders
+import OrdersMobile from "./mobilemenu/OrdersMobile"
+import NewOrderWrapper from "./topnav/NewOrderWrapper"
+import OrderWrapper from "./topnav/OrderWrapper"
+import OrdersWrapper from "./topnav/OrdersWrapper"
+import SearchOrderWrapper from "./topnav/SearchOrderWrapper"
+
+// Products
+import NewProductMobile from "./mobilemenu/NewProductMobile"
+import BrandsMovile from "./mobilemenu/BrandsMovile"
+import VehicleTypeMobile from "./mobilemenu/VehicleTypeMobile"
+import ProductsWrapper from "./topnav/ProductsWrapper"
+import NewProductWrapper from "./topnav/NewProductWrapper"
+import SearchProductWrapper from "./topnav/SearchProductWrapper"
+import BrandsWrapper from "./topnav/BrandsWrapper"
+import VehicleTypeWrapper from "./topnav/VehicleTypeWrapper"
+
+// Clients
+import ClientsWrapper from "./topnav/ClientsWrapper"
+import NewClientWrapper from "./topnav/NewClientWrapper"
+import SearchClientWrapper from "./topnav/SearchClientWrapper"
+
 // Navbar Types
 import {
     NEW_SELL,
@@ -31,7 +53,21 @@ import {
     SEARCH_QUOTATION,
     DEVOLUTIONS,
     NEW_DEVOLUTION,
-    SEARCH_DEVOLUTION
+    SEARCH_DEVOLUTION,
+
+    NEW_ORDER,
+    ORDERS,
+    ORDER,
+    SEARCH_ORDER,
+
+    PRODUCTS,
+    NEW_PRODUCT,
+    SEARCH_PRODUCT,
+    BRANDS,
+    VEHICLE_TYPE,
+    CLIENTS,
+    NEW_CLIENT,
+    SEARCH_CLIENT
 } from "./NavTypes"
 
 class Navbar extends Component {
@@ -43,7 +79,10 @@ class Navbar extends Component {
             MobileMenu,
             active_sells,
             active_quotes,
-            active_devolutions = null
+            active_devolutions,
+            active_orders,
+            active_products,
+            active_clients = null
 
         switch (navtype) {
             case NEW_SELL:
@@ -92,6 +131,74 @@ class Navbar extends Component {
                 active_devolutions = true
                 NavWrapper = SearchDevolutionWrapper
                 break
+
+            // Case orders
+            case NEW_ORDER:
+                active_orders = true
+                NavWrapper = NewOrderWrapper
+                break
+
+            case ORDERS:
+                active_orders = true
+                NavWrapper = OrdersWrapper
+                MobileMenu = OrdersMobile
+                break
+
+            case ORDER:
+                active_orders = true
+                NavWrapper = OrderWrapper
+                break
+
+            case SEARCH_ORDER:
+                active_orders = true
+                NavWrapper = SearchOrderWrapper
+                break
+
+            //Products
+            case PRODUCTS:
+                active_products = true
+                NavWrapper = ProductsWrapper
+                break
+
+            case NEW_PRODUCT:
+                active_products = true
+                MobileMenu = NewProductMobile
+                NavWrapper = NewProductWrapper
+                break
+
+            case SEARCH_PRODUCT:
+                active_products = true
+                NavWrapper = SearchProductWrapper
+                break
+
+            case BRANDS:
+                active_products = true
+                MobileMenu = BrandsMovile
+                NavWrapper = BrandsWrapper
+                break
+
+            case VEHICLE_TYPE:
+                active_products = true
+                MobileMenu = VehicleTypeMobile
+                NavWrapper = VehicleTypeWrapper
+                break
+
+            // Clients
+            case CLIENTS:
+                active_clients = true
+                NavWrapper = ClientsWrapper
+                break
+
+            case NEW_CLIENT:
+                active_clients = true
+                NavWrapper = NewClientWrapper
+                break
+
+            case SEARCH_CLIENT:
+                active_clients = true
+                NavWrapper = SearchClientWrapper
+                break
+
             default:
                 break
         }
@@ -104,7 +211,9 @@ class Navbar extends Component {
 
                 <nav className="red lighten-1 top-nav">
                     <div className="small-container">
-                        <NavWrapper />
+                        {NavWrapper && (
+                            <NavWrapper />
+                        )}
                     </div>
                 </nav>
 
@@ -179,37 +288,65 @@ class Navbar extends Component {
                                     </ul>
                                 </div>
                             </li>
-                            <li className="bold">
+                            <li className={`bold ${active_orders && ('active')}`}>
                                 <a className="collapsible-header" tabIndex="0" href="#!">
                                     <i className="material-icons">border_color</i>
                                     Pedidos</a>
                                 <div className="collapsible-body">
                                     <ul>
                                         <li>
-                                            <a href="nuevo_pedido.html">Nuevo</a>
+                                            <Link to="/nuevo_pedido">
+                                                Nuevo
+                                            </Link>
                                         </li>
-                                        <li><a href="pedidos.html">Historial</a></li>
-                                        <li><a href="buscar_pedido.html">Buscar</a></li>
+                                        <li>
+                                            <Link to="/pedidos">
+                                                Pedidos
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/buscar_pedido">
+                                                Buscar
+                                            </Link>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
-                            <li className="bold">
+                            <li className={`bold ${active_products && ('active')}`}>
                                 <a className="collapsible-header" tabIndex="0" href="#!">
                                     <i className="material-icons">directions_car</i>
                                     Productos</a>
                                 <div className="collapsible-body">
                                     <ul>
                                         <li>
-                                            <a href="inventario.html">Inventario</a>
+                                            <Link to="/productos">
+                                                Inventario
+                                            </Link>
                                         </li>
-                                        <li><a href="buscar_producto.html">Buscar</a></li>
-                                        <li><a href="nuevo_producto.html">Nuevo</a></li>
-                                        <li><a href="marcas.html">Marcas</a></li>
-                                        <li><a href="tipo_vehiculo.html">Tipo de vehiculo</a></li>
+                                        <li>
+                                            <Link to="/buscar_producto">
+                                                Buscar
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/nuevo_producto">
+                                                Nuevo
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/marcas">
+                                                Marcas
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/vehiculos">
+                                                Tipo de vehiculo
+                                            </Link>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
-                            <li className="bold">
+                            <li className={`bold ${active_clients && ('active')}`}>
                                 <a className="collapsible-header" tabIndex="0" href="#!">
                                     <i className="material-icons">group</i>
                                     Clientes
@@ -217,10 +354,20 @@ class Navbar extends Component {
                                 <div className="collapsible-body">
                                     <ul>
                                         <li>
-                                            <a href="nuevo_cliente.html">Nuevo</a>
+                                            <Link to="/nuevo_cliente">
+                                                Nuevo
+                                            </Link>
                                         </li>
-                                        <li><a href="clientes.html">Ver todos</a></li>
-                                        <li><a href="buscar_cliente.html">Buscar</a></li>
+                                        <li>
+                                            <Link to="/clientes">
+                                                Ver todos
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/buscar_cliente">
+                                                Buscar
+                                            </Link>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>

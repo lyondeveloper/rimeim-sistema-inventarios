@@ -4,7 +4,7 @@ import { SELLS } from "../../layout/NavTypes"
 
 // Custom components
 import Navbar from "../../layout/Navbar"
-import ProductCard from "../../common/ProductCard"
+import SellCard from "../../common/SellCard"
 
 // Functions
 import {
@@ -69,7 +69,7 @@ class Sells extends Component {
                         <div className="col s12">
                             {ventas.map((item, i) => {
                                 return (
-                                    <ProductCard venta={item} key={item.id} />
+                                    <SellCard venta={item} key={item.id} />
                                 )
                             })}
                         </div>
