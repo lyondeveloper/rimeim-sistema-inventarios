@@ -9,8 +9,17 @@ import {
 } from "../../../utils/MaterialFunctions"
 
 import "../../../public/css/cotizaciones.css"
+import SearchQuotationModel from "../../layout/modals/SearchQuotationModel"
+import { getCurrentDateToInput } from "../../../utils/dateFormat"
 
 class SearchQuotation extends Component {
+
+    state = {
+        cotizaciones: [],
+        cliente: "",
+        rtn: "",
+        productos: []
+    }
 
     componentWillMount() {
         removeMaterialComponents()
@@ -18,9 +27,21 @@ class SearchQuotation extends Component {
 
     componentDidMount() {
         configMaterialComponents()
+        const current_date = getCurrentDateToInput()
+        this.setState({
+            fecha_inicio: current_date,
+            fecha_fin: current_date
+        })
+    }
+
+    onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+
+    onSearch = () => {
+
     }
 
     render() {
+        const { cliente, rtn, productos } = this.state
         return (
             <React.Fragment >
                 <Navbar navtype={SEARCH_QUOTATION} />
@@ -31,6 +52,11 @@ class SearchQuotation extends Component {
                         </div>
                     </div>
                 </main>
+
+                <SearchQuotationModel
+                    values={{ cliente, rtn, productos }}
+                    onsearch={this.onSearch}
+                    onchange={this.onChangeTextInput} />
             </React.Fragment>
         )
     }

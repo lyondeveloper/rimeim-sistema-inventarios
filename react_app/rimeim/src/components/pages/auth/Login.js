@@ -29,11 +29,12 @@ class Login extends Component {
 
     onSubmitEvent = (e) => {
         e.preventDefault()
-        const userData = {
-            user: this.state.user,
-            password: this.state.password
-        }
-        this.props.loginUser(userData)
+        this.props.history.push('nueva_venta')
+        // const userData = {
+        //     user: this.state.user,
+        //     password: this.state.password
+        // }
+        // this.props.loginUser(userData)
     }
 
     componentWillReceiveProps(nextProps) {

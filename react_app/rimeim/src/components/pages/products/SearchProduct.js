@@ -8,7 +8,17 @@ import {
     removeMaterialComponents
 } from "../../../utils/MaterialFunctions"
 
+import SearchProductModel from "../../layout/modals/SearchProductModel"
+
 class SearchProduct extends Component {
+
+    state = {
+        productos: [],
+        termino: "",
+        marca: "",
+        tipo_vehiculo: "",
+        ubicacion: ""
+    }
 
     componentWillMount() {
         removeMaterialComponents()
@@ -18,7 +28,14 @@ class SearchProduct extends Component {
         configMaterialComponents()
     }
 
+    onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+
+    onSearch = () => {
+
+    }
+
     render() {
+        const { termino, marca, tipo_vehiculo, ubicacion } = this.state
         return (
             <React.Fragment>
                 <Navbar navtype={SEARCH_PRODUCT} />
@@ -30,6 +47,10 @@ class SearchProduct extends Component {
                         </div>
                     </div>
                 </main>
+
+                <SearchProductModel values={{ termino, marca, tipo_vehiculo, ubicacion }}
+                    onchange={this.onChangeTextInput}
+                    onsearch={this.onSearch} />
             </React.Fragment>
         )
     }

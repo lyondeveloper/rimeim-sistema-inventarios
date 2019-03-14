@@ -43,6 +43,12 @@ import ClientsWrapper from "./topnav/ClientsWrapper"
 import NewClientWrapper from "./topnav/NewClientWrapper"
 import SearchClientWrapper from "./topnav/SearchClientWrapper"
 
+// Provider
+import ProviderMobile from "./mobilemenu/ProviderMobile"
+import ProvidersWrapper from "./topnav/ProvidersWrapper"
+import ProviderWrapper from "./topnav/ProviderWrapper"
+import NewProviderWrapper from "./topnav/NewProviderWrapper"
+
 // Navbar Types
 import {
     NEW_SELL,
@@ -67,14 +73,18 @@ import {
     VEHICLE_TYPE,
     CLIENTS,
     NEW_CLIENT,
-    SEARCH_CLIENT
+    SEARCH_CLIENT,
+
+    PROVIDERS,
+    PROVIDER,
+    NEW_PROVIDER
 } from "./NavTypes"
 
 class Navbar extends Component {
 
     render() {
 
-        const { navtype } = this.props
+        const { navtype, has_notifications } = this.props
         var NavWrapper,
             MobileMenu,
             active_sells,
@@ -82,7 +92,8 @@ class Navbar extends Component {
             active_devolutions,
             active_orders,
             active_products,
-            active_clients = null
+            active_clients,
+            active_provider = null
 
         switch (navtype) {
             case NEW_SELL:
@@ -197,6 +208,23 @@ class Navbar extends Component {
             case SEARCH_CLIENT:
                 active_clients = true
                 NavWrapper = SearchClientWrapper
+                break
+
+            // Provider
+            case PROVIDER:
+                active_provider = true
+                MobileMenu = ProviderMobile
+                NavWrapper = ProviderWrapper
+                break
+
+            case NEW_PROVIDER:
+                active_provider = true
+                NavWrapper = NewProviderWrapper
+                break
+
+            case PROVIDERS:
+                active_provider = true
+                NavWrapper = ProvidersWrapper
                 break
 
             default:
@@ -371,7 +399,7 @@ class Navbar extends Component {
                                     </ul>
                                 </div>
                             </li>
-                            <li className="bold">
+                            <li className={`bold ${active_provider && ('active')}`}>
                                 <a className="collapsible-header" tabIndex="0" href="#!">
                                     <i className="material-icons">perm_contact_calendar</i>
                                     Proveedor
@@ -379,23 +407,36 @@ class Navbar extends Component {
                                 <div className="collapsible-body">
                                     <ul>
                                         <li>
-                                            <a href="nuevo_proveedor.html">Nuevo</a>
+                                            <Link to="/nuevo_proveedor">
+                                                Nuevo
+                                            </Link>
                                         </li>
-                                        <li><a href="proveedores.html">Ver todos</a></li>
+                                        <li>
+                                            <Link to="/proveedores">
+                                                Ver todos
+                                            </Link>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
                             <div className="divider"></div>
                             <li className="bold">
                                 <a className="collapsible-header" tabIndex="0" href="#!">
-                                    <i className="material-icons notifications-active">notifications_active</i>
+                                    {has_notifications ? (
+                                        <i className="material-icons notifications-active">notifications_active</i>
+                                    ) : (
+                                            <i className="material-icons">notifications</i>
+                                        )}
+
                                     Cuenta
                             </a>
                                 <div className="collapsible-body">
                                     <ul>
                                         <li>
                                             <a href="#!">
-                                                <i className="material-icons notifications-active-color">notifications</i>
+                                                <i className={`material-icons ${has_notifications && ('notifications-active-color')}`}>
+                                                    notifications
+                                                </i>
                                                 Notificaciones
                                         </a>
                                         </li>
@@ -405,9 +446,12 @@ class Navbar extends Component {
                                                 Configuracion
                                         </a>
                                         </li>
-                                        <li><a href="index.html">
-                                            <i className="material-icons">exit_to_app</i>
-                                            Cerrar sesion</a></li>
+                                        <li>
+                                            <a href="index.html">
+                                                <i className="material-icons">exit_to_app</i>
+                                                Cerrar sesion
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -420,7 +464,12 @@ class Navbar extends Component {
 }
 
 Navbar.propTypes = {
-    navtype: PropTypes.string.isRequired
+    navtype: PropTypes.string.isRequired,
+    has_notifications: PropTypes.bool.isRequired
+}
+
+Navbar.defaultProps = {
+    has_notifications: false
 }
 
 export default Navbar

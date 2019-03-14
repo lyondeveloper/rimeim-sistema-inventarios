@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 // Redux configuration
-import { Provider } from 'react-redux'
+import { Provider as ReduxProvider } from 'react-redux'
 import store from './store'
 
 // Css
@@ -43,6 +43,11 @@ import Clients from "./components/pages/clients/Clients"
 import NewClient from "./components/pages/clients/NewClient"
 import SearchClient from "./components/pages/clients/SearchClient"
 
+// Providers
+import NewProvider from "./components/pages/providers/NewProvider"
+import Provider from "./components/pages/providers/Provider"
+import Providers from "./components/pages/providers/Providers"
+
 // Custom functions
 import checkAppStatus from "./utils/checkAppStatus"
 checkAppStatus(store)
@@ -51,7 +56,7 @@ class App extends Component {
 
   render() {
     return (
-      <Provider store={store}>
+      <ReduxProvider store={store}>
         <Router>
           <Switch>
             <Route exact path="/" component={Login} />
@@ -80,9 +85,13 @@ class App extends Component {
             <Route exact path="/clientes" component={Clients} />
             <Route exact path="/buscar_cliente" component={SearchClient} />
             <Route exact path="/nuevo_cliente" component={NewClient} />
+
+            <Route exact path="/nuevo_proveedor" component={NewProvider} />
+            <Route exact path="/proveedores" component={Providers} />
+            <Route exact path="/proveedores/:id" component={Provider} />
           </Switch>
         </Router>
-      </Provider>
+      </ReduxProvider>
     )
   }
 }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const TextInputField = (props) => {
 
-    const { input_size, icon, type, id, label, onchange, value, error, required } = props
+    const { input_size, icon, type, id, label, active_label, onchange, value, error, required } = props
     return (
         <div className={`input-field col ${input_size}`}>
             {icon && (
@@ -16,7 +16,7 @@ const TextInputField = (props) => {
                     <input type={type} id={id} name={id} className="validate" onChange={onchange} value={value} />
                 )}
 
-            <label htmlFor={id}>{label}</label>
+            <label htmlFor={id} className={`${active_label && ('active')}`}>{label}</label>
             {error && (
                 <span className="helper-text text-danger">{error}</span>
             )}
@@ -30,6 +30,7 @@ TextInputField.propTypes = {
     icon: PropTypes.string,
     id: PropTypes.string.isRequired,
     label: PropTypes.string,
+    active_label: PropTypes.bool.isRequired,
     error: PropTypes.string,
     value: PropTypes.string.isRequired,
     onchange: PropTypes.func.isRequired,
@@ -41,7 +42,8 @@ TextInputField.defaultProps = {
     type: "text",
     icon: null,
     error: null,
-    required: false
+    required: false,
+    active_label: false
 }
 
 export default TextInputField

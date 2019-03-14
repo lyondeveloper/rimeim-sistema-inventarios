@@ -8,7 +8,14 @@ import {
     removeMaterialComponents
 } from "../../../utils/MaterialFunctions"
 
+import SearchClientModel from "../../layout/modals/SearchClientModel"
+
 class SearchClient extends Component {
+
+    state = {
+        clientes: [],
+        field: ""
+    }
 
     componentWillMount() {
         removeMaterialComponents()
@@ -18,7 +25,14 @@ class SearchClient extends Component {
         configMaterialComponents()
     }
 
+    onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+
+    onSearch = () => {
+
+    }
+
     render() {
+        const { field } = this.state
         return (
             <React.Fragment>
                 <Navbar navtype={SEARCH_CLIENT} />
@@ -30,6 +44,11 @@ class SearchClient extends Component {
                         </div>
                     </div>
                 </main>
+
+                <SearchClientModel
+                    onsearch={this.onSearch}
+                    onchange={this.UNSAFE_componentWillMount.onChangeTextInput}
+                    values={{ field }} />
             </React.Fragment>
         )
     }

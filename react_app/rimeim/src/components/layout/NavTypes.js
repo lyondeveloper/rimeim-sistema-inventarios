@@ -34,6 +34,7 @@ export const SEARCH_CLIENT = 'SEARCH_CLIENT'
 // Providers
 export const NEW_PROVIDER = 'NEW_PROVIDER'
 export const PROVIDERS = 'PROVIDERS'
+export const PROVIDER = 'PROVIDER'
 
 // Account
 export const NOTIFICATIONS = 'NOTIFICATIONS'
