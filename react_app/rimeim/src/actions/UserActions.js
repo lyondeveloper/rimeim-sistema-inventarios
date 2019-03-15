@@ -8,20 +8,22 @@ import {
 } from './types'
 
 export const loginUser = data => dispatch => {
-    axios.post('/users/login', data)
-        .then(res => {
-            const response = res.data
-            const { token } = response
-            localStorage.setItem('rimeim_token', token)
-            setAuthToken(token)
-            const decoded = jwt_decode(token)
-            dispatch(setCurrentUser(decoded))
-        })
-        .catch(err =>
-            dispatch({
-                type: GET_ERRORS,
-                payload: err.response.data.data
-            }))
+    setTimeout(() => {
+        axios.post('/users/login', data)
+            .then(res => {
+                const response = res.data
+                const { token } = response
+                localStorage.setItem('rimeim_token', token)
+                setAuthToken(token)
+                const decoded = jwt_decode(token)
+                dispatch(setCurrentUser(decoded))
+            })
+            .catch(err =>
+                dispatch({
+                    type: GET_ERRORS,
+                    payload: err.response.data.data
+                }))
+    }, 2000)
 }
 
 export const setCurrentUser = (user) => {

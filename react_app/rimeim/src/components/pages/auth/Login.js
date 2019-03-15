@@ -1,24 +1,34 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { loginUser } from '../../../actions/UserActions'
 
 // Custom Components
+import Spinner from "../../common/Spinner"
 import TextInputField from '../../common/TextInputField'
 import ButtonField from "../../common/ButtonField"
 
 import img_logo from '../../../public/img/logo_rimeim.png'
 
 // Functions
-import { configMaterialComponents } from "../../../utils/MaterialFunctions"
+import {
+    configMaterialComponents,
+    removeMaterialComponents
+} from "../../../utils/MaterialFunctions"
+
+import { loginUser } from '../../../actions/UserActions'
 
 
 class Login extends Component {
 
     state = {
+        isInRequest: false,
         user: "",
         password: "",
         errors: {}
+    }
+
+    componentWillMount() {
+        removeMaterialComponents()
     }
 
     componentDidMount() {
@@ -29,18 +39,28 @@ class Login extends Component {
 
     onSubmitEvent = (e) => {
         e.preventDefault()
-        this.props.history.push('nueva_venta')
-        // const userData = {
-        //     user: this.state.user,
-        //     password: this.state.password
-        // }
-        // this.props.loginUser(userData)
+        this.setState({
+            isInRequest: true
+        })
+        const userData = {
+            user: this.state.user,
+            password: this.state.password
+        }
+        this.props.loginUser(userData)
     }
 
     componentWillReceiveProps(nextProps) {
+        this.setState({
+            isInRequest: false
+        })
         if (nextProps.auth.isLoggedIn) {
             this.setState({ errors: {} })
-            this.props.history.push('nueva_venta')
+            if (nextProps.auth.user.isAdmin ||
+                nextProps.auth.user.locals.length > 1) {
+                this.props.history.push('/seleccionar_local')
+            } else {
+                this.props.history.push('/nueva_venta')
+            }
         }
 
         if (nextProps.errors) {
@@ -56,7 +76,7 @@ class Login extends Component {
 
     render() {
         const {
-            user, password,
+            user, password, isInRequest,
             errors: { user_error, password_error }
         } = this.state
 
@@ -73,7 +93,11 @@ class Login extends Component {
 
                             <div className="row">
                                 <div className="col">
+
                                     <form onSubmit={this.onSubmitEvent} className="white bordered p-1 border-radius-1 hoverable minw-300px ">
+
+                                        {isInRequest && (<Spinner fullWidth extraClass="p-1" />)}
+
                                         <div className="row">
                                             <TextInputField id="user"
                                                 label="Usuario o correo electronico"
@@ -81,6 +105,7 @@ class Login extends Component {
                                                 onchange={this.onChangeTextInput}
                                                 value={user}
                                                 error={user_error}
+                                                disabled={isInRequest}
                                                 required />
                                         </div>
                                         <div className="row">
@@ -91,16 +116,19 @@ class Login extends Component {
                                                 onchange={this.onChangeTextInput}
                                                 value={password}
                                                 error={password_error}
+                                                disabled={isInRequest}
                                                 required />
                                         </div>
 
                                         <ButtonField text="Aceptar"
                                             className="btn waves-effect waveslight btn-block red darken-1"
-                                            type="submit" />
+                                            type="submit"
+                                            disabled={isInRequest} />
 
                                         <ButtonField text="¿Olvido su clave?"
                                             className="btn-flat waves-effect waveslight btn-block mt-1"
-                                            onClick={this.forgotPassword} />
+                                            onClick={this.forgotPassword}
+                                            disabled={isInRequest} />
                                     </form>
                                 </div>
                             </div>

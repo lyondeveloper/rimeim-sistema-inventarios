@@ -58,6 +58,10 @@
    min-width: 300px;
 }
 
+.minw-100 {
+    min-width: 100%;
+}
+
 .text-danger {
     color: #e53935 !important;
 }

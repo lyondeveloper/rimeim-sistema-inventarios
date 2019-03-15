@@ -9,6 +9,10 @@ import store from './store'
 import "./public/css/materialize.min.css"
 import "./public/css/main.css"
 
+// Home
+import Home from "./components/pages/home/Home"
+import NotFound from "./components/pages/home/NotFound"
+
 // Auth 
 import Login from "./components/pages/auth/Login"
 
@@ -48,6 +52,12 @@ import NewProvider from "./components/pages/providers/NewProvider"
 import Provider from "./components/pages/providers/Provider"
 import Providers from "./components/pages/providers/Providers"
 
+// Custom component for multiple locals or admin user
+import ChoseLocal from "./components/pages/auth/ChooseLocal"
+
+// Custom components
+import PrivateRoute from "./components/common/PrivateRoute"
+
 // Custom functions
 import checkAppStatus from "./utils/checkAppStatus"
 checkAppStatus(store)
@@ -58,38 +68,107 @@ class App extends Component {
     return (
       <ReduxProvider store={store}>
         <Router>
-          <Switch>
-            <Route exact path="/" component={Login} />
+          <React.Fragment>
 
-            <Route exact path="/nueva_venta" component={NewSell} />
-            <Route exact path="/ventas" component={Sells} />
-            <Route exact path="/buscar_venta" component={SearchSell} />
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/login" component={Login} />
+              <Route component={NotFound} />
+            </Switch>
 
-            <Route exact path="/nueva_cotizacion" component={NewQuotation} />
-            <Route exact path="/cotizaciones" component={Quotations} />
-            <Route exact path="/buscar_cotizacion" component={SearchQuotation} />
+            {/* Sells */}
+            <Switch>
+              <PrivateRoute exact path="/ventas" component={Sells} />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact path="/nueva_venta" component={NewSell}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/buscar_venta" component={SearchSell} />
+            </Switch>
 
-            <Route exact path="/devoluciones" component={Devolutions} />
-            <Route exact path="/buscar_devolucion" component={SearchDevolution} />
 
-            <Route exact path="/pedidos" component={Orders} />
-            <Route exact path="/nuevo_pedido" component={NewOrder} />
-            <Route exact path="/buscar_pedido" component={SearchOrder} />
+            {/* Quotations */}
+            <Switch>
+              <PrivateRoute exact path="/nueva_cotizacion" component={NewQuotation} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/cotizaciones" component={Quotations} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/buscar_cotizacion" component={SearchQuotation} />
+            </Switch>
 
-            <Route exact path="/productos" component={Products} />
-            <Route exact path="/nuevo_producto" component={NewProduct} />
-            <Route exact path="/buscar_producto" component={SearchProduct} />
-            <Route exact path="/marcas" component={Brands} />
-            <Route exact path="/vehiculos" component={VehicleType} />
 
-            <Route exact path="/clientes" component={Clients} />
-            <Route exact path="/buscar_cliente" component={SearchClient} />
-            <Route exact path="/nuevo_cliente" component={NewClient} />
+            {/* Devolutions */}
+            <Switch>
+              <PrivateRoute exact path="/devoluciones" component={Devolutions} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/buscar_devolucion" component={SearchDevolution} />
+            </Switch>
 
-            <Route exact path="/nuevo_proveedor" component={NewProvider} />
-            <Route exact path="/proveedores" component={Providers} />
-            <Route exact path="/proveedores/:id" component={Provider} />
-          </Switch>
+
+            {/* Orders */}
+            <Switch>
+              <PrivateRoute exact path="/pedidos" component={Orders} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/nuevo_pedido" component={NewOrder} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/buscar_pedido" component={SearchOrder} />
+            </Switch>
+
+
+            {/* Products */}
+            <Switch>
+              <PrivateRoute exact path="/productos" component={Products} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/nuevo_producto" component={NewProduct} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/buscar_producto" component={SearchProduct} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/marcas" component={Brands} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/vehiculos" component={VehicleType} />
+            </Switch>
+
+
+            {/* Clients */}
+            <Switch>
+              <PrivateRoute exact path="/clientes" component={Clients} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/buscar_cliente" component={SearchClient} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/nuevo_cliente" component={NewClient} />
+            </Switch>
+
+            {/* Providers */}
+            <Switch>
+              <PrivateRoute exact path="/nuevo_proveedor" component={NewProvider} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/proveedores" component={Providers} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/proveedores/:id" component={Provider} />
+            </Switch>
+
+            {/* Locals */}
+            <Switch>
+              <PrivateRoute exact path="/seleccionar_local" component={ChoseLocal} />
+            </Switch>
+
+          </React.Fragment>
         </Router>
       </ReduxProvider>
     )
