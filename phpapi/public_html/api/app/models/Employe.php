@@ -30,6 +30,12 @@
             return $this->db->resultSet();
         }
 
+        public function get_locals_for_employe_by_userid($id) {
+            $this->db->query('call proc_get_locals_for_employe_by_userid(:p_id);');
+            $this->db->bind(':p_id', $id);
+            return $this->db->resultSet();
+        }
+
         public function get_by_local($id_local) {
             $this->db->query('call proc_get_empleados_by_local(:p_id_local);');
             $this->db->bind(':p_id_local', $id_local);

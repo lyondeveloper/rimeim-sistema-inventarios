@@ -224,4 +224,12 @@
             }
             $this->response();
         }
+
+        // Helpers
+        public function get_locals() {
+            $this->useGetRequest();
+            $this->private_route();
+            $locals = $this->employeModel->get_locals_for_employe_by_userid($this->get_current_user_id());
+            $this->response($locals);
+        }
     }

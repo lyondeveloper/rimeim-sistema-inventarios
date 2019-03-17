@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_get_next_empledo_id;
 delimiter $$
 create function func_get_next_empledo_id()
@@ -201,4 +201,34 @@ begin
     end if;
 end $$
 delimiter ;
+*/
+
+drop procedure if exists proc_get_locals_for_employe_by_userid;
+delimiter $$
+create procedure proc_get_locals_for_employe_by_userid(in p_id bigint)
+begin
+	if (valid_int_id(p_id)) then 
+		
+        if (func_is_user_admin(p_id)) then 
+			select l.id, 
+					l.codigo,
+                    l.nombre 
+			from tb_local l 
+            where l.eliminado = false;
+        else 
+			select distinct 
+					l.id,
+					l.codigo,
+					l.nombre
+			from tb_local l
+			join tb_empleado e on e.id_local = l.id
+								and e.id_usuario = p_id
+			where e.eliminado = false and
+					l.eliminado = false;
+        end if;
+    end if;
+end $$
+delimiter ;
+
+
 

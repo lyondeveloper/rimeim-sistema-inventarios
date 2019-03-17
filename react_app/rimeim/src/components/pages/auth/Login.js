@@ -53,14 +53,9 @@ class Login extends Component {
         this.setState({
             isInRequest: false
         })
-        if (nextProps.auth.isLoggedIn) {
+        if (nextProps.user.isLoggedIn) {
             this.setState({ errors: {} })
-            if (nextProps.auth.user.isAdmin ||
-                nextProps.auth.user.locals.length > 1) {
-                this.props.history.push('/seleccionar_local')
-            } else {
-                this.props.history.push('/nueva_venta')
-            }
+            this.props.history.push('/seleccionar_local')
         }
 
         if (nextProps.errors) {
@@ -142,12 +137,12 @@ class Login extends Component {
 
 Login.propTypes = {
     loginUser: PropTypes.func.isRequired,
-    auth: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
-    auth: state.auth,
+    user: state.user,
     errors: state.errors
 })
 

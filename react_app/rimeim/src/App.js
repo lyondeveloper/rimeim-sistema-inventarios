@@ -73,7 +73,7 @@ class App extends Component {
             <Switch>
               <Route exact path="/" component={Home} />
               <Route exact path="/login" component={Login} />
-              <Route component={NotFound} />
+              <Route exact path="/notfound" component={NotFound} />
             </Switch>
 
             {/* Sells */}

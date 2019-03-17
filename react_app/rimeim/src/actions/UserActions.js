@@ -4,26 +4,49 @@ import setAuthToken from '../utils/setAuthToken'
 
 import {
     GET_ERRORS,
-    SET_CURRENT_USER
+    SET_CURRENT_USER,
+    SET_LOCALS,
+    SET_CURRENT_LOCAL
 } from './types'
 
+import isEmpty from './isEmpty';
+
 export const loginUser = data => dispatch => {
-    setTimeout(() => {
-        axios.post('/users/login', data)
-            .then(res => {
-                const response = res.data
-                const { token } = response
-                localStorage.setItem('rimeim_token', token)
-                setAuthToken(token)
-                const decoded = jwt_decode(token)
-                dispatch(setCurrentUser(decoded))
+    axios.post('/users/login', data)
+        .then(res => {
+            const response = res.data
+            const decoded = getAuthTokenFromResponse(response)
+            dispatch(setCurrentUser(decoded))
+        })
+        .catch(err =>
+            dispatch({
+                type: GET_ERRORS,
+                payload: err.response.data.data
+            }))
+}
+
+export const getLocalsForCurrentUser = () => dispatch => {
+    axios.get('/users/get_locals')
+        .then(res => {
+            const response = res.data
+            const decoded = getAuthTokenFromResponse(response)
+            dispatch(setCurrentUser(decoded))
+            dispatch(setLocals(response.data))
+        })
+        .catch(err => {
+            dispatch({
+                type: GET_ERRORS,
+                payload: err.response.data.data
             })
-            .catch(err =>
-                dispatch({
-                    type: GET_ERRORS,
-                    payload: err.response.data.data
-                }))
-    }, 2000)
+        })
+}
+
+export const getAuthTokenFromResponse = (response) => {
+    const { token } = response
+    localStorage.setItem('rimeim_token', token)
+    setAuthToken(token)
+    const decoded = jwt_decode(token)
+    return decoded
 }
 
 export const setCurrentUser = (user) => {
@@ -33,6 +56,20 @@ export const setCurrentUser = (user) => {
     }
 }
 
+export const setLocals = (locals) => {
+    return {
+        type: SET_LOCALS,
+        payload: locals
+    }
+}
+
+export const setCurrentLocal = (local) => dispatch => {
+    var currentLocal = !isEmpty(local) ? local : {}
+    dispatch({
+        type: SET_CURRENT_LOCAL,
+        payload: currentLocal
+    })
+}
 
 export const logoutUser = () => dispatch => {
     localStorage.removeItem('rimeim_token')
