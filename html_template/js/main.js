@@ -5,5 +5,18 @@ document.addEventListener('DOMContentLoaded', function () {
     M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), []);
     M.FormSelect.init(document.querySelectorAll('select'), []);
     M.Tooltip.init(document.querySelectorAll('.tooltipped'), []);
+    M.Materialbox.init(document.querySelectorAll('.materialboxed'), []);
     M.updateTextFields();
 });
+
+function onChangeInputFileImage(input, id) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            document.getElementById(id).setAttribute('src', e.target.result)
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}

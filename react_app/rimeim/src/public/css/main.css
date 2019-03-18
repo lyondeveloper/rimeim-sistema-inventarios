@@ -404,6 +404,10 @@
     padding: 4rem !important;
 }
 
+.pb-navbar {
+    padding-bottom: 100px;
+}
+
 .px-2 {
     padding-left: 2rem !important;
     padding-right: 2rem !important;

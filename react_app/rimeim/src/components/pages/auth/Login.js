@@ -16,6 +16,7 @@ import {
 } from "../../../utils/MaterialFunctions"
 
 import { loginUser } from '../../../actions/UserActions'
+import redirect from "../../../utils/redirect"
 
 
 class Login extends Component {
@@ -33,6 +34,11 @@ class Login extends Component {
 
     componentDidMount() {
         configMaterialComponents()
+
+        const { isLoggedIn } = this.props.user
+        if (isLoggedIn) {
+            redirect(this.props, '/seleccionar_local')
+        }
     }
 
     onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });

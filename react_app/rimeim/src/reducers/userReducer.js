@@ -15,10 +15,13 @@ const initialState = {
 export default function (state = initialState, action) {
     switch (action.type) {
         case SET_CURRENT_USER:
+            const isLoggedIn = !isEmpty(action.payload)
             return {
                 ...state,
-                isLoggedIn: !isEmpty(action.payload),
-                user: action.payload
+                isLoggedIn: isLoggedIn,
+                user: action.payload,
+                locals: isLoggedIn ? state.locals : [],
+                currentLocal: isLoggedIn ? state.currentLocal : {}
             }
 
         case SET_LOCALS:

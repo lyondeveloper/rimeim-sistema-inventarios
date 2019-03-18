@@ -55,6 +55,10 @@ import Providers from "./components/pages/providers/Providers"
 // Custom component for multiple locals or admin user
 import ChoseLocal from "./components/pages/auth/ChooseLocal"
 
+// Admin area
+import AdminArea from "./components/pages/admin_area/AdminArea"
+import Locals from "./components/pages/admin_area/locals/Locals"
+
 // Custom components
 import PrivateRoute from "./components/common/PrivateRoute"
 
@@ -165,7 +169,15 @@ class App extends Component {
 
             {/* Locals */}
             <Switch>
-              <PrivateRoute exact path="/seleccionar_local" component={ChoseLocal} />
+              <PrivateRoute exact path="/seleccionar_local" component={ChoseLocal} isSelectLocal={true} />
+            </Switch>
+
+            {/* Admin area */}
+            <Switch>
+              <PrivateRoute exact path="/admin_area" component={AdminArea} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/admin/locales" component={Locals} />
             </Switch>
 
           </React.Fragment>

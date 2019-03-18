@@ -56,3 +56,16 @@
         }
         return $json;
     }
+
+    function convert_to_bool_values($json, $params = []) {
+        if(count($params) > 0 && 
+            is_object($json)) {
+            
+            foreach($params as $param) {
+                if (isset($json->$param)) {
+                    $json->$param = $json->$param == true;
+                }
+            }
+        }
+        return $json;
+    }

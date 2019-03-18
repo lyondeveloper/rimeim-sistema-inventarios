@@ -159,7 +159,7 @@ end $$
 delimiter ;
 */
 
-/*
+
 drop procedure if exists proc_get_usuario_to_auth;
 delimiter $$ 
 create procedure proc_get_usuario_to_auth(in p_field varchar(200))
@@ -168,9 +168,9 @@ begin
 	if (!is_empty(p_field)) then
 		select u.id,
 				u.nombre,
-				u.admin,
-				u.habilitado,
-				u.primera_sesion,
+                u.admin,
+                u.habilitado,
+                u.primera_sesion,
 				u.clave
 		from tb_usuario u 
 		where u.correo = p_field or 
@@ -179,7 +179,7 @@ begin
 	end if;
 end $$
 delimiter ;
-*/
+
 
 /*
 drop procedure if exists `proc_add_usuario`;

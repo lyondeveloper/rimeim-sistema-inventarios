@@ -69,17 +69,6 @@
     white-space: nowrap;
 }
 
-.header-th {
-    height: 55px !important;
-    width: 30px !important;
-}
-
-.checkbox-td {
-    width: 30px !important;
-    padding: 0 !important;
-    padding-top: 1px !important;
-}
-
 .checkbox-td label {
     margin-left: 4px;
     padding-top: 5px !important;

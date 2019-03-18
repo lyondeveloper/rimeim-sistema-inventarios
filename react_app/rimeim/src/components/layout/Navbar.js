@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
+import { connect } from 'react-redux'
 
 import logo_rimeim from "../../public/img/logo_rimeim.png"
 
@@ -80,11 +81,18 @@ import {
     NEW_PROVIDER
 } from "./NavTypes"
 
+// Functions
+import {
+    logoutUser,
+    setCurrentLocal
+} from "../../actions/UserActions"
+
 class Navbar extends Component {
 
     render() {
 
-        const { navtype, has_notifications } = this.props
+        const { navtype, has_notifications, user: { user: { admin }}} = this.props 
+
         var NavWrapper,
             MobileMenu,
             active_sells,
@@ -253,7 +261,7 @@ class Navbar extends Component {
                         <div className="divider"></div>
                     </li>
                     <li className="no-padding">
-                        <ul className="collapsible collapsible-accordion">
+                        <ul className="collapsible collapsible-accordion pb-navbar">
                             <li className={`bold ${active_sells && ('active')}`}>
                                 <a className="collapsible-header" tabIndex="0" href="#!">
                                     <i className="material-icons">monetization_on</i>
@@ -440,6 +448,14 @@ class Navbar extends Component {
                                                 Notificaciones
                                         </a>
                                         </li>
+                                        { admin && (
+                                            <li>
+                                                <a href="#!" onClick={() => {this.props.setCurrentLocal(null);}}>
+                                                    <i className="material-icons">compare_arrow</i>
+                                                    Cambiar de local
+                                                </a>
+                                            </li>
+                                        )}
                                         <li>
                                             <a href="#!">
                                                 <i className="material-icons">settings</i>
@@ -447,7 +463,7 @@ class Navbar extends Component {
                                         </a>
                                         </li>
                                         <li>
-                                            <a href="index.html">
+                                            <a href="#!" onClick={() => { this.props.logoutUser() }}>
                                                 <i className="material-icons">exit_to_app</i>
                                                 Cerrar sesion
                                             </a>
@@ -464,12 +480,22 @@ class Navbar extends Component {
 }
 
 Navbar.propTypes = {
+    user: PropTypes.object.isRequired,
     navtype: PropTypes.string.isRequired,
-    has_notifications: PropTypes.bool.isRequired
+    has_notifications: PropTypes.bool.isRequired,
+    setCurrentLocal: PropTypes.func.isRequired,
+    logoutUser: PropTypes.func.isRequired
 }
 
 Navbar.defaultProps = {
     has_notifications: false
 }
 
-export default Navbar
+const mapStateToProps = state => ({
+    user: state.user
+})
+
+export default connect(mapStateToProps, {
+    setCurrentLocal,
+    logoutUser
+})(Navbar)

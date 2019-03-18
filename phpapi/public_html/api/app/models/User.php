@@ -30,7 +30,8 @@
         public function get_user_to_auth($p_field) {
             $this->db->query('call proc_get_usuario_to_auth(:p_field);');
             $this->db->bind(':p_field', $p_field);
-            return $this->db->single();
+            $user = $this->db->single();
+            return convert_to_bool_values($user, ['admin', 'habilitado', 'primera_sesion']);
         }
 
         public function get_user_by_email($p_email) {
