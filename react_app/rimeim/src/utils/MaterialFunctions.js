@@ -7,6 +7,7 @@ export const configMaterialComponents = () => {
     M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), []);
     M.FormSelect.init(document.querySelectorAll('select'), []);
     M.Tooltip.init(document.querySelectorAll('.tooltipped'), []);
+    M.Materialbox.init(document.querySelectorAll('.materialboxed'), []);
     M.updateTextFields();
 
     const sidenav_overlay = document.getElementsByClassName('sidenav-overlay')[0]
@@ -19,6 +20,7 @@ export const removeMaterialComponents = () => {
     const sidenav_overlays = document.getElementsByClassName('sidenav-overlay')
     const drag_targets = document.getElementsByClassName('drag-target')
     const tooltips = document.getElementsByClassName('material-tooltip')
+    const hidden_divs = document.getElementsByClassName('hiddendiv')
 
     if (sidenav_overlays && sidenav_overlays.length > 0) {
         for (let index = 0; index < sidenav_overlays.length; index++) {
@@ -35,6 +37,12 @@ export const removeMaterialComponents = () => {
     if (tooltips && tooltips.length > 0) {
         for (let index = 0; index < tooltips.length; index++) {
             tooltips[index].parentNode.removeChild(tooltips[index])
+        }
+    }
+
+    if (hidden_divs && hidden_divs.length > 0) {
+        for (let index = 0; index < hidden_divs.length; index++) {
+            hidden_divs[index].parentNode.removeChild(hidden_divs[index])
         }
     }
 }

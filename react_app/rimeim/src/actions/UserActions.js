@@ -65,10 +65,19 @@ export const setLocals = (locals) => {
 
 export const setCurrentLocal = (local) => dispatch => {
     var currentLocal = !isEmpty(local) ? local : {}
-    dispatch({
+    if (isEmpty(currentLocal)) {
+        localStorage.removeItem('rimeim_current_local')
+    } else {
+        localStorage.setItem('rimeim_current_local', JSON.stringify(currentLocal))
+    }
+    dispatch(setCurrentLocalToState(currentLocal))
+}
+
+export const setCurrentLocalToState = (currentLocal) => {
+    return {
         type: SET_CURRENT_LOCAL,
         payload: currentLocal
-    })
+    }
 }
 
 export const logoutUser = () => dispatch => {

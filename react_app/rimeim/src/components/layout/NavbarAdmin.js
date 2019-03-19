@@ -7,6 +7,7 @@ import logo_rimeim from "../../public/img/logo_rimeim.png"
 
 // Navbar Types
 import {
+    ADMIN_DEFAULT,
     ADMIN_LOCALS,
     ADMIN_LOCAL,
     ADMIN_EDIT_LOCAL,
@@ -21,6 +22,15 @@ import {
     ADMIN_REPORT_SELLS,
     ADMIN_REPORT_PRODUCTS
 } from "./NavTypes"
+
+// Default
+import DefaultWrapper from "./admin_topnav/DefaultWrapper"
+
+// Locals
+import LocalsMobile from "./admin_mobilemenu/LocalsMobile"
+import LocalsWrapper from "./admin_topnav/LocalsWrapper"
+import NewLocalWrapper from "./admin_topnav/NewLocalWrapper"
+import LocalWrapper from "./admin_topnav/LocalWrapper"
 
 // Functions
 import {
@@ -39,11 +49,21 @@ class NavbarAdmin extends Component {
             active_reports = null
 
         switch (navtype) {
+            case ADMIN_DEFAULT:
+                NavWrapper = DefaultWrapper
+                break
+
             case ADMIN_LOCALS:
+                NavWrapper = LocalsWrapper
+                MobileMenu = LocalsMobile
                 break
+
             case ADMIN_LOCAL:
+                NavWrapper = LocalWrapper
                 break
+
             case ADMIN_EDIT_LOCAL:
+                NavWrapper = NewLocalWrapper
                 break
 
             case ADMIN_EMPLOYES:

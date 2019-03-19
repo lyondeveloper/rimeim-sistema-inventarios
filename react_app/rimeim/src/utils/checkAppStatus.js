@@ -1,6 +1,9 @@
 import jwt_decode from "jwt-decode"
 import setAuthToken from "./setAuthToken"
-import { setCurrentUser } from "../actions/UserActions"
+import {
+    setCurrentUser,
+    setCurrentLocalToState
+} from "../actions/UserActions"
 
 const checkAppStatus = (store) => {
     let token = localStorage.getItem('rimeim_token')
@@ -15,6 +18,16 @@ const checkAppStatus = (store) => {
         }
         setAuthToken(token)
         store.dispatch(setCurrentUser(decoded))
+
+        let current_local = localStorage.getItem('rimeim_current_local')
+        if (current_local) {
+            let obj_current_local = JSON.parse(current_local)
+            if (obj_current_local) {
+                store.dispatch(setCurrentLocalToState(obj_current_local))
+            } else {
+                localStorage.removeItem('rimeim_current_local')
+            }
+        }
     }
 }
 

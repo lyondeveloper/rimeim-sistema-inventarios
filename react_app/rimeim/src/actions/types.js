@@ -1,8 +1,12 @@
+// User
 export const SET_CURRENT_USER = 'SET_CURRENT_USER'
-
-// Locals
 export const SET_LOCALS = 'SET_LOCALS'
 export const SET_CURRENT_LOCAL = 'SET_CURRENT_LOCAL'
+
+// Locals
+export const LOCAL_LOADING = 'LOCAL_LOADING'
+export const GET_LOCALS = 'GET_LOCALS'
+export const GET_LOCAL = 'GET_LOCAL'
 
 // Error
 export const GET_ERRORS = 'GET_ERRORS'
