@@ -57,8 +57,10 @@ import ChoseLocal from "./components/pages/auth/ChooseLocal"
 
 // Admin area
 import AdminArea from "./components/pages/admin_area/AdminArea"
+import AdminLocal from "./components/pages/admin_area/locals/Local"
 import AdminLocals from "./components/pages/admin_area/locals/Locals"
 import AdminNewLocal from "./components/pages/admin_area/locals/NewLocal"
+import AdminEditLocal from "./components/pages/admin_area/locals/EditLocal"
 
 // Custom components
 import PrivateRoute from "./components/common/PrivateRoute"
@@ -181,9 +183,14 @@ class App extends Component {
               <PrivateRoute exact path="/admin/locales" component={AdminLocals} isAdminRoute={true} />
             </Switch>
             <Switch>
+              <PrivateRoute exact path="/admin/locales/:id" component={AdminLocal} isAdminRoute={true} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/admin/locales/editar/:id" component={AdminEditLocal} isAdminRoute={true} />
+            </Switch>
+            <Switch>
               <PrivateRoute exact path="/admin/locales/nuevo" component={AdminNewLocal} isAdminRoute={true} />
             </Switch>
-
 
 
           </React.Fragment>

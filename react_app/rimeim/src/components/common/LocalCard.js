@@ -4,13 +4,13 @@ import PropTypes from 'prop-types'
 
 
 const LocalCard = (props) => {
-    const { local: { id, img, codigo, nombre, es_bodega, color_hex } } = props
+    const { local: { id, codigo, nombre, es_bodega, color_hex } } = props
     return (
         <div className="card hoverable">
-            <Link to={`/locales/${id}`}>
-                <div className="card-image border-bottom card-product">
+            <Link to={`/admin/locales/${id}`}>
+                {/* <div className="card-image border-bottom card-product">
                     <img src={img} alt="" />
-                </div>
+                </div> */}
                 <div className="card-content">
                     <span className="d-block">
                         <div className="circle-local left" style={{ backgroundColor: color_hex }}></div>

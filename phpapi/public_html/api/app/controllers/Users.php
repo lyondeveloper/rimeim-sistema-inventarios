@@ -226,6 +226,15 @@
             $this->response();
         }
 
+        // Advance functions
+        public function search($field) {
+            $this->useGetRequest();
+            $this->private_route(CTR_ADMIN);
+            errorLog($field);
+            $results = $this->userModel->search_user($field);
+            $this->response($results);
+        }
+
         // Helpers
         public function get_locals() {
             $this->useGetRequest();

@@ -27,6 +27,13 @@
             return $response->admin;
         }
 
+        public function search_user($field) {
+            $this->db->query('call proc_search_user(:p_field);');
+            $this->db->bind(':p_field', $field);
+            return convert_to_bool_values($this->db->resultSet(), 
+                                            ['admin' ,'habilitado', 'primera_sesion']);
+        }
+
         public function get_user_to_auth($p_field) {
             $this->db->query('call proc_get_usuario_to_auth(:p_field);');
             $this->db->bind(':p_field', $p_field);

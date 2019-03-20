@@ -39,7 +39,7 @@
         public function get_by_local($id_local) {
             $this->db->query('call proc_get_empleados_by_local(:p_id_local);');
             $this->db->bind(':p_id_local', $id_local);
-            return $this->db->resultSet();
+            return convert_to_bool_values($this->db->resultSet(), ['admin', 'habilitado']);
         }
 
         public function get_by_id($id) {

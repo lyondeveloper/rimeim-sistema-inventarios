@@ -1,3 +1,4 @@
+/*
 drop function if exists func_get_next_local_id;
 delimiter $$
 create function func_get_next_local_id()
@@ -11,29 +12,27 @@ begin
     return @new_id;
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists proc_get_locales;
 delimiter $$
 create procedure proc_get_locales()
 begin
 	select l.id,
-			l.id_usuario_creado_por,
             l.nombre,
             l.codigo,
-            l.descripcion,
-            l.descripcion_ubicacion,
-            l.color_hex,
             l.es_bodega,
-            l.latitud,
-            l.longitud,
-            l.fecha_creado
+            l.color_hex
 	from tb_local l
     where l.eliminado = false
     order by l.fecha_creado desc;
             
 end $$
 delimiter ;
+*/
 
+/*
 drop function if exists func_exists_local_with_code;
 delimiter $$
 create function func_exists_local_with_code(p_codigo varchar(100))
@@ -52,7 +51,9 @@ begin
 	return @response;
 end $$
 delimiter ;
+*/
 
+/*
 drop function if exists func_exists_local_with_code_and_not_same;
 delimiter $$
 create function func_exists_local_with_code_and_not_same(p_codigo varchar(100),
@@ -74,6 +75,8 @@ begin
 	return @response;
 end $$
 delimiter ;
+*/
+
 
 drop procedure if exists proc_get_local_by_id;
 delimiter $$
@@ -99,7 +102,8 @@ begin
 end $$
 delimiter ;
 
-drop procedure if exists proc_add_local;
+
+/*drop procedure if exists proc_add_local;
 delimiter $$
 create procedure proc_add_local(in p_id_usuario_creado_por bigint,
 								in p_nombre varchar(255),
@@ -151,7 +155,9 @@ begin
     select @new_id as 'id';
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists `proc_update_local_by_id`;
 delimiter $$
 create procedure proc_update_local_by_id(in p_id bigint,
@@ -186,7 +192,9 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists `proc_delete_local_by_id`;
 delimiter $$
 create procedure proc_delete_local_by_id(in p_id bigint,
@@ -202,6 +210,6 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/
 
 

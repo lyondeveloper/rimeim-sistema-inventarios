@@ -6,7 +6,9 @@ import {
     GET_ERRORS,
     SET_CURRENT_USER,
     SET_LOCALS,
-    SET_CURRENT_LOCAL
+    SET_CURRENT_LOCAL,
+    GET_USERS,
+    USER_LOADING
 } from './types'
 
 import isEmpty from './isEmpty';
@@ -49,6 +51,43 @@ export const getAuthTokenFromResponse = (response) => {
     return decoded
 }
 
+export const setCurrentLocal = (local) => dispatch => {
+    var currentLocal = !isEmpty(local) ? local : {}
+    if (isEmpty(currentLocal)) {
+        localStorage.removeItem('rimeim_current_local')
+    } else {
+        localStorage.setItem('rimeim_current_local', JSON.stringify(currentLocal))
+    }
+    dispatch(setCurrentLocalToState(currentLocal))
+}
+
+export const getUsersByField = (field) => dispatch => {
+    dispatch(setUsers([]))
+    axios.get(`/users/search/${field}`)
+        .then(res => {
+            const response = res.data
+            const decoded = getAuthTokenFromResponse(response)
+            dispatch(setCurrentUser(decoded))
+            dispatch(setUsers(response.data))
+        })
+        .catch(err =>
+            dispatch({
+                type: GET_ERRORS,
+                payload: err.response.data.data
+            }))
+}
+
+export const setUserLoading = () => dispatch => {
+    dispatch(userLoadingObject)
+}
+
+// Simple return actions type
+export const userLoadingObject = () => {
+    return {
+        type: USER_LOADING
+    }
+}
+
 export const setCurrentUser = (user) => {
     return {
         type: SET_CURRENT_USER,
@@ -63,20 +102,17 @@ export const setLocals = (locals) => {
     }
 }
 
-export const setCurrentLocal = (local) => dispatch => {
-    var currentLocal = !isEmpty(local) ? local : {}
-    if (isEmpty(currentLocal)) {
-        localStorage.removeItem('rimeim_current_local')
-    } else {
-        localStorage.setItem('rimeim_current_local', JSON.stringify(currentLocal))
-    }
-    dispatch(setCurrentLocalToState(currentLocal))
-}
-
 export const setCurrentLocalToState = (currentLocal) => {
     return {
         type: SET_CURRENT_LOCAL,
         payload: currentLocal
+    }
+}
+
+export const setUsers = (users) => {
+    return {
+        type: GET_USERS,
+        payload: users
     }
 }
 

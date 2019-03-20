@@ -58,14 +58,24 @@
     }
 
     function convert_to_bool_values($json, $params = []) {
-        if(count($params) > 0 && 
-            is_object($json)) {
-            
-            foreach($params as $param) {
-                if (isset($json->$param)) {
-                    $json->$param = $json->$param == true;
+        if(count($params) > 0) {
+
+            if (is_array($json)) {
+                foreach($json as &$item) {
+                    foreach($params as $param) {
+                        if (isset($item->$param)) {
+                            $item->$param = $item->$param == true;
+                        }
+                    }
+                }
+
+            } elseif (is_object($json)) {
+                foreach($params as $param) {
+                    if (isset($json->$param)) {
+                        $json->$param = $json->$param == true;
+                    }
                 }
             }
-        }
+        } 
         return $json;
     }

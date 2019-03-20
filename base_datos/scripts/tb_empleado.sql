@@ -72,6 +72,7 @@ begin
     where e.eliminado = false;
 end $$
 delimiter ;
+*/
 
 drop procedure if exists `proc_get_empleados_by_local`;
 delimiter $$
@@ -79,12 +80,13 @@ create procedure proc_get_empleados_by_local(in p_id_local bigint)
 begin
 	if (valid_int_id(p_id_local)) then
 		select e.id,
-				e.id_usuario,
+				u.nombre,
 				e.id_usuario_creado_por,
 				e.admin,
 				e.habilitado,
 				e.fecha_creado
 		from tb_empleado e
+        join tb_usuario u on u.id = e.id_usuario
 		where e.eliminado = false
         and e.id_local = p_id_local;
     end if;
@@ -92,6 +94,7 @@ begin
 end $$
 delimiter ;
 
+/*
 drop procedure if exists `proc_get_empleado_by_id`;
 delimiter $$
 create procedure proc_get_empleado_by_id(in p_id bigint)
@@ -203,6 +206,8 @@ end $$
 delimiter ;
 */
 
+
+/*
 drop procedure if exists proc_get_locals_for_employe_by_userid;
 delimiter $$
 create procedure proc_get_locals_for_employe_by_userid(in p_id bigint)
@@ -229,6 +234,6 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/
 
 

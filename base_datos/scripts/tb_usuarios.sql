@@ -159,7 +159,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists proc_get_usuario_to_auth;
 delimiter $$ 
 create procedure proc_get_usuario_to_auth(in p_field varchar(200))
@@ -179,7 +179,7 @@ begin
 	end if;
 end $$
 delimiter ;
-
+*/
 
 /*
 drop procedure if exists `proc_add_usuario`;
@@ -334,4 +334,26 @@ end $$
 delimiter ;
 */
 
+
+drop procedure if exists proc_search_user;
+delimiter $$
+create procedure proc_search_user(in p_field varchar(255))
+begin
+	set p_field = trim(p_field);
+    
+    if (is_empty(p_field) = false) then
+		select u.id,
+				u.nombre,
+				u.nombre_usuario,
+				u.admin,
+				u.habilitado,
+				u.primera_sesion
+        from tb_usuario u
+        where u.nombre like concat('%',p_field,'%')
+        or u.id like concat('%', p_field, '%')
+        or u.nombre_usuario like concat('%', p_field, '%')
+        and u.eliminado = false;
+    end if;
+end $$
+delimiter ;
 

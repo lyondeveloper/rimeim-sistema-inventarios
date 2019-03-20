@@ -42,7 +42,12 @@ class NavbarAdmin extends Component {
 
     render() {
 
-        const { navtype, has_notifications, user: { user: { admin } } } = this.props
+        const {
+            navtype,
+            has_notifications,
+            obj,
+            user: { user: { admin } }
+        } = this.props
 
         var NavWrapper,
             MobileMenu,
@@ -95,7 +100,7 @@ class NavbarAdmin extends Component {
                 <nav className="red lighten-1 top-nav">
                     <div className="small-container">
                         {NavWrapper && (
-                            <NavWrapper />
+                            <NavWrapper obj={obj} />
                         )}
                     </div>
                 </nav>
@@ -208,7 +213,8 @@ NavbarAdmin.propTypes = {
     navtype: PropTypes.string.isRequired,
     has_notifications: PropTypes.bool.isRequired,
     setCurrentLocal: PropTypes.func.isRequired,
-    logoutUser: PropTypes.func.isRequired
+    logoutUser: PropTypes.func.isRequired,
+    obj: PropTypes.object
 }
 
 NavbarAdmin.defaultProps = {

@@ -28,13 +28,13 @@
 
         public function get() {
             $this->db->query('call proc_get_locales();');
-            return $this->db->resultSet();
+            return convert_to_bool_values($this->db->resultSet(), ['es_bodega']);
         }
 
         public function get_by_id($id) {
             $this->db->query('call proc_get_local_by_id(:p_id);');
             $this->db->bind(':p_id', $id);
-            return $this->db->single();
+            return convert_to_bool_values($this->db->single(), ['es_bodega']);
         }
 
         public function add($params) {

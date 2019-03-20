@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const TextAreaInputField = (props) => {
-    const { input_size, id, label, active_label, error, onchange, required, disabled } = props
+    const { input_size, id, label, active_label, error, onchange, required, disabled, value } = props
     return (
         <div className={`col ${input_size}`}>
             <div className="input-field">
@@ -10,7 +10,8 @@ const TextAreaInputField = (props) => {
                     name={id} id={id}
                     required={required}
                     disabled={disabled}
-                    onChange={onchange}></textarea>
+                    onChange={onchange}
+                    value={value}></textarea>
                 <label htmlFor={id} className={`${active_label && ('active')}`} >{label}</label>
 
                 {error && (

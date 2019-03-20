@@ -62,7 +62,7 @@
         public function getUrl() {
             if(isset( $_GET['url'])) {
                 $url = rtrim($_GET['url'], '/');
-                $url = filter_var($url, FILTER_SANITIZE_URL);
+                $url = preg_replace("/[^\x20-\x7E]/", "", $url);//filter_var($url, FILTER_SANITIZE_URL);
                 $url = explode('/', $url);
                 return $url;
             }

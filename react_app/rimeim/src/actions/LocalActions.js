@@ -4,7 +4,8 @@ import axios from "axios"
 import {
     GET_LOCALS,
     GET_LOCAL,
-    GET_ERRORS
+    GET_ERRORS,
+    LOCAL_LOADING
 } from "./types"
 
 import {
@@ -17,6 +18,7 @@ import {
 } from "./UserActions"
 
 export const getLocals = () => dispatch => {
+    dispatch(localLoading())
     dispatch(clearErrors())
     axios.get('/locals')
         .then(res => {
@@ -36,6 +38,7 @@ export const getLocals = () => dispatch => {
 }
 
 export const getLocal = (id) => dispatch => {
+    dispatch(localLoading())
     axios.get(`/locals/get_one/${id}`)
         .then(res => {
             const response = res.data
@@ -51,4 +54,14 @@ export const getLocal = (id) => dispatch => {
                 type: GET_ERRORS,
                 payload: err.response.data.data
             }))
+}
+
+export const updateLocal = (id, newLocal) => dispatch => {
+
+}
+
+export const localLoading = () => {
+    return {
+        type: LOCAL_LOADING
+    }
 }

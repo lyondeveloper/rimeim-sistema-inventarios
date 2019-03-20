@@ -28,6 +28,7 @@
             if (is_null($local)) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $local->empleados = $this->employeModel->get_by_local($id);
             $this->response($local);
         }
 

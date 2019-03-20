@@ -46,3 +46,12 @@ export const removeMaterialComponents = () => {
         }
     }
 }
+
+export const updateTextFields = () => {
+    M.updateTextFields();
+}
+
+export const getModalInstanceById = (id) => {
+    const elem = document.getElementById(id)
+    return M.Modal.getInstance(elem)
+}

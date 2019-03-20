@@ -1,10 +1,12 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
-export default function LocalWrapper() {
+export default function LocalWrapper(props) {
+    const { obj } = props
     return (
         <div className="nav-wrapper">
             <a href="#!" className="brand-logo">
-                Local
+                {obj.nombre}
             </a>
             <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
                 <i className="material-icons">menu</i>
@@ -12,9 +14,9 @@ export default function LocalWrapper() {
 
             <ul className="right">
                 <li>
-                    <a href="admin_add_local.html" className="modal-trigger">
+                    <Link to={`/admin/locales/editar/${obj.id}`}>
                         <i className="material-icons">edit</i>
-                    </a>
+                    </Link>
                 </li>
             </ul>
         </div>
