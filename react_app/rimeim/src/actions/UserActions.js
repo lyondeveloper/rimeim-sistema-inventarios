@@ -81,6 +81,13 @@ export const setUserLoading = () => dispatch => {
     dispatch(userLoadingObject)
 }
 
+export const clearUsers = () => dispatch => {
+    dispatch({
+        type: GET_USERS,
+        payload: []
+    })
+}
+
 // Simple return actions type
 export const userLoadingObject = () => {
     return {

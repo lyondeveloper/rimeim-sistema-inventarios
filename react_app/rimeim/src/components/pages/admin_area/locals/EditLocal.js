@@ -36,6 +36,7 @@ class EditLocal extends Component {
         descripcion_ubicacion: "    ",
         es_bodega: false,
         descripcion: "  ",
+        current_action: "0",
         empleados: []
     }
 
@@ -65,6 +66,10 @@ class EditLocal extends Component {
         }
     }
 
+    onSave = () => {
+
+    }
+
     onChangeTextInput = e => {
         if (e.target.name === "es_bodega") {
             const value = this.state.es_bodega ? false : true
@@ -73,12 +78,84 @@ class EditLocal extends Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
+    onChangeSelectedValue = e => {
+        this.setState({ current_action: e.target.value })
+    }
+
+    onSelectNewUser = (user) => {
+        if (user) {
+            const { empleados } = this.state
+            if (!empleados.find(empleado => empleado.id_usuario === user.id)) {
+                empleados.push({
+                    id: null,
+                    new: true,
+                    id_usuario: user.id,
+                    nombre: user.nombre,
+                    habilitado: true,
+                    eliminado: false
+                })
+            }
+        }
+    }
+
+    onChangeCheckboxEmploye(emp, e) {
+        e.preventDefault()
+        const { empleados } = this.state
+        const index = empleados.indexOf(emp)
+        if (index === null || index < 0) return
+
+        const empleado = empleados[index]
+
+        if (empleado.seleccionado !== null) {
+            empleado.seleccionado = !empleado.seleccionado
+        } else {
+            empleado.seleccionado = true
+        }
+
+        document.getElementById(`check${empleado.id_usuario}`).checked = empleado.seleccionado
+        this.setState({ empleados })
+    }
+
+    onApplyChangesToEmployes = () => {
+        const { empleados, current_action } = this.state
+        if (current_action === "0") return
+
+        const selecteds = empleados.filter(empleado => empleado.seleccionado === true)
+
+        switch (current_action) {
+            case "1":
+                selecteds.forEach(empleado => empleado.habilitado = false)
+                break
+
+            case "2":
+                selecteds.forEach(empleado => empleado.habilitado = true)
+                break
+
+            case "3":
+                selecteds.forEach(empleado => empleado.eliminado = true)
+                break
+
+            default: return
+        }
+        selecteds.forEach(empleado => {
+            const index = empleados.indexOf(empleado)
+            if (index !== null && index >= 0) {
+                empleados[index] = empleado
+            }
+        })
+        this.setState(empleados)
+    }
+
     render() {
         const {
-            codigo, nombre, color_hex, descripcion_ubicacion, es_bodega, descripcion, empleados } = this.state
+            codigo, nombre, color_hex,
+            descripcion_ubicacion, es_bodega,
+            descripcion,
+            current_action,
+            empleados } = this.state
         return (
             <React.Fragment>
-                <NavbarAdmin navtype={ADMIN_EDIT_LOCAL} />
+                <NavbarAdmin navtype={ADMIN_EDIT_LOCAL} obj={{ onSave: this.onSave }} />
 
                 <main>
                     <div className="row">
@@ -155,18 +232,25 @@ class EditLocal extends Component {
                                     </div>
 
                                     <div className="row">
-                                        <div className="input-field col s12">
-                                            <select>
-                                                <option value="0" defaultValue>Seleccionar una opcion</option>
+                                        <div className="input-field col s12 m6">
+                                            <select name="current_action"
+                                                onChange={this.onChangeSelectedValue}
+                                                value={current_action}>
+                                                <option value="0">Seleccionar una opcion</option>
                                                 <option value="1">Deshabilitar</option>
                                                 <option value="2">Habilitar</option>
                                                 <option value="3">Eliminar</option>
                                             </select>
                                             <label>Acciones en lote</label>
                                         </div>
+                                        <div className="col s12 m6">
+                                            <button type="button" className="btn" onClick={this.onApplyChangesToEmployes}>
+                                                Aplicar
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <table className="table-bordered striped">
+                                    <table className="table-bordered">
                                         <thead>
                                             <tr>
                                                 <th className="header-th"></th>
@@ -176,20 +260,23 @@ class EditLocal extends Component {
                                         </thead>
 
                                         <tbody>
-                                            {empleados.map((empleado, id) => {
-                                                return (
-                                                    <tr key={empleado.id}>
-                                                        <td className="checkbox-td">
-                                                            <label>
-                                                                <input type="checkbox" className="filled-in" />
-                                                                <span></span>
-                                                            </label>
-                                                        </td>
-                                                        <td>{empleado.id}</td>
-                                                        <td>{empleado.nombre}</td>
-                                                    </tr>
-                                                )
-                                            })}
+                                            {empleados.filter(emp => (typeof (emp.eliminado) === "undefined" || emp.eliminado === false))
+                                                .map((empleado, i) => {
+                                                    return (
+                                                        <tr key={empleado.id_usuario} className={`${!empleado.habilitado && ('grey lighten-2')}`}>
+                                                            <td className="checkbox-td">
+                                                                <label onClick={this.onChangeCheckboxEmploye.bind(this, empleado)}>
+                                                                    <input type="checkbox"
+                                                                        className="filled-in"
+                                                                        id={`check${empleado.id_usuario}`} />
+                                                                    <span></span>
+                                                                </label>
+                                                            </td>
+                                                            <td>{empleado.id_usuario}</td>
+                                                            <td>{empleado.nombre}</td>
+                                                        </tr>
+                                                    )
+                                                })}
                                         </tbody>
                                     </table>
                                 </div>
@@ -197,7 +284,7 @@ class EditLocal extends Component {
                         </div>
                     </div>
 
-                    <SearchUserModal />
+                    <SearchUserModal onSelectNewUser={this.onSelectNewUser} />
                 </main>
             </React.Fragment>
         )

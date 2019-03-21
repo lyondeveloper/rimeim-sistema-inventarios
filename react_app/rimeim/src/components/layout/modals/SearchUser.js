@@ -9,7 +9,8 @@ import {
 } from "../../../utils/MaterialFunctions"
 
 import {
-    getUsersByField
+    getUsersByField,
+    clearUsers
 } from "../../../actions/UserActions"
 
 class SearchUser extends Component {
@@ -26,6 +27,9 @@ class SearchUser extends Component {
     }
 
     onSelectUser = (user) => {
+        this.props.onSelectNewUser(user)
+        this.props.clearUsers()
+        this.setState({ usuario: "" })
         const currentModal = getModalInstanceById(this.state.modal_id)
         currentModal.close()
     }
@@ -82,7 +86,7 @@ class SearchUser extends Component {
                     {results}
                 </div>
                 <div className="modal-footer">
-                    <a href="#!" className="modal-close waves-effect waves-green btn-flat left">Cerrar</a>
+                    <a href="#!" className="btn-flat left" onClick={() => { this.onSelectUser(null) }}>Cerrar</a>
                 </div>
             </div>
         )
@@ -91,7 +95,9 @@ class SearchUser extends Component {
 
 SearchUser.propTypes = {
     user: PropTypes.object.isRequired,
-    getUsersByField: PropTypes.func.isRequired
+    getUsersByField: PropTypes.func.isRequired,
+    clearUsers: PropTypes.func.isRequired,
+    onSelectNewUser: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -99,5 +105,6 @@ const mapStateToProps = state => ({
 })
 
 export default connect(mapStateToProps, {
-    getUsersByField
+    getUsersByField,
+    clearUsers
 })(SearchUser)

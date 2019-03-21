@@ -80,8 +80,9 @@ create procedure proc_get_empleados_by_local(in p_id_local bigint)
 begin
 	if (valid_int_id(p_id_local)) then
 		select e.id,
-				u.nombre,
+                e.id_usuario,
 				e.id_usuario_creado_por,
+                u.nombre,
 				e.admin,
 				e.habilitado,
 				e.fecha_creado

@@ -1,10 +1,15 @@
 import React from 'react'
 
-export default function NewLocalWrapper() {
+export default function NewLocalWrapper(props) {
+    let onSave
+
+    if (props.obj.onSave) {
+        onSave = props.obj.onSave
+    }
     return (
         <div className="nav-wrapper">
             <a href="#!" className="brand-logo">
-                Nuevo local
+                {onSave !== null ? ('Actualizar local') : ('Nuevo local')}
             </a>
             <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
                 <i className="material-icons">menu</i>
@@ -12,7 +17,7 @@ export default function NewLocalWrapper() {
 
             <ul className="right">
                 <li>
-                    <a href="#!" className="modal-trigger">
+                    <a href="#!" onClick={onSave}>
                         <i className="material-icons">save</i>
                     </a>
                 </li>

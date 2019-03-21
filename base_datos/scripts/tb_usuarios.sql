@@ -344,10 +344,8 @@ begin
     if (is_empty(p_field) = false) then
 		select u.id,
 				u.nombre,
-				u.nombre_usuario,
 				u.admin,
-				u.habilitado,
-				u.primera_sesion
+				u.habilitado
         from tb_usuario u
         where u.nombre like concat('%',p_field,'%')
         or u.id like concat('%', p_field, '%')

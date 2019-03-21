@@ -57,7 +57,17 @@ export const getLocal = (id) => dispatch => {
 }
 
 export const updateLocal = (id, newLocal) => dispatch => {
-
+    axios.put(`/locals/update/${id}`, newLocal)
+        .then(res => {
+            const response = res.data
+            const decoded = getAuthTokenFromResponse(response)
+            dispatch(setCurrentUser(decoded))
+        })
+        .catch(err =>
+            dispatch({
+                type: GET_ERRORS,
+                payload: err.response.data.data
+            }))
 }
 
 export const localLoading = () => {
