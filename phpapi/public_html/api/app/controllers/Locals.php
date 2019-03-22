@@ -79,11 +79,14 @@
         public function update($id) {
             $this->usePutRequest();
             $data = $this->validate_update_data(getJsonData(), $id);
-            $success = $this->localModel->update($data);
-            if (!$success) {
-                $this->response(null, ERROR_PROCESS);
+            $successLocal = $this->localModel->update($data);
+            $successEmployes = $this->employeModel->update_by_local($data->empleados);
+            if (!$successLocal && !$successEmployes) {
+                $this->response(['error_process' => "No se pudo actualizar el local, es probable que no hubieran cambios para procesar"], 
+                                ERROR_PROCESS);
             }
             $updatedLocal = $this->localModel->get_by_id($id);
+            $updatedLocal->empleados = $this->employeModel->get_by_local($id);
             $this->response($updatedLocal);
         }
 
@@ -114,16 +117,32 @@
                     $errors['es_bodega_error'] = "Campo invalido";
                 }
                 if (!isset($data->latitud)) {
-                    $errors['latitud_error'] = "Campo invalido";
+                    $data->latitud = 0;
                 }
                 if (!isset($data->longitud)) {
-                    $errors['longitud_error'] = "Campo invalido";
+                    $data->longitud = 0;
+                }
+                if (isset($data->empleados)) {
+                    $data->empleados = $this->prepare_employes_to_update($id, $data->empleados);
+                } else {
+                    $data->empleados = [];
                 }
             }
 
             $this->checkErrors($errors);
             $data->id = $id;
             return $data;
+        }
+
+        private function prepare_employes_to_update($id_local, $empleados) {
+            foreach($empleados as &$empleado) {
+                $empleado->id_local = $id_local;
+                $empleado->id_usuario_creador = $this->get_current_user_id();
+                if(!isset($empleado->admin)) {
+                    $empleado->admin = false;
+                }
+            }
+            return $empleados;
         }
 
         public function delete($id) {

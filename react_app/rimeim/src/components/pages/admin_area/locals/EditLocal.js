@@ -30,6 +30,7 @@ import SearchUserModal from "../../../layout/modals/SearchUser"
 class EditLocal extends Component {
 
     state = {
+        loaded: false,
         codigo: "   ",
         nombre: "   ",
         color_hex: "    ",
@@ -37,7 +38,8 @@ class EditLocal extends Component {
         es_bodega: false,
         descripcion: "  ",
         current_action: "0",
-        empleados: []
+        empleados: [],
+        errors: {}
     }
 
     componentWillMount() {
@@ -50,11 +52,16 @@ class EditLocal extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.local.local &&
+        if (nextProps.errors) {
+            this.setState({ errors: nextProps.errors })
+        }
+        if (!this.state.loaded &&
+            nextProps.local.local &&
             !isEmpty(nextProps.local.local)) {
 
             const { local } = nextProps.local
             this.setState({
+                loaded: true,
                 codigo: local.codigo,
                 nombre: local.nombre,
                 color_hex: local.color_hex,
@@ -67,7 +74,22 @@ class EditLocal extends Component {
     }
 
     onSave = () => {
-
+        const { codigo, nombre,
+            color_hex, descripcion_ubicacion,
+            descripcion, empleados,
+            es_bodega } = this.state
+        const updatedLocal = {
+            codigo,
+            nombre,
+            descripcion,
+            descripcion_ubicacion,
+            color_hex,
+            es_bodega,
+            empleados
+        }
+        this.props.updateLocal(this.props.match.params.id,
+            updatedLocal,
+            this.props.history)
     }
 
     onChangeTextInput = e => {
@@ -85,15 +107,20 @@ class EditLocal extends Component {
     onSelectNewUser = (user) => {
         if (user) {
             const { empleados } = this.state
-            if (!empleados.find(empleado => empleado.id_usuario === user.id)) {
+            const empleado_existente = empleados.find(empleado => empleado.id_usuario === user.id)
+            if (!empleado_existente) {
                 empleados.push({
                     id: null,
                     new: true,
                     id_usuario: user.id,
                     nombre: user.nombre,
                     habilitado: true,
-                    eliminado: false
+                    eliminado: false,
+                    admin: false
                 })
+                this.setState({ empleados })
+            } else {
+                empleado_existente.eliminado = false
             }
         }
     }
@@ -140,10 +167,15 @@ class EditLocal extends Component {
         selecteds.forEach(empleado => {
             const index = empleados.indexOf(empleado)
             if (index !== null && index >= 0) {
-                empleados[index] = empleado
+                if (empleado.eliminado === true &&
+                    empleado.new === true) {
+                    empleados.splice(index, 1)
+                } else {
+                    empleados[index] = empleado
+                }
             }
         })
-        this.setState(empleados)
+        this.setState({ empleados })
     }
 
     render() {
@@ -293,12 +325,14 @@ class EditLocal extends Component {
 
 EditLocal.propTypes = {
     local: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
     getLocal: PropTypes.func.isRequired,
     updateLocal: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
-    local: state.local
+    local: state.local,
+    errors: state.errors
 })
 
 export default connect(mapStateToProps, {

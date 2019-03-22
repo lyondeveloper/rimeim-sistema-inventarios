@@ -55,3 +55,7 @@ export const getModalInstanceById = (id) => {
     const elem = document.getElementById(id)
     return M.Modal.getInstance(elem)
 }
+
+export const notificationError = (message) => {
+    M.toast({ html: message, classes: 'rounded  red darken-3' });
+}

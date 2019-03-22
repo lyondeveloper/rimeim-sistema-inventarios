@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+.disabled {
+    pointer-events:none;
+}
+
 /* Container */
 .small-container {
     padding-left: 1rem;

@@ -230,7 +230,6 @@
         public function search($field) {
             $this->useGetRequest();
             $this->private_route(CTR_ADMIN);
-            errorLog($field);
             $results = $this->userModel->search_user($field);
             $this->response($results);
         }

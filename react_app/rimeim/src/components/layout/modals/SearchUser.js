@@ -19,11 +19,18 @@ class SearchUser extends Component {
         modal_id: "modal_buscar_usuario",
         usuario: "",
         typing: false,
-        typingTimeout: 0
+        typingTimeout: 0,
+        searching: false
     }
 
     componentWillUnmount() {
-        console.log('Search user va a desaparecer')
+
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.user.users) {
+            this.setState({ searching: false })
+        }
     }
 
     onSelectUser = (user) => {
@@ -36,6 +43,7 @@ class SearchUser extends Component {
 
     onChangeTextInput = e => {
         if (this.state.typingTimeout) {
+            this.setState({ searching: true })
             clearTimeout(this.state.typingTimeout);
         }
 
@@ -49,11 +57,11 @@ class SearchUser extends Component {
     }
 
     render() {
-        const { usuario } = this.state
+        const { usuario, searching } = this.state
         const { users } = this.props.user
         let results
 
-        if (users.length === 0) {
+        if (searching) {
             results = <Spinner fullWidth />
         } else {
             results = (

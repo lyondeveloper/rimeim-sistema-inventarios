@@ -73,6 +73,19 @@
             return $this->db->success();
         }
 
+        public function update_by_local($empleados) {
+            foreach($empleados as $empleado) {
+                if (isset($empleado->new) && $empleado->new) {
+                    $this->add($empleado);
+                } elseif(isset($empleado->eliminado) && $empleado->eliminado) {
+                    $this->delete($empleado->id, $empleado->id_usuario_creador);
+                } else {
+                    $this->update($empleado);
+                }
+            }
+            return true;
+        }
+
         public function delete($id, $id_usuario_eliminado_por) {
             $this->db->query('call proc_delete_empleado_by_id(:p_id, :p_id_usuario_eliminado_por);');
             $this->db->bind(':p_id', $id);

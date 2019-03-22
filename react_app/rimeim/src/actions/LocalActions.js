@@ -4,12 +4,12 @@ import axios from "axios"
 import {
     GET_LOCALS,
     GET_LOCAL,
-    GET_ERRORS,
     LOCAL_LOADING
 } from "./types"
 
 import {
-    clearErrors
+    clearErrors,
+    handleError
 } from "./errorActions"
 
 import {
@@ -30,11 +30,7 @@ export const getLocals = () => dispatch => {
                 payload: response.data
             })
         })
-        .catch(err =>
-            dispatch({
-                type: GET_ERRORS,
-                payload: err.response.data.data
-            }))
+        .catch(err => handleError(err, dispatch))
 }
 
 export const getLocal = (id) => dispatch => {
@@ -49,25 +45,24 @@ export const getLocal = (id) => dispatch => {
                 payload: response.data
             })
         })
-        .catch(err =>
-            dispatch({
-                type: GET_ERRORS,
-                payload: err.response.data.data
-            }))
+        .catch(err => handleError(err, dispatch))
 }
 
-export const updateLocal = (id, newLocal) => dispatch => {
+export const updateLocal = (id, newLocal, history) => dispatch => {
+    dispatch(clearErrors())
+    dispatch(localLoading())
     axios.put(`/locals/update/${id}`, newLocal)
         .then(res => {
             const response = res.data
             const decoded = getAuthTokenFromResponse(response)
             dispatch(setCurrentUser(decoded))
-        })
-        .catch(err =>
             dispatch({
-                type: GET_ERRORS,
-                payload: err.response.data.data
-            }))
+                type: GET_LOCAL,
+                payload: response.data
+            })
+            history.push(`/admin/locales/${id}`)
+        })
+        .catch(err => handleError(err, dispatch))
 }
 
 export const localLoading = () => {

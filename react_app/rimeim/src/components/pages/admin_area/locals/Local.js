@@ -54,7 +54,9 @@ class Local extends Component {
                                     </tr>
                                     <tr>
                                         <td>Color</td>
-                                        <td></td>
+                                        <td>
+                                            <div className="circle-local" style={{backgroundColor: local.color_hex}}></div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Ubicacion</td>
