@@ -12,8 +12,11 @@ import {
 } from "../../../../utils/MaterialFunctions"
 
 import {
-    getLocal
+    getLocal,
+    deleteLocal
 } from "../../../../actions/LocalActions"
+
+import ConfirmationModal from "../../../layout/modals/ConfirmationModal"
 
 class Local extends Component {
 
@@ -24,6 +27,10 @@ class Local extends Component {
 
     componentDidMount() {
         configMaterialComponents()
+    }
+
+    onConfirmDeleteLocal = () => {
+        this.props.deleteLocal(this.props.match.params.id)
     }
 
     render() {
@@ -55,7 +62,7 @@ class Local extends Component {
                                     <tr>
                                         <td>Color</td>
                                         <td>
-                                            <div className="circle-local" style={{backgroundColor: local.color_hex}}></div>
+                                            <div className="circle-local" style={{ backgroundColor: local.color_hex }}></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -89,19 +96,21 @@ class Local extends Component {
                                 </thead>
 
                                 <tbody>
-                                    {local.empleados && local.empleados.map((empleado, i) => {
-                                        return (
-                                            <tr key={empleado.id} className={`${!empleado.habilitado && ('grey lighten-2')}`}>
-                                                <td>{empleado.id}</td>
-                                                <td>{empleado.nombre}</td>
-                                                <td>{empleado.admin ? ("Si") : ("No")}</td>
-                                            </tr>
-                                        )
-                                    })}
+                                    {local.empleados && local.empleados.map(empleado =>
+                                        <tr key={empleado.id} className={`${!empleado.habilitado && ('grey lighten-2')}`}>
+                                            <td>{empleado.id}</td>
+                                            <td>{empleado.nombre}</td>
+                                            <td>{empleado.admin ? ("Si") : ("No")}</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
+                    <button className="modal-trigger btn red darken-2 mt-2" data-target="modal_confirmar_evento">
+                        Eliminar
+                    </button>
                 </div>
             )
         }
@@ -116,6 +125,12 @@ class Local extends Component {
                         {localContent}
                     </div>
                 </main>
+
+                <ConfirmationModal
+                    title="Eliminar este local"
+                    message="Si confirma esta accion no podra seguir utilizando este local"
+                    onAccept={this.onConfirmDeleteLocal} />
+
             </React.Fragment>
         )
     }
@@ -123,7 +138,8 @@ class Local extends Component {
 
 Local.propTypes = {
     local: PropTypes.object.isRequired,
-    getLocal: PropTypes.func.isRequired
+    getLocal: PropTypes.func.isRequired,
+    deleteLocal: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -131,5 +147,6 @@ const mapStateToProps = state => ({
 })
 
 export default connect(mapStateToProps, {
-    getLocal
+    getLocal,
+    deleteLocal
 })(Local)

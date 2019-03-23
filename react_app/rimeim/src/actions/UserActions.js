@@ -13,12 +13,16 @@ import {
 
 import isEmpty from './isEmpty';
 
+export const configUserFromResponse = (response, dispatch) => {
+    const decoded = getAuthTokenFromResponse(response)
+    dispatch(setCurrentUser(decoded))
+}
+
 export const loginUser = data => dispatch => {
     axios.post('/users/login', data)
         .then(res => {
             const response = res.data
-            const decoded = getAuthTokenFromResponse(response)
-            dispatch(setCurrentUser(decoded))
+            configUserFromResponse(response, dispatch)
         })
         .catch(err =>
             dispatch({
@@ -31,8 +35,7 @@ export const getLocalsForCurrentUser = () => dispatch => {
     axios.get('/users/get_locals')
         .then(res => {
             const response = res.data
-            const decoded = getAuthTokenFromResponse(response)
-            dispatch(setCurrentUser(decoded))
+            configUserFromResponse(response, dispatch)
             dispatch(setLocals(response.data))
         })
         .catch(err => {
@@ -66,8 +69,7 @@ export const getUsersByField = (field) => dispatch => {
     axios.get(`/users/search/${field}`)
         .then(res => {
             const response = res.data
-            const decoded = getAuthTokenFromResponse(response)
-            dispatch(setCurrentUser(decoded))
+            configUserFromResponse(response, dispatch)
             dispatch(setUsers(response.data))
         })
         .catch(err =>

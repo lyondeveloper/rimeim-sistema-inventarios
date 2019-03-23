@@ -1,9 +1,9 @@
 import React from 'react'
 
 export default function NewLocalWrapper(props) {
-    let onSave
+    var onSave = null
 
-    if (props.obj.onSave) {
+    if (props.obj && props.obj.onSave) {
         onSave = props.obj.onSave
     }
     return (

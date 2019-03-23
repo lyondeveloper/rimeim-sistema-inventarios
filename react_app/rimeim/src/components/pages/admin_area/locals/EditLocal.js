@@ -293,22 +293,21 @@ class EditLocal extends Component {
 
                                         <tbody>
                                             {empleados.filter(emp => (typeof (emp.eliminado) === "undefined" || emp.eliminado === false))
-                                                .map((empleado, i) => {
-                                                    return (
-                                                        <tr key={empleado.id_usuario} className={`${!empleado.habilitado && ('grey lighten-2')}`}>
-                                                            <td className="checkbox-td">
-                                                                <label onClick={this.onChangeCheckboxEmploye.bind(this, empleado)}>
-                                                                    <input type="checkbox"
-                                                                        className="filled-in"
-                                                                        id={`check${empleado.id_usuario}`} />
-                                                                    <span></span>
-                                                                </label>
-                                                            </td>
-                                                            <td>{empleado.id_usuario}</td>
-                                                            <td>{empleado.nombre}</td>
-                                                        </tr>
-                                                    )
-                                                })}
+                                                .map(empleado =>
+                                                    <tr key={empleado.id_usuario} className={`${!empleado.habilitado && ('grey lighten-2')}`}>
+                                                        <td className="checkbox-td">
+                                                            <label onClick={this.onChangeCheckboxEmploye.bind(this, empleado)}>
+                                                                <input type="checkbox"
+                                                                    className="filled-in"
+                                                                    id={`check${empleado.id_usuario}`} />
+                                                                <span></span>
+                                                            </label>
+                                                        </td>
+                                                        <td>{empleado.id_usuario}</td>
+                                                        <td>{empleado.nombre}</td>
+                                                    </tr>
+                                                )
+                                            }
                                         </tbody>
                                     </table>
                                 </div>

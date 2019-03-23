@@ -13,8 +13,7 @@ import {
 } from "./errorActions"
 
 import {
-    getAuthTokenFromResponse,
-    setCurrentUser
+    configUserFromResponse
 } from "./UserActions"
 
 export const getLocals = () => dispatch => {
@@ -23,8 +22,7 @@ export const getLocals = () => dispatch => {
     axios.get('/locals')
         .then(res => {
             const response = res.data
-            const decoded = getAuthTokenFromResponse(response)
-            dispatch(setCurrentUser(decoded))
+            configUserFromResponse(response, dispatch)
             dispatch({
                 type: GET_LOCALS,
                 payload: response.data
@@ -38,8 +36,7 @@ export const getLocal = (id) => dispatch => {
     axios.get(`/locals/get_one/${id}`)
         .then(res => {
             const response = res.data
-            const decoded = getAuthTokenFromResponse(response)
-            dispatch(setCurrentUser(decoded))
+            configUserFromResponse(response, dispatch)
             dispatch({
                 type: GET_LOCAL,
                 payload: response.data
@@ -54,13 +51,23 @@ export const updateLocal = (id, newLocal, history) => dispatch => {
     axios.put(`/locals/update/${id}`, newLocal)
         .then(res => {
             const response = res.data
-            const decoded = getAuthTokenFromResponse(response)
-            dispatch(setCurrentUser(decoded))
+            configUserFromResponse(response, dispatch)
             dispatch({
                 type: GET_LOCAL,
                 payload: response.data
             })
             history.push(`/admin/locales/${id}`)
+        })
+        .catch(err => handleError(err, dispatch))
+}
+
+export const deleteLocal = (id, history) => dispatch => {
+    dispatch(clearErrors())
+    axios.delete(`/locals/delete/${id}`)
+        .then(res => {
+            const response = res.data
+            configUserFromResponse(response, dispatch)
+            history.push('/admin/locales')
         })
         .catch(err => handleError(err, dispatch))
 }

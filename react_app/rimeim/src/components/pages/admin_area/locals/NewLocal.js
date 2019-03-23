@@ -14,7 +14,6 @@ import SearchUserModal from "../../../layout/modals/SearchUser"
 import TextInputField from "../../../common/TextInputField"
 import TextAreaInputField from "../../../common/TextAreaInputField"
 import CheckInputField from "../../../common/CheckInputField"
-// import SelectSingleImage from "../../../common/SelectSingleImage"
 import ColorFieldInput from "../../../common/ColorFieldInput"
 
 class NewLocal extends Component {
@@ -25,8 +24,6 @@ class NewLocal extends Component {
         nombre: "",
         color_hex: "",
         ubicacion: "",
-        latitud: "0",
-        longitud: "0",
         es_bodega: false,
         descripcion: "",
         empleados: []
@@ -40,14 +37,6 @@ class NewLocal extends Component {
         configMaterialComponents()
     }
 
-    // onChangeFileInput = e => {
-    //     var newFile = null
-    //     if (e.files && e.files[0]) {
-    //         newFile = e.files[0]
-    //     }
-    //     this.setState({ [e.getAttribute('name')]: newFile });
-    // }
-
     onChangeTextInput = e => {
         if (e.target.name === "es_bodega") {
             const value = this.state.es_bodega ? false : true
@@ -56,10 +45,13 @@ class NewLocal extends Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
+    onSelectNewUser = (user) => {
+
+    }
+
     render() {
         const {
-            codigo, nombre, color_hex, ubicacion,
-            latitud, longitud, es_bodega, descripcion, empleados } = this.state
+            codigo, nombre, color_hex, ubicacion, es_bodega, descripcion, empleados } = this.state
         return (
             <React.Fragment>
                 <NavbarAdmin navtype={ADMIN_EDIT_LOCAL} />
@@ -71,14 +63,6 @@ class NewLocal extends Component {
                                 <div className="card-content">
                                     <h5>Datos del local</h5>
                                     <form action="">
-                                        {/* <div className="row">
-                                            <SelectSingleImage
-                                                label="Seleccionar imagen"
-                                                img_id="img_local"
-                                                id="imagen"
-                                                onchange={this.onChangeFileInput}
-                                            />
-                                        </div> */}
                                         <div className="row">
                                             <TextInputField input_size="s12 m6"
                                                 id="codigo"
@@ -106,24 +90,6 @@ class NewLocal extends Component {
                                                 id="ubicacion"
                                                 label="Ubicacion"
                                                 value={ubicacion}
-                                                onchange={this.onChangeTextInput} />
-                                        </div>
-
-                                        <div className="row">
-                                            <TextInputField
-                                                input_size="s12 m6"
-                                                id="latitud"
-                                                type="number"
-                                                label="Latitud"
-                                                value={latitud}
-                                                onchange={this.onChangeTextInput} />
-
-                                            <TextInputField
-                                                input_size="s12 m6"
-                                                id="longitud"
-                                                type="number"
-                                                label="Longitud"
-                                                value={longitud}
                                                 onchange={this.onChangeTextInput} />
                                         </div>
 
@@ -184,14 +150,14 @@ class NewLocal extends Component {
                                         <tbody>
                                             {empleados.map((empleado, id) => {
                                                 return (
-                                                    <tr key={empleado.id}>
+                                                    <tr key={empleado.id_usuario}>
                                                         <td class="checkbox-td">
                                                             <label>
                                                                 <input type="checkbox" class="filled-in" />
                                                                 <span></span>
                                                             </label>
                                                         </td>
-                                                        <td>{empleado.id}</td>
+                                                        <td>{empleado.id_usuario}</td>
                                                         <td>{empleado.nombre}</td>
                                                     </tr>
                                                 )
@@ -204,7 +170,7 @@ class NewLocal extends Component {
                     </div>
                 </main>
 
-                <SearchUserModal />
+                <SearchUserModal onSelectNewUser={this.onSelectNewUser} />
             </React.Fragment>
         )
     }

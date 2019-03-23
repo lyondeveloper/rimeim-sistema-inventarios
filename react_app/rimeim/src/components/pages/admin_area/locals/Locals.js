@@ -39,13 +39,11 @@ class Locals extends Component {
                         {loading ? (
                             <Spinner fullWidth />
                         ) : (
-                                locals.map((local, i) => {
-                                    return (
-                                        <div className="col s12 m6 l4" key={local.id}>
-                                            <LocalCard local={local} />
-                                        </div>
-                                    )
-                                })
+                                locals.map(local =>
+                                    <div className="col s12 m6 l4" key={local.id}>
+                                        <LocalCard local={local} />
+                                    </div>
+                                )
                             )}
                     </div>
                 </main>
