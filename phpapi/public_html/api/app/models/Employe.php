@@ -73,6 +73,12 @@
             return $this->db->success();
         }
 
+        public function add_by_local($empleados) {
+            foreach($empleados as $empleado) {
+                $this->add($empleado);
+            }
+        }
+
         public function update_by_local($empleados) {
             foreach($empleados as $empleado) {
                 if (isset($empleado->new) && $empleado->new) {

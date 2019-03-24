@@ -5,7 +5,7 @@ export default function LocalsMobile() {
     return (
         <ul id="dropdown_more" className="dropdown-content">
             <li>
-                <Link to="/admin/locales/nuevo">
+                <Link to="/admin/nuevo_local">
                     <i className="material-icons">add</i>
                 </Link>
             </li>

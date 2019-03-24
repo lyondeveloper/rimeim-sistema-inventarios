@@ -32,6 +32,7 @@ export const getLocals = () => dispatch => {
 }
 
 export const getLocal = (id) => dispatch => {
+    dispatch(clearErrors())
     dispatch(localLoading())
     axios.get(`/locals/get_one/${id}`)
         .then(res => {
@@ -41,6 +42,17 @@ export const getLocal = (id) => dispatch => {
                 type: GET_LOCAL,
                 payload: response.data
             })
+        })
+        .catch(err => handleError(err, dispatch))
+}
+
+export const saveNewLocal = (newLocalData, history) => dispatch => {
+    dispatch(clearErrors())
+    axios.post('/locals/add', newLocalData)
+        .then(res => {
+            const response = res.data
+            configUserFromResponse(response, dispatch)
+            history.push(`/admin/locales/${response.data.id}`)
         })
         .catch(err => handleError(err, dispatch))
 }

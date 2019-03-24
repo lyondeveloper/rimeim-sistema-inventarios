@@ -30,7 +30,7 @@ class Local extends Component {
     }
 
     onConfirmDeleteLocal = () => {
-        this.props.deleteLocal(this.props.match.params.id)
+        this.props.deleteLocal(this.props.match.params.id, this.props.history)
     }
 
     render() {

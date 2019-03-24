@@ -38,6 +38,11 @@
 
             $newId = $this->localModel->add($data);
             $this->checkNewId($newId);
+            if (isset($data->empleados)) {
+                $data->empleados = $this->prepare_employes_to_add_or_update($newId, $data->empleados);
+                $this->employeModel->add_by_local($data->empleados);
+            }
+            
             $newLocal = $this->localModel->get_by_id($newId);
             $this->response($newLocal);
         }
@@ -52,14 +57,14 @@
                     empty($data->nombre)) {
                     $errors['nombre_error'] = "Nombre invalido";
                 }
-                if (isset($data->codigo) || 
+                if (isset($data->codigo) && 
                     !empty($data->codigo)) {
                     $exists = $this->localModel->exists_with_code($data->codigo);
                     if ($exists) {
                         $errors['codigo_error'] = "El codigo ya se encuentra en uso";
                     }
                 } else {
-                    $data->codigo = null;
+                    $errors['codigo_error'] = "Campo requerido";
                 }
 
                 $data = json_set_null_params_if_not_exists($data, ['descripcion', 
@@ -123,7 +128,7 @@
                     $data->longitud = 0;
                 }
                 if (isset($data->empleados)) {
-                    $data->empleados = $this->prepare_employes_to_update($id, $data->empleados);
+                    $data->empleados = $this->prepare_employes_to_add_or_update($id, $data->empleados);
                 } else {
                     $data->empleados = [];
                 }
@@ -134,7 +139,7 @@
             return $data;
         }
 
-        private function prepare_employes_to_update($id_local, $empleados) {
+        private function prepare_employes_to_add_or_update($id_local, $empleados) {
             foreach($empleados as &$empleado) {
                 $empleado->id_local = $id_local;
                 $empleado->id_usuario_creador = $this->get_current_user_id();

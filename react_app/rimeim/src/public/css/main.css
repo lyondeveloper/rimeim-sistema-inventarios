@@ -2,6 +2,10 @@
     pointer-events:none;
 }
 
+.text-danger {
+    color: #d32f2f !important;
+}
+
 /* Container */
 .small-container {
     padding-left: 1rem;

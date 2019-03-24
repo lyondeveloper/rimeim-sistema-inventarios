@@ -13,7 +13,7 @@ export default function LocalsWrapper() {
 
             <ul className="right hide-on-small-only">
                 <li>
-                    <Link to="/admin/locales/nuevo">
+                    <Link to="/admin/nuevo_local">
                         <i className="material-icons">add</i>
                     </Link>
                 </li>

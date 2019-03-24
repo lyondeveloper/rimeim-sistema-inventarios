@@ -189,7 +189,7 @@ class App extends Component {
               <PrivateRoute exact path="/admin/locales/editar/:id" component={AdminEditLocal} isAdminRoute={true} />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/admin/locales/nuevo" component={AdminNewLocal} isAdminRoute={true} />
+              <PrivateRoute exact path="/admin/nuevo_local" component={AdminNewLocal} isAdminRoute={true} />
             </Switch>
 
 
