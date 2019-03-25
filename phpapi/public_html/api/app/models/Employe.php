@@ -27,7 +27,7 @@
 
         public function get() {
             $this->db->query('call proc_get_empleados();');
-            return $this->db->resultSet();
+            return convert_to_bool_values($this->db->resultSet(), ['admin', 'habilitado']);
         }
 
         public function get_locals_for_employe_by_userid($id) {
@@ -51,7 +51,7 @@
         public function get_by_user_id($id) {
             $this->db->query('call proc_get_empleado_by_user_id(:p_id);');
             $this->db->bind(':p_id', $id);
-            return $this->db->single();
+            return convert_to_bool_values($this->db->resultSet(), ['admin', 'habilitado']);
         }
 
         public function add($params) {

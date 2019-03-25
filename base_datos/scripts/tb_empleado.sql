@@ -56,7 +56,9 @@ begin
 	return @response;
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists `proc_get_empleados`;
 delimiter $$
 create procedure proc_get_empleados()
@@ -74,6 +76,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop procedure if exists `proc_get_empleados_by_local`;
 delimiter $$
 create procedure proc_get_empleados_by_local(in p_id_local bigint)
@@ -94,6 +97,8 @@ begin
 	
 end $$
 delimiter ;
+*/
+
 
 /*
 drop procedure if exists `proc_get_empleado_by_id`;

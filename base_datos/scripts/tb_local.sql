@@ -77,7 +77,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists proc_get_local_by_id;
 delimiter $$
 create procedure proc_get_local_by_id(in p_id bigint)
@@ -101,7 +101,7 @@ begin
             
 end $$
 delimiter ;
-
+*/
 
 /*drop procedure if exists proc_add_local;
 delimiter $$
@@ -194,7 +194,7 @@ end $$
 delimiter ;
 */
 
-/*
+
 drop procedure if exists `proc_delete_local_by_id`;
 delimiter $$
 create procedure proc_delete_local_by_id(in p_id bigint,
@@ -207,9 +207,15 @@ begin
 			fecha_eliminado = current_timestamp(),
             id_usuario_eliminado_por = p_id_usuario
 		where id = p_id;
+        
+        update tb_empleado 
+        set eliminado = true,
+			fecha_eliminado = current_timestamp()
+		where id_local = p_id;
+        
     end if;
 end $$
 delimiter ;
-*/
+
 
 

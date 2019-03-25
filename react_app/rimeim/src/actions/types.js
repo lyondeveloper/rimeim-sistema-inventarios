@@ -10,6 +10,11 @@ export const LOCAL_LOADING = 'LOCAL_LOADING'
 export const GET_LOCALS = 'GET_LOCALS'
 export const GET_LOCAL = 'GET_LOCAL'
 
+// Employes
+export const EMPLOYE_LOADING = 'EMPLOYE_LOADING'
+export const GET_EMPLOYE = 'GET_EMPLOYE'
+export const GET_EMPLOYES = 'GET_EMPLOYES'
+
 // Error
 export const GET_ERRORS = 'GET_ERRORS'
 export const CLEAR_ERRORS = 'CLEAR_ERRORS'

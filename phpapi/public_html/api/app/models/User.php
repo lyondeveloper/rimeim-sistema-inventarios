@@ -67,6 +67,12 @@
             return $this->db->resultSet();
         }
 
+        public function get_by_id($id) {
+            $this->db->query('call proc_get_usuario_by_id(:p_id);');
+            $this->db->bind(':p_id', $id);
+            return convert_to_bool_values($this->db->single(), ['habilitado', 'admin']);
+        }
+
         public function add_user($params) {
             $this->db->query('call proc_add_usuario(:p_nombre,:p_nombre_usuario,:p_correo,:p_clave,:p_admin,:p_id_usuario_agregado_por);');
             $this->db->bind(':p_nombre', $params->nombre);

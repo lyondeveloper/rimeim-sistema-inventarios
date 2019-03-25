@@ -123,6 +123,28 @@ delimiter ;
 */
 
 /*
+drop procedure if exists proc_get_usuario_by_id;
+delimiter $$
+create procedure proc_get_usuario_by_id(in p_id bigint)
+begin
+	if (valid_int_id(p_id)) then 
+		select u.id,
+				u.nombre,
+				u.nombre_usuario,
+				u.admin,
+				u.habilitado,
+                u.fecha_creado
+		from tb_usuario u where
+			u.eliminado = false
+			and u.id = p_id;
+    end if;
+    
+end $$
+delimiter ;
+*/
+
+
+/*
 drop procedure if exists `proc_get_usuarios`;
 delimiter $$
 create procedure proc_get_usuarios()
@@ -229,12 +251,18 @@ begin
 
     if (valid_int_id(p_id) and 
 		valid_int_id(p_id_usuario_eliminado_por)) then
-        UPDATE `db_rimeim`.`tb_usuario` SET
+        UPDATE tb_usuario SET
 		`id_usuario_eliminado_por` = p_id_usuario_eliminado_por,
 		`habilitado` = false,
 		`eliminado` = true,
 		`fecha_eliminado` = current_timestamp()
 		WHERE `id` = p_id;
+        
+        update tb_empleado 
+        set eliminado = true,
+			id_usuario_eliminado_por = p_id_usuario_eliminado_por,
+			fecha_eliminado = current_timestamp()
+		where id_usuario = p_id;
 		
     end if;
 end $$
@@ -334,7 +362,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists proc_search_user;
 delimiter $$
 create procedure proc_search_user(in p_field varchar(255))
@@ -354,4 +382,4 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/

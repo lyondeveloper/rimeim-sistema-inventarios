@@ -62,6 +62,8 @@ import AdminLocals from "./components/pages/admin_area/locals/Locals"
 import AdminNewLocal from "./components/pages/admin_area/locals/NewLocal"
 import AdminEditLocal from "./components/pages/admin_area/locals/EditLocal"
 
+import AdminEmployes from "./components/pages/admin_area/employes/Employes"
+
 // Custom components
 import PrivateRoute from "./components/common/PrivateRoute"
 
@@ -190,6 +192,11 @@ class App extends Component {
             </Switch>
             <Switch>
               <PrivateRoute exact path="/admin/nuevo_local" component={AdminNewLocal} isAdminRoute={true} />
+            </Switch>
+
+            {/* Employes */}
+            <Switch>
+              <PrivateRoute exact path="/admin/empleados" component={AdminEmployes} isAdminRoute={true} />
             </Switch>
 
 

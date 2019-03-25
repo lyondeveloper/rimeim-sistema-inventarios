@@ -22,8 +22,7 @@
 
             $this->response([
                     'token' => $new_token, 
-                    'primera_sesion' => $user->primera_sesion,
-                    'user' => $user
+                    'primera_sesion' => $user->primera_sesion
                 ]);
         }
 

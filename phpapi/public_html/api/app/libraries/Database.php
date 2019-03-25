@@ -81,6 +81,7 @@
              $results = null;
              if ($this->execute()) {
                 $results = $this->stmt->fetchAll(PDO::FETCH_OBJ);
+                $this->stmt->closeCursor();
              }
              return is_null($results) ? [] : $results;
          }

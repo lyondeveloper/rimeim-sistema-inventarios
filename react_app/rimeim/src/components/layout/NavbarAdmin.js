@@ -13,7 +13,6 @@ import {
     ADMIN_EDIT_LOCAL,
 
     ADMIN_EMPLOYES,
-    ADMIN_EDIT_EMPLOYE,
     ADMIN_EMPLOYE,
 
     ADMIN_USER,
@@ -31,6 +30,10 @@ import LocalsMobile from "./admin_mobilemenu/LocalsMobile"
 import LocalsWrapper from "./admin_topnav/LocalsWrapper"
 import NewLocalWrapper from "./admin_topnav/NewLocalWrapper"
 import LocalWrapper from "./admin_topnav/LocalWrapper"
+
+// Employe
+import EmployesWrapper from "./admin_topnav/EmployesWrapper"
+import EmployeWrapper from "./admin_topnav/EmployeWrapper"
 
 // Functions
 import {
@@ -72,10 +75,11 @@ class NavbarAdmin extends Component {
                 break
 
             case ADMIN_EMPLOYES:
+                NavWrapper = EmployesWrapper
                 break
-            case ADMIN_EDIT_EMPLOYE:
-                break
+
             case ADMIN_EMPLOYE:
+                NavWrapper = EmployeWrapper
                 break
 
             case ADMIN_USER:

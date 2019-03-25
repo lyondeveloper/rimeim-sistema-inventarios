@@ -164,8 +164,7 @@
             $headers = apache_request_headers();
             $token_header = isset($headers['Authorization']) ? $headers['Authorization'] : null;
             $token_header = (is_null($token_header) && isset($headers['authorization']))
-                             ? $headers['authorization'] : null;
-
+                             ? $headers['authorization'] : $token_header;
             if (!is_null($token_header)) {
                 $matches = [];
                 if (preg_match('/' . KEY_BEARER . '\s(\S+)/', $token_header, $matches)) {
