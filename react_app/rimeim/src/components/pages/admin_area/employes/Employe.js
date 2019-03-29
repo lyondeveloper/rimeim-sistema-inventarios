@@ -7,7 +7,8 @@ import Navbar from "../../../layout/Navbar"
 
 import {
     configMaterialComponents,
-    removeMaterialComponents
+    removeMaterialComponents,
+    getModalInstanceById
 } from "../../../../utils/MaterialFunctions"
 
 import {
@@ -16,12 +17,14 @@ import {
 
 import Spinner from "../../../common/Spinner"
 import EmployeLocal from "../../../common/EmployeLocal"
+import EmployeUpdateRegisterModal from "../../../layout/modals/EmployeUpdateRegisterModal"
 
 class Employe extends Component {
 
     state = {
         employe: {},
-        errors: {}
+        errors: {},
+        edited_register: {}
     }
 
     componentWillMount() {
@@ -31,6 +34,16 @@ class Employe extends Component {
     componentDidMount() {
         configMaterialComponents()
         this.props.getEmployeById(this.props.match.params.id)
+    }
+
+    handleShowModal = (show) => {
+        const modal = getModalInstanceById('modal_editar_empleado_registro')
+        console.log("Hola mundo")
+        if (show) {
+            modal.open()
+        } else {
+            modal.close()
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -52,7 +65,18 @@ class Employe extends Component {
     }
 
     onEditEmployeRegister = (id) => {
+        const index = this.state.employe.registros.findIndex(r => r.id === id)
+        if (index >= 0) {
+            this.setState({
+                edited_register: this.state.employe.registros[index]
+            })
+            this.handleShowModal(true)
+        }
+    }
 
+    onConfirmUpdateEmploye = (newRegister) => {
+        this.handleShowModal(false)
+        console.log(newRegister)
     }
 
     onDeleteEmployeRegister = (id) => {
@@ -72,7 +96,7 @@ class Employe extends Component {
 
     render() {
         const { loading } = this.props.employe
-        const { employe } = this.state
+        const { employe, edited_register } = this.state
         let employeData
 
         if (loading) {
@@ -139,33 +163,10 @@ class Employe extends Component {
                     </div>
                 </main>
 
-                <div id="modal_editar_empleado" className="modal">
-                    <div className="modal-content">
-                        <h5>Editar empleado en el local: Local</h5>
-                        <div className="row">
-                            <div className="col s12">
-                                <label>
-                                    <input type="checkbox" className="filled-in" checked="checked" />
-                                    <span>Habilitado</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col s12">
-                                <label>
-                                    <input type="checkbox" className="filled-in" checked="checked" />
-                                    <span>Admin</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="modal-footer">
-                        <a href="#!" className="modal-close btn-flat left">Cerrar</a>
-                        <button type="button" className="btn">
-                            Aceptar
-                        </button>
-                    </div>
-                </div>
+                <EmployeUpdateRegisterModal
+                    registro={edited_register}
+                    onUpdateEmployeRegister={this.onConfirmUpdateEmploye}
+                />
             </React.Fragment>
         )
     }
