@@ -21,6 +21,7 @@ begin
                 p.id_archivo,
                 p.principal,
                 p.fecha_creado
+        from tb_producto_imagenes
         where p.id_producto = p_id_producto
         and p.eliminado = false;
     end if;

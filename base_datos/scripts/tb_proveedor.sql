@@ -32,7 +32,7 @@ delimiter ;
 
 drop procedure if exists `proc_get_proveedor_by_id`;
 delimiter $$
-create procedure proc_get_proveedore_by_id(in p_id bigint)
+create procedure proc_get_proveedor_by_id(in p_id bigint)
 begin
     if (valid_int_id(p_id)) then
         select p.id,
@@ -52,7 +52,7 @@ delimiter ;
 
 drop procedure if exists `proc_get_proveedor_by_rtn`;
 delimiter $$
-create procedure proc_get_proveedore_by_rtn(in p_rtn varchar(100))
+create procedure proc_get_proveedor_by_rtn(in p_rtn varchar(100))
 begin
     set p_rtn = remove_spaces(p_rtn);
     if (!is_empty(p_rtn)) then

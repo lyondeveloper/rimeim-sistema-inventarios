@@ -16,7 +16,7 @@ drop procedure if exists `proc_get_pedido_productos_by_pedido`;
 delimiter $$
 create procedure proc_get_pedido_productos_by_pedido(in p_id_pedido bigint )
 begin
-    if (valid_int_id(p_id_pedido)) begin
+    if (valid_int_id(p_id_pedido)) then
         select p.id,
                 p.id_producto,
                 p.cantidad,
@@ -24,8 +24,8 @@ begin
         from tb_pedido_producto p 
         where p.eliminado = false;
     end if;
-delimiter ;
 end $$
+delimiter ;
 
 drop procedure if exists `proc_add_pedido_producto`;
 delimiter $$
@@ -58,7 +58,7 @@ delimiter ;
 drop procedure if exists `proc_update_pedido_producto_by_id`;
 delimiter $$
 create procedure proc_update_pedido_producto_by_id(in p_id bigint,
-                                                    in p_cantidad)
+                                                    in p_cantidad int(11))
 begin
     if (valid_int_id(p_id)) then
         update tb_pedido_producto

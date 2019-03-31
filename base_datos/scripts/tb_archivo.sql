@@ -1,5 +1,5 @@
 
-/*
+
 drop function if exists func_get_next_archivo_id;
 delimiter $$
 create function func_get_next_archivo_id()
@@ -13,9 +13,9 @@ begin
     return @new_id;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_get_archivos`;
 delimiter $$
 create procedure proc_get_archivos()
@@ -29,9 +29,9 @@ begin
     order by a.fecha_creado desc;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists func_get_archivo_by_id;
 delimiter $$
 create procedure func_get_archivo_by_id(in p_id bigint)
@@ -45,9 +45,9 @@ begin
     and a.id = p_id;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_get_archivo_by_url`;
 delimiter $$
 create procedure proc_get_archivo_by_url(in p_url text)
@@ -62,9 +62,9 @@ begin
     and a.url = p_url;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_add_archivo`;
 delimiter $$
 create procedure proc_add_archivo(in p_id_usuario_creador bigint,
@@ -95,9 +95,9 @@ begin
 	select @new_id as 'id';
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists proc_delete_archivo_by_id;
 delimiter $$
 create procedure proc_delete_archivo_by_id(in p_id bigint)
@@ -110,7 +110,7 @@ begin
     end if;
 end $$
 delimiter ;
-*/
+
 
 
 

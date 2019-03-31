@@ -32,7 +32,7 @@ delimiter ;
 
 drop procedure if exists `proc_get_pedido_solicitud_by_pedido`;
 delimiter $$
-create procedure if exists proc_get_pedido_solicitud_by_pedido(in p_id_pedido bigint)
+create procedure proc_get_pedido_solicitud_by_pedido(in p_id_pedido bigint)
 begin
     if (valid_int_id(p_id_pedido)) then
         select p.id,

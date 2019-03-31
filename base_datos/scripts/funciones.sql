@@ -1,6 +1,6 @@
 
 
-/*
+
 drop function if exists is_empty;
 delimiter $$
 create function is_empty(p_string text)
@@ -16,9 +16,9 @@ begin
     return @r_response;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists remove_spaces;
 delimiter $$
 create function remove_spaces(p_text text)
@@ -32,9 +32,9 @@ begin
 	return p_text;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists trim_and_lower;
 delimiter $$
 create function trim_and_lower(p_texto text)
@@ -46,9 +46,9 @@ begin
 	return p_texto;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists default_bool_value;
 delimiter $$
 create function default_bool_value(p_var boolean, p_default boolean)
@@ -63,9 +63,9 @@ begin
 	return p_var;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists get_next_tb_usario_id;
 delimiter $$
 create function get_next_tb_usario_id()
@@ -80,9 +80,9 @@ begin
     return @new_id;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists valid_int_id;
 delimiter $$
 create function valid_int_id(p_value bigint)
@@ -93,7 +93,7 @@ begin
     return @r_response;
 end $$
 delimiter ;
-*/
+
 
 
 

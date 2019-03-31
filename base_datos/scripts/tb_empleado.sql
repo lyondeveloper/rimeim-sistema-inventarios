@@ -1,4 +1,4 @@
-/*
+
 drop function if exists func_get_next_empledo_id;
 delimiter $$
 create function func_get_next_empledo_id()
@@ -56,9 +56,9 @@ begin
 	return @response;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_get_empleados`;
 delimiter $$
 create procedure proc_get_empleados()
@@ -74,9 +74,9 @@ begin
     where e.eliminado = false;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_get_empleados_by_local`;
 delimiter $$
 create procedure proc_get_empleados_by_local(in p_id_local bigint)
@@ -97,10 +97,10 @@ begin
 	
 end $$
 delimiter ;
-*/
 
 
-/*
+
+
 drop procedure if exists `proc_get_empleado_by_id`;
 delimiter $$
 create procedure proc_get_empleado_by_id(in p_id bigint)
@@ -210,10 +210,10 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
 
-/*
+
+
 drop procedure if exists proc_get_locals_for_employe_by_userid;
 delimiter $$
 create procedure proc_get_locals_for_employe_by_userid(in p_id bigint)
@@ -240,6 +240,6 @@ begin
     end if;
 end $$
 delimiter ;
-*/
+
 
 

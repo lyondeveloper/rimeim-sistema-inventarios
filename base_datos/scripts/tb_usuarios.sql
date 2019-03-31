@@ -1,4 +1,4 @@
-/*
+
 drop function if exists func_exists_usuario_with_email_or_username;
 delimiter $$
 create function func_exists_usuario_with_email_or_username(p_correo varchar(200),
@@ -22,9 +22,9 @@ begin
 	return @response;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists func_exists_usuario_with_email;
 delimiter $$
 create function func_exists_usuario_with_email(p_correo varchar(200))
@@ -35,9 +35,9 @@ begin
 	return @response;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists func_exists_usuario_with_username;
 delimiter $$
 create function func_exists_usuario_with_username(p_nombre_usuario varchar(100))
@@ -49,9 +49,9 @@ begin
 	return @response;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists func_exists_usuario_with_username_and_not_same;
 delimiter $$
 create function func_exists_usuario_with_username_and_not_same(p_nombre_usuario varchar(100),
@@ -65,9 +65,9 @@ begin
 	return @response;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists func_is_usuario_enabled;
 delimiter $$
 create function func_is_usuario_enabled(p_id bigint) 
@@ -85,9 +85,9 @@ begin
     return @response;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists func_get_id_usuario_by_email;
 delimiter $$
 create function func_get_id_usuario_by_email(p_email varchar(200))
@@ -100,9 +100,9 @@ begin
 	return @response_id;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop function if exists func_is_user_admin;
 delimiter $$
 create function func_is_user_admin(p_id bigint)
@@ -120,9 +120,9 @@ begin
     return @r_admin;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists proc_get_usuario_by_id;
 delimiter $$
 create procedure proc_get_usuario_by_id(in p_id bigint)
@@ -141,10 +141,10 @@ begin
     
 end $$
 delimiter ;
-*/
 
 
-/*
+
+
 drop procedure if exists `proc_get_usuarios`;
 delimiter $$
 create procedure proc_get_usuarios()
@@ -160,9 +160,9 @@ begin
     order by u.nombre asc;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_get_usuario_by_email`;
 delimiter $$
 create procedure proc_get_usuario_by_email(in p_correo varchar(200))
@@ -179,9 +179,9 @@ begin
 	and u.eliminado = false;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists proc_get_usuario_to_auth;
 delimiter $$ 
 create procedure proc_get_usuario_to_auth(in p_field varchar(200))
@@ -201,9 +201,9 @@ begin
 	end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_add_usuario`;
 delimiter $$
 create procedure proc_add_usuario(in p_nombre varchar(200),
@@ -240,9 +240,9 @@ begin
     select @new_id as 'id';
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_delete_usuario_by_id`;
 delimiter $$
 create procedure proc_delete_usuario_by_id(in p_id bigint,
@@ -267,9 +267,9 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_disable_usuario_by_id`;
 delimiter $$
 create procedure proc_disable_usuario_by_id(in p_id_usuario bigint)
@@ -282,9 +282,9 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_enable_usuario_by_id`;
 delimiter $$
 create procedure proc_enable_usuario_by_id(in p_id_usuario bigint)
@@ -297,9 +297,9 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_update_usuario_by_id`;
 delimiter $$
 create procedure proc_update_usuario_by_id(in p_id_usuario bigint,
@@ -326,9 +326,9 @@ begin
 	
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_update_password_usuario_by_id`;
 delimiter $$
 create procedure proc_update_password_usuario_by_id(in p_id_usuario bigint,
@@ -344,9 +344,9 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_set_usuario_admin_by_id`;
 delimiter $$
 create procedure proc_set_usuario_admin_by_id(in p_id_usuario bigint,
@@ -360,9 +360,9 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists proc_search_user;
 delimiter $$
 create procedure proc_search_user(in p_field varchar(255))
@@ -382,4 +382,4 @@ begin
     end if;
 end $$
 delimiter ;
-*/
+

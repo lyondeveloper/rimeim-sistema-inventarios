@@ -20,7 +20,7 @@ begin
         select p.id,
                 p.id_proveedor,
                 p.id_producto,
-                p.precio
+                p.precio,
                 p.fecha_creado
         from tb_proveedor_producto p 
         where p.id_proveedor = p_id
