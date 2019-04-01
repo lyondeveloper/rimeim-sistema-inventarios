@@ -1,3 +1,4 @@
 base_datos/disenio/diseno.mwb.bak
 phpapi/public_html/api/app/log
 phpapi/vars/config.ini
+base_datos/scripts/run_all.sh

@@ -30,21 +30,19 @@
         public function search_user($field) {
             $this->db->query('call proc_search_user(:p_field);');
             $this->db->bind(':p_field', $field);
-            return convert_to_bool_values($this->db->resultSet(), 
-                                            ['admin' ,'habilitado', 'primera_sesion']);
+            return $this->get_user_with_converted_fields($this->db->resultSet());
         }
 
         public function get_user_to_auth($p_field) {
             $this->db->query('call proc_get_usuario_to_auth(:p_field);');
             $this->db->bind(':p_field', $p_field);
-            $user = $this->db->single();
-            return convert_to_bool_values($user, ['admin', 'habilitado', 'primera_sesion']);
+            return $this->get_user_with_converted_fields($this->db->single());
         }
 
         public function get_user_by_email($p_email) {
             $this->db->query('call proc_get_usuario_by_email(:p_correo);');
             $this->db->bind(':p_correo', $p_email);
-            return $this->db->single();
+            return $this->get_user_with_converted_fields($this->db->single());
         }
 
         public function can_user_update_username($id_user_to_update, $username) {
@@ -64,13 +62,13 @@
 
         public function get_users() {
             $this->db->query('call proc_get_usuarios();');
-            return $this->db->resultSet();
+            return $this->get_user_with_converted_fields($this->db->resultSet());
         }
 
         public function get_by_id($id) {
             $this->db->query('call proc_get_usuario_by_id(:p_id);');
             $this->db->bind(':p_id', $id);
-            return convert_to_bool_values($this->db->single(), ['habilitado', 'admin']);
+            return $this->get_user_with_converted_fields($this->db->single());
         }
 
         public function add_user($params) {
@@ -123,6 +121,11 @@
             $this->db->bind(':p_id', $id);
             $this->db->bind(':p_id_usuario_eliminado_por', $id_usuario);
             return $this->db->success();
+        }
+
+        // Helpers
+        private function get_user_with_converted_fields($dbUser) {
+            return convert_to_bool_values($dbUser, ['admin', 'habilitado', 'primera_sesion']);
         }
 
     }

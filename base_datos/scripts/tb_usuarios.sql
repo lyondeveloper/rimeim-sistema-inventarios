@@ -133,7 +133,8 @@ begin
 				u.nombre_usuario,
 				u.admin,
 				u.habilitado,
-                u.fecha_creado
+                u.fecha_creado,
+                u.primera_sesion
 		from tb_usuario u where
 			u.eliminado = false
 			and u.id = p_id;
@@ -153,8 +154,7 @@ begin
 			u.nombre,
             u.nombre_usuario,
             u.admin,
-            u.habilitado,
-            u.primera_sesion
+            u.habilitado
     from tb_usuario u where
     u.eliminado = false
     order by u.nombre asc;
