@@ -66,6 +66,10 @@
             if (is_null($user)) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $this->response_get_user($user, $id);
+        }
+
+        private function response_get_user($user, $id) {
             $locals = (object)[];
             $users = (object)[];
             $employe_nodes = $this->employeModel->get_by_user_id($id);
@@ -131,15 +135,18 @@
             return $data;
         }
 
-        public function update($id) {
+        public function update($id, $id_usuario) {
             $this->usePutRequest();
             $data = $this->validate_update_data(getJsonData(), $id);
             $success = $this->employeModel->update($data);
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             } 
-            $updatedEmploye = $this->employeModel->get_by_id($id);
-            $this->response($updatedEmploye);
+            $user = $this->userModel->get_by_id($id_usuario);
+            if (is_null($user)) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+            $this->response_get_user($user, $id_usuario);
         }
 
         private function validate_update_data($data, $id) {
