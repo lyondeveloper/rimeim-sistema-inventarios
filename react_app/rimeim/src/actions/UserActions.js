@@ -14,6 +14,18 @@ import { handleError } from './errorActions';
 
 import isEmpty from './isEmpty';
 
+export const getUsers = () => dispatch => {
+  dispatch(userLoadingObject());
+  axios
+    .get('/users/get')
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch(setUsers(response.data));
+    })
+    .catch(err => handleError(err));
+};
+
 export const configUserFromResponse = (response, dispatch) => {
   const decoded = getAuthTokenFromResponse(response);
   dispatch(setCurrentUser(decoded));
@@ -33,7 +45,6 @@ export const getLocalsForCurrentUser = () => dispatch => {
   axios
     .get('/users/get_locals')
     .then(res => {
-      console.log('Accion completada');
       const response = res.data;
       configUserFromResponse(response, dispatch);
       dispatch(setLocals(response.data));
@@ -60,6 +71,7 @@ export const setCurrentLocal = local => dispatch => {
 };
 
 export const getUsersByField = field => dispatch => {
+  dispatch(userLoadingObject());
   dispatch(setUsers([]));
   axios
     .get(`/users/search/${field}`)
