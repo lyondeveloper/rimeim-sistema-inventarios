@@ -52,11 +52,13 @@ class SearchUser extends Component {
     const { usuario, searching } = this.state;
     var results = null;
 
+    if (searching) {
+      results = <Spinner fullWidth />;
+    }
+
     if (!this.props.is_only_textbox) {
       const { users } = this.props.user;
-      if (searching) {
-        results = <Spinner fullWidth />;
-      } else {
+      if (!searching) {
         results = (
           <div className="row">
             <div className="col s12">

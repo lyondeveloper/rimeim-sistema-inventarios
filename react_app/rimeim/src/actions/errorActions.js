@@ -12,7 +12,6 @@ export const clearErrors = () => {
 };
 
 export const handleError = (err, dispatch) => {
-  console.log(err);
   if (err.response.status === 409) {
     const response = err.response.data;
     const decoded = getAuthTokenFromResponse(response);
