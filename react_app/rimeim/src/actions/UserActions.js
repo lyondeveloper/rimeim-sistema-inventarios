@@ -10,7 +10,7 @@ import {
   USER_LOADING
 } from './types';
 
-import { handleError } from './errorActions';
+import { handleError, clearErrors } from './errorActions';
 
 import isEmpty from './isEmpty';
 
@@ -72,7 +72,7 @@ export const setCurrentLocal = local => dispatch => {
 
 export const getUsersByField = field => dispatch => {
   dispatch(userLoadingObject());
-  dispatch(setUsers([]));
+  dispatch(clearUsers());
   axios
     .get(`/users/search/${field}`)
     .then(res => {
@@ -81,6 +81,32 @@ export const getUsersByField = field => dispatch => {
       dispatch(setUsers(response.data));
     })
     .catch(err => handleError(err, dispatch));
+};
+
+export const getUserById = id => dispatch => {
+  dispatch(userLoadingObject());
+  dispatch(clearUsers());
+  axios
+    .get(`/users/get_one/${id}`)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch(setUsers([response.data]));
+    })
+    .catch(err => handleError(err));
+};
+
+export const updateUserById = (id, newUserData) => dispatch => {
+  dispatch(clearErrors());
+  dispatch(userLoadingObject());
+  axios
+    .put(`/users/update/${id}`, newUserData)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch(setUsers([response.data]));
+    })
+    .catch(err => handleError(err));
 };
 
 export const setUserLoading = () => dispatch => {

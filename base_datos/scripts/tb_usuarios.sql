@@ -129,8 +129,10 @@ create procedure proc_get_usuario_by_id(in p_id bigint)
 begin
 	if (valid_int_id(p_id)) then 
 		select u.id,
+				u.id_usuario_creado_por,
 				u.nombre,
 				u.nombre_usuario,
+                u.correo,
 				u.admin,
 				u.habilitado,
                 u.fecha_creado,

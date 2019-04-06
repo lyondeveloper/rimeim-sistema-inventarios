@@ -66,6 +66,7 @@ import AdminEmployes from './components/pages/admin_area/employes/Employes';
 import AdminEmploye from './components/pages/admin_area/employes/Employe';
 
 import AdminUsers from './components/pages/admin_area/users/Users';
+import AdminUser from './components/pages/admin_area/users/User';
 
 // Custom components
 import PrivateRoute from './components/common/PrivateRoute';
@@ -282,6 +283,14 @@ class App extends Component {
                 exact
                 path="/admin/usuarios"
                 component={AdminUsers}
+                isAdminRoute={true}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/admin/usuarios/:id"
+                component={AdminUser}
                 isAdminRoute={true}
               />
             </Switch>

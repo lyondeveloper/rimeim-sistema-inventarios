@@ -64,6 +64,17 @@
             $this->response($users);
         }
 
+        public function get_one($id) {
+            $this->useGetRequest();
+            $this->private_route(CTR_ADMIN);
+            $user = $this->userModel->get_by_id($id);
+            if (is_null($user)) {
+                $this->response(NULL, ERROR_NOTFOUND);
+            }
+            $user->usuario_creador = $this->userModel->get_by_id($user->id_usuario_creado_por);
+            $this->response($user);
+        }
+
         // ====== Add User ======
         public function add() {
             $this->usePostRequest();
@@ -120,18 +131,33 @@
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
-            $this->response();
+            $user = $this->userModel->get_by_id($id);
+            $user->usuario_creador = $this->userModel->get_by_id($user->id_usuario_creado_por);
+            $this->response($user);
         }
 
         private function valid_update_user_data($data, $id) {
             $errors = [];
             if (is_empty_array($data)) {
                 $errors['params_error'] = "Parametros invalidos";  
-            } elseif (empty_json_params($data, ['nombre', 'nombre_usuario'])) {
-                $errors['params_error'] = "Uno o mas parametros invalidos";
             } else {
-                if (!$this->userModel->can_user_update_username($id, $data->nombre_usuario)) {
+                
+                if (!isset($data->nombre) || empty($data->nombre)) {
+                    $errors['nombre_error'] = "Nombre invalido";
+                }
+
+                if (!isset($data->nombre_usuario) || empty($data->nombre_usuario)) {
+                    $errors['nombre_usuario_error'] = "Nombre de usuario invalido";
+                } elseif (!$this->userModel->can_user_update_username($id, $data->nombre_usuario)) {
                     $errors['nombre_usuario_error'] = "Nombre de usuario no disponible";
+                }
+
+                if (!isset($data->admin)) {
+                    $errors['admin_error'] = "Campo invalido";
+                }
+
+                if (!isset($data->habilitado)) {
+                    $errors['habilitado_error'] = "Campo invalido";
                 }
             }
 
