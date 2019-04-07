@@ -83,10 +83,12 @@
         }
 
         public function update_user($params) {
-            $this->db->query('call proc_update_usuario_by_id(:p_id,:p_nombre,:p_nombre_usuario);');
+            $this->db->query('call proc_update_usuario_by_id(:p_id,:p_nombre,:p_nombre_usuario,:p_habilitado,:p_admin);');
             $this->db->bind(':p_id', $params->id);
             $this->db->bind(':p_nombre', $params->nombre);
             $this->db->bind(':p_nombre_usuario', $params->nombre_usuario);
+            $this->db->bind(':p_habilitado', $params->habilitado);
+            $this->db->bind(':p_admin', $params->admin);
             return $this->db->success();
         }
 

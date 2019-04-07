@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_exists_usuario_with_email_or_username;
 delimiter $$
 create function func_exists_usuario_with_email_or_username(p_correo varchar(200),
@@ -300,37 +300,36 @@ begin
 end $$
 delimiter ;
 
-
+*/
 
 drop procedure if exists `proc_update_usuario_by_id`;
 delimiter $$
 create procedure proc_update_usuario_by_id(in p_id_usuario bigint,
 											in p_nombre varchar(200),
-                                            in p_nombre_usuario varchar(100))
+                                            in p_nombre_usuario varchar(100),
+											in p_habilitado boolean,
+                                            in p_admin boolean)
 begin
-	if(valid_int_id(p_id_usuario)) then
+	if(valid_int_id(p_id_usuario) and
+		p_habilitado is not null and
+        p_admin is not null) then
 		set p_nombre = trim_and_lower(p_nombre);
 		set p_nombre_usuario = trim_and_lower(p_nombre_usuario);
     
-		if (is_empty(p_nombre_usuario)) then
-			UPDATE tb_usuario
-			set nombre = p_nombre
-			where id = p_id_usuario
-            and eliminado = false;
-        else 
-			UPDATE tb_usuario
-			set nombre = p_nombre,
-				nombre_usuario = p_nombre_usuario
-			where id = p_id_usuario
-			and eliminado = false;
-        end if;
+		UPDATE tb_usuario
+		set nombre = p_nombre,
+			nombre_usuario = p_nombre_usuario,
+            habilitado = p_habilitado,
+            admin = p_admin
+		where id = p_id_usuario
+		and eliminado = false;
     end if;
 	
 end $$
 delimiter ;
 
 
-
+/*
 drop procedure if exists `proc_update_password_usuario_by_id`;
 delimiter $$
 create procedure proc_update_password_usuario_by_id(in p_id_usuario bigint,
@@ -384,4 +383,4 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/

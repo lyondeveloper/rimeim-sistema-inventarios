@@ -85,15 +85,38 @@
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $this->response();
         }
 
         private function validate_add_user_data($data) {
             $errors = [];
             if (is_empty_array($data)) {
                 $errors['params_error'] = "Parametros invalidos";
-            } elseif (empty_json_params($data, ['nombre', 'correo', 'password', 'admin'])) {
-                $errors['params_error'] = "Uno o mas parametros invalidos";
             } else {
+                if (!isset($data->nombre) || empty($data->nombre)) {
+                    $errors['nombre_error'] = "Nombre invalido";
+                }
+                if (!isset($data->correo) || 
+                    empty($data->correo) ||
+                    !isEmail($data->correo)) {
+                    $errors['correo_error'] = "Campo invalido";
+                }
+                if (!isset($data->nombre_usuario) || empty($data->nombre_usuario)) {
+                    $errors['nombre_usuario_error'] = "Campo invalido";
+                }
+                if (!isset($data->password) || empty($data->password)) {
+                    $errors['password_error'] = "Campo invalido";
+                }
+                if (!isset($data->admin) || !is_bool($data->admin)) {
+                    $errors['admin_error'] = "Campo invalido";
+                }
+                if (!isset($data->habilitado) || !is_bool($data->habilitado)) {
+                    $errors['habilitado_error'] = "Campo invalido";
+                }
+                
+            } 
+
+            if (count($errors) == 0) {
                 $data->nombre = trim($data->nombre);
                 $data->nombre_usuario = trim(get_if_isset($data, 'nombre_usuario'));
                 $data->correo = trim($data->correo);
@@ -186,8 +209,8 @@
         private function validate_update_password_data($data) {
             $errors = [];
 
-            if (empty_json_params($data, ['password'])) {
-                $errors['params_error'] = "Uno o mas parametros invalidos";
+            if (!isset($data->password) || empty($data->password)) {
+                $errors['password_error'] = "Uno o mas parametros invalidos";
             } else {
                 if(!isValidPassword($data->password)) {
                     $errors['password_error'] = "Clave invalida";

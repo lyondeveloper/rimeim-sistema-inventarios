@@ -1,8 +1,12 @@
 import { CLEAR_ERRORS, GET_ERRORS } from './types';
-
-import { getAuthTokenFromResponse, setCurrentUser } from './UserActions';
-
+import {
+  getAuthTokenFromResponse,
+  setCurrentUser,
+  logOutUserWithDispatch
+} from './UserActions';
 import { notificationError } from '../utils/MaterialFunctions';
+
+const ERROR_INVALID_USER = 'NotValidUser';
 
 export const clearErrors = () => {
   return {
@@ -11,7 +15,23 @@ export const clearErrors = () => {
   };
 };
 
+export const endApplication = dispatch => {
+  setTimeout(() => {
+    logOutUserWithDispatch(dispatch);
+  }, 5000);
+};
+
 export const handleError = (err, dispatch) => {
+  if (
+    err.response.data &&
+    err.response.data.data &&
+    err.response.data.data.error
+  ) {
+    if (err.response.data.data.error === ERROR_INVALID_USER) {
+      notificationError('Su usuario es invalido o ya no se encuentra activo');
+      return endApplication(dispatch);
+    }
+  }
   if (err.response.status === 409) {
     const response = err.response.data;
     const decoded = getAuthTokenFromResponse(response);

@@ -43,6 +43,11 @@ class AdminUsers extends Component {
                   <i className="material-icons">search</i>
                 </a>
               </li>
+              <li>
+                <Link to="/admin/nuevo_usuario">
+                  <i className="material-icons">add</i>
+                </Link>
+              </li>
             </ul>
           </div>
         </NavbarAdmin>

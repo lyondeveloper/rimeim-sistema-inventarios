@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import NavbarAdmin from '../../../layout/NewNavbarAdmin';
 
 import {
   configMaterialComponents,
-  removeMaterialComponents
+  removeMaterialComponents,
+  getModalInstanceById
 } from '../../../../utils/MaterialFunctions';
 
 import Spinner from '../../../common/Spinner';
 import TextInputField from '../../../common/TextInputField';
 import CheckInputField from '../../../common/CheckInputField';
+import ConfirmationModal from '../../../layout/modals/ConfirmationModal';
 
-import { getUserById, updateUserById } from '../../../../actions/UserActions';
+import {
+  getUserById,
+  updateUserById,
+  updateUserPasswordById,
+  deleteUserById
+} from '../../../../actions/UserActions';
+import isEmpty from '../../../../actions/isEmpty';
 
 class AdminUser extends Component {
   state = {
@@ -23,6 +30,7 @@ class AdminUser extends Component {
     nueva_clave: '',
     habilitado: true,
     admin: false,
+    is_in_request: false,
     errors: {}
   };
 
@@ -36,11 +44,29 @@ class AdminUser extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    var has_error = false;
+
     if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors
       });
+
+      has_error = !isEmpty(nextProps.errors);
     }
+
+    if (this.state.is_in_request && !has_error) {
+      getModalInstanceById('modal_editar_usuario').close();
+      getModalInstanceById('modal_actualizar_usuario_clave').close();
+    }
+
+    this.setState({
+      is_in_request: false
+    });
+
+    if (has_error) {
+      return;
+    }
+
     if (nextProps.user.users.length > 0) {
       const usuario = nextProps.user.users[0];
       this.setState({
@@ -60,6 +86,9 @@ class AdminUser extends Component {
   };
 
   onUpdateUserClick = () => {
+    this.setState({
+      is_in_request: true
+    });
     const { nombre, nombre_usuario, habilitado, admin } = this.state;
     const newUser = {
       nombre,
@@ -70,7 +99,19 @@ class AdminUser extends Component {
     this.props.updateUserById(this.props.match.params.id, newUser);
   };
 
-  onUpdateUserPasswordClick = () => {};
+  onUpdateUserPasswordClick = () => {
+    this.setState({
+      is_in_request: true
+    });
+    this.props.updateUserPasswordById(this.props.match.params.id, {
+      password: this.state.nueva_clave
+    });
+  };
+
+  onDeleteUser = () => {
+    getModalInstanceById('modal_confirmar_evento').close();
+    this.props.deleteUserById(this.props.match.params.id, this.props.history);
+  };
 
   render() {
     const { users, loading } = this.props.user;
@@ -80,6 +121,7 @@ class AdminUser extends Component {
       habilitado,
       admin,
       nueva_clave,
+      is_in_request,
       errors: {
         nombre_error,
         nombre_usuario_error,
@@ -148,7 +190,12 @@ class AdminUser extends Component {
             Actualizar clave
           </button>
 
-          <button className="btn red darken-2">Eliminar</button>
+          <button
+            className="btn red darken-2 ml-1 modal-trigger"
+            data-target="modal_confirmar_evento"
+          >
+            Eliminar
+          </button>
         </div>
       );
     }
@@ -195,7 +242,7 @@ class AdminUser extends Component {
                 label="Usuario"
                 value={nombre_usuario}
                 onchange={this.onChangeTextInput}
-                usuario={nombre_usuario_error}
+                error={nombre_usuario_error}
               />
             </div>
 
@@ -218,6 +265,8 @@ class AdminUser extends Component {
                 error={admin_error}
               />
             </div>
+
+            {is_in_request && <Spinner fullWidth />}
           </div>
           <div className="modal-footer">
             <a href="#!" className="modal-close left btn-flat">
@@ -244,6 +293,8 @@ class AdminUser extends Component {
                 onchange={this.onChangeTextInput}
               />
             </div>
+
+            {is_in_request && <Spinner fullWidth />}
           </div>
 
           <div className="modal-footer">
@@ -252,13 +303,19 @@ class AdminUser extends Component {
             </a>
             <a
               href="#!"
-              className="modal-close right btn-flat"
+              className="right btn-flat"
               onClick={this.onUpdateUserPasswordClick}
             >
               Actualizar
             </a>
           </div>
         </div>
+
+        <ConfirmationModal
+          title="Confirmar eliminar usuario"
+          message="Esta seguro de que quiere eliminar a este usuario? Esta accion no se podra revertir"
+          onAccept={this.onDeleteUser}
+        />
       </React.Fragment>
     );
   }
@@ -266,15 +323,19 @@ class AdminUser extends Component {
 
 AdminUser.propTypes = {
   user: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
   getUserById: PropTypes.func.isRequired,
-  updateUserById: PropTypes.func.isRequired
+  updateUserById: PropTypes.func.isRequired,
+  updateUserPasswordById: PropTypes.func.isRequired,
+  deleteUserById: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  errors: state.errors
 });
 
 export default connect(
   mapStateToProps,
-  { getUserById, updateUserById }
+  { getUserById, updateUserById, updateUserPasswordById, deleteUserById }
 )(AdminUser);
