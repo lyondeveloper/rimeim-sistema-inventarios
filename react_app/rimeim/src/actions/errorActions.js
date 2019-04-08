@@ -21,7 +21,12 @@ export const endApplication = dispatch => {
   }, 5000);
 };
 
-export const handleError = (err, dispatch) => {
+export const handleError = (err, dispatch, another_dispatch = null) => {
+  if (another_dispatch) {
+    dispatch({
+      type: another_dispatch
+    });
+  }
   if (
     err.response.data &&
     err.response.data.data &&

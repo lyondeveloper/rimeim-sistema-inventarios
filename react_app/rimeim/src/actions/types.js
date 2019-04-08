@@ -16,6 +16,12 @@ export const EMPLOYE_LOADING = 'EMPLOYE_LOADING';
 export const GET_EMPLOYE = 'GET_EMPLOYE';
 export const GET_EMPLOYES = 'GET_EMPLOYES';
 
+// Products
+export const PRODUCT_LOADING = 'PRODUCT_LOADING';
+export const PRODUCT_END_LOADING = 'PRODUCT_END_LOADING';
+export const GET_PRODUCTS = 'GET_PRODUCTS';
+export const GET_PRODUCT = 'GET_PRODUCT';
+
 // Error
 export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
