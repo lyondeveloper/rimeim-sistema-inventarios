@@ -13,7 +13,9 @@ class NavbarAdmin extends Component {
     const {
       active_nav,
       has_notifications,
-      user: { admin }
+      user: {
+        user: { admin }
+      }
     } = this.props;
     let mobile_nav = this.props.mobile_nav ? this.props.mobile_nav : null;
 
@@ -110,10 +112,10 @@ class NavbarAdmin extends Component {
                       </li>
                     )}
                     <li>
-                      <a href="#!">
+                      <Link to="/admin/configuracion">
                         <i className="material-icons">settings</i>
                         Configuracion
-                      </a>
+                      </Link>
                     </li>
                     <li>
                       <a

@@ -52,6 +52,9 @@ import NewProvider from './components/pages/providers/NewProvider';
 import Provider from './components/pages/providers/Provider';
 import Providers from './components/pages/providers/Providers';
 
+// Account
+import ConfigurationView from './components/pages/account/ConfigurationView';
+
 // Custom component for multiple locals or admin user
 import ChoseLocal from './components/pages/auth/ChooseLocal';
 
@@ -68,6 +71,8 @@ import AdminEmploye from './components/pages/admin_area/employes/Employe';
 import AdminUsers from './components/pages/admin_area/users/Users';
 import AdminUser from './components/pages/admin_area/users/User';
 import AdminNewUser from './components/pages/admin_area/users/NewUser';
+
+import AdminConfiguration from './components/pages/admin_area/account/AdminConfiguration';
 
 // Custom components
 import PrivateRoute from './components/common/PrivateRoute';
@@ -189,7 +194,7 @@ class App extends Component {
               <PrivateRoute exact path="/nuevo_cliente" component={NewClient} />
             </Switch>
 
-            {/* Providers */}
+            {/* Admin Providers */}
             <Switch>
               <PrivateRoute
                 exact
@@ -208,7 +213,17 @@ class App extends Component {
               />
             </Switch>
 
-            {/* Locals */}
+            {/* Account */}
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/configuracion"
+                component={ConfigurationView}
+              />
+            </Switch>
+
+            {/* ================== Admin Area =================== */}
+            {/* Admin Locals */}
             <Switch>
               <PrivateRoute
                 exact
@@ -260,7 +275,7 @@ class App extends Component {
               />
             </Switch>
 
-            {/* Employes */}
+            {/* Admin Employes */}
             <Switch>
               <PrivateRoute
                 exact
@@ -278,7 +293,7 @@ class App extends Component {
               />
             </Switch>
 
-            {/* Users */}
+            {/* Admin Users */}
             <Switch>
               <PrivateRoute
                 exact
@@ -300,6 +315,16 @@ class App extends Component {
                 exact
                 path="/admin/nuevo_usuario"
                 component={AdminNewUser}
+                isAdminRoute={true}
+              />
+            </Switch>
+
+            {/* Admin Configuration */}
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/admin/configuracion"
+                component={AdminConfiguration}
                 isAdminRoute={true}
               />
             </Switch>
