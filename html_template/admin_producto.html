@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/main.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Producto | Rimeim</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <header>
+        <!-- Top navbar -->
+        <nav class="red lighten-1 top-nav">
+          <div class="small-container">
+            <div class="nav-wrapper">
+              <a href="#!" class="brand-logo">
+                Producto
+              </a>
+              <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
+                <i class="material-icons">menu</i>
+              </a>
+
+              <!-- Normal -->
+              <ul class="right">
+                <li>
+                  <a href="admin_nuevo_producto.html">
+                    <i class="material-icons">edit</i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Sidenav -->
+        <ul class="sidenav sidenav-fixed" id="nav_sidenav">
+          <li class="logo">
+            <a href="#!" class="brand-logo center mt-1">
+              <img src="img/logo_rimeim.png" class="logo-sidenav" />
+            </a>
+            <div class="divider"></div>
+          </li>
+          <li class="no-padding">
+            <ul class="collapsible collapsible-accordion">
+              <li class="bold">
+                <a class="collapsible-header" tabindex="0" href="#!">
+                  <i class="material-icons">store</i>
+                  Locales
+                </a>
+              </li>
+
+              <li class="bold">
+                <a
+                  class="collapsible-header"
+                  tabindex="0"
+                  href="admin_empleados.html"
+                >
+                  <i class="material-icons">people</i>
+                  Empleados
+                </a>
+              </li>
+
+              <li class="bold">
+                <a class="collapsible-header" tabindex="0" href="#!">
+                  <i class="material-icons">account_circle</i>
+                  Usuarios
+                </a>
+              </li>
+
+              <li class="bold">
+                <a class="collapsible-header" tabindex="0">
+                  <i class="material-icons">directions_car</i>
+                  Productos
+                </a>
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="admin_productos.html">
+                        Inventario
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#!">
+                        Nuevo
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
+              <li class="bold">
+                <a class="collapsible-header" tabindex="0">
+                  <i class="material-icons">trending_up</i>
+                  Reportes
+                </a>
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="#!">
+                        Ventas
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#!">
+                        Inventario
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
+              <div class="divider"></div>
+              <li class="bold">
+                <a class="collapsible-header" tabindex="0">
+                  <i class="material-icons notifications-active"
+                    >notifications_active</i
+                  >
+                  Cuenta
+                </a>
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="#!">
+                        <i class="material-icons notifications-active-color"
+                          >notifications</i
+                        >
+                        Notificaciones
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#!">
+                        <i class="material-icons">settings</i>
+                        Configuracion
+                      </a>
+                    </li>
+                    <li>
+                      <a href="index.html">
+                        <i class="material-icons">exit_to_app</i>
+                        Cerrar sesion</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </header>
+
+      <main>
+        <div class="row">
+          <div class="col s12">
+            <div class="card">
+              <div class="card-content">
+                <div class="w-100">
+                  <img
+                    src="img/auto_motor.jpg"
+                    class="responsive-img materialboxed"
+                    style="max-height: 300px !important;"
+                  />
+                </div>
+                <table class="table-bordered">
+                  <tr>
+                    <td>Id</td>
+                    <td>1</td>
+                  </tr>
+                  <tr>
+                    <td>Codigo de barra</td>
+                    <td>12121</td>
+                  </tr>
+                  <tr>
+                    <td>Nombre</td>
+                    <td>Rin</td>
+                  </tr>
+                  <tr>
+                    <td>Marca</td>
+                    <td>Ferrari</td>
+                  </tr>
+                  <tr>
+                    <td>Tipo de vehiculo</td>
+                    <td>Mustang</td>
+                  </tr>
+                  <tr>
+                    <td>Descripcion</td>
+                    <td>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Harum qui, eum cumque delectus nulla esse. Quia illum
+                      maxime debitis cum recusandae autem praesentium, non
+                      numquam reprehenderit adipisci totam accusantium neque
+                      omnis, ipsam tempora doloremque iure molestiae nisi
+                      architecto reiciendis ipsum. Dolorem fugiat quas sint
+                      nobis quae facilis eveniet quibusdam distinctio.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Es raro</td>
+                    <td>No</td>
+                  </tr>
+                  <tr>
+                    <td>Precio</td>
+                    <td>10,000</td>
+                  </tr>
+                  <tr>
+                    <td>Existecia</td>
+                    <td>100</td>
+                  </tr>
+                  <tr>
+                    <td>Cantidad minima</td>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <td>Fecha creado</td>
+                    <td>12/01/2019</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-content">
+                <h5>Distribucion</h5>
+                <table class="table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Local</th>
+                      <th>Existencia</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td>San Pedro Sula</td>
+                      <td>10</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <button class="btn red darken-3">
+              Borrar
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

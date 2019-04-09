@@ -17,6 +17,31 @@
     padding-right: 1rem;
 }
 
+.horizontal-scroll-container {
+    min-width: 100%;
+    min-height: 220px;
+    display: flex;
+    overflow-x:auto;
+    padding: 10px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.horizontal-scroll-container .item {
+    height: 210px;
+    margin: 10px;
+}
+
+.horizontal-scroll-container .item .close-button {
+    width: 27px;
+    height: 27px;
+    padding: 1px;
+    border-radius: 50%;
+    float: right;
+}
+
 /* Corner radios */
 .border-radius-1 {
     border-radius: 6px;
