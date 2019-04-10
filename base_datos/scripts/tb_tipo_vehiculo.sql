@@ -1,3 +1,4 @@
+/*
 drop function if exists func_get_next_tipo_vehiculo_id;
 delimiter $$
 create function func_get_next_tipo_vehiculo_id()
@@ -24,7 +25,25 @@ begin
     where t.eliminado = false;
 end $$
 delimiter ;
+*/
 
+drop procedure if exists proc_get_tipo_vehiculo_byid;
+delimiter $$
+create procedure proc_get_tipo_vehiculo_byid(in p_id bigint)
+begin
+	if (valid_int_id(p_id)) then
+		select t.id,
+				t.nombre,
+				t.descripcion,
+				t.fecha_creado
+		from tb_tipo_vehiculo t 
+		where t.eliminado = false
+        and t.id = p_id;
+    end if;
+end $$
+delimiter ;
+
+/*
 drop procedure if exists proc_add_tipo_vehiculo;
 delimiter $$
 create procedure proc_add_tipo_vehiculo(in p_nombre varchar(200),
@@ -86,3 +105,4 @@ begin
     end if;
 end $$
 delimiter ;
+*/

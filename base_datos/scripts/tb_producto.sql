@@ -19,14 +19,9 @@ begin
     select p.id,
             p.id_tipo_vehiculo,
             p.id_marca,
-            p.codigo_barra,
             p.nombre,
-            p.descripcion,
-            p.raro,
             p.precio,
-            p.existencia,
-            p.cantidad_minima,
-            p.fecha_creado
+            p.existencia
     from tb_producto p
     where p.eliminado = false
     order by p.nombre asc;

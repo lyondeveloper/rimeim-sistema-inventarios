@@ -1,3 +1,4 @@
+/*
 drop function if exists func_get_next_producto_local_id;
 delimiter $$
 create function func_get_next_producto_local_id()
@@ -11,24 +12,52 @@ begin
     return @new_id;
 end $$
 delimiter ;
+*/
 
 drop procedure if exists `proc_get_producto_local`;
 delimiter $$
 create procedure proc_get_producto_local(in p_id_local bigint)
 begin
     if (valid_int_id(p_id_local)) then
-        select p.id,
-                p.id_producto,
-                p.id_local,
-                p.existencia,
-                p.cantidad_minima
-        from tb_producto_local p
+        select pl.id,
+                pl.id_producto,
+                pl.id_local,
+                pl.existencia,
+                p.nombre,
+                p.precio
+        from tb_producto_local pl
+        join tb_producto p on p.id = pl.id_producto
         where p.eliminado = false and
-        p.id_local = p_id_local;
+        pl.eliminado = false and
+        pl.id_local = p_id_local;
     end if;
 end $$
 delimiter ;
 
+drop procedure if exists proc_get_producto_local_by_id;
+delimiter $$
+create procedure proc_get_producto_local_by_id(in p_producto_local_id bigint)
+begin 
+	if (valid_int_id(p_producto_local_id)) then
+		select pl.id,
+				pl.id_local,
+                pl.id_producto,
+                pl.existencia,
+                p.nombre,
+                p.descripcion,
+                p.raro,
+                p.codigo_barra,
+                p.fecha_creado
+        from tb_producto_local pl
+        join tb_producto p on p.id = pl.id_producto
+						and p.eliminado = false
+        where pl.id = p_producto_local_id
+        and pl.eliminado = false;
+    end if;
+end $$
+delimiter ;
+
+/*
 drop procedure if exists `proc_add_producto_local`;
 delimiter $$
 create procedure proc_add_producto_local(in p_id_producto bigint,
@@ -95,3 +124,4 @@ begin
     end if;
 end $$
 delimiter ;
+*/

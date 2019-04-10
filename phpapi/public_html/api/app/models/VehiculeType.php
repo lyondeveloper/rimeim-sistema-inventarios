@@ -16,6 +16,12 @@
             return $this->db->resultSet();
         }
 
+        public function get_by_id($id) {
+            $this->db->query('call proc_get_tipo_vehiculo_byid(:p_id);');
+            $this->db->bind(':p_id', $id);
+            return $this->db->single();
+        }
+
         public function add($nombre, $descripcion) {
             $this->db->query('call proc_add_tipo_vehiculo(:p_nombre, :p_descripcion);');
             $this->db->bind(':p_nombre', $nombre);

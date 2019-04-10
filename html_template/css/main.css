@@ -18,10 +18,10 @@
 }
 
 .horizontal-scroll-container {
-    min-width: 100%;
+    width: 100%;
     min-height: 220px;
     display: flex;
-    overflow-x:auto;
+    overflow-x: auto;
     padding: 10px;
 }
 
@@ -30,8 +30,18 @@
 }
 
 .horizontal-scroll-container .item {
-    height: 210px;
+    min-height: 210px;
+    min-width: 210px;
     margin: 10px;
+}
+
+.horizontal-scroll-container .img-item {
+    max-height: 210px !important;
+    margin: 10px;
+}
+
+.horizontal-scroll-container .img-item img {
+    height: 210px !important;
 }
 
 .horizontal-scroll-container .item .close-button {
@@ -40,6 +50,10 @@
     padding: 1px;
     border-radius: 50%;
     float: right;
+}
+
+.card-distrubucion-productos .row .col {
+    max-height: 40px;
 }
 
 /* Corner radios */

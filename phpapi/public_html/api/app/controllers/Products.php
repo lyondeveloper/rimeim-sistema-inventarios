@@ -14,12 +14,34 @@
         {
             $this->initController(CTR_EMPLEADO);
             $this->productModel = $this->model('Product');
+            $this->productLocalModel = $this->model('ProductLocal');
+            $this->brandModel = $this->model('Brand');
+            $this->vehiculeType = $this->model('VehiculeType');
         }
 
         public function get() {
             $this->useGetRequest();
-            $products = $this->productModel->get();
+            $products = [];
+
+            $json_data = getJsonData();
+            if ($json_data && isset($json_data->id_local)) {
+                $products = $this->productLocalModel->get_by_local($json_data->id_local);
+            } else {
+                $products = $this->productModel->get();
+            }
+            
+            foreach ($products as &$product) {
+                $product = $this->parse_product_to_send($product);
+            }
             $this->response($products);
+        }
+
+        private function parse_product_to_send($product) {
+            $product->marca = $this->brandModel->get_by_id($product->id_marca);
+            $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
+            unset($product->id_marca);
+            unset($product->id_tipo_vehiculo);
+            return $product;
         }
 
         public function get_one($id) {
@@ -28,6 +50,7 @@
             if (is_null($product)) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $product = $this->parse_product_to_send($product);
             $this->response($product);
         }
 
@@ -37,6 +60,7 @@
             $newId = $this->productModel->add($data);
             $this->checkNewId($newId);
             $product = $this->productModel->get_by_id($newId);
+            $product = $this->parse_product_to_send($product);
             $this->response($product);
         }
 
@@ -88,6 +112,7 @@
                 $this->response(null, ERROR_NOTFOUND);
             }
             $updated_product = $this->productModel->get_by_id($id);
+            $updated_product = $this->parse_product_to_send($updated_product);
             $this->response($updated_product);
         }
 

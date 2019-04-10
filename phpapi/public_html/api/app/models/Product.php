@@ -12,19 +12,19 @@
 
         public function get() {
             $this->db->query('call proc_get_productos();');
-            return $this->db->resultSet();
+            return $this->convert_product_bool_values($this->db->resultSet());
         }
 
         public function get_by_id($id) {
             $this->db->query('call proc_get_producto_by_id(:p_id);');
             $this->db->bind(':p_id', $id);
-            return $this->db->single();
+            return $this->convert_product_bool_values($this->db->single());
         }
 
         public function get_by_codigo_barra($codigo) {
             $this->db->query('call proc_get_producto_by_codigo_barra(:p_codigo_barra);');
             $this->db->bind(':p_codigo_barra', $codigo);
-            return $this->db->single();
+            return $this->convert_product_bool_values($this->db->single());
         }
 
         public function add($params) {
@@ -60,5 +60,9 @@
             $this->db->query('call proc_delete_producto_by_id(:p_id);');
             $this->db->bind(':p_id', $id);
             return $this->db->success();
+        }
+
+        public function convert_product_bool_values($product) {
+            return convert_to_bool_values($product, ['raro']);
         }
     }

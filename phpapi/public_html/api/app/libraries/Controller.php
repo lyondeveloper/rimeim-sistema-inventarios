@@ -246,6 +246,10 @@
                 return;
             }
 
+            if ($this->is_current_user_admin()) {
+                return;
+            }
+
             switch ($private_type) {
                 case CTR_EMPLEADO:
                     $this->route_for_empleado();

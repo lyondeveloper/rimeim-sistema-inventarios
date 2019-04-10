@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_get_next_local_id;
 delimiter $$
 create function func_get_next_local_id()
@@ -101,7 +101,7 @@ begin
             
 end $$
 delimiter ;
-
+*/
 
 drop procedure if exists proc_add_local;
 delimiter $$
@@ -149,7 +149,12 @@ begin
 				p_es_bodega,
 				p_latitud,
 				p_longitud);
-
+		
+        call proc_add_empleado(@new_id, 
+								p_id_usuario_creado_por, 
+                                p_id_usuario_creado_por,
+                                true, 
+                                true);
     end if;
     
     select @new_id as 'id';
@@ -157,7 +162,7 @@ end $$
 delimiter ;
 
 
-
+/*
 drop procedure if exists `proc_update_local_by_id`;
 delimiter $$
 create procedure proc_update_local_by_id(in p_id bigint,
@@ -216,6 +221,6 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/
 
 
