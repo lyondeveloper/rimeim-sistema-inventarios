@@ -6,10 +6,54 @@
     color: #d32f2f !important;
 }
 
+/* Icon size */
+.m2x { font-size: 24px; }
+.m3x { font-size: 36px; }
+.m4x { font-size: 48px; }
+
 /* Container */
 .small-container {
     padding-left: 1rem;
     padding-right: 1rem;
+}
+
+.horizontal-scroll-container {
+    width: 100%;
+    min-height: 220px;
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.horizontal-scroll-container .item {
+    min-height: 210px;
+    min-width: 210px;
+    margin: 10px;
+}
+
+.horizontal-scroll-container .img-item {
+    max-height: 210px !important;
+    margin: 10px;
+}
+
+.horizontal-scroll-container .img-item .adjust {
+    height: 210px !important;
+}
+
+.horizontal-scroll-container .item .close-button {
+    width: 27px;
+    height: 27px;
+    padding: 1px;
+    border-radius: 50%;
+    float: right;
+}
+
+.card-distrubucion-productos .row .col {
+    max-height: 40px;
 }
 
 /* Corner radios */

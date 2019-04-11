@@ -57,6 +57,23 @@ class NavbarAdmin extends Component {
                 </Link>
               </li>
 
+              <li className={`bold ${active_nav === 'PRODUCTOS' && 'active'}`}>
+                <a className="collapsible-header" tabindex="0" href="#!">
+                  <i className="material-icons">directions_car</i>
+                  Productos
+                </a>
+                <div className="collapsible-body">
+                  <ul>
+                    <li>
+                      <Link to="/admin/productos">Inventario</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin/nuevo_producto">Nuevo producto</Link>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
               <li className={`bold ${active_nav === 'REPORTES' && 'active'}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">trending_up</i>

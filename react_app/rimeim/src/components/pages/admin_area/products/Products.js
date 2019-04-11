@@ -10,7 +10,10 @@ import {
   removeMaterialComponents
 } from '../../../../utils/MaterialFunctions';
 
+import { getProducts } from '../../../../actions/productActions';
+
 import Spinner from '../../../common/Spinner';
+import ProductCard from '../../../common/ProductCard';
 
 class AdminProducts extends Component {
   componentWillMount() {
@@ -19,6 +22,7 @@ class AdminProducts extends Component {
 
   componentDidMount() {
     configMaterialComponents();
+    this.props.getProducts(this.props.user.currentLocal.id);
   }
 
   render() {
@@ -67,11 +71,17 @@ class AdminProducts extends Component {
 }
 
 AdminProducts.propTypes = {
-  product: PropTypes.object.isRequired
+  product: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  getProducts: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  product: state.product
+  product: state.product,
+  user: state.user
 });
 
-export default connect(mapStateToProps)(AdminProducts);
+export default connect(
+  mapStateToProps,
+  { getProducts }
+)(AdminProducts);

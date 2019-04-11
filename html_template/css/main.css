@@ -40,7 +40,7 @@
     margin: 10px;
 }
 
-.horizontal-scroll-container .img-item img {
+.horizontal-scroll-container .img-item .adjust {
     height: 210px !important;
 }
 

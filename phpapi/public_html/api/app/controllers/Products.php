@@ -19,19 +19,20 @@
             $this->vehiculeType = $this->model('VehiculeType');
         }
 
-        public function get() {
+        public function get($id_local) {
             $this->useGetRequest();
             $products = [];
 
-            $json_data = getJsonData();
-            if ($json_data && isset($json_data->id_local)) {
-                $products = $this->productLocalModel->get_by_local($json_data->id_local);
-            } else {
+            if (!is_null($id_local) && $id_local > 0) {
+                $products = $this->productLocalModel->get_by_local($id_local);
+            } elseif ($this->is_current_user_admin()) {
                 $products = $this->productModel->get();
             }
             
-            foreach ($products as &$product) {
-                $product = $this->parse_product_to_send($product);
+            if (count($products) > 0) {
+                foreach ($products as &$product) {
+                    $product = $this->parse_product_to_send($product);
+                }
             }
             $this->response($products);
         }

@@ -3,6 +3,8 @@ import userReducer from './userReducer';
 import localReducer from './localReducer';
 import employeReducer from './employeReducer';
 import productReducer from './productReducer';
+import brandReducer from './brandReducer';
+import vehicleTypeReducer from './vehicleType';
 
 import errorReducer from './errorReducer';
 
@@ -11,5 +13,7 @@ export default combineReducers({
   employe: employeReducer,
   local: localReducer,
   product: productReducer,
+  brand: brandReducer,
+  vehicle: vehicleTypeReducer,
   errors: errorReducer
 });

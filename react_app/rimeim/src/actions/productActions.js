@@ -13,10 +13,10 @@ import {
   PRODUCT_END_LOADING
 } from './types';
 
-export const getProducts = () => dispatch => {
+export const getProducts = id_local => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .get('/products')
+    .get(`/products/get/${id_local}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -28,10 +28,10 @@ export const getProducts = () => dispatch => {
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };
 
-export const getProductById = id => dispatch => {
+export const getProductById = (id, id_local) => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .get(`/products/get_one/${id}`)
+    .get(`/products/get_one/${id}/${id_local}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

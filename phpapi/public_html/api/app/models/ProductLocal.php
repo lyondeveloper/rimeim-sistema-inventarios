@@ -14,7 +14,7 @@
         public function get_by_local($id_local) {
             $this->db->query('call proc_get_producto_local(:p_id_local);');
             $this->db->bind(':p_id_local', $id_local);
-            return $this->db->newId();
+            return $this->db->resultSet();
         }
 
         public function add($params) {

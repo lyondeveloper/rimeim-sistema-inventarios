@@ -72,6 +72,9 @@ import AdminUsers from './components/pages/admin_area/users/Users';
 import AdminUser from './components/pages/admin_area/users/User';
 import AdminNewUser from './components/pages/admin_area/users/NewUser';
 
+import AdminProducts from './components/pages/admin_area/products/Products';
+import AdminNewProduct from './components/pages/admin_area/products/NewProduct';
+
 import AdminConfiguration from './components/pages/admin_area/account/AdminConfiguration';
 
 // Custom components
@@ -315,6 +318,24 @@ class App extends Component {
                 exact
                 path="/admin/nuevo_usuario"
                 component={AdminNewUser}
+                isAdminRoute={true}
+              />
+            </Switch>
+
+            {/* Admin Products */}
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/admin/productos"
+                component={AdminProducts}
+                isAdminRoute={true}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/admin/nuevo_producto"
+                component={AdminNewProduct}
                 isAdminRoute={true}
               />
             </Switch>

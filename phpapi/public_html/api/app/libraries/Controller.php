@@ -265,7 +265,7 @@
             }
         }
 
-        private function is_current_user_admin() {
+        public function is_current_user_admin() {
             return $this->userModel->is_user_admin($this->get_current_user_id());
         }
     }
