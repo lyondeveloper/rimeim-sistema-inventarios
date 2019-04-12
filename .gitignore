@@ -5,3 +5,4 @@ base_datos/scripts/run_all.sh
 react_app/rimeim/.vscode
 phpapi/public_html/.vscode
 react_app/rimeim/node_modules/
+base_datos/scripts/db_rimeim_pruebas.sql
