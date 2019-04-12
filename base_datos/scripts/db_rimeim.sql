@@ -7,14 +7,12 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-USE `db_rimeim` ;
-
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_usuario`
+-- Table `tb_usuario`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_usuario` ;
+DROP TABLE IF EXISTS `tb_usuario` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_usuario` (
+CREATE TABLE IF NOT EXISTS `tb_usuario` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_usuario_creado_por` BIGINT NULL,
   `id_usuario_eliminado_por` BIGINT NULL,
@@ -34,11 +32,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_local`
+-- Table `tb_local`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_local` ;
+DROP TABLE IF EXISTS `tb_local` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_local` (
+CREATE TABLE IF NOT EXISTS `tb_local` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_usuario_creado_por` BIGINT NOT NULL,
   `id_usuario_eliminado_por` BIGINT NULL,
@@ -58,23 +56,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_local` (
   INDEX `fk_local_id_usuario_eliminado_por_idx` (`id_usuario_eliminado_por` ASC),
   CONSTRAINT `fk_local_id_usuario_creado_por`
     FOREIGN KEY (`id_usuario_creado_por`)
-    REFERENCES `db_rimeim`.`tb_usuario` (`id`)
+    REFERENCES `tb_usuario` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_local_id_usuario_eliminado_por`
     FOREIGN KEY (`id_usuario_eliminado_por`)
-    REFERENCES `db_rimeim`.`tb_usuario` (`id`)
+    REFERENCES `tb_usuario` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_tipo_vehiculo`
+-- Table `tb_tipo_vehiculo`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_tipo_vehiculo` ;
+DROP TABLE IF EXISTS `tb_tipo_vehiculo` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_tipo_vehiculo` (
+CREATE TABLE IF NOT EXISTS `tb_tipo_vehiculo` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(200) NOT NULL,
   `descripcion` TEXT NULL,
@@ -86,11 +84,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_marca`
+-- Table `tb_marca`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_marca` ;
+DROP TABLE IF EXISTS `tb_marca` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_marca` (
+CREATE TABLE IF NOT EXISTS `tb_marca` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(200) NOT NULL,
   `descripcion` TEXT NOT NULL,
@@ -102,11 +100,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_producto`
+-- Table `tb_producto`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_producto` ;
+DROP TABLE IF EXISTS `tb_producto` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_producto` (
+CREATE TABLE IF NOT EXISTS `tb_producto` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_tipo_vehiculo` BIGINT NULL,
   `id_marca` BIGINT NULL,
@@ -126,23 +124,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_producto` (
   INDEX `fk_producto_id_marca_idx` (`id_marca` ASC),
   CONSTRAINT `fk_producto_id_tipo_vehiculo`
     FOREIGN KEY (`id_tipo_vehiculo`)
-    REFERENCES `db_rimeim`.`tb_tipo_vehiculo` (`id`)
+    REFERENCES `tb_tipo_vehiculo` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_producto_id_marca`
     FOREIGN KEY (`id_marca`)
-    REFERENCES `db_rimeim`.`tb_marca` (`id`)
+    REFERENCES `tb_marca` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_empleado`
+-- Table `tb_empleado`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_empleado` ;
+DROP TABLE IF EXISTS `tb_empleado` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_empleado` (
+CREATE TABLE IF NOT EXISTS `tb_empleado` (
   `id` BIGINT NOT NULL,
   `id_local` BIGINT NOT NULL,
   `id_usuario` BIGINT NOT NULL,
@@ -160,33 +158,33 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_empleado` (
   INDEX `fk_empleado_id_usuario_eliminado_por_idx` (`id_usuario_eliminado_por` ASC),
   CONSTRAINT `fk_empleado_id_usuario`
     FOREIGN KEY (`id_usuario`)
-    REFERENCES `db_rimeim`.`tb_usuario` (`id`)
+    REFERENCES `tb_usuario` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_empleado_id_local`
     FOREIGN KEY (`id_local`)
-    REFERENCES `db_rimeim`.`tb_local` (`id`)
+    REFERENCES `tb_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_empleado_id_usuario_creado_por`
     FOREIGN KEY (`id_usuario_creado_por`)
-    REFERENCES `db_rimeim`.`tb_usuario` (`id`)
+    REFERENCES `tb_usuario` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_empleado_id_usuario_eliminado_por`
     FOREIGN KEY (`id_usuario_eliminado_por`)
-    REFERENCES `db_rimeim`.`tb_usuario` (`id`)
+    REFERENCES `tb_usuario` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_cliente`
+-- Table `tb_cliente`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_cliente` ;
+DROP TABLE IF EXISTS `tb_cliente` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_cliente` (
+CREATE TABLE IF NOT EXISTS `tb_cliente` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_local_registrado` BIGINT NOT NULL COMMENT 'Este campo almacena el id del local en el que fue registrado este cliente',
   `id_empleado_creado_por` BIGINT NOT NULL,
@@ -210,28 +208,28 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_cliente` (
   INDEX `fk_cliente_id_usuario_eliminado_por_idx` (`id_empleado_eliminado_por` ASC),
   CONSTRAINT `fk_cliente_id_empleado_creado_por`
     FOREIGN KEY (`id_empleado_creado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_cliente_id_local_registrado`
     FOREIGN KEY (`id_local_registrado`)
-    REFERENCES `db_rimeim`.`tb_local` (`id`)
+    REFERENCES `tb_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_cliente_id_usuario_eliminado_por`
     FOREIGN KEY (`id_empleado_eliminado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_archivo`
+-- Table `tb_archivo`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_archivo` ;
+DROP TABLE IF EXISTS `tb_archivo` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_archivo` (
+CREATE TABLE IF NOT EXISTS `tb_archivo` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_usuario_creado_por` BIGINT NOT NULL,
   `url` TEXT NOT NULL,
@@ -244,11 +242,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_proveedor`
+-- Table `tb_proveedor`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_proveedor` ;
+DROP TABLE IF EXISTS `tb_proveedor` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_proveedor` (
+CREATE TABLE IF NOT EXISTS `tb_proveedor` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_empleado_creado_por` BIGINT NOT NULL,
   `id_imagen` BIGINT NULL,
@@ -267,23 +265,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_proveedor` (
   INDEX `fk_proveedor_id_imagen_idx` (`id_imagen` ASC),
   CONSTRAINT `fk_proveedor_id_empleado_creado_por`
     FOREIGN KEY (`id_empleado_creado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_proveedor_id_imagen`
     FOREIGN KEY (`id_imagen`)
-    REFERENCES `db_rimeim`.`tb_archivo` (`id`)
+    REFERENCES `tb_archivo` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_pedido`
+-- Table `tb_pedido`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_pedido` ;
+DROP TABLE IF EXISTS `tb_pedido` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_pedido` (
+CREATE TABLE IF NOT EXISTS `tb_pedido` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_empleado_creado_por` BIGINT NOT NULL,
   `id_empleado_eliminado_por` BIGINT NULL,
@@ -307,38 +305,38 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_pedido` (
   INDEX `fk_pedido_id_proveedor_idx` (`id_proveedor` ASC),
   CONSTRAINT `fk_pedido_id_empleado_creado_por`
     FOREIGN KEY (`id_empleado_creado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_pedido_id_empleado_eliminado_por`
     FOREIGN KEY (`id_empleado_eliminado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_pedido_id_local`
     FOREIGN KEY (`id_local`)
-    REFERENCES `db_rimeim`.`tb_local` (`id`)
+    REFERENCES `tb_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_pedido_id_local_solicitado`
     FOREIGN KEY (`id_local_solicitado`)
-    REFERENCES `db_rimeim`.`tb_local` (`id`)
+    REFERENCES `tb_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_pedido_id_proveedor`
     FOREIGN KEY (`id_proveedor`)
-    REFERENCES `db_rimeim`.`tb_proveedor` (`id`)
+    REFERENCES `tb_proveedor` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_venta`
+-- Table `tb_venta`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_venta` ;
+DROP TABLE IF EXISTS `tb_venta` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_venta` (
+CREATE TABLE IF NOT EXISTS `tb_venta` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_local` BIGINT NOT NULL,
   `id_cliente` BIGINT NULL,
@@ -362,33 +360,33 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_venta` (
   INDEX `fk_venta_id_empleado_eliminado_por_idx` (`id_empleado_eliminado_por` ASC),
   CONSTRAINT `fk_venta_id_local`
     FOREIGN KEY (`id_local`)
-    REFERENCES `db_rimeim`.`tb_local` (`id`)
+    REFERENCES `tb_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_venta_id_cliente`
     FOREIGN KEY (`id_cliente`)
-    REFERENCES `db_rimeim`.`tb_cliente` (`id`)
+    REFERENCES `tb_cliente` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_venta_id_empleado_creado_por`
     FOREIGN KEY (`id_empleado_creado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_venta_id_empleado_eliminado_por`
     FOREIGN KEY (`id_empleado_eliminado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_devolucion`
+-- Table `tb_devolucion`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_devolucion` ;
+DROP TABLE IF EXISTS `tb_devolucion` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_devolucion` (
+CREATE TABLE IF NOT EXISTS `tb_devolucion` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_venta` BIGINT NOT NULL,
   `id_empleado_creado_por` BIGINT NOT NULL,
@@ -404,28 +402,28 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_devolucion` (
   INDEX `fk_devolucion_id_venta_idx` (`id_venta` ASC),
   CONSTRAINT `fk_devolucion_id_empleado_creado_por`
     FOREIGN KEY (`id_empleado_creado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_devolucion_id_empleado_eliminado_por`
     FOREIGN KEY (`id_empleado_eliminado_por`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_devolucion_id_venta`
     FOREIGN KEY (`id_venta`)
-    REFERENCES `db_rimeim`.`tb_venta` (`id`)
+    REFERENCES `tb_venta` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_pedido_solicitud`
+-- Table `tb_pedido_solicitud`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_pedido_solicitud` ;
+DROP TABLE IF EXISTS `tb_pedido_solicitud` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_pedido_solicitud` (
+CREATE TABLE IF NOT EXISTS `tb_pedido_solicitud` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_pedido` BIGINT NOT NULL,
   `id_local` BIGINT NOT NULL,
@@ -441,28 +439,28 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_pedido_solicitud` (
   INDEX `fk_pedido_solicitud_id_empleado_encargado_idx` (`id_empleado_encargado` ASC),
   CONSTRAINT `fk_pedido_solicitud_id_pedido`
     FOREIGN KEY (`id_pedido`)
-    REFERENCES `db_rimeim`.`tb_pedido` (`id`)
+    REFERENCES `tb_pedido` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_pedido_solicitud_id_local`
     FOREIGN KEY (`id_local`)
-    REFERENCES `db_rimeim`.`tb_local` (`id`)
+    REFERENCES `tb_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_pedido_solicitud_id_empleado_encargado`
     FOREIGN KEY (`id_empleado_encargado`)
-    REFERENCES `db_rimeim`.`tb_empleado` (`id`)
+    REFERENCES `tb_empleado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_producto_imagenes`
+-- Table `tb_producto_imagenes`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_producto_imagenes` ;
+DROP TABLE IF EXISTS `tb_producto_imagenes` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_producto_imagenes` (
+CREATE TABLE IF NOT EXISTS `tb_producto_imagenes` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_producto` BIGINT NOT NULL,
   `id_archivo` BIGINT NOT NULL,
@@ -475,23 +473,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_producto_imagenes` (
   INDEX `fk_producto_imagenes_id_archivo_idx` (`id_archivo` ASC),
   CONSTRAINT `fk_producto_imagenes_id_producto`
     FOREIGN KEY (`id_producto`)
-    REFERENCES `db_rimeim`.`tb_producto` (`id`)
+    REFERENCES `tb_producto` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_producto_imagenes_id_archivo`
     FOREIGN KEY (`id_archivo`)
-    REFERENCES `db_rimeim`.`tb_archivo` (`id`)
+    REFERENCES `tb_archivo` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_producto_local`
+-- Table `tb_producto_local`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_producto_local` ;
+DROP TABLE IF EXISTS `tb_producto_local` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_producto_local` (
+CREATE TABLE IF NOT EXISTS `tb_producto_local` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_producto` BIGINT NOT NULL,
   `id_local` BIGINT NOT NULL,
@@ -505,23 +503,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_producto_local` (
   INDEX `fk_producto_local_id_producto_idx` (`id_producto` ASC),
   CONSTRAINT `fk_producto_local_id_local`
     FOREIGN KEY (`id_local`)
-    REFERENCES `db_rimeim`.`tb_local` (`id`)
+    REFERENCES `tb_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_producto_local_id_producto`
     FOREIGN KEY (`id_producto`)
-    REFERENCES `db_rimeim`.`tb_producto` (`id`)
+    REFERENCES `tb_producto` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_producto_local_ubicacion`
+-- Table `tb_producto_local_ubicacion`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_producto_local_ubicacion` ;
+DROP TABLE IF EXISTS `tb_producto_local_ubicacion` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_producto_local_ubicacion` (
+CREATE TABLE IF NOT EXISTS `tb_producto_local_ubicacion` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_producto_local` BIGINT NOT NULL,
   `ubicacion` VARCHAR(100) NOT NULL,
@@ -532,18 +530,18 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_producto_local_ubicacion` (
   INDEX `fk_producto_local_ubicacion_id_producto_local_idx` (`id_producto_local` ASC),
   CONSTRAINT `fk_producto_local_ubicacion_id_producto_local`
     FOREIGN KEY (`id_producto_local`)
-    REFERENCES `db_rimeim`.`tb_producto_local` (`id`)
+    REFERENCES `tb_producto_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_venta_producto`
+-- Table `tb_venta_producto`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_venta_producto` ;
+DROP TABLE IF EXISTS `tb_venta_producto` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_venta_producto` (
+CREATE TABLE IF NOT EXISTS `tb_venta_producto` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_venta` BIGINT NOT NULL,
   `id_producto` BIGINT NOT NULL,
@@ -559,23 +557,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_venta_producto` (
   INDEX `fk_venta_producto_id_venta_idx` (`id_venta` ASC),
   CONSTRAINT `fk_venta_producto_id_producto`
     FOREIGN KEY (`id_producto`)
-    REFERENCES `db_rimeim`.`tb_producto` (`id`)
+    REFERENCES `tb_producto` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_venta_producto_id_venta`
     FOREIGN KEY (`id_venta`)
-    REFERENCES `db_rimeim`.`tb_venta` (`id`)
+    REFERENCES `tb_venta` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_devolucion_producto`
+-- Table `tb_devolucion_producto`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_devolucion_producto` ;
+DROP TABLE IF EXISTS `tb_devolucion_producto` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_devolucion_producto` (
+CREATE TABLE IF NOT EXISTS `tb_devolucion_producto` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_devolucion` BIGINT NOT NULL,
   `id_venta_producto` BIGINT NOT NULL,
@@ -588,23 +586,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_devolucion_producto` (
   INDEX `fk_devolucion_producto_id_venta_producto_idx` (`id_venta_producto` ASC),
   CONSTRAINT `fk_devolucion_producto_id_devolucion`
     FOREIGN KEY (`id_devolucion`)
-    REFERENCES `db_rimeim`.`tb_devolucion` (`id`)
+    REFERENCES `tb_devolucion` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_devolucion_producto_id_venta_producto`
     FOREIGN KEY (`id_venta_producto`)
-    REFERENCES `db_rimeim`.`tb_venta_producto` (`id`)
+    REFERENCES `tb_venta_producto` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_proveedor_producto`
+-- Table `tb_proveedor_producto`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_proveedor_producto` ;
+DROP TABLE IF EXISTS `tb_proveedor_producto` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_proveedor_producto` (
+CREATE TABLE IF NOT EXISTS `tb_proveedor_producto` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_proveedor` BIGINT NOT NULL,
   `id_producto` BIGINT NOT NULL,
@@ -617,23 +615,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_proveedor_producto` (
   INDEX `fk_proveedor_producto_id_producto_idx` (`id_producto` ASC),
   CONSTRAINT `fk_proveedor_producto_id_proveedor`
     FOREIGN KEY (`id_proveedor`)
-    REFERENCES `db_rimeim`.`tb_proveedor` (`id`)
+    REFERENCES `tb_proveedor` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_proveedor_producto_id_producto`
     FOREIGN KEY (`id_producto`)
-    REFERENCES `db_rimeim`.`tb_producto` (`id`)
+    REFERENCES `tb_producto` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_pedido_producto`
+-- Table `tb_pedido_producto`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_pedido_producto` ;
+DROP TABLE IF EXISTS `tb_pedido_producto` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_pedido_producto` (
+CREATE TABLE IF NOT EXISTS `tb_pedido_producto` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_pedido` BIGINT NOT NULL,
   `id_producto` BIGINT NOT NULL,
@@ -646,23 +644,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_pedido_producto` (
   INDEX `fk_pedido_producto_id_producto_idx` (`id_producto` ASC),
   CONSTRAINT `fk_pedido_producto_id_pedido`
     FOREIGN KEY (`id_pedido`)
-    REFERENCES `db_rimeim`.`tb_pedido` (`id`)
+    REFERENCES `tb_pedido` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_pedido_producto_id_producto`
     FOREIGN KEY (`id_producto`)
-    REFERENCES `db_rimeim`.`tb_producto` (`id`)
+    REFERENCES `tb_producto` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_pedido_producto_reparto`
+-- Table `tb_pedido_producto_reparto`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_pedido_producto_reparto` ;
+DROP TABLE IF EXISTS `tb_pedido_producto_reparto` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_pedido_producto_reparto` (
+CREATE TABLE IF NOT EXISTS `tb_pedido_producto_reparto` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_pedido_producto` BIGINT NOT NULL,
   `id_local` BIGINT NOT NULL,
@@ -676,23 +674,23 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_pedido_producto_reparto` (
   INDEX `fk_pedido_producto_reparto_id_local_idx` (`id_local` ASC),
   CONSTRAINT `fk_pedido_producto_reparto_id_pedido_producto`
     FOREIGN KEY (`id_pedido_producto`)
-    REFERENCES `db_rimeim`.`tb_pedido_producto` (`id`)
+    REFERENCES `tb_pedido_producto` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_pedido_producto_reparto_id_local`
     FOREIGN KEY (`id_local`)
-    REFERENCES `db_rimeim`.`tb_local` (`id`)
+    REFERENCES `tb_local` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `db_rimeim`.`tb_cliente_producto_precio`
+-- Table `tb_cliente_producto_precio`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `db_rimeim`.`tb_cliente_producto_precio` ;
+DROP TABLE IF EXISTS `tb_cliente_producto_precio` ;
 
-CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_cliente_producto_precio` (
+CREATE TABLE IF NOT EXISTS `tb_cliente_producto_precio` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `id_cliente` BIGINT NOT NULL,
   `id_producto` BIGINT NOT NULL,
@@ -705,12 +703,12 @@ CREATE TABLE IF NOT EXISTS `db_rimeim`.`tb_cliente_producto_precio` (
   INDEX `fk_cliente_producto_precio_id_producto_idx` (`id_producto` ASC),
   CONSTRAINT `fk_cliente_producto_precio_id_cliente`
     FOREIGN KEY (`id_cliente`)
-    REFERENCES `db_rimeim`.`tb_cliente` (`id`)
+    REFERENCES `tb_cliente` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_cliente_producto_precio_id_producto`
     FOREIGN KEY (`id_producto`)
-    REFERENCES `db_rimeim`.`tb_producto` (`id`)
+    REFERENCES `tb_producto` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
