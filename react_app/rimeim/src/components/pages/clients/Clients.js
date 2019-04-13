@@ -1,50 +1,64 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-import { CLIENTS } from "../../layout/NavTypes"
-import Navbar from "../../layout/Navbar"
+import { CLIENTS } from '../../layout/NavTypes';
+import Navbar from '../../layout/Navbar';
 
 import {
     configMaterialComponents,
     removeMaterialComponents
-} from "../../../utils/MaterialFunctions"
+} from '../../../utils/MaterialFunctions';
 
-import ClientCard from "../../common/ClientCard"
+import { connect } from 'react-redux';
+import { getClients } from '../../../actions/clientActions';
+
+import ClientCard from '../../common/ClientCard';
+
+import Spinner from '../../common/Spinner';
 
 class Clients extends Component {
-
-    state = {
-        clientes: []
-    }
-
     componentWillMount() {
-        removeMaterialComponents()
+        removeMaterialComponents();
     }
 
     componentDidMount() {
-        configMaterialComponents()
+        configMaterialComponents();
+        this.props.getClients();
     }
 
     render() {
-        const { clientes } = this.state
+        const { clients, loading } = this.props.clients;
+
+        let clientsContent;
+
+        if (clients.length < 0 || loading) {
+            clientsContent = <Spinner fullWidth />;
+        } else {
+            clientsContent = clients.map((client, i) => {
+                console.log(client);
+                return (
+                    <div className='col s12 m6 l4'>
+                        <ClientCard client={client} key={client.id} />
+                    </div>
+                );
+            });
+        }
+
         return (
             <React.Fragment>
                 <Navbar navtype={CLIENTS} />
-
                 <main>
-                    <div className="row">
-                        {clientes.map((cliente, i) => {
-                            return (
-                                <div className="col s12 m6 l4">
-                                    <ClientCard cliente={cliente} key={cliente.id} />
-                                </div>
-                            )
-                        })}
-
-                    </div>
+                    <div className='row'>{clientsContent}</div>
                 </main>
             </React.Fragment>
-        )
+        );
     }
 }
 
-export default Clients
+const mapStateToProps = state => ({
+    clients: state.client
+});
+
+export default connect(
+    mapStateToProps,
+    { getClients }
+)(Clients);

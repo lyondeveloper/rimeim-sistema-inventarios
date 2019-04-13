@@ -1,7 +1,10 @@
 base_datos/disenio/diseno.mwb.bak
 phpapi/public_html/api/app/log
 phpapi/vars/config.ini
+phpapi/vars/config.dev.ini
 base_datos/scripts/run_all.sh
 react_app/rimeim/.vscode
 phpapi/public_html/.vscode
 react_app/rimeim/node_modules/
+base_datos/scripts/db_rimeim_pruebas.sql
+base_datos/scripts/sql_compile.sql

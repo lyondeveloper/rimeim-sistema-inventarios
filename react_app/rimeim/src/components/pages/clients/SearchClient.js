@@ -1,57 +1,52 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-import { SEARCH_CLIENT } from "../../layout/NavTypes"
-import Navbar from "../../layout/Navbar"
+import { SEARCH_CLIENT } from '../../layout/NavTypes';
+import Navbar from '../../layout/Navbar';
 
 import {
     configMaterialComponents,
     removeMaterialComponents
-} from "../../../utils/MaterialFunctions"
+} from '../../../utils/MaterialFunctions';
 
-import SearchClientModel from "../../layout/modals/SearchClientModel"
+import SearchClientModel from '../../layout/modals/SearchClientModel';
 
 class SearchClient extends Component {
-
     state = {
         clientes: [],
-        field: ""
-    }
+        field: ''
+    };
 
     componentWillMount() {
-        removeMaterialComponents()
+        removeMaterialComponents();
     }
 
     componentDidMount() {
-        configMaterialComponents()
+        configMaterialComponents();
     }
 
     onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
-    onSearch = () => {
-
-    }
+    onSearch = () => {};
 
     render() {
-        const { field } = this.state
+        const { field } = this.state;
         return (
             <React.Fragment>
                 <Navbar navtype={SEARCH_CLIENT} />
 
                 <main>
-                    <div className="row">
-                        <div className="col s12">
-
-                        </div>
-                    </div>
+                    {/* <div className='row'>
+                        <div className='col s12' />
+                    </div> */}
+                    <SearchClientModel
+                        onsearch={this.onSearch}
+                        onchange={this.onChangeTextInput}
+                        values={{ field }}
+                    />
                 </main>
-
-                <SearchClientModel
-                    onsearch={this.onSearch}
-                    onchange={this.UNSAFE_componentWillMount.onChangeTextInput}
-                    values={{ field }} />
             </React.Fragment>
-        )
+        );
     }
 }
 
-export default SearchClient
+export default SearchClient;

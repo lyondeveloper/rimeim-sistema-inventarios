@@ -222,7 +222,7 @@ begin
     
     set @new_id = get_next_tb_usario_id();
     
-    INSERT INTO `db_rimeim`.`tb_usuario`
+    INSERT INTO `tb_usuario`
 				(`id`,
 				`id_usuario_creado_por`,
 				`nombre`,

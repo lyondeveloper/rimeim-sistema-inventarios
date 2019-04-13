@@ -31,5 +31,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "proxy": "http://localhost/api"
+  "proxy": "https://rimeim.com/api"
 }
