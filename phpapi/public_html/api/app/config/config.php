@@ -16,7 +16,7 @@
     define('ERROR_PROCESS', 409);
     define('ERROR_SERVER', 500);
 
-    define('URLROOT', 'http://localhost/');
+    define('URLROOT', 'https://rimeim.com/');
     define('SITENAME', 'Rimeim');
 
     // Private Controller Types

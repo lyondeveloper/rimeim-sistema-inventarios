@@ -14,6 +14,7 @@
         {
             $this->initController(CTR_EMPLEADO);
             $this->productModel = $this->model('Product');
+            $this->productImagesModel = $this->model('ProductImages');
             $this->productLocalModel = $this->model('ProductLocal');
             $this->brandModel = $this->model('Brand');
             $this->vehiculeType = $this->model('VehiculeType');
@@ -40,6 +41,7 @@
         private function parse_product_to_send($product) {
             $product->marca = $this->brandModel->get_by_id($product->id_marca);
             $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
+            $product->imagen = $this->productImagesModel->get_principal_image($product->id);
             unset($product->id_marca);
             unset($product->id_tipo_vehiculo);
             return $product;

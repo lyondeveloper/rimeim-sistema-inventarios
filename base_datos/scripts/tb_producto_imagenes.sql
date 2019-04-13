@@ -1,3 +1,4 @@
+/*
 drop function if exists func_get_next_producto_imagenes_id;
 delimiter $$
 create function func_get_next_producto_imagenes_id()
@@ -11,6 +12,8 @@ begin
     return @new_id;
 end $$
 delimiter ;
+*/
+
 
 drop procedure if exists `proc_get_producto_imagenes_by_producto`;
 delimiter $$
@@ -19,15 +22,36 @@ begin
     if (valid_int_id(p_id_producto)) then
         select p.id,
                 p.id_archivo,
-                p.principal,
-                p.fecha_creado
-        from tb_producto_imagenes
+                ar.url,
+                p.principal
+        from tb_producto_imagenes p
+        join tb_archivo ar on ar.id = p.id_archivo
         where p.id_producto = p_id_producto
         and p.eliminado = false;
     end if;
 end $$  
 delimiter ;
 
+
+drop procedure if exists `proc_get_producto_imagen_principal_byid`;
+delimiter $$
+create procedure proc_get_producto_imagen_principal_byid(in p_id_producto bigint)
+begin
+    if (valid_int_id(p_id_producto)) then
+        select p.id,
+                p.id_archivo,
+                ar.url
+        from tb_producto_imagenes p
+        join tb_archivo ar on ar.id = p.id_archivo
+        where p.id_producto = p_id_producto
+        and p.eliminado = false
+        and p.principal = true
+        limit 1;
+    end if;
+end $$  
+delimiter ;
+
+/*
 drop procedure if exists `proc_add_producto_imagenes`;
 delimiter $$
 create procedure proc_add_producto_imagenes(in p_id_producto bigint,
@@ -84,3 +108,4 @@ begin
     end if;
 end $$
 delimiter ;
+*/
