@@ -59,7 +59,7 @@ class AdminProducts extends Component {
             ) : (
               products.map(product => (
                 <div className="col s12 m6 l4" key={`prod${product.id}`}>
-                  <ProductCard producto={product} key={product.id} />
+                  <ProductCard product={product} key={product.id} />
                 </div>
               ))
             )}
