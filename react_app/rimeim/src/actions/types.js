@@ -22,6 +22,11 @@ export const PRODUCT_END_LOADING = 'PRODUCT_END_LOADING';
 export const GET_PRODUCTS = 'GET_PRODUCTS';
 export const GET_PRODUCT = 'GET_PRODUCT';
 
+//Clients
+export const CLIENT_LOADING = 'CLIENT_LOADING';
+export const GET_CLIENT = 'GET_CLIENT';
+export const GET_CLIENTS = 'GET_CLIENTS';
+
 // Error
 export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
