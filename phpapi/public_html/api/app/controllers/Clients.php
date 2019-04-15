@@ -56,7 +56,7 @@
                 }
 
                 if (isset($data->codigo) && 
-                    !isEmpty($data->codigo) &&
+                    !empty($data->codigo) &&
                     $this->clientModel->get_by_code($data->codigo)) {
                     $errors['codigo_error'] = "Codigo no disponible o en uso";
                 } else {
@@ -64,7 +64,7 @@
                 }
 
                 if (isset($data->rtn) && 
-                    !isEmpty($data->rtn) &&
+                    !empty($data->rtn) &&
                     $this->clientModel->get_by_rtn($data->rtn)) {
                     $errors['rtn_error'] = "Rtn no disponible o en uso";
                 } else {
@@ -72,7 +72,7 @@
                 }
 
                 if (isset($data->correo) && 
-                    !isEmpty($data->correo) &&
+                    !empty($data->correo) &&
                     isEmail($data->correo) &&
                     $this->clientModel->get_by_email($data->correo)) {
                     $errors['correo_error'] = "Correo no disponible o en uso";
@@ -81,7 +81,7 @@
                 }
 
                 if (isset($data->telefono) && 
-                    !isEmpty($data->telefono) &&
+                    !empty($data->telefono) &&
                     $this->clientModel->get_by_phone($data->telefono)) {
                     $errors['telefono_error'] = "Telefono no disponible o en uso";
                 } else {
@@ -123,7 +123,7 @@
                 }
 
                 if (isset($data->codigo) && 
-                    !isEmpty($data->codigo)) {
+                    !empty($data->codigo)) {
                     $client = $this->clientModel->get_by_code($data->codigo);
                     if (!is_null($client) && 
                         $client->id != $id) {
@@ -134,7 +134,7 @@
                 }
 
                 if (isset($data->rtn) && 
-                    !isEmpty($data->rtn)) {
+                    !empty($data->rtn)) {
                     $client = $this->clientModel->get_by_rtn($data->rtn);
                     if (!is_null($client) && 
                         $client->id != $id) {
@@ -145,7 +145,7 @@
                 }
 
                 if (isset($data->correo) && 
-                    !isEmpty($data->correo) &&
+                    !empty($data->correo) &&
                     isEmail($data->correo)) {
                     $client = $this->clientModel->get_by_email($data->correo);
                     if (!is_null($client) && 
@@ -157,7 +157,7 @@
                 }
 
                 if (isset($data->telefono) && 
-                    !isEmpty($data->telefono)) {
+                    !empty($data->telefono)) {
                     $client = $this->clientModel->get_by_phone($data->telefono);
                     if (!is_null($client) && 
                         $client->id != $id) {
