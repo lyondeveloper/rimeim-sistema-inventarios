@@ -11,6 +11,18 @@
             $this->db = new Database;
         }
 
+        public function save_all_files($fileupload, $id_usuario) {
+            $new_files = $fileupload->save_all_uploads();
+            foreach($new_files as &$file) {
+                if($new_id = $this->add_file($id_usuario, 
+                                            $file->type, 
+                                            $file->path)) {
+                    $file->id = $new_id;
+                }
+            }
+            return $new_files;
+        }
+
         public function get_files() {
             $this->db->query('call proc_get_archivos();');
             return $this->db->resultSet();
@@ -29,11 +41,11 @@
         }
 
         public function add_file($id_usuario, $p_type, $p_url) {
-            $this->db->query('call proc_add_archivo(:p_id_usuario,:p_type,:p_url);');
+            $this->db->query('call proc_add_archivo(:p_id_usuario,:p_url,:p_type);');
             $this->db->bind(':p_id_usuario', $id_usuario);
             $this->db->bind(':p_type', $p_type);
             $this->db->bind(':p_url', $p_url);
-            return $this->db->success();
+            return $this->db->single()->id;
         }
 
         public function delete_by_id($id) {

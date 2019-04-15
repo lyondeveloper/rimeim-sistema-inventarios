@@ -73,7 +73,7 @@
     function processLog($str) {
         $file_url = APP_ROOT . '/log/process.log';
         $data_help = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a") . ": ";
-        $file_content = "\n" . $data_help . $error;
+        $file_content = "\n" . $data_help . $str;
         file_put_contents($file_url, $file_content, FILE_APPEND | LOCK_EX);
     }
 

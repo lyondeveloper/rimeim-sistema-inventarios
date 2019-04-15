@@ -14,10 +14,30 @@
     class Files extends Controller {
 
         public function __construct() {
-            $this->initController(CTR_EMPLEADO);
-
+            //$this->initController(CTR_PRIVATE);
+            $this->fileupload = new FileUpload;
             $this->dbFileModel = $this->model('DBFile');
-            $this->localFileModel = $this->model('LFile');
+        }
+
+        public function upload() {
+            $files_count = $this->fileupload->get_count_files_upload();
+            $files_saved = [];
+            for ($x=0; $x < $files_count; $x++) { 
+                if($new_file_path = $this->fileupload->save_upload_file($x)) {
+                    
+                    if ($new_id = $this->dbFileModel->add_file(1, 
+                                                pathinfo($new_file_path, PATHINFO_EXTENSION), 
+                                                $new_file_path)) {
+                        $new_file = [
+                            'id' => $new_id,
+                            'path' => get_server_file_url($new_file_path),
+                            'name' => $this->fileupload->get_upload_file_name($x)
+                        ];
+                        array_push($files_saved, $new_file);
+                    }
+                }
+            }
+            $this->response($files_saved);
         }
 
         public function get() {

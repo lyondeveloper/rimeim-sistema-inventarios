@@ -58,7 +58,7 @@ class NavbarAdmin extends Component {
               </li>
 
               <li className={`bold ${active_nav === 'PRODUCTOS' && 'active'}`}>
-                <a className="collapsible-header" tabindex="0" href="#!">
+                <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">directions_car</i>
                   Productos
                 </a>

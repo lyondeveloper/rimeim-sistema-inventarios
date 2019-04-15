@@ -13,6 +13,8 @@
         public function __construct()
         {
             $this->initController(CTR_EMPLEADO);
+            $this->fileupload = new FileUpload;
+            $this->fileModel = $this->model('DBFile');
             $this->productModel = $this->model('Product');
             $this->productImagesModel = $this->model('ProductImages');
             $this->productLocalModel = $this->model('ProductLocal');
@@ -62,8 +64,19 @@
             $data = $this->validate_add_data(getJsonData());
             $newId = $this->productModel->add($data);
             $this->checkNewId($newId);
+            $product_files = $this->fileModel->save_all($this->fileupload, $this->get_current_user_id());
+
+            $x = 0;
+            foreach($product_files as $file) {
+                $file->id_producto = $newId;
+                $file->id_archivo = $file->id;
+                $file->principal = $x == 0;
+                $this->productImagesModel->add($file);
+                $x = $x + 1;
+            }
+
             $product = $this->productModel->get_by_id($newId);
-            $product = $this->parse_product_to_send($product);
+            $product->images = $this->productImagesModel->get_by_product($newId);
             $this->response($product);
         }
 
@@ -105,6 +118,10 @@
             }
             $this->checkErrors($errors);
             return $data;
+        }
+
+        private function add_images() {
+
         }
 
         public function update($id) {

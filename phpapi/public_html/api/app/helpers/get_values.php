@@ -90,4 +90,6 @@
         return $randomString;
     }
 
-    
+    function get_server_file_url($simple_url) {
+        return URLROOT . $simple_url;
+    }

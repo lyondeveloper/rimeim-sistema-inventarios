@@ -10,23 +10,85 @@ import {
   removeMaterialComponents
 } from '../../../../utils/MaterialFunctions';
 
-// import { getProductById } from '../../../../actions/productActions';
-
 import Spinner from '../../../common/Spinner';
-// import ProductCard from '../../../common/ProductCard';
+import TextInputField from '../../../common/TextInputField';
+import TextAreaInputField from '../../../common/TextAreaInputField';
+import CheckInputField from '../../../common/CheckInputField';
+import SelectInputField from '../../../common/SelectInputField';
+import SelectFiles from '../../../common/SelectFiles';
 
 class NewProduct extends Component {
+  state = {
+    codigo_barra: '',
+    nombre: '',
+    marca: '0',
+    tipo_vehiculo: '0',
+    descripcion: '',
+    precio: '',
+    existencia: '',
+    cantidad_minima: '',
+    es_raro: false,
+    imagenes: [],
+    errors: {}
+  };
+
   componentWillMount() {
     removeMaterialComponents();
   }
 
   componentDidMount() {
     configMaterialComponents();
-    // this.props.getProductById(this.props.match.params.id);
   }
 
+  onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+
+  onChangeCheckField = e => {
+    const current_value = this.state[e.target.name];
+    this.setState({ [e.target.name]: !current_value });
+  };
+
+  onSelectFiles = e => {
+    const { files } = e.target;
+    const new_images = [];
+
+    for (var i = 0; i < files.length; i++) {
+      const file = files[i];
+      var reader = new FileReader();
+      reader.onload = result => {
+        new_images.push({
+          name: file.name,
+          src: result.target.result
+        });
+
+        if (i === files.length) {
+          this.setState({ imagenes: new_images });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   render() {
-    // const { product, loading } = this.props.product;
+    const {
+      codigo_barra,
+      nombre,
+      marca,
+      tipo_vehiculo,
+      descripcion,
+      precio,
+      existencia,
+      cantidad_minima,
+      es_raro,
+      imagenes,
+      errors: {
+        codigo_barra_error,
+        nombre_error,
+        descripcion_error,
+        precio_error,
+        existencia_error,
+        cantidad_minima_error
+      }
+    } = this.state;
     return (
       <React.Fragment>
         <NavbarAdmin>
@@ -53,145 +115,102 @@ class NewProduct extends Component {
               <div className="card">
                 <div className="card-content">
                   <div className="row">
-                    <div className="col s12">
-                      <div className="horizontal-scroll-container bordered">
-                        <div className="item red">
-                          <div className="red close-button cursor-pointer">
-                            <i className="material-icons">close</i>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="file-field input-field overflow-x-hidden">
-                        <div className="btn">
-                          <span>Seleccionar imagen</span>
-                          <input
-                            type="file"
-                            accept="image/jpeg"
-                            onchange="onChangeInputFileImage(this, 'img_producto')"
-                          />
-                        </div>
-                        <div className="file-path-wrapper d-none">
-                          <input className="file-path validate" type="text" />
-                        </div>
-                      </div>
-                    </div>
+                    <SelectFiles
+                      id="imagenes"
+                      label="Imagenes"
+                      onchange={this.onSelectFiles}
+                      multiple={true}
+                      files={imagenes}
+                    />
                   </div>
                   <div className="row">
-                    <div className="col s12">
-                      <div className="input-field">
-                        <input
-                          id="codigo_barra"
-                          name="codigo_barra"
-                          type="text"
-                          className="validate"
-                        />
-                        <label for="codigo_barra">Codigo de barra</label>
-                      </div>
-                    </div>
+                    <TextInputField
+                      id="codigo_barra"
+                      label="Codigo de barra"
+                      value={codigo_barra}
+                      error={codigo_barra_error}
+                      onchange={this.onChangeTextInput}
+                      required={true}
+                    />
                   </div>
                   <div className="row">
-                    <div className="col s12">
-                      <div className="input-field">
-                        <input
-                          id="nombre"
-                          name="nombre"
-                          type="text"
-                          className="validate"
-                        />
-                        <label for="nombre">Nombre</label>
-                      </div>
-                    </div>
+                    <TextInputField
+                      id="nombre"
+                      label="Nombre"
+                      value={nombre}
+                      error={nombre_error}
+                      onchange={this.onChangeTextInput}
+                      required={true}
+                    />
                   </div>
                   <div className="row">
-                    <div className="input-field col s12">
-                      <select>
-                        <option value="" disabled selected>
-                          Seleccionar
-                        </option>
-                        <option value="1">Marca 1</option>
-                        <option value="2">Marca 2</option>
-                        <option value="3">Marca 3</option>
-                      </select>
-                      <label>Marca</label>
-                    </div>
+                    <SelectInputField
+                      id="marca"
+                      label="Marca"
+                      value={marca}
+                      onchange={this.onChangeTextInput}
+                      options={[{ value: 1, label: 'Marca 1' }]}
+                    />
                   </div>
                   <div className="row">
-                    <div className="input-field col s12">
-                      <select>
-                        <option value="" disabled selected>
-                          Seleccionar
-                        </option>
-                        <option value="1">Tipo 1</option>
-                        <option value="2">Tipo 2</option>
-                        <option value="3">Tipo 3</option>
-                      </select>
-                      <label>Tipo de vehiculo</label>
-                    </div>
+                    <SelectInputField
+                      id="tipo_vehiculo"
+                      label="Tipo de vehiculo"
+                      value={tipo_vehiculo}
+                      onchange={this.onChangeTextInput}
+                      options={[{ value: 1, label: 'Mazada' }]}
+                    />
                   </div>
                   <div className="row">
-                    <div className="col s12">
-                      <div className="input-field">
-                        <input
-                          id="descripcion"
-                          name="descripcion"
-                          type="text"
-                          className="validate"
-                        />
-                        <label for="descripcion">Descripcion</label>
-                      </div>
-                    </div>
+                    <TextAreaInputField
+                      id="descripcion"
+                      label="Descripcion"
+                      onchange={this.onChangeTextInput}
+                      value={descripcion}
+                      error={descripcion_error}
+                    />
                   </div>
 
                   <div className="row">
-                    <div className="col s12">
-                      <div className="input-field">
-                        <input
-                          id="precio"
-                          name="precio"
-                          type="text"
-                          className="validate"
-                        />
-                        <label for="precio">Precio</label>
-                      </div>
-                    </div>
+                    <TextInputField
+                      id="precio"
+                      label="Precio"
+                      type="number"
+                      onchange={this.onChangeTextInput}
+                      value={precio}
+                      error={precio_error}
+                      required
+                    />
                   </div>
                   <div className="row">
-                    <div className="col s12">
-                      <div className="input-field">
-                        <input
-                          id="existencia"
-                          name="existencia"
-                          type="text"
-                          className="validate"
-                        />
-                        <label for="existencia">Existencia</label>
-                      </div>
-                    </div>
+                    <TextInputField
+                      id="existencia"
+                      label="Existencia"
+                      type="number"
+                      onchange={this.onChangeTextInput}
+                      value={existencia}
+                      error={existencia_error}
+                      required
+                    />
                   </div>
                   <div className="row">
-                    <div className="col s12">
-                      <div className="input-field">
-                        <input
-                          id="cantidad_minima"
-                          name="cantidad_minima"
-                          type="text"
-                          className="validate"
-                        />
-                        <label for="cantidad_minima">Cantidad minima</label>
-                      </div>
-                    </div>
+                    <TextInputField
+                      id="cantidad_minima"
+                      label="Cantidad minima"
+                      type="number"
+                      onchange={this.onChangeTextInput}
+                      value={cantidad_minima}
+                      error={cantidad_minima_error}
+                      required
+                    />
                   </div>
                   <div className="row">
-                    <div className="col s12">
-                      <label>
-                        <input
-                          type="checkbox"
-                          className="filled-in"
-                          checked="checked"
-                        />
-                        <span>Es raro</span>
-                      </label>
-                    </div>
+                    <CheckInputField
+                      id="es_raro"
+                      label="Es raro"
+                      checked={es_raro}
+                      onchange={this.onChangeCheckField}
+                    />
                   </div>
                 </div>
               </div>
