@@ -13,10 +13,14 @@ import { withRouter } from 'react-router-dom';
 
 import LogoRimeim from '../../../public/img/logo_rimeim.png';
 
+import isEmpty from '../../../actions/isEmpty';
+
 import {
     configMaterialComponents,
     removeMaterialComponents
 } from '../../../utils/MaterialFunctions';
+
+import Spinner from '../../common/Spinner';
 
 import TextInputField from '../../common/TextInputField';
 import CheckInputField from '../../common/CheckInputField';
@@ -43,7 +47,29 @@ class NewClient extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps);
+        const { client } = nextProps.clients;
+
+        if (client) {
+            client.nombre = !isEmpty(client.nombre) ? client.nombre : '';
+            client.rtn = !isEmpty(client.rtn) ? client.rtn : '';
+            client.correo = !isEmpty(client.correo) ? client.correo : '';
+            client.contacto = !isEmpty(client.contacto) ? client.contacto : '';
+            client.telefono = !isEmpty(client.telefono) ? client.telefono : '';
+            client.codigo = !isEmpty(client.codigo) ? client.codigo : '';
+            client.es_empresa = !isEmpty(client.es_empresa)
+                ? client.es_empresa
+                : '';
+
+            this.setState({
+                nombre: client.nombre,
+                rtn: client.rtn,
+                correo: client.correo,
+                contacto: client.contacto,
+                telefono: client.telefono,
+                codigo: client.codigo,
+                es_empresa: client.es_empresa
+            });
+        }
     }
 
     onChangeTextInput = e => {
@@ -57,6 +83,8 @@ class NewClient extends Component {
     onSubmit = e => {
         e.preventDefault();
 
+        const { id } = this.props.match.params;
+
         const clientData = {
             nombre: this.state.nombre,
             rtn: this.state.rtn,
@@ -67,13 +95,19 @@ class NewClient extends Component {
             es_empresa: this.state.es_empresa
         };
 
-        if (this.state.editMode)
+        if (this.props.match.params.id)
+            this.props.editClient(
+                clientData,
+                id,
+                this.props.history,
+                '/clientes'
+            );
+        else
             this.props.createClient(
                 clientData,
                 this.props.history,
                 '/clientes'
             );
-        else this.props.editClient(clientData, this.props.history, '/clientes');
     };
 
     render() {
@@ -86,134 +120,163 @@ class NewClient extends Component {
             codigo,
             es_empresa
         } = this.state;
-        return (
-            <React.Fragment>
-                <Navbar navtype={NEW_CLIENT} />
-                <main>
-                    <div className='row'>
-                        <div className='col s12'>
-                            <div className='card '>
-                                <div className='card-content'>
-                                    <div className='row'>
-                                        <div className='col s12 m12 center'>
-                                            <img
-                                                src={LogoRimeim}
-                                                className='responsive-img bordered'
-                                                alt=''
-                                            />
-                                            <div className='d-block'>
-                                                <button className='btn'>
-                                                    Cambiar
-                                                </button>
-                                            </div>
+
+        const { loading, client } = this.props.clients;
+
+        const { id } = this.props.match.params;
+
+        let formContent;
+
+        if (loading) {
+            formContent = <Spinner fullWidth />;
+        } else {
+            formContent = (
+                <div className='row'>
+                    <div className='col s12'>
+                        <div className='card '>
+                            <div className='card-content'>
+                                <div className='row'>
+                                    <div className='col s12 m12 center'>
+                                        <img
+                                            src={LogoRimeim}
+                                            className='responsive-img bordered'
+                                            alt=''
+                                        />
+                                        <div className='d-block'>
+                                            <button className='btn'>
+                                                Cambiar
+                                            </button>
                                         </div>
                                     </div>
-                                    <div className='row'>
-                                        <div className='col s12 m12'>
-                                            <form onSubmit={this.onSubmit}>
-                                                <div className='row'>
-                                                    <TextInputField
-                                                        id='nombre'
-                                                        label='Nombre'
-                                                        onchange={
-                                                            this
-                                                                .onChangeTextInput
-                                                        }
-                                                        value={nombre}
-                                                    />
-                                                </div>
-                                                <div className='row'>
-                                                    <TextInputField
-                                                        id='rtn'
-                                                        label='RTN'
-                                                        onchange={
-                                                            this
-                                                                .onChangeTextInput
-                                                        }
-                                                        value={rtn}
-                                                    />
-                                                </div>
+                                </div>
+                                <div className='row'>
+                                    <div className='col s12 m12'>
+                                        <form onSubmit={this.onSubmit}>
+                                            <div className='row'>
+                                                <TextInputField
+                                                    id='nombre'
+                                                    label='Nombre'
+                                                    onchange={
+                                                        this.onChangeTextInput
+                                                    }
+                                                    value={nombre}
+                                                    active_label={
+                                                        id ? true : false
+                                                    }
+                                                />
+                                            </div>
+                                            <div className='row'>
+                                                <TextInputField
+                                                    id='rtn'
+                                                    label='RTN'
+                                                    onchange={
+                                                        this.onChangeTextInput
+                                                    }
+                                                    value={rtn}
+                                                    active_label={
+                                                        id ? true : false
+                                                    }
+                                                />
+                                            </div>
 
-                                                <div className='row'>
-                                                    <TextInputField
-                                                        id='correo'
-                                                        type='email'
-                                                        label='Correo'
-                                                        onchange={
-                                                            this
-                                                                .onChangeTextInput
-                                                        }
-                                                        value={correo}
-                                                    />
-                                                </div>
-                                                <div className='row'>
-                                                    <TextInputField
-                                                        id='contacto'
-                                                        label='Contacto'
-                                                        onchange={
-                                                            this
-                                                                .onChangeTextInput
-                                                        }
-                                                        value={contacto}
-                                                    />
-                                                </div>
-                                                <div className='row'>
-                                                    <TextInputField
-                                                        id='telefono'
-                                                        label='Telefono'
-                                                        onchange={
-                                                            this
-                                                                .onChangeTextInput
-                                                        }
-                                                        value={telefono}
-                                                    />
-                                                </div>
-                                                <div className='row'>
-                                                    <TextInputField
-                                                        id='codigo'
-                                                        label='Codigo'
-                                                        onchange={
-                                                            this
-                                                                .onChangeTextInput
-                                                        }
-                                                        value={codigo}
-                                                    />
-                                                </div>
-                                                <div className='row'>
-                                                    <CheckInputField
-                                                        id='es_empresa'
-                                                        checked={es_empresa}
-                                                        onchange={
-                                                            this
-                                                                .onChangeTextInput
-                                                        }
-                                                        label='Es empresa'
-                                                    />
-                                                </div>
+                                            <div className='row'>
+                                                <TextInputField
+                                                    id='correo'
+                                                    type='email'
+                                                    label='Correo'
+                                                    onchange={
+                                                        this.onChangeTextInput
+                                                    }
+                                                    value={correo}
+                                                    active_label={
+                                                        id ? true : false
+                                                    }
+                                                />
+                                            </div>
+                                            <div className='row'>
+                                                <TextInputField
+                                                    id='contacto'
+                                                    label='Contacto'
+                                                    onchange={
+                                                        this.onChangeTextInput
+                                                    }
+                                                    value={contacto}
+                                                    active_label={
+                                                        id ? true : false
+                                                    }
+                                                />
+                                            </div>
+                                            <div className='row'>
+                                                <TextInputField
+                                                    id='telefono'
+                                                    label='Telefono'
+                                                    onchange={
+                                                        this.onChangeTextInput
+                                                    }
+                                                    value={telefono}
+                                                    active_label={
+                                                        id ? true : false
+                                                    }
+                                                />
+                                            </div>
+                                            <div className='row'>
+                                                <TextInputField
+                                                    id='codigo'
+                                                    label='Codigo'
+                                                    onchange={
+                                                        this.onChangeTextInput
+                                                    }
+                                                    value={codigo}
+                                                    active_label={
+                                                        id ? true : false
+                                                    }
+                                                />
+                                            </div>
+                                            <div className='row'>
+                                                <CheckInputField
+                                                    id='es_empresa'
+                                                    checked={es_empresa}
+                                                    onchange={
+                                                        this.onChangeTextInput
+                                                    }
+                                                    label='Es empresa'
+                                                    active_label={
+                                                        id ? true : false
+                                                    }
+                                                />
+                                            </div>
 
-                                                <div className='d-block center'>
-                                                    <button
-                                                        className='btn center'
-                                                        type='submit'
-                                                    >
-                                                        Guardar
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
+                                            <div className='d-block center'>
+                                                <button
+                                                    className='btn center'
+                                                    type='submit'
+                                                >
+                                                    {id
+                                                        ? 'Actualizar'
+                                                        : 'Guardar'}
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </main>
+                </div>
+            );
+        }
+
+        return (
+            <React.Fragment>
+                <Navbar navtype={NEW_CLIENT} />
+                <main>{formContent}</main>
             </React.Fragment>
         );
     }
 }
 
 const mapStateToProps = state => ({
-    clients: state.clients,
+    clients: state.client,
     errors: state.errors
 });
 

@@ -33,8 +33,7 @@ class Clients extends Component {
         if (clients.length < 0 || loading) {
             clientsContent = <Spinner fullWidth />;
         } else {
-            clientsContent = clients.map((client, i) => {
-                console.log(client);
+            clientsContent = clients.map((client, index) => {
                 return (
                     <div className='col s12 m6 l4'>
                         <ClientCard client={client} key={client.id} />

@@ -36,7 +36,7 @@ export const getClient = id => dispatch => {
     dispatch(clearErrors());
     dispatch(clientLoading());
     axios
-        .get(`clients/get_one/${id}`)
+        .get(`/clients/get_one/${id}`)
         .then(res => {
             const response = res.data;
             configUserFromResponse(response, dispatch);
@@ -48,7 +48,7 @@ export const getClient = id => dispatch => {
         })
         .catch(err => handleError(err, dispatch));
 };
-export const editClient = (data, id) => dispatch => {
+export const editClient = (data, id, history, newUrl) => dispatch => {
     dispatch(clearErrors());
     axios
         .put(`/clients/update/${id}`, data)
@@ -59,11 +59,23 @@ export const editClient = (data, id) => dispatch => {
                 type: GET_CLIENT,
                 payload: response.data
             });
+
+            history.push(newUrl);
         })
         .catch(err => handleError(err, dispatch));
 };
 export const searchClient = () => dispatch => {};
-export const deleteClient = id => dispatch => {};
+export const deleteClient = id => dispatch => {
+    dispatch(clearErrors);
+    dispatch(clientLoading);
+    axios
+        .delete(`/clients/delete/${id}`)
+        .then(res => {
+            const response = res.data;
+            configUserFromResponse(response, dispatch);
+        })
+        .catch(err => handleError(err, dispatch));
+};
 export const clientLoading = () => {
     return {
         type: CLIENT_LOADING
