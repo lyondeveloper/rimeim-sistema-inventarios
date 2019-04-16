@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function NewClientWrapper() {
+export default function NewClientWrapper(props) {
     return (
         <div className='nav-wrapper'>
             <a href='#!' className='brand-logo'>

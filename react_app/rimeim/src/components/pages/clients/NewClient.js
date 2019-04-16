@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createClient, editClient } from '../../../actions/clientActions';
+import {
+    createClient,
+    editClient,
+    getClient
+} from '../../../actions/clientActions';
 
 import { NEW_CLIENT } from '../../layout/NavTypes';
 import Navbar from '../../layout/Navbar';
@@ -25,8 +29,7 @@ class NewClient extends Component {
         contacto: '',
         telefono: '',
         codigo: '',
-        es_empresa: false,
-        editMode: false
+        es_empresa: false
     };
 
     componentWillMount() {
@@ -35,6 +38,8 @@ class NewClient extends Component {
 
     componentDidMount() {
         configMaterialComponents();
+        const { id } = this.props.match.params;
+        if (id) this.props.getClient(id);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -52,17 +57,23 @@ class NewClient extends Component {
     onSubmit = e => {
         e.preventDefault();
 
-        const newClient = {
+        const clientData = {
             nombre: this.state.nombre,
             rtn: this.state.rtn,
             correo: this.state.correo,
             contacto: this.state.contacto,
+            telefono: this.state.telefono,
+            codigo: this.state.codigo,
             es_empresa: this.state.es_empresa
         };
 
-        console.log(newClient);
-
-        this.props.createClient(newClient, this.props.history, '/login');
+        if (this.state.editMode)
+            this.props.createClient(
+                clientData,
+                this.props.history,
+                '/clientes'
+            );
+        else this.props.editClient(clientData, this.props.history, '/clientes');
     };
 
     render() {
@@ -208,5 +219,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    { createClient, editClient }
+    { createClient, editClient, getClient }
 )(withRouter(NewClient));

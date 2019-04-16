@@ -32,8 +32,36 @@ export const getClients = () => dispatch => {
         })
         .catch(err => handleError(err, dispatch));
 };
-export const getClient = id => dispatch => {};
-export const editClient = id => dispatch => {};
+export const getClient = id => dispatch => {
+    dispatch(clearErrors());
+    dispatch(clientLoading());
+    axios
+        .get(`clients/get_one/${id}`)
+        .then(res => {
+            const response = res.data;
+            configUserFromResponse(response, dispatch);
+
+            dispatch({
+                type: GET_CLIENT,
+                payload: response.data
+            });
+        })
+        .catch(err => handleError(err, dispatch));
+};
+export const editClient = (data, id) => dispatch => {
+    dispatch(clearErrors());
+    axios
+        .put(`/clients/update/${id}`, data)
+        .then(res => {
+            const response = res.data;
+            configUserFromResponse(response, dispatch);
+            dispatch({
+                type: GET_CLIENT,
+                payload: response.data
+            });
+        })
+        .catch(err => handleError(err, dispatch));
+};
 export const searchClient = () => dispatch => {};
 export const deleteClient = id => dispatch => {};
 export const clientLoading = () => {
