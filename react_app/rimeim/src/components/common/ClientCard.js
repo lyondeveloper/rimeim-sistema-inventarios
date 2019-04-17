@@ -6,11 +6,17 @@ import { connect } from 'react-redux';
 import { deleteClient } from '../../actions/clientActions';
 
 import LogoRimeim from '../../public/img/logo_rimeim.png';
+import Spinner from './Spinner';
 
 class ClientCard extends Component {
     onDeleteClientClick = e => {
         e.preventDefault();
-        this.props.deleteClient(this.props.client.id);
+        if (
+            window.confirm(
+                'Estas seguro de esto? Esta acción NO se puede revertir.'
+            )
+        )
+            this.props.deleteClient(this.props.client.id);
     };
 
     render() {
@@ -26,6 +32,13 @@ class ClientCard extends Component {
                 telefono
             }
         } = this.props;
+
+        console.log(this.props.clients);
+        const { loading } = this.props.clients;
+
+        if (loading) {
+            return <Spinner fullWidth />;
+        }
 
         return (
             <div className='card hoverable'>
@@ -77,7 +90,11 @@ class ClientCard extends Component {
     }
 }
 
+const mapStateToProps = state => ({
+    clients: state.client
+});
+
 export default connect(
-    null,
+    mapStateToProps,
     { deleteClient }
 )(withRouter(ClientCard));

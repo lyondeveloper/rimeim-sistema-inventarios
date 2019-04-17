@@ -1,4 +1,9 @@
-import { CLIENT_LOADING, GET_CLIENT, GET_CLIENTS } from '../actions/types';
+import {
+    CLIENT_LOADING,
+    GET_CLIENT,
+    GET_CLIENTS,
+    CLIENT_LOADING_END
+} from '../actions/types';
 
 const initialState = {
     loading: false,
@@ -12,6 +17,12 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 loading: true
+            };
+
+        case CLIENT_LOADING_END:
+            return {
+                ...state,
+                loading: false
             };
 
         case GET_CLIENT:

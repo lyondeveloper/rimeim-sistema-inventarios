@@ -24,6 +24,7 @@ export const GET_PRODUCT = 'GET_PRODUCT';
 
 //Clients
 export const CLIENT_LOADING = 'CLIENT_LOADING';
+export const CLIENT_LOADING_END = 'CLIENT_LOADING_END';
 export const GET_CLIENT = 'GET_CLIENT';
 export const GET_CLIENTS = 'GET_CLIENTS';
 
