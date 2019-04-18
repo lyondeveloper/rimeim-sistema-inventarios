@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-import { CLIENT_LOADING, GET_CLIENT, GET_CLIENTS } from '../actions/types';
+import {
+    CLIENT_LOADING,
+    GET_CLIENT,
+    GET_CLIENTS,
+    CLIENT_LOADING_END
+} from '../actions/types';
 
 import { clearErrors, handleError } from './errorActions';
 
@@ -64,20 +69,42 @@ export const editClient = (data, id, history, newUrl) => dispatch => {
         })
         .catch(err => handleError(err, dispatch));
 };
-export const searchClient = () => dispatch => {};
+export const searchClient = data => dispatch => {
+    dispatch(clientLoading());
+    axios
+        .get(`/clients/search/${data}`)
+        .then(res => {
+            const response = res.data;
+            configUserFromResponse(response, dispatch);
+            dispatch({
+                type: GET_CLIENTS,
+                payload: response.data
+            });
+            setTimeout(() => clientLoadingEnd(), 10);
+        })
+        .catch(err => handleError(err, dispatch));
+};
 export const deleteClient = id => dispatch => {
-    dispatch(clearErrors);
-    dispatch(clientLoading);
+    dispatch(clearErrors());
+    dispatch(clientLoading());
     axios
         .delete(`/clients/delete/${id}`)
         .then(res => {
             const response = res.data;
             configUserFromResponse(response, dispatch);
+            dispatch(getClients());
+            setTimeout(() => clientLoadingEnd(), 10);
         })
         .catch(err => handleError(err, dispatch));
 };
 export const clientLoading = () => {
     return {
         type: CLIENT_LOADING
+    };
+};
+
+export const clientLoadingEnd = () => {
+    return {
+        type: CLIENT_LOADING_END
     };
 };

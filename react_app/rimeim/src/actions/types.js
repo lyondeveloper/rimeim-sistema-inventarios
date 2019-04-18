@@ -36,6 +36,7 @@ export const GET_VEHICLES = 'GET_VEHICLES';
 
 //Clients
 export const CLIENT_LOADING = 'CLIENT_LOADING';
+export const CLIENT_LOADING_END = 'CLIENT_LOADING_END';
 export const GET_CLIENT = 'GET_CLIENT';
 export const GET_CLIENTS = 'GET_CLIENTS';
 
