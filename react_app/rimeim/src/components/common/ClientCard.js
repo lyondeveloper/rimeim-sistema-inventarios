@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 
 import { deleteClient } from '../../actions/clientActions';
 
-import LogoRimeim from '../../public/img/logo_rimeim.png';
 import Spinner from './Spinner';
 
 class ClientCard extends Component {
@@ -33,7 +32,6 @@ class ClientCard extends Component {
             }
         } = this.props;
 
-        console.log(this.props.clients);
         const { loading } = this.props.clients;
 
         if (loading) {
@@ -45,7 +43,7 @@ class ClientCard extends Component {
                 <div className='card-content'>
                     <Link to={`/clientes/${id}`}>
                         <div className='card-image border-bottom card-product'>
-                            <img src={LogoRimeim} alt='' />
+                            <img src={img} alt='' />
                         </div>
                         <span className='d-block'>
                             Codigo: <span>{codigo}</span>

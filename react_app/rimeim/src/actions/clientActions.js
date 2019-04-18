@@ -69,7 +69,21 @@ export const editClient = (data, id, history, newUrl) => dispatch => {
         })
         .catch(err => handleError(err, dispatch));
 };
-export const searchClient = () => dispatch => {};
+export const searchClient = data => dispatch => {
+    dispatch(clientLoading());
+    axios
+        .get(`/clients/search/${data}`)
+        .then(res => {
+            const response = res.data;
+            configUserFromResponse(response, dispatch);
+            dispatch({
+                type: GET_CLIENTS,
+                payload: response.data
+            });
+            setTimeout(() => clientLoadingEnd(), 10);
+        })
+        .catch(err => handleError(err, dispatch));
+};
 export const deleteClient = id => dispatch => {
     dispatch(clearErrors());
     dispatch(clientLoading());
