@@ -50,8 +50,16 @@
         if ($die) { die(); }
     }
         
-    function getJsonData() {
-        $data = json_decode(file_get_contents('php://input'), true);
+    function getJsonData($json_identifier = null) {
+        $data = null;
+
+        if (!is_null($json_identifier) && 
+            isset($_POST[$json_identifier])) {
+            $data = json_decode($_POST[$json_identifier]); 
+        } else {
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+        
         if (!is_null($data)) {
             $data = array_to_obj($data);
             foreach($data as &$value) {

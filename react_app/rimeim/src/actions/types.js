@@ -22,6 +22,18 @@ export const PRODUCT_END_LOADING = 'PRODUCT_END_LOADING';
 export const GET_PRODUCTS = 'GET_PRODUCTS';
 export const GET_PRODUCT = 'GET_PRODUCT';
 
+// Brands
+export const BRAND_LOADING = 'BRAND_LOADING';
+export const BRAND_END_LOADING = 'BRAND_END_LOADING';
+export const GET_BRAND = 'GET_BRAND';
+export const GET_BRANDS = 'GET_BRANDS';
+
+// Vehicle
+export const VEHICLE_LOADING = 'VEHICLE_LOADING';
+export const VEHICLE_END_LOADING = 'VEHICLE_END_LOADING';
+export const GET_VEHICLE = 'GET_VEHICLE';
+export const GET_VEHICLES = 'GET_VEHICLES';
+
 //Clients
 export const CLIENT_LOADING = 'CLIENT_LOADING';
 export const GET_CLIENT = 'GET_CLIENT';

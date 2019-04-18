@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_get_next_cliente_id;
 delimiter $$
 create function func_get_next_cliente_id()
@@ -225,6 +225,35 @@ begin
             telefono = p_telefono,
             es_empresa = p_es_empresa
 		where id = p_id;
+    end if;
+end $$
+delimiter ;
+*/
+
+drop procedure if exists proc_search_client;
+delimiter $$
+create procedure proc_search_client(in p_field varchar(255))
+begin
+	set p_field = trim_and_lower(p_field);
+    if (!is_empty(p_field)) then
+		select distinct 
+			c.id,
+			c.nombre,
+            c.codigo,
+            c.rtn,
+            c.correo,
+            c.telefono,
+            c.es_empresa
+        from tb_cliente c
+        where c.eliminado = false
+        and 
+        ( c.nombre like concat('%', p_field, '%')
+        or c.codigo like concat('%', p_field, '%')
+        or c.rtn like concat('%', p_field, '%')
+        or c.correo like concat('%', p_field, '%')
+        or c.id = p_field
+        )
+        order by c.nombre asc;
     end if;
 end $$
 delimiter ;

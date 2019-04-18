@@ -374,36 +374,83 @@
             </div>
 
             <div class="card">
-              <div class="card-content card-distrubucion-productos">
-                <h5>Distribucion</h5>
-                <div class="row">
-                  <div class="col s12">
-                    San Pedro Sula:
-                    <div class="input-field inline">
-                      <input id="email_inline" type="text" class="validate" />
-                    </div>
-                  </div>
+              <div class="card-content">
+                <div>
+                  <h5>Distribucion</h5>
+                  <button
+                    class="btn-floating right modal-trigger"
+                    data-target="modal_local_producto"
+                  >
+                    <i class="material-icons">add</i>
+                  </button>
                 </div>
+                <table class="table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Local</th>
+                      <th>Ubicacion</th>
+                      <th>Cantidad</th>
+                    </tr>
+                  </thead>
 
-                <div class="row">
-                  <div class="col s12">
-                    Tegucigalpa:
-                    <div class="input-field inline">
-                      <input id="email_inline" type="text" class="validate" />
-                    </div>
-                  </div>
-                </div>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <div class="row">
-                  <div class="col s12">
-                    Choloma:
-                    <div class="input-field inline">
-                      <input id="email_inline" type="text" class="validate" />
-                    </div>
-                  </div>
+        <div class="modal" id="modal_local_producto">
+          <div class="modal-content">
+            <h5>Agregar o editar producto</h5>
+            <div class="row">
+              <div class="input-field col s12">
+                <select>
+                  <option value="" selected>Seleccionar</option>
+                  <option value="1">Sps</option>
+                  <option value="2">Tegucigalpa</option>
+                  <option value="3">Choloma</option>
+                </select>
+                <label>Local</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col s12">
+                <div class="input-field">
+                  <input
+                    id="local_cantidad"
+                    name="local_cantidad"
+                    type="number"
+                    class="validate"
+                  />
+                  <label for="local_cantidad">Cantidad</label>
                 </div>
               </div>
             </div>
+
+            <div class="row">
+              <div class="col s12">
+                <div class="input-field">
+                  <input
+                    id="local_ubicacion"
+                    name="local_ubicacion"
+                    type="number"
+                    class="validate"
+                  />
+                  <label for="local_ubicacion">Ubicacion</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <a href="#!" class="btn-flat left modal-close">
+              Cerrar
+            </a>
+            <a href="#!" class="btn right">
+              Aceptar
+            </a>
           </div>
         </div>
       </main>

@@ -3,21 +3,17 @@ import { Link } from 'react-router-dom';
 
 export default function ProductCard(props) {
   const {
-    product: {
-      id,
-      nombre,
-      precio,
-      existencia,
-      imagen: { url },
-      marca,
-      tipo_vehiculo
-    }
+    product: { id, nombre, precio, existencia, imagen, marca, tipo_vehiculo }
   } = props;
   return (
     <div className="card hoverable">
       <Link to={`/productos/${id}`}>
         <div className="card-image border-bottom card-product">
-          <img src={url} alt="" />
+          {imagen && imagen.url ? (
+            <img src={imagen.url} alt="" />
+          ) : (
+            <img src="" alt="" />
+          )}
         </div>
         <div className="card-content">
           <h5 className="d-block">{nombre}</h5>

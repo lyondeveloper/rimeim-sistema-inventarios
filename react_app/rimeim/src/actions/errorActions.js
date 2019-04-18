@@ -28,6 +28,7 @@ export const handleError = (err, dispatch, another_dispatch = null) => {
     });
   }
   if (
+    err.response &&
     err.response.data &&
     err.response.data.data &&
     err.response.data.data.error
@@ -37,13 +38,14 @@ export const handleError = (err, dispatch, another_dispatch = null) => {
       return endApplication(dispatch);
     }
   }
-  if (err.response.status === 409) {
+  if (err.response && err.response.status === 409) {
     const response = err.response.data;
     const decoded = getAuthTokenFromResponse(response);
     dispatch(setCurrentUser(decoded));
   }
 
   if (
+    err.response &&
     err.response.data &&
     err.response.data.data &&
     err.response.data.data.error_process
@@ -52,7 +54,11 @@ export const handleError = (err, dispatch, another_dispatch = null) => {
   }
 
   var payload = {};
-  if (err.response.data && typeof err.response.data.data !== 'undefined') {
+  if (
+    err.response &&
+    err.response.data &&
+    typeof err.response.data.data !== 'undefined'
+  ) {
     payload = err.response.data.data;
   }
 

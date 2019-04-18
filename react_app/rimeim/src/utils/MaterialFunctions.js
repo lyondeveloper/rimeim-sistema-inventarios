@@ -70,6 +70,10 @@ export const updateTextFields = () => {
   M.updateTextFields();
 };
 
+export const configSelectInputFields = () => {
+  M.FormSelect.init(document.querySelectorAll('select'), []);
+};
+
 export const getModalInstanceById = id => {
   const elem = document.getElementById(id);
   return M.Modal.getInstance(elem);

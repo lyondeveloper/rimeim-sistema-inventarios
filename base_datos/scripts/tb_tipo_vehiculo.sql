@@ -12,7 +12,7 @@ begin
     return @new_id;
 end $$
 delimiter ;
-
+*/
 drop procedure if exists proc_get_tipo_vehiculos;
 delimiter $$
 create procedure proc_get_tipo_vehiculos()
@@ -22,11 +22,12 @@ begin
             t.descripcion,
             t.fecha_creado
     from tb_tipo_vehiculo t 
-    where t.eliminado = false;
+    where t.eliminado = false
+    order by t.nombre asc;
 end $$
 delimiter ;
-*/
 
+/*
 drop procedure if exists proc_get_tipo_vehiculo_byid;
 delimiter $$
 create procedure proc_get_tipo_vehiculo_byid(in p_id bigint)
@@ -42,6 +43,7 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
 /*
 drop procedure if exists proc_add_tipo_vehiculo;

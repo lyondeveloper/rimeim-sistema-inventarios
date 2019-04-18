@@ -109,10 +109,10 @@
         }
 
         public function save_all_uploads() {
-            $files_count = $this->fileupload->get_count_files_upload();
+            $files_count = $this->get_count_files_upload();
             $files_saved = [];
             for ($x=0; $x < $files_count; $x++) { 
-                if($new_file_path = $this->fileupload->save_upload_file($x)) {
+                if($new_file_path = $this->save_upload_file($x)) {
                     $new_file = [
                         'path' => $new_file_path,
                         'type' => pathinfo($new_file_path, PATHINFO_EXTENSION),

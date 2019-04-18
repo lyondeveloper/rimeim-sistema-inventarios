@@ -13,7 +13,7 @@
 
         public function get_all() {
             $this->db->query('call proc_get_clientes();');
-            return $this->db->resultSet();
+            return convert_to_bool_values($this->db->resultSet(), ['es_empresa']);
         }
 
         public function get_by_id($id) {
@@ -76,5 +76,12 @@
             $this->db->bind(':p_id', $id);
             $this->db->bind(':p_id_empleado', $id_empleado);
             return $this->db->success();
+        }
+
+        // Helpers
+        public function search($field) {
+            $this->db->query('call proc_search_client(:p_field);');
+            $this->db->bind(':p_field', $field);
+            return convert_to_bool_values($this->db->resultSet(), ['es_empresa']);
         }
     }

@@ -178,11 +178,18 @@
 
         public function delete($id) {
             $this->useDeleteRequest();
-            $success = $this->clientModel->delete_by_id($id);
+            $success = $this->clientModel->delete_by_id($id, 
+                                            $this->get_current_id_empleado());
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
             $this->response();
+        }
+
+        public function search($field) {
+            $this->useGetRequest();
+            $clients = $this->clientModel->search($field);
+            $this->response($clients);
         }
 
         // ========== ClientProducPrice =============

@@ -13,7 +13,7 @@
         public function __construct()
         {
             $this->initController(CTR_EMPLEADO);
-            $this->fileupload = new FileUpload;
+            $this->fileupload = new FileUpload();
             $this->fileModel = $this->model('DBFile');
             $this->productModel = $this->model('Product');
             $this->productImagesModel = $this->model('ProductImages');
@@ -61,10 +61,11 @@
 
         public function add() {
             $this->usePostRequest();
-            $data = $this->validate_add_data(getJsonData());
+            echo var_dump($_FILES); die();
+            $data = $this->validate_add_data(getJsonData('json_data'));
             $newId = $this->productModel->add($data);
             $this->checkNewId($newId);
-            $product_files = $this->fileModel->save_all($this->fileupload, $this->get_current_user_id());
+            $product_files = $this->fileModel->save_all_files($this->fileupload, $this->get_current_user_id());
 
             $x = 0;
             foreach($product_files as $file) {
@@ -104,18 +105,16 @@
                 $errors['raro_error'] = "Campo invalido";
             }
             if (!isset($data->precio) || 
-                (!is_double($data->precio) && !is_int($data->precio)) ) {
+                empty($data->precio)) {
                 $errors['precio_error'] = "Campo invalido";
             }
             if (!isset($data->existencia) || 
-                !is_int($data->existencia)) {
+                empty($data->existencia)) {
                 $errors['existencia_error'] = "Campo invalido";
             }
             if (!isset($data->cantidad_minima)) {
                 $errors['cantidad_minima_error'] = "Campo invalido";
-            } elseif ($data->cantidad_minima == -1) {
-                $data->cantidad_minima = 100;
-            }
+            } 
             $this->checkErrors($errors);
             return $data;
         }

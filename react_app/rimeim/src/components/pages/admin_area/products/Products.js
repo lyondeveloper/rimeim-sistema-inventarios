@@ -22,7 +22,10 @@ class AdminProducts extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-    this.props.getProducts(this.props.user.currentLocal.id);
+    const id_local = this.props.user.currentLocal.id
+      ? this.props.user.currentLocal.id
+      : 0;
+    this.props.getProducts(id_local);
   }
 
   render() {

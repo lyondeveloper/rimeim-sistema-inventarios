@@ -1,8 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import uuid from 'uuid';
 
 const SelectFiles = props => {
-  const { label, onchange, id, input_size, multiple, accept, files } = props;
+  const {
+    label,
+    onchange,
+    id,
+    input_size,
+    multiple,
+    accept,
+    files,
+    onDeleteFileClick
+  } = props;
   var scroll_files = null;
 
   if (files.length > 0) {
@@ -10,13 +20,20 @@ const SelectFiles = props => {
       <div className="horizontal-scroll-container bordered">
         {files.map(file => (
           <div
-            key={file.name}
+            key={uuid()}
             className="item"
             style={{
               background: `url('${file.src}') no-repeat center center / cover`
             }}
           >
-            <div className="red close-button cursor-pointer">
+            <div
+              className="red close-button cursor-pointer"
+              onClick={() => {
+                if (onDeleteFileClick) {
+                  onDeleteFileClick(file);
+                }
+              }}
+            >
               <i className="material-icons">close</i>
             </div>
           </div>
@@ -54,7 +71,8 @@ SelectFiles.propTypes = {
   input_size: PropTypes.string.isRequired,
   multiple: PropTypes.bool.isRequired,
   accept: PropTypes.string.isRequired,
-  files: PropTypes.array
+  files: PropTypes.array,
+  onDeleteFileClick: PropTypes.func
 };
 
 SelectFiles.defaultProps = {

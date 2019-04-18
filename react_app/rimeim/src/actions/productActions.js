@@ -46,15 +46,19 @@ export const getProductById = (id, id_local) => dispatch => {
 export const addNewProduct = (newProductData, history, new_url) => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .post('/products/add', newProductData)
+    .post('/products/add', newProductData, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
-      configUserFromResponse(response, dispatch);
+      console.log(response);
+      /*configUserFromResponse(response, dispatch);
       dispatch({
-        type: PRODUCT_END_LOADING
+        type: GET_PRODUCT,
+        payload: response.data
       });
-      history.push(new_url);
+      history.push(`${new_url}/${response.data.id}`);*/
     })
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };

@@ -22,10 +22,10 @@
             return $this->db->single();
         }
 
-        public function add($nombre, $descripcion) {
+        public function add($params) {
             $this->db->query('call proc_add_tipo_vehiculo(:p_nombre, :p_descripcion);');
-            $this->db->bind(':p_nombre', $nombre);
-            $this->db->bind(':p_descripcion', $descripcion);
+            $this->db->bind(':p_nombre', $params->nombre);
+            $this->db->bind(':p_descripcion', $params->descripcion);
             return $this->db->newId();
         }
 
