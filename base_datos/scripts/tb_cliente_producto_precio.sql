@@ -78,19 +78,25 @@ begin
 	set @new_id = null;
 	if (valid_int_id(p_id_cliente) and
 		valid_int_id(p_id_producto) and
-        p_precio != null) then
+        p_precio >= 0) then
         
-        set @new_id = func_get_next_cliente_producto_precio_id();
+        if not exists(select * from 
+					tb_cliente_producto_precio p 
+                    where p.id_cliente = p_id_cliente and 
+                    p.id_producto = p_id_producto and
+                    p.eliminado = false) then
+			set @new_id = func_get_next_cliente_producto_precio_id();
         
-		insert into tb_cliente_producto_precio(
-					`id`,
-					`id_cliente`,
-                    `id_producto`,
-                    `precio`)
-		values(@new_id,
-				p_id_cliente,
-				p_id_producto,
-				p_precio);
+			insert into tb_cliente_producto_precio(
+						`id`,
+						`id_cliente`,
+						`id_producto`,
+						`precio`)
+			values(@new_id,
+					p_id_cliente,
+					p_id_producto,
+					p_precio);
+        end if;
     end if;
     
     select @new_id as 'id';
@@ -105,7 +111,7 @@ create procedure proc_update_cliente_producto_precio_by_id(in p_id bigint,
 															in p_precio double)
 begin
 	if (valid_int_id(p_id) and 
-		p_precio != null) then
+		p_precio >= 0) then
 		update tb_cliente_producto_precio
         set precio = p_precio
         where id = p_id 
@@ -124,7 +130,7 @@ create procedure proc_update_cliente_producto_precio_by_idp_idc(in p_id_cliente 
 begin
 	if (valid_int_id(p_id_cliente) and
         valid_int_id(p_id_producto) and
-        p_precio != null) then
+        p_precio >= 0) then
 		
         update tb_cliente_producto_precio
         set precio = p_precio

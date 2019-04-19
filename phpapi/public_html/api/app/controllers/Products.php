@@ -61,7 +61,6 @@
 
         public function add() {
             $this->usePostRequest();
-            echo var_dump($_FILES); die();
             $data = $this->validate_add_data(getJsonData('json_data'));
             $newId = $this->productModel->add($data);
             $this->checkNewId($newId);

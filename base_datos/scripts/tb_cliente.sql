@@ -181,6 +181,8 @@ begin
     select @new_id as 'id';
 end $$
 delimiter ;
+*/
+
 
 drop procedure if exists `proc_delete_cliente_by_id`;
 delimiter $$
@@ -194,10 +196,17 @@ begin
 			fecha_eliminado = current_timestamp(),
             id_empleado_eliminado_por = p_id_empleado_eliminado_por
 		where id = p_id;
+        
+        update tb_cliente_producto_precio 
+        set eliminado = true,
+			fecha_eliminado = current_timestamp()
+		where id_cliente = p_id;
     end if;
 end $$
 delimiter ;
 
+
+/*
 drop procedure if exists `proc_update_cliente_by_id`;
 delimiter $$
 create procedure proc_update_cliente_by_id(in p_id bigint,
@@ -230,6 +239,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop procedure if exists proc_search_client;
 delimiter $$
 create procedure proc_search_client(in p_field varchar(255))
@@ -257,5 +267,5 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/
 

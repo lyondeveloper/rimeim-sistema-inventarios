@@ -52,13 +52,12 @@ export const addNewProduct = (newProductData, history, new_url) => dispatch => {
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
-      console.log(response);
-      /*configUserFromResponse(response, dispatch);
+      configUserFromResponse(response, dispatch);
       dispatch({
         type: GET_PRODUCT,
         payload: response.data
       });
-      history.push(`${new_url}/${response.data.id}`);*/
+      history.push(`${new_url}/${response.data.id}`);
     })
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };

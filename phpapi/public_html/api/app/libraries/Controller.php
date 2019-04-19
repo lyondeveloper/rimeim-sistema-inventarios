@@ -169,8 +169,8 @@
             // Medida para cuando la funcion apache_request_headers no esta definida y en cambio
             // se esta usando una obtenida en php.net
             $token_header = (is_null($token_header) && isset($headers['AUTH'])) ? $headers['AUTH'] : $token_header;
+            $token_header = (is_null($token_header) && isset($headers['Auth'])) ? $headers['Auth'] : $token_header;
             $token_header = (is_null($token_header) && isset($headers['auth'])) ? $headers['auth'] : $token_header;
-
             if (!is_null($token_header)) {
                 $matches = [];
                 if (preg_match('/' . KEY_BEARER . '\s(\S+)/', $token_header, $matches)) {

@@ -28,6 +28,7 @@
             if (is_null($client)) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $client->precios_productos = $this->clientProductModel->get($id);
             $this->response($client);
         }
 
@@ -38,7 +39,11 @@
             if (is_null($new_id)) {
                 $this->response(null, ERROR_PROCESS);
             } 
+            $this->add_clients_products_prices($new_id, 
+                                                isset($data->precios_productos) ? 
+                                                    $data->precios_productos : []);
             $new_empleado = $this->clientModel->get_by_id($new_id);
+            $new_empleado->precios_productos = $this->clientProductModel->get($new_id);
             $this->response($new_empleado);
         }
 
@@ -56,46 +61,65 @@
                 }
 
                 if (isset($data->codigo) && 
-                    !empty($data->codigo) &&
-                    $this->clientModel->get_by_code($data->codigo)) {
-                    $errors['codigo_error'] = "Codigo no disponible o en uso";
+                    !empty($data->codigo)) {
+                    if($this->clientModel->get_by_code($data->codigo)) {
+                        $errors['codigo_error'] = "Codigo no disponible o en uso";
+                    }
+                    
                 } else {
                     $data->codigo = null;
                 }
 
                 if (isset($data->rtn) && 
-                    !empty($data->rtn) &&
-                    $this->clientModel->get_by_rtn($data->rtn)) {
-                    $errors['rtn_error'] = "Rtn no disponible o en uso";
+                    !empty($data->rtn)) {
+                    if ($this->clientModel->get_by_rtn($data->rtn)) {
+                        $errors['rtn_error'] = "Rtn no disponible o en uso";
+                    }
                 } else {
                     $data->rtn = null;
                 }
 
                 if (isset($data->correo) && 
                     !empty($data->correo) &&
-                    isEmail($data->correo) &&
-                    $this->clientModel->get_by_email($data->correo)) {
-                    $errors['correo_error'] = "Correo no disponible o en uso";
+                    isEmail($data->correo)) {
+                    if ($this->clientModel->get_by_email($data->correo)) {
+                        $errors['correo_error'] = "Correo no disponible o en uso";
+                    }
                 } else {
                     $data->correo = null;
                 }
 
                 if (isset($data->telefono) && 
-                    !empty($data->telefono) &&
-                    $this->clientModel->get_by_phone($data->telefono)) {
-                    $errors['telefono_error'] = "Telefono no disponible o en uso";
+                    !empty($data->telefono)) {
+                    if ($this->clientModel->get_by_phone($data->telefono)) {
+                        $errors['telefono_error'] = "Telefono no disponible o en uso";
+                    }
                 } else {
                     $data->telefono = null;
                 }
             } 
 
-            if (count($errors) > 0) {
-                $this->response($errors, ERROR_FORBIDDEN);
-            }
+            $this->checkErrors($errors);
+
             $data->id_local = $this->get_current_id_local();
             $data->id_empleado = $this->get_current_id_empleado();
             return $data;
         }
+
+        private function add_clients_products_prices($client_id, $precios_productos) {
+            if(!is_array($precios_productos) || 
+                count($precios_productos) <= 0) {
+                return;
+            }
+            foreach($precios_productos as &$producto_precio) {
+                if (isset($producto_precio->id_producto) && 
+                    isset($producto_precio->precio)) {
+                    $producto_precio->id_cliente = $client_id;
+                    processLog("Agregando precio producto");
+                    $this->clientProductModel->add($producto_precio);
+                }
+            }
+        } // END OF ADD
 
         public function update($id) {
             $this->usePutRequest();
@@ -104,7 +128,11 @@
             if (!$success) {
                 $this->response(null, ERROR_PROCESS);
             }
+            $this->update_client_products_prices(isset($data->precios_productos) ? 
+                                                    $data->precios_productos : []);
+
             $updated_client = $this->clientModel->get_by_id($id);
+            $updated_client->precios_productos = $this->clientProductModel->get($id);
             $this->response($updated_client);
         }
 
@@ -176,6 +204,22 @@
             return $data;
         }
 
+        private function update_client_products_prices($id_cliente, $precios_productos) {
+            foreach($precios_productos as &$product_price) {
+                if (isset($product_price->id_producto) &&
+                    isset($product_price->precio)) {
+
+                    $product_price->id_cliente = $id_cliente;
+                    if (isset($products_price->eliminado) && 
+                        $products_price->eliminado == true) {
+                        $this->clientProductModel->delete_by_id($product_price->id_producto);
+                    } else {
+                        $this->clientProductModel->update_by_idp_idc($product_price);
+                    }
+                }
+            }
+        } // End of UPDATE
+
         public function delete($id) {
             $this->useDeleteRequest();
             $success = $this->clientModel->delete_by_id($id, 
@@ -241,14 +285,31 @@
             return $data;
         }
 
-        public function update_product_price($id, $precio) {
+        public function update_product_price() {
             $this->usePutRequest();
-            $success = $this->clientProductModel->update_by_id($id, $precio);
+            $data = $this->validate_update_product_price(getJsonData());
+            $success = $this->clientProductModel->update_by_id($data->id_producto, $data->precio);
             if(!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
             $updated_product_price = $this->clientProductModel->get_by_id($id);
             $this->response($updated_product_price);
+        }
+
+        private function validate_update_product_price($data) {
+            $errors = [];
+
+            if (!isset($data->id_producto) ||
+                !($data->id_producto >= 0)) {
+                $errors['id_producto_error'] = "Campo invalido";
+            }
+            if (!isset($data->precio) || 
+                !($data->precio >= 0)) {
+                $errors['precio_error'] = "Campo invalido";
+            }
+
+            $this->checkErrors($errors);
+            return $data;
         }
 
         public function delete_product_price($id) {

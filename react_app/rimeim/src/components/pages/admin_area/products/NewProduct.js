@@ -121,7 +121,8 @@ class NewProduct extends Component {
       reader.onload = result => {
         new_images.push({
           name: file.name,
-          src: result.target.result
+          src: result.target.result,
+          file
         });
 
         if (i === files.length) {

@@ -19,31 +19,31 @@
         public function get_by_id($id) {
             $this->db->query('call proc_get_cliente_by_id(:p_id);');
             $this->db->bind(':p_id', $id);
-            return $this->db->single();
+            return convert_to_bool_values($this->db->single(), ['es_empresa']);
         }
 
         public function get_by_code($code) {
             $this->db->query('call proc_get_cliente_by_codigo(:p_codigo);');
             $this->db->bind(':p_codigo', $code);
-            return $this->db->single();
+            return convert_to_bool_values($this->db->single(), ['es_empresa']);
         }
 
         public function get_by_email($email) {
             $this->db->query('call proc_get_cliente_by_email(:p_correo);');
             $this->db->bind(':p_correo', $email);
-            return $this->db->single();
+            return convert_to_bool_values($this->db->single(), ['es_empresa']);
         }
 
         public function get_by_rtn($rtn) {
             $this->db->query('call proc_get_cliente_by_rtn(:p_rtn);');
             $this->db->bind(':p_rtn', $rtn);
-            return $this->db->single();
+            return convert_to_bool_values($this->db->single(), ['es_empresa']);
         }
 
         public function get_by_phone($telefono) {
             $this->db->query('call proc_get_cliente_by_telefono(:p_telefono);');
             $this->db->bind(':p_telefono', $telefono);
-            return $this->db->single();
+            return convert_to_bool_values($this->db->single(), ['es_empresa']);
         }
 
         public function add($params) {
