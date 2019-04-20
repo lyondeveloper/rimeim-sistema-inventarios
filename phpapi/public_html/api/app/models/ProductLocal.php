@@ -24,6 +24,12 @@
             return $this->db->resultSet();
         }
 
+        public function get_by_id_product($id_producto) {
+            $this->db->query('call proc_get_producto_local_distribucion_by_id(:p_id_producto);');
+            $this->db->bind(':p_id_producto', $id_producto);
+            return $this->db->resultSet();
+        }
+
         public function get_minified_byid($id) {
             $this->db->query('call proc_get_minified_producto_local_byid(:p_id);');
             $this->db->bind(':p_id', $id);

@@ -37,16 +37,36 @@
             
             if (count($products) > 0) {
                 foreach ($products as &$product) {
+                    if (!is_null($id_local) && $id_local > 0) {
+                        $product = $this->productModel->get_by_id($product->id_producto);
+                    } 
                     $product = $this->parse_product_to_send($product);
                 }
             }
             $this->response($products);
         }
 
-        private function parse_product_to_send($product) {
+        private function parse_product_to_send($product, $is_singular = false) {
             $product->marca = $this->brandModel->get_by_id($product->id_marca);
             $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
-            $product->imagen = $this->productImagesModel->get_principal_image($product->id);
+
+            if ($is_singular) {
+                $product->imagenes = $this->productImagesModel->get_by_product($product->id);
+                $product->distribucion = $this->productLocalModel->get_by_id_product($product->id);
+
+                foreach($product->distribucion as &$distribucion) {
+                    $distribucion->local = $this->localModel->get_by_id($distribucion->id_local);
+
+                    $ubicacion = $this->productLocalUbicationModal->get($distribucion->id);
+                    if (count($ubicacion) > 0) {
+                        $distribucion->ubicacion = $ubicacion[0]->ubicacion;
+                        $distribucion->id_ubicacion = $ubicacion[0]->id;
+                    }
+                }
+            } else {
+                $product->imagen = $this->productImagesModel->get_principal_image($product->id);
+            }
+
             unset($product->id_marca);
             unset($product->id_tipo_vehiculo);
             return $product;
@@ -58,7 +78,7 @@
             if (is_null($product)) {
                 $this->response(null, ERROR_NOTFOUND);
             }
-            $product = $this->parse_product_to_send($product);
+            $product = $this->parse_product_to_send($product, true);
             $this->response($product);
         }
 
@@ -129,18 +149,21 @@
                 count($array_distribucion) <= 0) {
                 return;
             }
-            foreach($array_distribucion as &$distrubucion) {
-                if (isset($distrubucion->id_local) && 
-                    isset($distrubucion->existencia) && 
-                    isset($distrubucion->cantidad_minima) &&
-                    isset($distrubucion->ubicacion)) {
+            foreach($array_distribucion as &$distribucion) {
+                if (isset($distribucion->id_local) && 
+                    isset($distribucion->existencia) && 
+                    isset($distribucion->cantidad_minima) &&
+                    isset($distribucion->ubicacion)) {
 
-                    $distrubucion->id_producto = $id_producto;
-                    $new_producto_local_id = $this->productLocalModel->add($distrubucion);
-                    if($new_producto_local_id > 0) {
-                        $this->productLocalUbicationModal->add($new_producto_local_id, $distrubucion->ubicacion);
+                    $distribucion->id_producto = $id_producto;
+
+                    if (!$this->productLocalModel->exists_by_idp_idl($id_producto, $distribucion->id_local)) {
+                        $new_producto_local_id = $this->productLocalModel->add($distribucion);
+                        if($new_producto_local_id > 0) {
+                            $this->productLocalUbicationModal->add($new_producto_local_id, $distribucion->ubicacion);
+                        }
+                        unset($new_producto_local_id);
                     }
-                    unset($new_producto_local_id);
                 }
             }
         } // END OF ADD
@@ -213,15 +236,20 @@
             foreach($array_distribucion as &$distribucion) {
                 if (isset($distribucion->id) && 
                     isset($distribucion->existencia) &&
-                    isset($distribucion->cantidad_minima)) {
+                    isset($distribucion->cantidad_minima) && 
+                    isset($distribucion->id_ubicacion) && 
+                    isset($distribucion->ubicacion)) {
                     
                     if (isset($distribucion->eliminado) &&
                         $distribucion->eliminado == true) {
                         $this->productLocalModel->delete($distribucion->id);
-                    } else {
+
+                    } elseif(isset($distribucion->actualizado) &&
+                        $distribucion->actualizado == true) {
                         $this->productLocalModel->update($distribucion);
-                        $this->productLocalUbicationModal->update($distribucion->id, 
+                        $this->productLocalUbicationModal->update($distribucion->id_ubicacion, 
                                                                     $distribucion->ubicacion);
+
                     }
                 }
             }
@@ -236,16 +264,16 @@
             $this->response();
         }
 
-        public function add_producto_local() {
+        // ======== Distribucion de productos en locales ========
+
+        public function add_product_local() {
             $this->usePostRequest();
             $data = $this->validate_add_product_local(getJsonData());
             $newId = $this->productLocalModel->add($data);
             $this->checkNewId($newId);
             $this->productLocalUbicationModal->add($newId, $data->ubicacion);
 
-            $newProductLocal = $this->productLocalModel->get_minified_byid($newId);
-            $newProductLocal->local = $this->localModel->get_by_id($newProductLocal->id_local);
-            $newProductLocal->ubicacion = $this->productLocalUbicationModal->get($newId)[0]->ubicacion;
+            $newProductLocal = $this->get_producto_local_by_id($newId);
             $this->response($newProductLocal);
         }
 
@@ -282,5 +310,69 @@
 
             $this->checkErrors($errors);
             return $data;
+        }
+
+        public function update_product_local($id) {
+            $this->usePutRequest();
+            $data = $this->validate_update_product_local_data($id, getJsonData());
+            $success = $this->productLocalModel->update($data);
+            if (!$success) {
+                $this->response(null, ERROR_PROCESS);
+            }
+            $this->productLocalUbicationModal->update($data->id_ubicacion, $data->ubicacion);
+            $updatedProductLocal = $this->get_producto_local_by_id($id);
+            $this->response($updatedProductLocal);
+        }
+
+        private function validate_update_product_local_data($id, $data) {
+            $errors = [];
+
+            if (!isset($data->existencia) || 
+                !($data->existencia >= 0 )) {
+                $errors['pl_existencia_error'] = "Campo invalido";
+            }
+
+            if (!isset($data->cantidad_minima) ||
+                !($data->cantidad_minima >= 0)) {
+                $errors['pl_cantidad_minima_error'] = "Campo invalido";
+            }
+
+            if (!isset($data->ubicacion) ||
+                empty($data->ubicacion)) {
+                $errors['pl_ubicacion_error'] = "Campo invalido";
+            }
+
+            if (!isset($data->id_ubicacion) || 
+                !($data->id_ubicacion >= 0)) {
+                $errors['pl_id_ubicacion_error'] = "Campo invalido";
+            }
+
+            $this->checkErrors($errors);
+
+            $data->id = $id;
+            return $data;
+        }// END OF UPDATE
+
+        public function delete_product_local($id) {
+            $this->useDeleteRequest();
+            $success = $this->productLocalModel->delete($id);
+            if (!$success) {
+                $this->response(null, ERROR_NOTFOUND);
+            } 
+            $this->response();
+        }
+
+
+        // Helpers
+        private function get_producto_local_by_id($id) {
+            $productLocal = $this->productLocalModel->get_minified_byid($id);
+            $productLocal->local = $this->localModel->get_by_id($productLocal->id_local);
+
+            $productLocalUbication = $this->productLocalUbicationModal->get($id);
+            if (count($productLocalUbication) > 0) {
+                $productLocal->ubicacion = $productLocalUbication[0]->ubicacion;
+                $productLocal->id_ubicacion = $productLocalUbication[0]->id;
+            }
+            return $productLocal;
         }
     }

@@ -54,6 +54,7 @@ begin
 end $$
 delimiter ;
 
+
 drop procedure if exists `proc_update_producto_local_ubicacion_by_id`;
 delimiter $$
 create procedure proc_update_producto_local_ubicacion_by_id(in p_id_producto_local bigint,
