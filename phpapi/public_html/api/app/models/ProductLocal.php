@@ -11,10 +11,23 @@
             $this->db = new Database;
         }
 
+        public function exists_by_idp_idl($id_producto, $id_local) {
+            $this->db->query("select func_exists_producto_local_by_idp_idl(:p_id_producto, :p_id_local) as 'exists';");
+            $this->db->bind(':p_id_producto', $id_producto);
+            $this->db->bind(':p_id_local', $id_local);
+            return $this->db->single()->exists == true;
+        }
+
         public function get_by_local($id_local) {
             $this->db->query('call proc_get_producto_local(:p_id_local);');
             $this->db->bind(':p_id_local', $id_local);
             return $this->db->resultSet();
+        }
+
+        public function get_minified_byid($id) {
+            $this->db->query('call proc_get_minified_producto_local_byid(:p_id);');
+            $this->db->bind(':p_id', $id);
+            return $this->db->single();
         }
 
         public function add($params) {

@@ -288,7 +288,7 @@
         public function update_product_price() {
             $this->usePutRequest();
             $data = $this->validate_update_product_price(getJsonData());
-            $success = $this->clientProductModel->update_by_id($data->id_producto, $data->precio);
+            $success = $this->clientProductModel->update_by_id($data->id, $data->precio);
             if(!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
@@ -299,9 +299,9 @@
         private function validate_update_product_price($data) {
             $errors = [];
 
-            if (!isset($data->id_producto) ||
-                !($data->id_producto >= 0)) {
-                $errors['id_producto_error'] = "Campo invalido";
+            if (!isset($data->id) ||
+                !($data->id >= 0)) {
+                $errors['id_error'] = "Campo invalido";
             }
             if (!isset($data->precio) || 
                 !($data->precio >= 0)) {

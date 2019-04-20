@@ -14,6 +14,32 @@ end $$
 delimiter ;
 */
 
+-- Verifica si existe un producto en un local 
+/*
+drop function if exists func_exists_producto_local_by_idp_idl;
+delimiter $$
+create function func_exists_producto_local_by_idp_idl(p_id_producto bigint,
+														p_id_local bigint)
+returns bool
+begin
+	set @response = false;
+    
+    if (valid_int_id(p_id_producto) and 
+		valid_int_id(p_id_local)) then
+		set @response = exists(
+			select * from tb_producto_local p
+            where p.id_producto = p_id_producto
+            and p.id_local = p_id_local
+            and p.eliminado = false
+        );
+	end if;
+    
+    return @response;
+end $$
+delimiter ;
+*/
+
+/*
 drop procedure if exists `proc_get_producto_local`;
 delimiter $$
 create procedure proc_get_producto_local(in p_id_local bigint)
@@ -32,8 +58,9 @@ begin
         pl.id_local = p_id_local;
     end if;
 end $$
-delimiter ;
+delimiter ;*/
 
+/*
 drop procedure if exists proc_get_producto_local_by_id;
 delimiter $$
 create procedure proc_get_producto_local_by_id(in p_producto_local_id bigint)
@@ -56,6 +83,27 @@ begin
     end if;
 end $$
 delimiter ;
+*/
+
+
+drop procedure if exists proc_get_minified_producto_local_byid;
+delimiter $$
+create procedure proc_get_minified_producto_local_byid(in p_id bigint)
+begin
+	if (valid_int_id(p_id)) then
+		select pl.id,
+				pl.id_producto,
+				pl.id_local,
+                pl.existencia,
+                pl.cantidad_minima,
+                pl.fecha_creado
+        from tb_producto_local pl
+        where pl.id = p_id
+        and pl.eliminado = false;
+    end if;
+end $$
+delimiter ;
+
 
 /*
 drop procedure if exists `proc_add_producto_local`;

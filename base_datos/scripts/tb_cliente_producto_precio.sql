@@ -27,8 +27,11 @@ begin
 	if (valid_int_id(p_id)) then
 		select p.id,
 				p.id_producto,
+                prod.nombre,
+                prod.descripcion,
 				p.precio
 		from tb_cliente_producto_precio p 
+        join tb_producto prod on prod.id = p.id_producto
 		where p.id = p_id
 		and p.eliminado = false;
 	end if; 
@@ -42,8 +45,11 @@ begin
 	if (valid_int_id(p_id_cliente)) then
 		select p.id,
 				p.id_producto,
+                prod.nombre,
+                prod.descripcion,
 				p.precio
 		from tb_cliente_producto_precio p 
+        join tb_producto prod on prod.id = p.id_producto
 		where p.id_cliente = p_id_cliente
 		and p.eliminado = false;
 	end if; 
@@ -59,8 +65,11 @@ begin
 		valid_int_id(p_id_producto)) then
 		select p.id,
 				p.id_producto,
+                prod.nombre,
+                prod.descripcion,
 				p.precio
 		from tb_cliente_producto_precio p 
+        join tb_producto prod on prod.id = p.id_producto
 		where p.id_cliente = p_id_cliente
 		and p.id_producto = p_id_producto
 		and p.eliminado = false;
