@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-export default function ProductCard(props) {
+const ProductCard = props => {
   const {
-    product: { id, nombre, precio, existencia, imagen, marca, tipo_vehiculo }
+    product: { id, nombre, precio, existencia, imagen, marca, tipo_vehiculo },
+    admin
   } = props;
   return (
     <div className="card hoverable">
-      <Link to={`/productos/${id}`}>
+      <Link to={`${admin && '/admin'}/productos/${id}`}>
         <div className="card-image border-bottom card-product">
           {imagen && imagen.url ? (
             <img src={imagen.url} alt="" />
@@ -31,4 +33,15 @@ export default function ProductCard(props) {
       </Link>
     </div>
   );
-}
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.object.isRequired,
+  admin: PropTypes.bool.isRequired
+};
+
+ProductCard.defaultProps = {
+  admin: false
+};
+
+export default ProductCard;

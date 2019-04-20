@@ -1,7 +1,7 @@
 import { GET_LOCAL, GET_LOCALS, LOCAL_LOADING } from '../actions/types';
 
 const initialState = {
-  loading: false,
+  loading: true,
   local: {},
   locals: []
 };

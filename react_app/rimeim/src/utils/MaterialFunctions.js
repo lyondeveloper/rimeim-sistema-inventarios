@@ -19,6 +19,13 @@ export const configMaterialComponents = () => {
   }
 };
 
+export const configMaterialBoxedImages = () => {
+  M.Materialbox.init(document.querySelectorAll('.materialboxed'), {
+    onOpenEnd: onOpenEndImage,
+    onCloseEnd: onCloseEndImage
+  });
+};
+
 export const onOpenEndImage = e => {
   if (e.parentElement.parentElement.classList.contains('img-item')) {
     if (e.classList.contains('adjust')) {

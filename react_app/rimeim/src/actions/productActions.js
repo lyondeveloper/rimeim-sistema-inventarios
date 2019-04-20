@@ -28,10 +28,10 @@ export const getProducts = id_local => dispatch => {
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };
 
-export const getProductById = (id, id_local) => dispatch => {
+export const getProductById = id => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .get(`/products/get_one/${id}/${id_local}`)
+    .get(`/products/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

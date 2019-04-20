@@ -23,9 +23,7 @@ import { getLocals } from '../../../../actions/LocalActions';
 import { getBrands } from '../../../../actions/brandActions';
 import { getVehicles } from '../../../../actions/vehicleActions';
 
-import isEmpty from '../../../../actions/isEmpty';
-
-class NewProduct extends Component {
+class EditProduct extends Component {
   state = {
     codigo_barra: '',
     nombre: '',
@@ -34,7 +32,6 @@ class NewProduct extends Component {
     descripcion: '',
     precio: '0',
     existencia: '0',
-    existencia_asignada: 0,
     cantidad_minima: '0',
     es_raro: false,
     local_seleccionado: '0',
@@ -176,6 +173,7 @@ class NewProduct extends Component {
       imagenes.forEach(img =>
         newProductData.append('file_uploads[]', img.file, img.name)
       );
+
       newProductData.append('json_data', JSON.stringify(newProduct));
       this.props.addNewProduct(
         newProductData,
@@ -193,7 +191,7 @@ class NewProduct extends Component {
 
   onClickAcceptProductLocalModal = () => {
     const errors = { ...this.state.custom_errors };
-    const { existencia, existencia_asignada } = this.state;
+    const { existencia } = this.state;
     var is_valid = true;
 
     if (this.state.is_modal_editing) {
@@ -204,47 +202,20 @@ class NewProduct extends Component {
         local_seleccionado,
         local_cantidad_minima
       } = this.state;
-      const existencia_int = parseInt(existencia);
-      const local_cantidad_int = parseInt(local_cantidad);
-      const local_cantidad_minima_int = parseInt(local_cantidad_minima);
 
-      if (
-        existencia_int < local_cantidad_int ||
-        local_cantidad_int + existencia_asignada > existencia
-      ) {
+      if (parseInt(existencia) < parseInt(local_cantidad)) {
         errors.local_cantidad_error =
           'La cantidad excede el inventario del producto';
         is_valid = false;
-      } else if (local_cantidad_int < 0) {
-        errors.local_cantidad_error = 'La cantidad es invalida';
-        is_valid = false;
       } else {
         delete errors.local_cantidad_error;
-      }
-
-      if (local_cantidad_minima_int < 0) {
-        errors.local_cantidad_minima_error = 'Cantidad invalida';
-        is_valid = false;
-      } else if (local_cantidad_minima_int > local_cantidad_int) {
-        errors.local_cantidad_minima_error =
-          'La cantidad minima excede el total del local';
-        is_valid = false;
-      } else {
-        delete errors.local_cantidad_minima_error;
-      }
-
-      if (isEmpty(local_ubicacion)) {
-        errors.local_ubicacion_error = 'Ubicacion invalida';
-        is_valid = false;
-      } else {
-        delete errors.local_ubicacion_error;
       }
 
       if (local_seleccionado !== '0' && is_valid) {
         const new_product_local = {
           id_local: local_seleccionado,
           local: this.state.locals.find(l => l.id === local_seleccionado),
-          existencia: local_cantidad,
+          cantidad: local_cantidad,
           ubicacion: local_ubicacion,
           cantidad_minima: local_cantidad_minima
         };
@@ -254,7 +225,6 @@ class NewProduct extends Component {
 
         locals_product.push(new_product_local);
         this.setState({
-          existencia_asignada: existencia_asignada + local_cantidad_int,
           locals_product,
           local_cantidad: '0',
           local_ubicacion: '',
@@ -318,11 +288,7 @@ class NewProduct extends Component {
         existencia_error,
         cantidad_minima_error
       },
-      custom_errors: {
-        local_cantidad_error,
-        local_cantidad_minima_error,
-        local_ubicacion_error
-      }
+      custom_errors: { local_cantidad_error, local_cantidad_minima_error }
     } = this.state;
 
     const brandOptions = [];
@@ -488,7 +454,7 @@ class NewProduct extends Component {
                         <tr key={uuid()}>
                           <td>{lp.local.nombre}</td>
                           <td>{lp.ubicacion}</td>
-                          <td>{lp.existencia}</td>
+                          <td>{lp.cantidad}</td>
                           <td>{lp.cantidad_minima}</td>
                         </tr>
                       ))}
@@ -556,7 +522,6 @@ class NewProduct extends Component {
                   label="Ubicacion"
                   onchange={this.onChangeTextInput}
                   value={local_ubicacion}
-                  error={local_ubicacion_error}
                 />
               </div>
             </div>
@@ -580,7 +545,7 @@ class NewProduct extends Component {
   }
 }
 
-NewProduct.propTypes = {
+EditProduct.propTypes = {
   errors: PropTypes.object.isRequired,
   product: PropTypes.object.isRequired,
   local: PropTypes.object.isRequired,
@@ -608,4 +573,4 @@ export default connect(
     getVehicles,
     getBrands
   }
-)(NewProduct);
+)(EditProduct);

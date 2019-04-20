@@ -90,7 +90,7 @@
             $this->add_product_images($newId);
             $this->add_product_distribution($newId, isset($data->distribucion) ? $data->distribucion: []);
             $product = $this->productModel->get_by_id($newId);
-            $product->images = $this->productImagesModel->get_by_product($newId);
+            $product = $this->parse_product_to_send($product, true);
             $this->response($product);
         }
 
@@ -154,7 +154,6 @@
                     isset($distribucion->existencia) && 
                     isset($distribucion->cantidad_minima) &&
                     isset($distribucion->ubicacion)) {
-
                     $distribucion->id_producto = $id_producto;
 
                     if (!$this->productLocalModel->exists_by_idp_idl($id_producto, $distribucion->id_local)) {
@@ -163,7 +162,7 @@
                             $this->productLocalUbicationModal->add($new_producto_local_id, $distribucion->ubicacion);
                         }
                         unset($new_producto_local_id);
-                    }
+                    } 
                 }
             }
         } // END OF ADD
