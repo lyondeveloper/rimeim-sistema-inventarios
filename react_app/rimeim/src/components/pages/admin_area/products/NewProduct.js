@@ -34,7 +34,6 @@ class NewProduct extends Component {
     descripcion: '',
     precio: '0',
     existencia: '0',
-    existencia_asignada: 0,
     cantidad_minima: '0',
     es_raro: false,
     local_seleccionado: '0',
@@ -107,11 +106,23 @@ class NewProduct extends Component {
     }
   }
 
-  onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+  onChangeTextInput = e => {
+    if (e.target.name === 'local_seleccionado' && this.state.is_modal_editing)
+      return;
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   onChangeCheckField = e => {
     const current_value = this.state[e.target.name];
     this.setState({ [e.target.name]: !current_value });
+  };
+
+  hadleModalState = hide => {
+    if (hide) {
+      getModalInstanceById('modal_local_producto').close();
+    } else {
+      getModalInstanceById('modal_local_producto').open();
+    }
   };
 
   onSelectFiles = e => {
@@ -124,7 +135,7 @@ class NewProduct extends Component {
       reader.onload = result => {
         new_images.push({
           name: file.name,
-          src: result.target.result,
+          url: result.target.result,
           file
         });
 
@@ -140,6 +151,192 @@ class NewProduct extends Component {
     this.setState({
       imagenes: this.state.imagenes.filter(img => img !== file)
     });
+  };
+
+  getTotalSumProductLocals = () => {
+    let total = 0;
+    this.state.locals_product.forEach(l => {
+      if (
+        !(
+          this.state.is_modal_editing &&
+          this.state.local_seleccionado === l.id_local
+        )
+      ) {
+        total += parseInt(l.existencia);
+      }
+    });
+    return total;
+  };
+
+  onClickAcceptProductLocalModal = () => {
+    const errors = { ...this.state.custom_errors };
+    const {
+      existencia,
+      local_cantidad,
+      local_ubicacion,
+      local_seleccionado,
+      local_cantidad_minima,
+      locals_product
+    } = this.state;
+    var existencia_asignada = this.getTotalSumProductLocals();
+
+    var is_valid = true;
+    const existencia_int = parseInt(existencia);
+    const local_cantidad_int = parseInt(local_cantidad);
+    const local_cantidad_minima_int = parseInt(local_cantidad_minima);
+
+    if (
+      existencia_int < local_cantidad_int ||
+      local_cantidad_int + existencia_asignada > existencia
+    ) {
+      errors.local_cantidad_error =
+        'La cantidad excede el inventario del producto';
+      is_valid = false;
+    } else if (local_cantidad_int < 0) {
+      errors.local_cantidad_error = 'La cantidad es invalida';
+      is_valid = false;
+    } else {
+      delete errors.local_cantidad_error;
+    }
+
+    if (local_cantidad_minima_int < 0) {
+      errors.local_cantidad_minima_error = 'Cantidad invalida';
+      is_valid = false;
+    } else if (local_cantidad_minima_int > local_cantidad_int) {
+      errors.local_cantidad_minima_error =
+        'La cantidad minima excede el total del local';
+      is_valid = false;
+    } else {
+      delete errors.local_cantidad_minima_error;
+    }
+
+    if (isEmpty(local_ubicacion)) {
+      errors.local_ubicacion_error = 'Ubicacion invalida';
+      is_valid = false;
+    } else {
+      delete errors.local_ubicacion_error;
+    }
+
+    if (this.state.is_modal_editing) {
+      if (is_valid && local_seleccionado !== 0) {
+        const productLocalIndex = locals_product.findIndex(
+          l => l.id_local === local_seleccionado
+        );
+        if (productLocalIndex >= 0) {
+          locals_product[productLocalIndex] = {
+            id_local: local_seleccionado,
+            local: locals_product[productLocalIndex].local,
+            existencia: local_cantidad,
+            ubicacion: local_ubicacion,
+            cantidad_minima: local_cantidad_minima
+          };
+        }
+
+        this.setState({
+          locals_product,
+          local_cantidad: '0',
+          local_ubicacion: '',
+          local_cantidad_minima: '0',
+          local_seleccionado: '0'
+        });
+        this.hadleModalState(true);
+      }
+    } else {
+      if (local_seleccionado !== '0' && is_valid) {
+        const new_product_local = {
+          id_local: local_seleccionado,
+          local: this.state.locals.find(l => l.id === local_seleccionado),
+          existencia: local_cantidad,
+          ubicacion: local_ubicacion,
+          cantidad_minima: local_cantidad_minima
+        };
+
+        this.disableSelectedLocalOption(local_seleccionado);
+        locals_product.push(new_product_local);
+
+        this.setState({
+          locals_product,
+          local_cantidad: '0',
+          local_ubicacion: '',
+          local_cantidad_minima: '0',
+          local_seleccionado: '0'
+        });
+
+        this.hadleModalState(true);
+      }
+    }
+    this.setState({
+      custom_errors: errors
+    });
+  };
+
+  disableSelectedLocalOption = local_seleccionado => {
+    const localIndex = this.state.locals.findIndex(
+      l => l.id === local_seleccionado
+    );
+    if (localIndex >= 0) {
+      const new_locals = this.state.locals.map(a => ({ ...a }));
+      new_locals[localIndex].disabled = true;
+      this.setState({
+        needs_config_selects: true,
+        locals: new_locals
+      });
+    }
+  };
+
+  onAddLocalProductClick = () => {
+    this.setState({
+      local_cantidad: '0',
+      local_ubicacion: '',
+      local_cantidad_minima: '0',
+      local_seleccionado: '0',
+      is_modal_editing: false,
+      needs_config_selects: true
+    });
+    this.hadleModalState(false);
+  };
+
+  onLocalProductClick = productLocal => {
+    const { id_local, cantidad_minima, existencia, ubicacion } = productLocal;
+    this.setState({
+      local_cantidad: existencia,
+      local_ubicacion: ubicacion,
+      local_cantidad_minima: cantidad_minima,
+      local_seleccionado: id_local,
+      is_modal_editing: true,
+      needs_config_selects: true
+    });
+    this.hadleModalState(false);
+  };
+
+  onDeleteProductLocalClick = () => {
+    if (!this.state.is_modal_editing) {
+      return this.hadleModalState(true);
+    }
+    const { local_seleccionado, locals_product, locals } = this.state;
+    const localProducIndex = locals_product.findIndex(
+      l => l.id_local === local_seleccionado
+    );
+
+    if (localProducIndex >= 0) {
+      const localIndex = locals.findIndex(l => l.id === local_seleccionado);
+      if (localIndex >= 0) {
+        locals[localIndex].disabled = false;
+      }
+    }
+    this.setState({
+      locals,
+      local_cantidad: '0',
+      local_ubicacion: '',
+      local_cantidad_minima: '0',
+      local_seleccionado: '0',
+      is_modal_editing: false,
+      needs_config_selects: true,
+      locals_product: locals_product.filter(
+        l => l.id_local !== local_seleccionado
+      )
+    });
+    this.hadleModalState(true);
   };
 
   onSaveNewProduct = () => {
@@ -188,107 +385,6 @@ class NewProduct extends Component {
         this.props.history,
         '/admin/productos'
       );
-    }
-  };
-
-  onClickAcceptProductLocalModal = () => {
-    const errors = { ...this.state.custom_errors };
-    const { existencia, existencia_asignada } = this.state;
-    var is_valid = true;
-
-    if (this.state.is_modal_editing) {
-    } else {
-      const {
-        local_cantidad,
-        local_ubicacion,
-        local_seleccionado,
-        local_cantidad_minima
-      } = this.state;
-      const existencia_int = parseInt(existencia);
-      const local_cantidad_int = parseInt(local_cantidad);
-      const local_cantidad_minima_int = parseInt(local_cantidad_minima);
-
-      if (
-        existencia_int < local_cantidad_int ||
-        local_cantidad_int + existencia_asignada > existencia
-      ) {
-        errors.local_cantidad_error =
-          'La cantidad excede el inventario del producto';
-        is_valid = false;
-      } else if (local_cantidad_int < 0) {
-        errors.local_cantidad_error = 'La cantidad es invalida';
-        is_valid = false;
-      } else {
-        delete errors.local_cantidad_error;
-      }
-
-      if (local_cantidad_minima_int < 0) {
-        errors.local_cantidad_minima_error = 'Cantidad invalida';
-        is_valid = false;
-      } else if (local_cantidad_minima_int > local_cantidad_int) {
-        errors.local_cantidad_minima_error =
-          'La cantidad minima excede el total del local';
-        is_valid = false;
-      } else {
-        delete errors.local_cantidad_minima_error;
-      }
-
-      if (isEmpty(local_ubicacion)) {
-        errors.local_ubicacion_error = 'Ubicacion invalida';
-        is_valid = false;
-      } else {
-        delete errors.local_ubicacion_error;
-      }
-
-      if (local_seleccionado !== '0' && is_valid) {
-        const new_product_local = {
-          id_local: local_seleccionado,
-          local: this.state.locals.find(l => l.id === local_seleccionado),
-          existencia: local_cantidad,
-          ubicacion: local_ubicacion,
-          cantidad_minima: local_cantidad_minima
-        };
-
-        const { locals_product } = this.state;
-        this.disableSelectedLocalOption(local_seleccionado);
-
-        locals_product.push(new_product_local);
-        this.setState({
-          existencia_asignada: existencia_asignada + local_cantidad_int,
-          locals_product,
-          local_cantidad: '0',
-          local_ubicacion: '',
-          local_cantidad_minima: '0',
-          local_seleccionado: '0'
-        });
-
-        this.hadleModalState(true);
-      }
-    }
-    this.setState({
-      custom_errors: errors
-    });
-  };
-
-  disableSelectedLocalOption = local_seleccionado => {
-    const localIndex = this.state.locals.findIndex(
-      l => l.id === local_seleccionado
-    );
-    if (localIndex >= 0) {
-      const new_locals = this.state.locals.map(a => ({ ...a }));
-      new_locals[localIndex].disabled = true;
-      this.setState({
-        needs_config_selects: true,
-        locals: new_locals
-      });
-    }
-  };
-
-  hadleModalState = hide => {
-    if (hide) {
-      getModalInstanceById('modal_local_producto').close();
-    } else {
-      getModalInstanceById('modal_local_producto').open();
     }
   };
 
@@ -467,8 +563,8 @@ class NewProduct extends Component {
                   <div>
                     <h5>Distribucion</h5>
                     <button
-                      className="btn-floating right modal-trigger"
-                      data-target="modal_local_producto"
+                      className="btn-floating right"
+                      onClick={this.onAddLocalProductClick}
                     >
                       <i className="material-icons">add</i>
                     </button>
@@ -485,7 +581,11 @@ class NewProduct extends Component {
 
                     <tbody>
                       {locals_product.map(lp => (
-                        <tr key={uuid()}>
+                        <tr
+                          key={uuid()}
+                          className="cursor-pointer"
+                          onClick={this.onLocalProductClick.bind(this, lp)}
+                        >
                           <td>{lp.local.nombre}</td>
                           <td>{lp.ubicacion}</td>
                           <td>{lp.existencia}</td>
@@ -511,6 +611,7 @@ class NewProduct extends Component {
                     name="local_seleccionado"
                     onChange={this.onChangeTextInput}
                     value={local_seleccionado}
+                    disabled={this.state.is_modal_editing ? 'disabled' : ''}
                   >
                     <option value="0">Seleccionar</option>
                     {locals.map(local => (
@@ -565,6 +666,15 @@ class NewProduct extends Component {
               <a href="#!" className="btn-flat left modal-close">
                 Cerrar
               </a>
+
+              <a
+                href="#!"
+                className="btn red darken-3 ml-1 left"
+                onClick={this.onDeleteProductLocalClick}
+              >
+                Borrar
+              </a>
+
               <a
                 href="#!"
                 className="btn right"

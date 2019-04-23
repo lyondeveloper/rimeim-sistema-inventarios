@@ -9,12 +9,17 @@ import NavbarAdmin from '../../../layout/NewNavbarAdmin';
 import {
   configMaterialComponents,
   removeMaterialComponents,
-  configMaterialBoxedImages
+  configMaterialBoxedImages,
+  getModalInstanceById
 } from '../../../../utils/MaterialFunctions';
 
-import { getProductById } from '../../../../actions/productActions';
+import {
+  getProductById,
+  deleteProductById
+} from '../../../../actions/productActions';
 
 import Spinner from '../../../common/Spinner';
+import ConfirmationModal from '../../../layout/modals/ConfirmationModal';
 
 class AdminProduct extends Component {
   componentWillMount() {
@@ -29,6 +34,18 @@ class AdminProduct extends Component {
   componentDidUpdate() {
     configMaterialBoxedImages();
   }
+
+  onDeleteProductClick = () => {
+    getModalInstanceById('modal_confirmar_evento').open();
+  };
+
+  onConfirmDeleteProduct = () => {
+    this.props.deleteProductById(
+      this.props.match.params.id,
+      this.props.history,
+      '/admin/productos'
+    );
+  };
 
   render() {
     const {
@@ -130,11 +147,11 @@ class AdminProduct extends Component {
                 </tbody>
               </table>
 
-              <div className="mt-1">
+              {/* <div className="mt-1">
                 <button className="btn">Realizar pedido</button>
 
                 <button className="btn ml-1">Enviar a un local</button>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -167,7 +184,12 @@ class AdminProduct extends Component {
             </div>
           </div>
 
-          <button className="btn red darken-3">Borrar</button>
+          <button
+            className="btn red darken-3"
+            onClick={this.onDeleteProductClick}
+          >
+            Borrar
+          </button>
         </div>
       );
     }
@@ -196,6 +218,12 @@ class AdminProduct extends Component {
         <main>
           <div className="row">{productContent}</div>
         </main>
+
+        <ConfirmationModal
+          title="Borrar producto"
+          message="Esta seguro de eliminar este producto? No sera posible revertir la funcion"
+          onAccept={this.onConfirmDeleteProduct}
+        />
       </React.Fragment>
     );
   }
@@ -203,7 +231,8 @@ class AdminProduct extends Component {
 
 AdminProduct.propTypes = {
   product: PropTypes.object.isRequired,
-  getProductById: PropTypes.func.isRequired
+  getProductById: PropTypes.func.isRequired,
+  deleteProductById: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -212,5 +241,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getProductById }
+  { getProductById, deleteProductById }
 )(AdminProduct);

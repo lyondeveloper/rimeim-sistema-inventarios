@@ -14,16 +14,17 @@ const SelectFiles = props => {
     onDeleteFileClick
   } = props;
   var scroll_files = null;
-
-  if (files.length > 0) {
+  console.log(files);
+  const process_files = files.filter(file => !file.eliminado);
+  if (process_files.length > 0) {
     scroll_files = (
       <div className="horizontal-scroll-container bordered">
-        {files.map(file => (
+        {process_files.map(file => (
           <div
             key={uuid()}
             className="item"
             style={{
-              background: `url('${file.src}') no-repeat center center / cover`
+              background: `url('${file.url}') no-repeat center center / cover`
             }}
           >
             <div
