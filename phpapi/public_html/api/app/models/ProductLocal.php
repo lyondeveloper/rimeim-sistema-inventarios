@@ -55,7 +55,7 @@
 
         public function delete($id) {
             $this->db->query('call proc_delete_producto_local_by_id(:p_id);');
-            $this->db->bind(':p_id', $params->id);
+            $this->db->bind(':p_id', $id);
             return $this->db->success();
         }
     }

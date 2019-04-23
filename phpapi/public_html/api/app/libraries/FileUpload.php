@@ -142,4 +142,15 @@
             
             return $filename;
         }
+
+        // DELETE
+        public function delete_file($url) {
+            $file_url = $this->files_folder_path . $url;
+            processLog("Preprando archivo para borrar: " . $file_url);
+            if (file_exists($file_url)) {
+                unlink($file_url);
+                return true;
+            }   
+            return false;
+        }
     }

@@ -123,7 +123,9 @@
                 'admin' => $user->admin,
                 'dt_expire' => strtotime("+" . TOKEN_DURATION . " seconds", curent_time())
             ];
-            if (!is_null($info_employe)) {
+            if (!is_null($info_employe) && 
+                isset($info_employe->id) && 
+                isset($info_employe->id_local)) {
                 $token_arr['id_empleado'] = $info_employe->id;
                 $token_arr['id_local'] = $info_employe->id_local;
             }

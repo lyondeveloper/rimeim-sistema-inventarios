@@ -59,10 +59,10 @@ class EditProduct extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-    this.props.getProductById(this.props.match.params.id);
     this.props.getLocals();
     this.props.getBrands();
     this.props.getVehicles();
+    this.props.getProductById(this.props.match.params.id);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -90,7 +90,18 @@ class EditProduct extends Component {
         imagenes,
         distribucion
       } = nextProps.product.product;
+
+      const { locals } = this.state;
+      distribucion.forEach(dist => {
+        locals.forEach(local => {
+          if (dist.local.id === local.id) {
+            local.disabled = true;
+          }
+        });
+      });
+
       this.setState({
+        locals,
         codigo_barra,
         nombre,
         marca: marca && marca.id ? marca.id : '0',
@@ -109,7 +120,7 @@ class EditProduct extends Component {
 
     if (nextProps.local.locals && this.state.locals.length === 0) {
       const { locals } = nextProps.local;
-      locals.forEach(local => (local.disabled = true));
+      locals.forEach(local => (local.disabled = false));
       this.setState({
         needs_config_selects: true,
         locals: locals
@@ -212,7 +223,7 @@ class EditProduct extends Component {
           this.state.is_modal_editing &&
           this.state.local_seleccionado === l.id_local
         ) &&
-        !(l.deleted && l.deleted === true)
+        !(l.eliminado && l.eliminado === true)
       ) {
         total += parseInt(l.existencia);
       }
@@ -378,6 +389,15 @@ class EditProduct extends Component {
       delete locals_product[localProducIndex].actualizado;
       locals_product[localProducIndex].eliminado = true;
     }
+    if (locals_product[localProducIndex].id) {
+      this.setState({ locals_product });
+    } else {
+      this.setState({
+        locals_product: locals_product.filter(
+          lp => lp !== locals_product[localProducIndex]
+        )
+      });
+    }
     this.setState({
       locals,
       local_cantidad: '0',
@@ -385,14 +405,12 @@ class EditProduct extends Component {
       local_cantidad_minima: '0',
       local_seleccionado: '0',
       is_modal_editing: false,
-      needs_config_selects: true,
-      locals_product
+      needs_config_selects: true
     });
     this.hadleModalState(true);
   };
 
   onSaveProduct = () => {
-    return;
     const {
       codigo_barra,
       nombre,
@@ -407,7 +425,7 @@ class EditProduct extends Component {
       imagenes
     } = this.state;
 
-    const newProduct = {
+    const updatedProduct = {
       codigo_barra,
       nombre,
       id_marca: marca,
@@ -417,28 +435,27 @@ class EditProduct extends Component {
       precio: precio,
       existencia,
       cantidad_minima,
-      distribucion: locals_product
+      distribucion: locals_product,
+      imagenes: imagenes.filter(img => img.id)
     };
 
-    if (imagenes.length > 0) {
-      const newProductData = new FormData();
-
-      imagenes.forEach(img =>
-        newProductData.append('file_uploads[]', img.file, img.name)
+    const newImages = imagenes.filter(img => !img.id);
+    if (newImages.length > 0) {
+      const updatedProductData = new FormData();
+      newImages.forEach(img =>
+        updatedProductData.append('file_uploads[]', img.file, img.name)
       );
-      newProductData.append('json_data', JSON.stringify(newProduct));
-      this.props.addNewProduct(
-        newProductData,
-        this.props.history,
-        '/admin/productos'
+      updatedProductData.append('json_data', JSON.stringify(updatedProduct));
+      this.props.updateProductById(
+        this.props.match.params.id,
+        updatedProductData
       );
     } else {
-      this.props.addNewProduct(
-        newProduct,
-        this.props.history,
-        '/admin/productos'
-      );
+      this.props.updateProductById(this.props.match.params.id, updatedProduct);
     }
+    this.setState({
+      is_product_setted: false
+    });
   };
 
   render() {
@@ -630,18 +647,20 @@ class EditProduct extends Component {
                   </thead>
 
                   <tbody>
-                    {locals_product.map(lp => (
-                      <tr
-                        key={uuid()}
-                        className="cursor-pointer"
-                        onClick={this.onLocalProductClick.bind(this, lp)}
-                      >
-                        <td>{lp.local.nombre}</td>
-                        <td>{lp.ubicacion}</td>
-                        <td>{lp.existencia}</td>
-                        <td>{lp.cantidad_minima}</td>
-                      </tr>
-                    ))}
+                    {locals_product
+                      .filter(lp => !lp.eliminado)
+                      .map(lp => (
+                        <tr
+                          key={uuid()}
+                          className="cursor-pointer"
+                          onClick={this.onLocalProductClick.bind(this, lp)}
+                        >
+                          <td>{lp.local.nombre}</td>
+                          <td>{lp.ubicacion}</td>
+                          <td>{lp.existencia}</td>
+                          <td>{lp.cantidad_minima}</td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>

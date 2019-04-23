@@ -65,7 +65,9 @@ export const addNewProduct = (newProductData, history, new_url) => dispatch => {
 export const updateProductById = (id, newData) => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .put(`/products/update/${id}`, newData)
+    .post(`/products/update/${id}`, newData, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;

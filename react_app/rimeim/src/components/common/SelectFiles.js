@@ -14,7 +14,6 @@ const SelectFiles = props => {
     onDeleteFileClick
   } = props;
   var scroll_files = null;
-  console.log(files);
   const process_files = files.filter(file => !file.eliminado);
   if (process_files.length > 0) {
     scroll_files = (

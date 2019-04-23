@@ -168,21 +168,23 @@
         } // END OF ADD
 
         public function update($id) {
-            $this->usePutRequest();
-            $data = $this->validate_update_data(getJsonData(), $id);
-            $success = $this->productModel->update($data);
-            if (!$success) {
+            $this->usePostRequest();
+            if($this->productModel->get_by_id($id) == null) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+
+            $data = $this->validate_update_data(getJsonData('json_data'), $id);
+            
+            $this->productModel->update($data);
             $this->update_producto_distribution($id, isset($data->distribucion) ? $data->distribucion: []);
+            $this->update_product_images($id, isset($data->imagenes) ? $data->imagenes : []);
             $updated_product = $this->productModel->get_by_id($id);
-            $updated_product = $this->parse_product_to_send($updated_product);
+            $updated_product = $this->parse_product_to_send($updated_product, true);
             $this->response($updated_product);
         }
 
         private function validate_update_data($data, $id) {
             $errors = [];
-
             if (isset($data->id_tipo_vehiculo)) {
             }
             if (isset($data->id_marca)) {
@@ -208,18 +210,17 @@
                 $errors['raro_error'] = "Campo invalido";
             }
             if (!isset($data->precio) || 
-                (!is_double($data->precio) && !is_int($data->precio)) ) {
+                !($data->precio >= 0) ) {
                 $errors['precio_error'] = "Campo invalido";
             }
             if (!isset($data->existencia) || 
-                !is_int($data->existencia)) {
+                !($data->existencia >= 0)) {
                 $errors['existencia_error'] = "Campo invalido";
             }
-            if (!isset($data->cantidad_minima)) {
+            if (!isset($data->cantidad_minima) ||
+                !($data->cantidad_minima >= 0)) {
                 $errors['cantidad_minima_error'] = "Campo invalido";
-            } elseif ($data->cantidad_minima == -1) {
-                $data->cantidad_minima = 100;
-            }
+            } 
 
             $this->checkErrors($errors);
             $data->id = $id;
@@ -229,15 +230,15 @@
         private function update_producto_distribution($id_producto, $array_distribucion) {
             if (!is_array($array_distribucion) || 
                 count($array_distribucion) <= 0) {
+                    processLog("El array para actualizaar es corto");
                 return;
             }
 
             foreach($array_distribucion as &$distribucion) {
-                if (isset($distribucion->id) && 
-                    isset($distribucion->existencia) &&
+                if (isset($distribucion->existencia) &&
                     isset($distribucion->cantidad_minima) && 
-                    isset($distribucion->id_ubicacion) && 
-                    isset($distribucion->ubicacion)) {
+                    isset($distribucion->ubicacion) && 
+                    isset($distribucion->id_local)) {
                     
                     if (isset($distribucion->eliminado) &&
                         $distribucion->eliminado == true) {
@@ -249,9 +250,35 @@
                         $this->productLocalUbicationModal->update($distribucion->id_ubicacion, 
                                                                     $distribucion->ubicacion);
 
+                    } elseif (!isset($distribucion->id)) {
+                        if (!$this->productLocalModel->exists_by_idp_idl($id_producto, $distribucion->id_local)) {
+
+                            $distribucion->id_producto = $id_producto;
+                            $new_producto_local_id = $this->productLocalModel->add($distribucion);
+                            if($new_producto_local_id > 0) {
+                                $this->productLocalUbicationModal->add($new_producto_local_id, $distribucion->ubicacion);
+                            }
+                            unset($new_producto_local_id);
+                        } 
                     }
                 }
             }
+        } 
+        
+        private function update_product_images($id_producto, $array_imagenes) {
+            foreach($array_imagenes as &$product_image) {
+                if (isset($product_image->eliminado) && 
+                    $product_image->eliminado === true) {
+                    if($this->productImagesModel->delete($product_image->id)) {
+
+                        $file_url = str_replace(URLROOT, "", $product_image->url);
+                        if ($this->fileupload->delete_file($file_url)) {
+                            $this->fileModel->delete_by_id($product_image->id_archivo);
+                        }
+                    }
+                }
+            }
+            $this->add_product_images($id_producto);
         } // END OF UPDATE
 
         public function delete($id) {

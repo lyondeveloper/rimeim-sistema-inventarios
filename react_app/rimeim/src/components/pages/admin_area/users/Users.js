@@ -58,7 +58,7 @@ class AdminUsers extends Component {
               <Spinner fullWidth />
             ) : (
               users.map(user => (
-                <div className="col s12 m6 l4" key={user.id}>
+                <div className="col s12 m6 l6" key={user.id}>
                   <div className="card hoverable">
                     <Link to={`/admin/usuarios/${user.id}`}>
                       <div

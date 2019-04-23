@@ -26,5 +26,5 @@
     define('CTR_EMPLEADO', 'CONTROLLER_FOR_EMPLEADO');
 
     // Allow request
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Headers: Authorization');
+    // header('Access-Control-Allow-Origin: *');
+    // header('Access-Control-Allow-Headers: Authorization');
