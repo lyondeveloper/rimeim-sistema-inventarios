@@ -40,6 +40,12 @@ export const CLIENT_LOADING_END = 'CLIENT_LOADING_END';
 export const GET_CLIENT = 'GET_CLIENT';
 export const GET_CLIENTS = 'GET_CLIENTS';
 
+//Providers
+export const PROVIDER_LOADING = 'PROVIDER_LOADING';
+export const PROVIDER_LOADING_END = 'PROVIDER_LOADING_END';
+export const GET_PROVIDER = 'GET_PROVIDER';
+export const GET_PROVIDERS = 'GET_PROVIDERS';
+
 // Error
 export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';

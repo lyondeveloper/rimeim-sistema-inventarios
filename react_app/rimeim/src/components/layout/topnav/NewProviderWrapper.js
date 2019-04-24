@@ -1,27 +1,38 @@
-import React from 'react'
+import React from 'react';
 
 export default function NewProviderWrapper() {
     return (
-        <div className="nav-wrapper">
-            <a href="#!" className="brand-logo">
+        <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
                 Nuevo proveedor
-                        </a>
-            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
-                <i className="material-icons">menu</i>
+            </a>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+                <i className='material-icons'>menu</i>
             </a>
 
-            <ul className="right hide-on-small-only">
+            <ul className='right'>
                 <li>
-                    <a href="#!" className="tooltipped" data-position="left" data-tooltip="Nuevo pedido">
-                        <i className="material-icons">border_color</i>
+                    <a
+                        href='#!'
+                        className='tooltipped'
+                        data-position='left'
+                        data-tooltip='Ver Todos'
+                    >
+                        <i className='material-icons'>group</i>
                     </a>
                 </li>
+
                 <li>
-                    <a href="#!" className="tooltipped" data-position="left" data-tooltip="Guardar">
-                        <i className="material-icons">save</i>
+                    <a
+                        href='#!'
+                        className='tooltipped'
+                        data-position='left'
+                        data-tooltip='Buscar'
+                    >
+                        <i className='material-icons'>search</i>
                     </a>
                 </li>
             </ul>
         </div>
-    )
+    );
 }
