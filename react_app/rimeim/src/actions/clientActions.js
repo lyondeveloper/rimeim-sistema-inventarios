@@ -68,7 +68,7 @@ export const getClient = id => dispatch => {
 export const editClient = (data, id, history, newUrl) => dispatch => {
   dispatch(clearErrors());
   axios
-    .put(`/clients/update/${id}`, data)
+    .post(`/clients/update/${id}`, data)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

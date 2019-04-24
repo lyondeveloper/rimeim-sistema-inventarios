@@ -28,6 +28,7 @@ export const VEHICLE_TYPE = 'VEHICLE_TYPE';
 
 // Clients
 export const NEW_CLIENT = 'NEW_CLIENT';
+export const EDIT_CLIENT = 'EDIT_CLIENT';
 export const CLIENTS = 'CLIENTS';
 export const SEARCH_CLIENT = 'SEARCH_CLIENT';
 

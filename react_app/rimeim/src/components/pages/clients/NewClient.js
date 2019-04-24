@@ -41,29 +41,18 @@ class NewClient extends Component {
     es_empresa: false,
     id_producto: '',
     precio: '',
+    editar_precio: false,
     productos_especiales: [],
-    needs_config_selects: false
+    needs_config_selects: false,
+    errors: {}
   };
 
   componentWillMount() {
     removeMaterialComponents();
-    this.setState({
-      nombre: '',
-      rtn: '',
-      correo: '',
-      contacto: '',
-      telefono: '',
-      codigo: '',
-      es_empresa: '',
-      productos_especiales: [],
-      needs_config_selects: false
-    });
   }
 
   componentDidMount() {
     configMaterialComponents();
-    const { id } = this.props.match.params;
-    if (id) this.props.getClient(id);
     this.props.getProducts();
   }
 
@@ -77,7 +66,11 @@ class NewClient extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { client } = nextProps.clients;
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
 
     const { products } = nextProps.products;
 
@@ -85,32 +78,6 @@ class NewClient extends Component {
       products.forEach(product => (product.disabled = false));
       this.setState({
         needs_config_selects: true
-      });
-    }
-
-    if (client) {
-      client.nombre = !isEmpty(client.nombre) ? client.nombre : '';
-      client.rtn = !isEmpty(client.rtn) ? client.rtn : '';
-      client.correo = !isEmpty(client.correo) ? client.correo : '';
-      client.contacto = !isEmpty(client.contacto) ? client.contacto : '';
-      client.telefono = !isEmpty(client.telefono) ? client.telefono : '';
-      client.codigo = !isEmpty(client.codigo) ? client.codigo : '';
-      client.es_empresa = !isEmpty(client.es_empresa) ? client.es_empresa : '';
-      client.precios_productos = !isEmpty(client.precios_productos)
-        ? client.precios_productos
-        : [];
-
-      console.log(client);
-
-      this.setState({
-        nombre: client.nombre,
-        rtn: client.rtn,
-        correo: client.correo,
-        contacto: client.contacto,
-        telefono: client.telefono,
-        codigo: client.codigo,
-        es_empresa: client.es_empresa,
-        productos_especiales: client.precios_productos
       });
     }
   }
@@ -128,8 +95,7 @@ class NewClient extends Component {
 
     this.setState({
       id_producto: '',
-      precio: '',
-      needs_config_selects: true
+      precio: ''
     });
   };
 
@@ -147,8 +113,33 @@ class NewClient extends Component {
 
     this.setState({
       id_producto: '',
-      precio: '',
-      needs_config_selects: false
+      precio: ''
+    });
+  };
+
+  onEditSpecialProductPrice = producto => {
+    const { id_producto, precio, productos_especiales } = this.state;
+
+    const productIndex = productos_especiales.findIndex(
+      p => p.id === producto.id
+    );
+
+    productos_especiales[productIndex].id_producto = id_producto;
+    productos_especiales[productIndex].precio = precio;
+    productos_especiales[productIndex].actualizado = true;
+
+    this.setState({
+      editar_precio: false
+    });
+  };
+
+  onEditSpecialProductPriceClick = producto => {
+    const { precio, id_producto } = producto;
+
+    this.setState({
+      id_producto,
+      precio,
+      editar_precio: true
     });
   };
 
@@ -159,19 +150,18 @@ class NewClient extends Component {
       p => p.id.toString() === producto.id
     );
 
-    productos_especiales.splice(productIndex, 1);
+    delete productos_especiales[productIndex].actualizado;
+
+    productos_especiales[productIndex].eliminado = true;
 
     this.setState({
       id_producto: '',
-      precio: '',
-      needs_config_selects: false
+      precio: ''
     });
   };
 
   onSubmit = e => {
     e.preventDefault();
-
-    const { id } = this.props.match.params;
 
     const {
       nombre,
@@ -195,23 +185,7 @@ class NewClient extends Component {
       precios_productos: productos_especiales
     };
 
-    if (this.props.match.params.id)
-      this.props.editClient(clientData, id, this.props.history, '/clientes');
-    else {
-      this.props.createClient(clientData, this.props.history, '/clientes');
-    }
-
-    this.setState({
-      nombre: '',
-      rtn: '',
-      correo: '',
-      contacto: '',
-      telefono: '',
-      codigo: '',
-      es_empresa: '',
-      productos_especiales: [],
-      needs_config_selects: false
-    });
+    this.props.createClient(clientData, this.props.history, '/clientes');
   };
 
   render() {
@@ -228,11 +202,7 @@ class NewClient extends Component {
       productos_especiales
     } = this.state;
 
-    const { loading } = this.props.clients;
-
     const { products } = this.props.products;
-
-    const { id } = this.props.match.params;
 
     const productsOptions = [];
 
@@ -243,203 +213,215 @@ class NewClient extends Component {
       });
     });
 
-    let newClientContent;
-
-    if (loading && id) {
-      newClientContent = <Spinner fullWidth />;
-    } else {
-      newClientContent = (
-        <div className='row'>
-          <div className='col s12'>
-            <div className='card '>
-              <div className='card-content'>
-                <div className='row'>
-                  <div className='col s12 m12 center'>
-                    <img
-                      src={LogoRimeim}
-                      className='responsive-img bordered'
-                      alt=''
-                    />
-                    <div className='d-block'>
-                      <button className='btn'>Cambiar</button>
+    return (
+      <React.Fragment>
+        <Navbar navtype={NEW_CLIENT} />
+        <main>
+          <div className='row'>
+            <div className='col s12'>
+              <div className='card '>
+                <div className='card-content'>
+                  <div className='row'>
+                    <div className='col s12 m12 center'>
+                      <img
+                        src={LogoRimeim}
+                        className='responsive-img bordered'
+                        alt=''
+                      />
+                      <div className='d-block'>
+                        <button className='btn'>Cambiar</button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className='row'>
-                  <div className='col s12 m12'>
-                    <form onSubmit={this.onSubmit}>
-                      <div className='row'>
-                        <TextInputField
-                          id='nombre'
-                          label='Nombre'
-                          onchange={this.onChangeTextInput}
-                          value={nombre}
-                          active_label={id ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='rtn'
-                          label='RTN'
-                          onchange={this.onChangeTextInput}
-                          value={rtn}
-                          active_label={id ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='correo'
-                          type='email'
-                          label='Correo'
-                          onchange={this.onChangeTextInput}
-                          value={correo}
-                          active_label={id ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='contacto'
-                          label='Contacto'
-                          onchange={this.onChangeTextInput}
-                          value={contacto}
-                          active_label={id ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='telefono'
-                          label='Telefono'
-                          onchange={this.onChangeTextInput}
-                          value={telefono}
-                          active_label={id ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='codigo'
-                          label='Codigo'
-                          onchange={this.onChangeTextInput}
-                          value={codigo}
-                          active_label={id ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <CheckInputField
-                          id='es_empresa'
-                          checked={es_empresa}
-                          onchange={this.onChangeTextInput}
-                          label='Es empresa'
-                        />
-                      </div>
-                      <div className='col s12 center mb-1'>
-                        <div className='d-block'>
-                          <h5>Precio Especial a Producto</h5>
-                          <button
-                            className='modal-trigger btn-floating'
-                            data-target='modal_agregar_precio_producto'
-                            onClick={this.onAddSpecialProductPriceClick}
+                  <div className='row'>
+                    <div className='col s12 m12'>
+                      <form onSubmit={this.onSubmit}>
+                        <div className='row'>
+                          <TextInputField
+                            id='nombre'
+                            label='Nombre'
+                            onchange={this.onChangeTextInput}
+                            value={nombre}
+                          />
+                        </div>
+                        <div className='row'>
+                          <TextInputField
+                            id='rtn'
+                            label='RTN'
+                            onchange={this.onChangeTextInput}
+                            value={rtn}
+                          />
+                        </div>
+                        <div className='row'>
+                          <TextInputField
+                            id='correo'
+                            type='email'
+                            label='Correo'
+                            onchange={this.onChangeTextInput}
+                            value={correo}
+                          />
+                        </div>
+                        <div className='row'>
+                          <TextInputField
+                            id='contacto'
+                            label='Contacto'
+                            onchange={this.onChangeTextInput}
+                            value={contacto}
+                          />
+                        </div>
+                        <div className='row'>
+                          <TextInputField
+                            id='telefono'
+                            label='Telefono'
+                            onchange={this.onChangeTextInput}
+                            value={telefono}
+                          />
+                        </div>
+                        <div className='row'>
+                          <TextInputField
+                            id='codigo'
+                            label='Codigo'
+                            onchange={this.onChangeTextInput}
+                            value={codigo}
+                          />
+                        </div>
+                        <div className='row'>
+                          <CheckInputField
+                            id='es_empresa'
+                            checked={es_empresa}
+                            onchange={this.onChangeTextInput}
+                            label='Es empresa'
+                          />
+                        </div>
+                        <div className='col s12 center mb-1'>
+                          <div className='d-block'>
+                            <h5>Precio Especial a Producto</h5>
+                            <button
+                              className='modal-trigger btn-floating'
+                              data-target='modal_agregar_precio_producto'
+                              onClick={
+                                this.state.editar_precio
+                                  ? this.onEditSpecialProductPriceClick
+                                  : this.onAddSpecialProductPriceClick
+                              }
+                            >
+                              <i className='material-icons'>add</i>
+                            </button>
+                          </div>
+
+                          <div
+                            className='modal'
+                            id='modal_agregar_precio_producto'
                           >
-                            <i className='material-icons'>add</i>
+                            {this.props.products.loading ? (
+                              <Spinner fullWidth />
+                            ) : (
+                              <div>
+                                <div className='modal-content center'>
+                                  <h5>Precio Especial a Producto</h5>
+                                  <div className='row'>
+                                    <SelectInputField
+                                      id='id_producto'
+                                      label='Producto'
+                                      onchange={this.onChangeTextInput}
+                                      value={id_producto}
+                                      options={productsOptions}
+                                    />
+                                  </div>
+                                  <div className='row'>
+                                    <TextInputField
+                                      id='precio'
+                                      label='Precio'
+                                      onchange={this.onChangeTextInput}
+                                      value={precio}
+                                    />
+                                  </div>
+                                </div>
+                                <div className='modal-footer'>
+                                  <a
+                                    href='#!'
+                                    className='modal-close waves-effect waves-green btn left text-white'
+                                  >
+                                    Cerrar
+                                  </a>
+                                  <a
+                                    href='#!'
+                                    className='modal-close waves-effect waves-green btn text-white mb-1'
+                                    onClick={
+                                      this.state.editar_precio
+                                        ? this.onEditSpecialProductPrice
+                                        : this.onAddSpecialProductPrice
+                                    }
+                                  >
+                                    Guardar
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className='row'>
+                            {productos_especiales.length > 0 ? (
+                              <table className='striped table-bordered mt-1'>
+                                <thead>
+                                  <tr>
+                                    <th>ID Producto</th>
+                                    <th>Precio</th>
+                                    <th>Acciones</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {productos_especiales.map((producto, i) =>
+                                    producto.eliminado ? (
+                                      ''
+                                    ) : (
+                                      <tr key={producto.id_producto}>
+                                        <td>{producto.id_producto}</td>
+                                        <td>{producto.precio}</td>
+                                        <td>
+                                          <i
+                                            onClick={this.onDeleteSpecialProductPrice.bind(
+                                              this,
+                                              producto
+                                            )}
+                                            className='material-icons cursor-pointer'
+                                          >
+                                            delete_sweep
+                                          </i>
+                                          <i
+                                            onClick={this.onEditSpecialProductPriceClick.bind(
+                                              this,
+                                              producto
+                                            )}
+                                            data-target='modal_agregar_precio_producto'
+                                            className='material-icons cursor-pointer modal-trigger'
+                                          >
+                                            create
+                                          </i>
+                                        </td>
+                                      </tr>
+                                    )
+                                  )}
+                                </tbody>
+                              </table>
+                            ) : (
+                              ''
+                            )}
+                          </div>
+                        </div>
+                        <div className='d-block center mt-1'>
+                          <button className='btn' type='submit'>
+                            Guardar{' '}
                           </button>
                         </div>
-
-                        <div
-                          className='modal'
-                          id='modal_agregar_precio_producto'
-                        >
-                          {this.props.products.loading && <Spinner fullWidth />}
-
-                          <div className='modal-content center'>
-                            <h5>Precio Especial a Producto</h5>
-                            <div className='row'>
-                              <SelectInputField
-                                id='id_producto'
-                                label='Producto'
-                                onchange={this.onChangeTextInput}
-                                value={id_producto}
-                                options={productsOptions}
-                              />
-                            </div>
-                            <div className='row'>
-                              <TextInputField
-                                id='precio'
-                                label='Precio'
-                                onchange={this.onChangeTextInput}
-                                value={precio}
-                              />
-                            </div>
-                          </div>
-                          <div className='modal-footer'>
-                            <a
-                              href='#!'
-                              className='modal-close waves-effect waves-green btn left text-white'
-                            >
-                              Cerrar
-                            </a>
-                            <a
-                              href='#!'
-                              className='modal-close waves-effect waves-green btn text-white mb-1'
-                              onClick={this.onAddSpecialProductPrice}
-                            >
-                              Agregar
-                            </a>
-                          </div>
-                        </div>
-
-                        <div className='row'>
-                          {productos_especiales.length > 0 ? (
-                            <table className='striped table-bordered mt-1'>
-                              <thead>
-                                <tr>
-                                  <th>ID Producto</th>
-                                  <th>Precio</th>
-                                  <th>Acciones</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {productos_especiales.map((producto, i) => (
-                                  <tr key={producto.id_producto}>
-                                    <td>{producto.id_producto}</td>
-                                    <td>{producto.precio}</td>
-                                    <td>
-                                      <i
-                                        onClick={this.onDeleteSpecialProductPrice.bind(
-                                          this,
-                                          producto
-                                        )}
-                                        className='material-icons cursor-pointer'
-                                      >
-                                        delete_sweep
-                                      </i>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          ) : (
-                            ''
-                          )}
-                        </div>
-                      </div>
-                      <div className='d-block center mt-1'>
-                        <button className='btn' type='submit'>
-                          {id ? 'Actualizar' : 'Guardar'}
-                        </button>
-                      </div>
-                    </form>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      );
-    }
-
-    return (
-      <React.Fragment>
-        <Navbar navtype={NEW_CLIENT} />
-        <main>{newClientContent}</main>
+        </main>
       </React.Fragment>
     );
   }
@@ -453,5 +435,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { createClient, editClient, getClient, getProducts, addSpecialProductPrice }
+  { createClient, getClient, getProducts, addSpecialProductPrice }
 )(withRouter(NewClient));
