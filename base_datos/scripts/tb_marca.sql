@@ -18,6 +18,7 @@ delimiter $$
 create procedure proc_get_marcas()
 begin
     select m.id,
+			m.id_archivo,
             m.nombre,
             m.descripcion,
             m.fecha_creado
@@ -34,6 +35,7 @@ begin
     if (valid_int_id(p_id)) then
         select m.id,
                 m.nombre,
+                m.id_archivo,
                 m.descripcion,
                 m.fecha_creado
         from tb_marca m 
@@ -46,7 +48,8 @@ delimiter ;
 drop procedure if exists `proc_add_marca`;
 delimiter $$
 create procedure proc_add_marca(in p_nombre varchar(200),
-                                in p_descripcion text)
+                                in p_descripcion text,
+                                in p_id_archivo bigint)
 begin
     set p_nombre = trim(p_nombre);
     set p_descripcion = trim(p_descripcion);
@@ -59,10 +62,12 @@ begin
         insert into tb_marca(
             `id`,
             `nombre`,
-            `descripcion`)
+            `descripcion`,
+			`id_archivo`)
         values(@new_id,
                 p_nombre,
-                p_descripcion);
+                p_descripcion,
+                p_id_archivo);
     end if;
 
     select @new_id as 'id';
@@ -73,7 +78,8 @@ drop procedure if exists `proc_update_marca_by_id`;
 delimiter $$
 create procedure proc_update_marca_by_id(in p_id bigint,
                                             in p_nombre varchar(200),
-                                            in p_descripcion text)
+                                            in p_descripcion text,
+                                            in p_id_archivo bigint)
 begin
     if (valid_int_id(p_id)) then
         set p_nombre = trim_and_lower(p_nombre);
@@ -81,7 +87,8 @@ begin
 
         update tb_marca
         set nombre = p_nombre,
-            descripcion = p_descripcion
+            descripcion = p_descripcion,
+            id_archivo = p_id_archivo
         where id = p_id;
     end if;
 end $$

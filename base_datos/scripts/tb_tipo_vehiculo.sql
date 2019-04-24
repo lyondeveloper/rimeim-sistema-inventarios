@@ -1,4 +1,4 @@
-/*
+
 drop function if exists func_get_next_tipo_vehiculo_id;
 delimiter $$
 create function func_get_next_tipo_vehiculo_id()
@@ -12,12 +12,14 @@ begin
     return @new_id;
 end $$
 delimiter ;
-*/
+
+
 drop procedure if exists proc_get_tipo_vehiculos;
 delimiter $$
 create procedure proc_get_tipo_vehiculos()
 begin
     select t.id,
+			t.id_archivo,
             t.nombre,
             t.descripcion,
             t.fecha_creado
@@ -27,13 +29,14 @@ begin
 end $$
 delimiter ;
 
-/*
+
 drop procedure if exists proc_get_tipo_vehiculo_byid;
 delimiter $$
 create procedure proc_get_tipo_vehiculo_byid(in p_id bigint)
 begin
 	if (valid_int_id(p_id)) then
 		select t.id,
+				t.id_archivo,
 				t.nombre,
 				t.descripcion,
 				t.fecha_creado
@@ -43,13 +46,14 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists proc_add_tipo_vehiculo;
 delimiter $$
 create procedure proc_add_tipo_vehiculo(in p_nombre varchar(200),
-                                        in p_descripcion text)
+                                        in p_descripcion text,
+										in p_id_archivo bigint)
 begin
     set p_nombre = trim_and_lower(p_nombre);
     set p_descripcion = trim(p_descripcion);
@@ -62,11 +66,13 @@ begin
         insert into tb_tipo_vehiculo(
             `id`,
             `nombre`,
-            `descripcion`
+            `descripcion`,
+			`id_archivo`
         ) values (
             @new_id,
             p_nombre,
-            p_descripcion
+            p_descripcion,
+            p_id_archivo
         );
     end if;
 
@@ -78,7 +84,8 @@ drop procedure if exists proc_update_tipo_vehiculo_by_id;
 delimiter $$
 create procedure proc_update_tipo_vehiculo_by_id(in p_id bigint,
                                                     in p_nombre varchar(200),
-                                                    in p_descripcion text)
+                                                    in p_descripcion text,
+                                                    in p_id_archivo bigint)
 begin
     set p_nombre = trim_and_lower(p_nombre);
     set p_descripcion = trim(p_descripcion);
@@ -88,7 +95,8 @@ begin
         
         update tb_tipo_vehiculo
         set nombre = p_nombre,
-            descripcion = p_descripcion
+            descripcion = p_descripcion,
+            id_archivo = p_id_archivo
         where id = p_id
         and eliminado = false;
     end if;
@@ -107,4 +115,4 @@ begin
     end if;
 end $$
 delimiter ;
-*/
+

@@ -108,9 +108,13 @@
             return null;
         }
 
-        public function save_all_uploads() {
+        public function save_all_uploads($max_files = null) {
             $files_count = $this->get_count_files_upload();
             $files_saved = [];
+
+            if (!is_null($max_files) && $max_files > 0 && $files_count != 0) {
+                $files_count = $max_files;
+            }
             for ($x=0; $x < $files_count; $x++) { 
                 if($new_file_path = $this->save_upload_file($x)) {
                     $new_file = [

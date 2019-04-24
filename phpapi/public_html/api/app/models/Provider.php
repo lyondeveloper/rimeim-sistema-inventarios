@@ -11,6 +11,18 @@
             $this->db = new Database;
         }
 
+        public function exists_by_telefono($p_telefono) {
+            $this->db->query("select func_exists_proveedor_by_telefono(:p_telefono) as 'exists'");
+            $this->db->bind(':p_telefono', $p_telefono);
+            return $this->db->single()->exists;
+        }
+
+        public function exists_by_correo($p_correo) {
+            $this->db->query("select func_exists_proveedor_by_correo(:p_correo) as 'exists';");
+            $this->db->bind(':p_correo', $p_correo);
+            return $this->db->single()->exists;
+        }
+
         public function get() {
             $this->db->query('call proc_get_proveedores();');
             return $this->db->resultSet();
@@ -25,6 +37,18 @@
         public function get_by_rtn($rtn) {
             $this->db->query('call proc_get_proveedor_by_rtn(:p_rtn);');
             $this->db->bind(':p_rtn', $rtn);
+            return $this->db->single();
+        }
+
+        public function get_by_telefono($p_telefono) {
+            $this->db->query('call proc_get_proveedor_by_telefono(:p_telefono);');
+            $this->db->bind(':p_telefono', $p_telefono);
+            return $this->db->single();
+        }
+
+        public function get_by_correo($p_correo) {
+            $this->db->query('call proc_get_proveedor_by_correo(:p_correo);');
+            $this->db->bind(':p_correo', $p_correo);
             return $this->db->single();
         }
 

@@ -10,74 +10,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Marcas | Rimeim</title>
-
-    <!-- Adicional -->
-    <link rel="stylesheet" href="css/ventas.css" />
   </head>
 
   <body>
     <div id="app">
       <header>
-        <!-- Menu mobile -->
-        <ul id="dropdown_more" class="dropdown-content">
-          <li>
-            <a href="#!">
-              <i class="material-icons">add</i>
-              Nueva
-            </a>
-          </li>
-          <li>
-            <a href="#modal_buscar_marca" class="modal-trigger">
-              <i class="material-icons">search</i>
-              Buscar
-            </a>
-          </li>
-        </ul>
-
         <!-- Top navbar -->
         <nav class="red lighten-1 top-nav">
           <div class="small-container">
             <div class="nav-wrapper">
               <a href="#!" class="brand-logo">
-                Marcas
+                Nueva marca
               </a>
               <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
                 <i class="material-icons">menu</i>
               </a>
 
-              <!-- Normal links -->
-              <ul class="right hide-on-small-only">
+              <ul class="right">
                 <li>
-                  <a
-                    href="nueva_marca.html"
-                    class="tooltipped"
-                    data-position="bottom"
-                    data-tooltip="Nueva"
-                  >
-                    <i class="material-icons">add</i>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#modal_buscar_marca"
-                    class="modal-trigger tooltipped"
-                    data-position="bottom"
-                    data-tooltip="Buscar"
-                  >
-                    <i class="material-icons">search</i>
-                  </a>
-                </li>
-              </ul>
-
-              <!-- Mobile option -->
-              <ul class="mobile-only right">
-                <li>
-                  <a
-                    class="dropdown-trigger"
-                    href="#!"
-                    data-target="dropdown_more"
-                  >
-                    <i class="material-icons">more_vert</i>
+                  <a href="#!">
+                    <i class="material-icons">save</i>
                   </a>
                 </li>
               </ul>
@@ -265,40 +217,19 @@
 
       <main>
         <div class="row">
-          <div class="col s12 m6 l4">
-            <div class="card hoverable">
-              <a href="marca.html">
-                <div class="card-image border-bottom card-product">
-                  <img src="img/carro_audi.jpg" />
-                </div>
-                <div class="card-content">
-                  <span class="d-block">Nombre</span>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="modal" id="modal_buscar_marca">
-          <div class="modal-content">
-            <div class="row">
-              <div class="col s12">
-                <div class="input-field">
-                  <input type="text" id="search" name="search" />
-                  <label for="search">Nombre</label>
+          <div class="col s12">
+            <div class="card">
+              <div class="card-content">
+                <div class="horizontal-scroll-container">
+                  <div class="img-item">
+                    <img
+                      src="img/auto_motor.jpg"
+                      class="materialboxed adjust"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <a
-              href="#!"
-              class="modal-close waves-effect waves-green btn-flat left"
-              >Cerrar</a
-            >
-            <a href="#!" class="modal-close waves-effect waves-green btn"
-              >Buscar</a
-            >
           </div>
         </div>
       </main>

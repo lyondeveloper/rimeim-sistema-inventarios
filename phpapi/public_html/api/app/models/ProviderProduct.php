@@ -11,6 +11,13 @@
             $this->db = new Database;
         }
 
+        public function exists_by_idprod_idp($id_producto, $id_proveedor) {
+            $this->db->query("select func_get_proveedor_producto_by_idprod_idp(:p_id_producto, :p_id_proveedor) as 'exists';");
+            $this->db->bind(':p_id_producto', $id_producto);
+            $this->db->bind(':p_id_proveedor', $id_proveedor);
+            return $this->db->single()->exists;
+        }
+
         public function get_by_provider($id_proveedor) {
             $this->db->query('call proc_get_proveedor_productos_by_proveedor(:p_id_proveedor);');
             $this->db->bind(':p_id_proveedor', $id_proveedor);

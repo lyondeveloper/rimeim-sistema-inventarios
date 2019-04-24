@@ -11,4 +11,3 @@ for filename in *.sql; do
         echo "" >> sql_compile.sql
     fi
 done
-

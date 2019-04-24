@@ -11,8 +11,8 @@
             $this->db = new Database;
         }
 
-        public function save_all_files($fileupload, $id_usuario) {
-            $new_files = $fileupload->save_all_uploads();
+        public function save_all_files($fileupload, $id_usuario, $max_files = null) {
+            $new_files = $fileupload->save_all_uploads($max_files);
             foreach($new_files as &$file) {
                 if($new_id = $this->add_file($id_usuario, 
                                             $file->type, 

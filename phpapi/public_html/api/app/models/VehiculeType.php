@@ -23,17 +23,19 @@
         }
 
         public function add($params) {
-            $this->db->query('call proc_add_tipo_vehiculo(:p_nombre, :p_descripcion);');
+            $this->db->query('call proc_add_tipo_vehiculo(:p_nombre, :p_descripcion, :p_id_archivo);');
             $this->db->bind(':p_nombre', $params->nombre);
             $this->db->bind(':p_descripcion', $params->descripcion);
+            $this->db->bind(':p_id_archivo', $params->id_archivo);
             return $this->db->newId();
         }
 
         public function update($params) {
-            $this->db->query('call proc_update_tipo_vehiculo_by_id(:p_id, :p_nombre, :p_descripcion);');
+            $this->db->query('call proc_update_tipo_vehiculo_by_id(:p_id, :p_nombre, :p_descripcion, :p_id_archivo);');
             $this->db->bind(':p_id', $params->id);
             $this->db->bind(':p_nombre', $params->nombre);
             $this->db->bind(':p_descripcion', $params->descripcion);
+            $this->db->bind(':p_id_archivo', $params->id_archivo);
             return $this->db->success();
         }
 

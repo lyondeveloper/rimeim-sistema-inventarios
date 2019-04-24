@@ -1,3 +1,4 @@
+
 drop function if exists func_get_next_proveedor_producto_id;
 delimiter $$
 create function func_get_next_proveedor_producto_id()
@@ -11,6 +12,31 @@ begin
     return @new_id;
 end $$
 delimiter ;
+
+
+drop function if exists func_get_proveedor_producto_by_idprod_idp;
+delimiter $$
+create function func_get_proveedor_producto_by_idprod_idp(p_id_producto bigint, 
+														p_id_proveedor bigint)
+returns bool
+begin
+	set @response = false;
+    
+    if (valid_int_id(p_id_producto) and 
+		valid_int_id(p_id_proveedor)) then
+		set @response = exists(
+			select * from tb_proveedor_producto p
+            where p.id_producto = p_id_producto and
+            p.id_proveedor = p_id_proveedor
+            and p.eliminado = false
+        );
+    end if;
+    
+    return @response;
+end $$
+delimiter ;
+
+
 
 drop procedure if exists proc_get_proveedor_productos_by_proveedor;
 delimiter $$

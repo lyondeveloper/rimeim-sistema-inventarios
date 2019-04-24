@@ -123,9 +123,7 @@
                 'admin' => $user->admin,
                 'dt_expire' => strtotime("+" . TOKEN_DURATION . " seconds", curent_time())
             ];
-            if (!is_null($info_employe) && 
-                isset($info_employe->id) && 
-                isset($info_employe->id_local)) {
+            if (!is_null($info_employe)) {
                 $token_arr['id_empleado'] = $info_employe->id;
                 $token_arr['id_local'] = $info_employe->id_local;
             }
@@ -228,7 +226,7 @@
         public function get_current_employe_id()
         {
             return (!is_null($this->current_token) &&
-                isset($this->current_token->id_empleado)) ? $this->current_token->id_empleado : 0;
+                isset($this->current_token->id_empleado)) ? $this->current_token->id_empleado : null;
         }
 
         public function get_current_id_local()
