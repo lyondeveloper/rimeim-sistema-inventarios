@@ -49,55 +49,63 @@
 
         private function validate_add_data($data) {
             $errors = [];
-            if (is_null($data)) {
-                $errors['params_error'] = "Parametros invalidos";
-            } else {
-                if (!isset($data->nombre) || 
-                    empty($data->nombre)) {
-                    $errors['nombre_error'] = "Nombre de cliente invalido";
-                } 
-                if (!isset($data->es_empresa)) {
-                    $data->es_empresa = false;
-                }
+            if (!isset($data->nombre) || 
+                empty($data->nombre)) {
+                $errors['nombre_error'] = "Nombre de cliente invalido";
+            } 
+            if (!isset($data->es_empresa)) {
+                $data->es_empresa = false;
+            }
 
-                if (isset($data->codigo) && 
-                    !empty($data->codigo)) {
+            if (isset($data->codigo)) {
+                if (!empty($data->codigo)) {
                     if($this->clientModel->get_by_code($data->codigo)) {
                         $errors['codigo_error'] = "Codigo no disponible o en uso";
                     }
-                    
                 } else {
                     $data->codigo = null;
                 }
+                
+            } else {
+                $errors['codigo_error'] = "Campo invalido";
+            }
 
-                if (isset($data->rtn) && 
-                    !empty($data->rtn)) {
+            if (isset($data->rtn)) {
+                if (!empty($data->rtn)) {
                     if ($this->clientModel->get_by_rtn($data->rtn)) {
                         $errors['rtn_error'] = "Rtn no disponible o en uso";
                     }
                 } else {
                     $data->rtn = null;
                 }
+            } else {
+                $errors['rtn_error'] = "Campo invalido";
+            }
 
-                if (isset($data->correo) && 
-                    !empty($data->correo) &&
-                    isEmail($data->correo)) {
-                    if ($this->clientModel->get_by_email($data->correo)) {
-                        $errors['correo_error'] = "Correo no disponible o en uso";
-                    }
-                } else {
-                    $data->correo = null;
-                }
+            if (isset($data->correo) && 
+                !empty($data->correo)) {
+                if (!isEmail($data->correo)) {
+                    $errors['correo_error'] = "Campo con formato invalido";
 
-                if (isset($data->telefono) && 
-                    !empty($data->telefono)) {
-                    if ($this->clientModel->get_by_phone($data->telefono)) {
-                        $errors['telefono_error'] = "Telefono no disponible o en uso";
-                    }
-                } else {
-                    $data->telefono = null;
+                } elseif ($this->clientModel->get_by_email($data->correo)) {
+                    $errors['correo_error'] = "Correo no disponible o en uso";
                 }
-            } 
+            } elseif (!isset($data->correo)) {
+                $errors['correo_error'] = "Campo invalido";
+            } else {
+                $data->correo = null;
+            }
+
+            if (isset($data->telefono) && 
+                !empty($data->telefono)) {
+                if ($this->clientModel->get_by_phone($data->telefono)) {
+                    $errors['telefono_error'] = "Telefono no disponible o en uso";
+                }
+            } elseif(!isset($data->telefono)) {
+                $errors['telefono_error'] = "Campo invalido";
+            } else {
+                $data->telefono = null;
+            }
 
             $this->checkErrors($errors);
 
@@ -115,19 +123,18 @@
                 if (isset($producto_precio->id_producto) && 
                     isset($producto_precio->precio)) {
                     $producto_precio->id_cliente = $client_id;
-                    processLog("Agregando precio producto");
                     $this->clientProductModel->add($producto_precio);
                 }
             }
         } // END OF ADD
 
         public function update($id) {
-            $this->usePutRequest();
+            $this->usePostRequest();
+            if ($this->clientModel->get_by_id($id) == null) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
             $data = $this->validate_update_data(getJsonData(), $id);
             $success = $this->clientModel->update($data);
-            if (!$success) {
-                $this->response(null, ERROR_PROCESS);
-            }
             $this->update_client_products_prices(isset($data->precios_productos) ? 
                                                     $data->precios_productos : []);
 
@@ -210,11 +217,19 @@
                     isset($product_price->precio)) {
 
                     $product_price->id_cliente = $id_cliente;
-                    if (isset($products_price->eliminado) && 
-                        $products_price->eliminado == true) {
+                    if (isset($product_price->eliminado) && 
+                        $product_price->eliminado == true) {
                         $this->clientProductModel->delete_by_id($product_price->id_producto);
-                    } else {
+
+                    } elseif(isset($product_price->actualizado) && 
+                        $product_price->actualizado == true) {
                         $this->clientProductModel->update_by_idp_idc($product_price);
+
+                    } elseif (!isset($product_price->id) && 
+                        $this->clientProductModel->get_by_idc_idp($id_cliente, $product_price->id_producto) == null) {
+                        
+                        $product_price->id_cliente = $id_cliente;
+                        $this->clientProductModel->add($product_price);
                     }
                 }
             }
