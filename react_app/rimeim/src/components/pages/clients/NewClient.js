@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import uuid from "uuid"
 import {
   createClient,
-  editClient,
   getClient,
   addSpecialProductPrice
 } from '../../../actions/clientActions';
@@ -107,7 +107,7 @@ class NewClient extends Component {
     const { productos_especiales, id_producto, precio_especial } = this.state;
 
     const productData = {
-      id: id_producto,
+      id_producto: id_producto,
       precio: precio_especial
     };
 
@@ -382,38 +382,38 @@ class NewClient extends Component {
                                     producto.eliminado ? (
                                       ''
                                     ) : (
-                                      <tr key={producto.id}>
-                                        <td>{producto.id}</td>
-                                        <td>{producto.precio}</td>
-                                        <td>
-                                          <i
-                                            onClick={this.onDeleteSpecialProductPrice.bind(
-                                              this,
-                                              producto
-                                            )}
-                                            className='material-icons cursor-pointer'
-                                          >
-                                            delete_sweep
+                                        <tr key={uuid()}>
+                                          <td>{producto.id_producto}</td>
+                                          <td>{producto.precio}</td>
+                                          <td>
+                                            <i
+                                              onClick={this.onDeleteSpecialProductPrice.bind(
+                                                this,
+                                                producto
+                                              )}
+                                              className='material-icons cursor-pointer'
+                                            >
+                                              delete_sweep
                                           </i>
-                                          <i
-                                            onClick={this.onEditSpecialProductPriceClick.bind(
-                                              this,
-                                              producto
-                                            )}
-                                            data-target='modal_agregar_precio_producto'
-                                            className='material-icons cursor-pointer modal-trigger'
-                                          >
-                                            create
+                                            <i
+                                              onClick={this.onEditSpecialProductPriceClick.bind(
+                                                this,
+                                                producto
+                                              )}
+                                              data-target='modal_agregar_precio_producto'
+                                              className='material-icons cursor-pointer modal-trigger'
+                                            >
+                                              create
                                           </i>
-                                        </td>
-                                      </tr>
-                                    )
+                                          </td>
+                                        </tr>
+                                      )
                                   )}
                                 </tbody>
                               </table>
                             ) : (
-                              ''
-                            )}
+                                ''
+                              )}
                           </div>
                         </div>
                         <div className='d-block center mt-1'>

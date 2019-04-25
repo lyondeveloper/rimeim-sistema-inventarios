@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import uuid from "uuid"
 import {
   createClient,
   editClient,
@@ -187,7 +188,7 @@ class EditClient extends Component {
     const { productos_especiales } = this.state;
 
     const productIndex = productos_especiales.findIndex(
-      p => p.id.toString() === producto.id_producto
+      p => p.id_producto === producto.id_producto
     );
 
     delete productos_especiales[productIndex].actualizado;
@@ -378,38 +379,38 @@ class EditClient extends Component {
                                   producto.eliminado ? (
                                     undefined
                                   ) : (
-                                    <tr key={producto.id_producto}>
-                                      <td>{producto.id_producto}</td>
-                                      <td>{producto.precio}</td>
-                                      <td>
-                                        <i
-                                          onClick={this.onDeleteSpecialProductPrice.bind(
-                                            this,
-                                            producto
-                                          )}
-                                          className='material-icons cursor-pointer'
-                                        >
-                                          delete_sweep
+                                      <tr key={uuid()}>
+                                        <td>{producto.id_producto}</td>
+                                        <td>{producto.precio}</td>
+                                        <td>
+                                          <i
+                                            onClick={this.onDeleteSpecialProductPrice.bind(
+                                              this,
+                                              producto
+                                            )}
+                                            className='material-icons cursor-pointer'
+                                          >
+                                            delete_sweep
                                         </i>
-                                        <i
-                                          onClick={this.onEditSpecialProductPriceClick.bind(
-                                            this,
-                                            producto
-                                          )}
-                                          data-target='modal_editar_precio_producto'
-                                          className='material-icons cursor-pointer modal-trigger'
-                                        >
-                                          create
+                                          <i
+                                            onClick={this.onEditSpecialProductPriceClick.bind(
+                                              this,
+                                              producto
+                                            )}
+                                            data-target='modal_editar_precio_producto'
+                                            className='material-icons cursor-pointer modal-trigger'
+                                          >
+                                            create
                                         </i>
-                                      </td>
-                                    </tr>
-                                  )
+                                        </td>
+                                      </tr>
+                                    )
                                 )}
                               </tbody>
                             </table>
                           ) : (
-                            undefined
-                          )}
+                              undefined
+                            )}
                         </div>
                       </div>
                       <div className='d-block center mt-1'>
