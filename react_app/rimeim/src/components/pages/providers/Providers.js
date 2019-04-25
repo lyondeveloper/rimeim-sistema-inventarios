@@ -1,50 +1,61 @@
 import React, { Component } from 'react';
 
+import { connect } from 'react-redux';
+
+import { withRouter } from 'react-router-dom';
+
 import { PROVIDERS } from '../../layout/NavTypes';
 import Navbar from '../../layout/Navbar';
 
 import {
-    configMaterialComponents,
-    removeMaterialComponents
+  configMaterialComponents,
+  removeMaterialComponents
 } from '../../../utils/MaterialFunctions';
 
 import ProviderCard from '../../common/ProviderCard';
 
+import { getProviders } from '../../../actions/providerActions';
+
 class Providers extends Component {
-    state = {
-        proveedores: []
-    };
+  state = {
+    proveedores: []
+  };
 
-    componentWillMount() {
-        removeMaterialComponents();
-    }
+  componentWillMount() {
+    removeMaterialComponents();
+  }
 
-    componentDidMount() {
-        configMaterialComponents();
-    }
+  componentDidMount() {
+    configMaterialComponents();
+    this.props.getProviders();
+  }
 
-    render() {
-        const { proveedores } = this.state;
-        return (
-            <React.Fragment>
-                <Navbar navtype={PROVIDERS} />
-                <main>
-                    <div className='row'>
-                        {proveedores.map((proveedor, i) => {
-                            return (
-                                <div
-                                    className='col s12 m6 l4'
-                                    key={proveedor.id}
-                                >
-                                    <ProviderCard proveedor={proveedor} />
-                                </div>
-                            );
-                        })}
-                    </div>
-                </main>
-            </React.Fragment>
-        );
-    }
+  render() {
+    const { proveedores } = this.state;
+    return (
+      <React.Fragment>
+        <Navbar navtype={PROVIDERS} />
+        <main>
+          <div className='row'>
+            {proveedores.map((proveedor, i) => {
+              return (
+                <div className='col s12 m6 l4' key={proveedor.id}>
+                  <ProviderCard proveedor={proveedor} />
+                </div>
+              );
+            })}
+          </div>
+        </main>
+      </React.Fragment>
+    );
+  }
 }
 
-export default Providers;
+const mapStateToProps = state => ({
+  providers: state.provider
+});
+
+export default connect(
+  mapStateToProps,
+  { getProviders }
+)(withRouter(Providers));

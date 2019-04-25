@@ -40,7 +40,8 @@ class NewClient extends Component {
     codigo: '',
     es_empresa: false,
     id_producto: '',
-    precio: '',
+    producto_seleccionado: '',
+    precio_especial: '',
     editar_precio: false,
     productos_especiales: [],
     needs_config_selects: false,
@@ -95,50 +96,61 @@ class NewClient extends Component {
 
     this.setState({
       id_producto: '',
-      precio: ''
+      precio_especial: '',
+      producto_seleccionado: ''
     });
   };
 
   onAddSpecialProductPrice = e => {
     e.preventDefault();
 
-    const { productos_especiales, id_producto, precio } = this.state;
+    const { productos_especiales, id_producto, precio_especial } = this.state;
 
     const productData = {
-      id_producto,
-      precio
+      id: id_producto,
+      precio: precio_especial
     };
 
     productos_especiales.push(productData);
 
     this.setState({
       id_producto: '',
-      precio: ''
+      precio_especial: '',
+      producto_seleccionado: ''
     });
   };
 
   onEditSpecialProductPrice = producto => {
-    const { id_producto, precio, productos_especiales } = this.state;
+    const {
+      id_producto,
+      precio_especial,
+      productos_especiales,
+      producto_seleccionado
+    } = this.state;
 
     const productIndex = productos_especiales.findIndex(
-      p => p.id === producto.id
+      p => p.id === producto_seleccionado
     );
 
-    productos_especiales[productIndex].id_producto = id_producto;
-    productos_especiales[productIndex].precio = precio;
+    productos_especiales[productIndex].id = id_producto;
+    productos_especiales[productIndex].precio = precio_especial;
     productos_especiales[productIndex].actualizado = true;
 
     this.setState({
+      id_producto: '',
+      precio_especial: '',
+      producto_seleccionado: '',
       editar_precio: false
     });
   };
 
   onEditSpecialProductPriceClick = producto => {
-    const { precio, id_producto } = producto;
+    const { precio, id } = producto;
 
     this.setState({
-      id_producto,
-      precio,
+      id_producto: id,
+      precio_especial: precio,
+      producto_seleccionado: id,
       editar_precio: true
     });
   };
@@ -156,7 +168,7 @@ class NewClient extends Component {
 
     this.setState({
       id_producto: '',
-      precio: ''
+      precio_especial: ''
     });
   };
 
@@ -198,7 +210,7 @@ class NewClient extends Component {
       codigo,
       es_empresa,
       id_producto,
-      precio,
+      precio_especial,
       productos_especiales
     } = this.state;
 
@@ -299,11 +311,7 @@ class NewClient extends Component {
                             <button
                               className='modal-trigger btn-floating'
                               data-target='modal_agregar_precio_producto'
-                              onClick={
-                                this.state.editar_precio
-                                  ? this.onEditSpecialProductPriceClick
-                                  : this.onAddSpecialProductPriceClick
-                              }
+                              onClick={this.onAddSpecialProductPriceClick}
                             >
                               <i className='material-icons'>add</i>
                             </button>
@@ -313,51 +321,50 @@ class NewClient extends Component {
                             className='modal'
                             id='modal_agregar_precio_producto'
                           >
-                            {this.props.products.loading ? (
+                            {this.props.products.loading && (
                               <Spinner fullWidth />
-                            ) : (
-                              <div>
-                                <div className='modal-content center'>
-                                  <h5>Precio Especial a Producto</h5>
-                                  <div className='row'>
-                                    <SelectInputField
-                                      id='id_producto'
-                                      label='Producto'
-                                      onchange={this.onChangeTextInput}
-                                      value={id_producto}
-                                      options={productsOptions}
-                                    />
-                                  </div>
-                                  <div className='row'>
-                                    <TextInputField
-                                      id='precio'
-                                      label='Precio'
-                                      onchange={this.onChangeTextInput}
-                                      value={precio}
-                                    />
-                                  </div>
+                            )}
+                            <div>
+                              <div className='modal-content center'>
+                                <h5>Precio Especial a Producto</h5>
+                                <div className='row'>
+                                  <SelectInputField
+                                    id='id_producto'
+                                    label='Producto'
+                                    onchange={this.onChangeTextInput}
+                                    value={id_producto}
+                                    options={productsOptions}
+                                  />
                                 </div>
-                                <div className='modal-footer'>
-                                  <a
-                                    href='#!'
-                                    className='modal-close waves-effect waves-green btn left text-white'
-                                  >
-                                    Cerrar
-                                  </a>
-                                  <a
-                                    href='#!'
-                                    className='modal-close waves-effect waves-green btn text-white mb-1'
-                                    onClick={
-                                      this.state.editar_precio
-                                        ? this.onEditSpecialProductPrice
-                                        : this.onAddSpecialProductPrice
-                                    }
-                                  >
-                                    Guardar
-                                  </a>
+                                <div className='row'>
+                                  <TextInputField
+                                    id='precio_especial'
+                                    label='Precio Especial'
+                                    onchange={this.onChangeTextInput}
+                                    value={precio_especial}
+                                  />
                                 </div>
                               </div>
-                            )}
+                              <div className='modal-footer'>
+                                <a
+                                  href='#!'
+                                  className='modal-close waves-effect waves-green btn left text-white'
+                                >
+                                  Cerrar
+                                </a>
+                                <a
+                                  href='#!'
+                                  className='modal-close waves-effect waves-green btn text-white mb-1'
+                                  onClick={
+                                    this.state.editar_precio
+                                      ? this.onEditSpecialProductPrice
+                                      : this.onAddSpecialProductPrice
+                                  }
+                                >
+                                  Guardar
+                                </a>
+                              </div>
+                            </div>
                           </div>
 
                           <div className='row'>
@@ -375,8 +382,8 @@ class NewClient extends Component {
                                     producto.eliminado ? (
                                       ''
                                     ) : (
-                                      <tr key={producto.id_producto}>
-                                        <td>{producto.id_producto}</td>
+                                      <tr key={producto.id}>
+                                        <td>{producto.id}</td>
                                         <td>{producto.precio}</td>
                                         <td>
                                           <i

@@ -8,8 +8,7 @@ import LogoRimeim from '../../../public/img/logo_rimeim.png';
 import {
   configMaterialComponents,
   removeMaterialComponents,
-  configSelectInputFields,
-  getModalInstanceById
+  configSelectInputFields
 } from '../../../utils/MaterialFunctions';
 
 import { connect } from 'react-redux';
@@ -21,7 +20,7 @@ import SelectInputField from '../../common/SelectInputField';
 import Spinner from '../../common/Spinner';
 
 import { getProducts } from '../../../actions/productActions';
-import { addProvider, editProvider } from '../../../actions/providerActions';
+import { addProvider } from '../../../actions/providerActions';
 
 class NewProvider extends Component {
   state = {
@@ -30,9 +29,10 @@ class NewProvider extends Component {
     correo: '',
     contacto: '',
     producto_seleccionado: '0',
-    producto_precio_especial: '0',
+    precio: '0',
     productos: [],
-    needs_config_selects: false
+    needs_config_selects: false,
+    editMode: false
   };
 
   componentWillMount() {
@@ -50,7 +50,7 @@ class NewProvider extends Component {
         errors: nextProps.errors
       });
 
-    if (nextProps.products.products && this.state.productos.length === 0) {
+    if (nextProps.products.products) {
       const { products } = nextProps.products;
       products.forEach(product => (product.disabled = false));
       this.setState({
@@ -71,11 +71,7 @@ class NewProvider extends Component {
     e.preventDefault();
     const { products } = this.props.products;
 
-    const {
-      producto_seleccionado,
-      productos,
-      producto_precio_especial
-    } = this.state;
+    const { producto_seleccionado, productos, precio } = this.state;
 
     const productIndex = products.findIndex(
       p => p.id.toString() === producto_seleccionado
@@ -83,7 +79,7 @@ class NewProvider extends Component {
 
     const productData = {
       ...products[productIndex],
-      producto_precio_especial
+      precio
     };
 
     productos.push(productData);
@@ -96,11 +92,36 @@ class NewProvider extends Component {
 
   onAddProductClick = () => {
     this.setState({
-      producto_nombre: '',
-      producto_precio: '0',
-      producto_descripcion: '',
-      producto_codigo: '0',
-      needs_config_selects: true
+      producto_seleccionado: '',
+      precio: '0'
+    });
+  };
+
+  onEditProductClick = producto => {
+    const { precio, id } = producto;
+
+    this.setState({
+      producto_seleccionado: id,
+      precio,
+      editMode: true
+    });
+  };
+
+  onEditProduct = () => {
+    const { productos, producto_seleccionado, precio } = this.state;
+
+    const productIndex = productos.findIndex(
+      p => p.id === producto_seleccionado
+    );
+
+    productos[productIndex].id = producto_seleccionado;
+    productos[productIndex].precio = precio;
+    productos[productIndex].actualizado = true;
+
+    this.setState({
+      producto_seleccionado: '',
+      precio: '0',
+      editMode: false
     });
   };
 
@@ -109,13 +130,13 @@ class NewProvider extends Component {
 
     const productIndex = productos.findIndex(p => p.id === producto.id);
 
-    productos.splice(productIndex, 1);
+    delete productos[productIndex].actualizado;
+
+    productos[productIndex].eliminado = true;
 
     this.setState({
-      producto_nombre: '',
-      producto_codigo: '',
-      producto_descripcion: '',
-      producto_precio: ''
+      producto_seleccionado: '',
+      precio: '0'
     });
   };
 
@@ -129,6 +150,8 @@ class NewProvider extends Component {
       correo: this.state.correo,
       productos: this.state.productos
     };
+
+    this.props.addProvider(providerData, this.props.history);
   };
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
@@ -141,7 +164,7 @@ class NewProvider extends Component {
       contacto,
       producto_seleccionado,
       productos,
-      producto_precio_especial
+      precio
     } = this.state;
 
     const productsOptions = [];
@@ -229,28 +252,45 @@ class NewProvider extends Component {
                           <thead>
                             <tr>
                               <th>Nombre</th>
-                              <th>Precio</th>
+                              <th>Precio Original</th>
+                              <th>Precio Especial</th>
                               <th>Acciones</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {productos.map((producto, i) => (
-                              <tr key={producto.id}>
-                                <td>{producto.nombre}</td>
-                                <td>{producto.precio}</td>
-                                <td>
-                                  <i
-                                    className='material-icons cursor-pointer center'
-                                    onClick={this.onDeleteProduct.bind(
-                                      this,
-                                      producto
-                                    )}
-                                  >
-                                    delete_sweep
-                                  </i>
-                                </td>
-                              </tr>
-                            ))}
+                            {productos.map((producto, i) =>
+                              producto.eliminado ? (
+                                ''
+                              ) : (
+                                <tr key={producto.id}>
+                                  <td>{producto.nombre}</td>
+                                  <td>{producto.precio}</td>
+                                  <td>{producto.precio}</td>
+                                  <td>
+                                    <i
+                                      className='material-icons cursor-pointer center'
+                                      onClick={this.onDeleteProduct.bind(
+                                        this,
+                                        producto
+                                      )}
+                                    >
+                                      delete_sweep
+                                    </i>
+
+                                    <i
+                                      className='material-icons cursor-pointer modal-trigger center'
+                                      data-target='modal_agregar_productos'
+                                      onClick={this.onEditProductClick.bind(
+                                        this,
+                                        producto
+                                      )}
+                                    >
+                                      create
+                                    </i>
+                                  </td>
+                                </tr>
+                              )
+                            )}
                           </tbody>
                         </table>
                       ) : (
@@ -270,10 +310,10 @@ class NewProvider extends Component {
                         />
 
                         <TextInputField
-                          id='producto_precio_especial'
+                          id='precio'
                           label='Precio Especial'
                           onchange={this.onChangeTextInput}
-                          value={producto_precio_especial}
+                          value={precio}
                         />
 
                         <div className='modal-footer'>
@@ -286,9 +326,13 @@ class NewProvider extends Component {
                           <a
                             href='#!'
                             className='modal-close waves-effect waves-green btn text-white'
-                            onClick={this.onAddProduct}
+                            onClick={
+                              this.state.editMode
+                                ? this.onEditProduct
+                                : this.onAddProduct
+                            }
                           >
-                            Agregar
+                            Guardar
                           </a>
                         </div>
                       </div>
