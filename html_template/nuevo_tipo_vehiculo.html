@@ -16,21 +16,6 @@
 
         <header>
 
-            <!-- Menu mobile -->
-            <ul id="dropdown_more" class="dropdown-content">
-                <li>
-                    <a href="#modal_nuevo_tipo_vehiculo">
-                        <i class="material-icons">add</i>
-                        Nuevo
-                    </a>
-                </li>
-                <li>
-                    <a href="#modal_buscar_tipo_vehiculo">
-                        <i class="material-icons">search</i>
-                        Buscar
-                    </a>
-                </li>
-            </ul>
             <!-- Top navbar -->
             <nav class="red lighten-1 top-nav">
                 <div class="small-container">
@@ -43,26 +28,10 @@
                         </a>
 
                         <!-- Regular links -->
-                        <ul class="right hide-on-small-only">
+                        <ul class="right">
                             <li>
-                                <a href="#modal_nuevo_tipo_vehiculo" class="modal-trigger tooltipped"
-                                    data-position="left" data-tooltip="Nuevo">
-                                    <i class="material-icons">add</i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#modal_buscar_tipo_vehiculo" class="modal-trigger tooltipped"
-                                    data-position="left" data-tooltip="Buscar">
-                                    <i class="material-icons">search</i>
-                                </a>
-                            </li>
-                        </ul>
-
-                        <!-- Right menu options mobile -->
-                        <ul class="right mobile-only">
-                            <li>
-                                <a class="dropdown-trigger" href="#!" data-target="dropdown_more">
-                                    <i class="material-icons right">more_vert</i>
+                                <a href="#!">
+                                    <i class="material-icons">edit</i>
                                 </a>
                             </li>
                         </ul>
@@ -215,64 +184,35 @@
 
         <main>
             <div class="row">
-                <div class="col s12 m6 l4">
-                    <div class="card hoverable">
-                        <a href="ver_tipo_vehiculo.html">
-                            <div class="card-image border-bottom card-product">
-                                <img src="img/carro_audi.jpg">
+                <div class="col s12">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="horizontal-scroll-container">
+                                <div class="img-item">
+                                    <img src="img/auto_motor.jpg" class="materialboxed adjust" />
+                                </div>
                             </div>
-                            <div class="card-content">
-                                <span class="d-block">Nombre</span>
-                                <span class="d-block">
-                                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid, autem.
-                                </span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
 
-            <div class="modal" id="modal_buscar_tipo_vehiculo">
-                <div class="modal-content">
-                    <h5>Buscar</h5>
-                    <div class="row">
-                        <div class="col s12">
-                            <div class="input-field">
-                                <input type="text" name="nombre" id="nombre">
-                                <label for="nombre">Nombre</label>
-                            </div>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>ID</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nombre</td>
+                                        <td>Nombre</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Descripcion</td>
+                                        <td>Descripcion</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <a href="#!" class="modal-close waves-effect waves-green btn-flat left">Cerrar</a>
-                    <a href="#!" class="modal-close waves-effect waves-green btn">Buscar</a>
-                </div>
             </div>
-
-            <div class="modal" id="modal_nuevo_tipo_vehiculo">
-                <div class="modal-content">
-                    <h5>Nuevo</h5>
-                    <div class="row">
-                        <div class="col s12">
-                            <img src="img/carro_audi.jpg" class="responsive-img">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col s12">
-                            <div class="input-field">
-                                <input type="text" name="nombre" id="nombre">
-                                <label for="nombre">Nombre</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="#!" class="modal-close waves-effect waves-green btn-flat left">Cerrar</a>
-                    <a href="#!" class="modal-close waves-effect waves-green btn">Guardar</a>
-                </div>
-            </div>
-
         </main>
     </div>
     <script type="text/javascript" src="js/materialize.min.js"></script>
