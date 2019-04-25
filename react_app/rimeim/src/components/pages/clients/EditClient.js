@@ -187,7 +187,7 @@ class EditClient extends Component {
     const { productos_especiales } = this.state;
 
     const productIndex = productos_especiales.findIndex(
-      p => p.id.toString() === producto.id_producto
+      p => p.id_producto === producto.id_producto
     );
 
     delete productos_especiales[productIndex].actualizado;

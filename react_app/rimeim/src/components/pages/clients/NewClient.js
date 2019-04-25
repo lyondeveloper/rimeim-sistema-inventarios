@@ -107,7 +107,7 @@ class NewClient extends Component {
     const { productos_especiales, id_producto, precio_especial } = this.state;
 
     const productData = {
-      id: id_producto,
+      id_producto,
       precio: precio_especial
     };
 
@@ -382,8 +382,8 @@ class NewClient extends Component {
                                     producto.eliminado ? (
                                       ''
                                     ) : (
-                                      <tr key={producto.id}>
-                                        <td>{producto.id}</td>
+                                      <tr key={producto.id_producto}>
+                                        <td>{producto.id_producto}</td>
                                         <td>{producto.precio}</td>
                                         <td>
                                           <i
