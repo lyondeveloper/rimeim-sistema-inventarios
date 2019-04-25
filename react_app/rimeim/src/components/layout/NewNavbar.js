@@ -12,6 +12,7 @@ class NewNavbar extends Component {
     const {
       active_nav,
       has_notifications,
+      show_more_option,
       user: {
         user: { admin }
       }
@@ -23,7 +24,22 @@ class NewNavbar extends Component {
         {mobile_nav}
 
         <nav className="red lighten-1 top-nav">
-          <div className="small-container">{this.props.children}</div>
+          <div className="small-container">
+            {this.props.children}
+            {show_more_option && (
+              <ul className="mobile-only right">
+                <li>
+                  <a
+                    className="dropdown-trigger"
+                    href="#!"
+                    data-target="dropdown_more"
+                  >
+                    <i className="material-icons">more_vert</i>
+                  </a>
+                </li>
+              </ul>
+            )}
+          </div>
         </nav>
 
         <ul className="sidenav sidenav-fixed" id="nav_sidenav">
@@ -243,11 +259,13 @@ NewNavbar.propTypes = {
   active_nav: PropTypes.string,
   has_notifications: PropTypes.bool.isRequired,
   setCurrentLocal: PropTypes.func.isRequired,
-  logoutUser: PropTypes.func.isRequired
+  logoutUser: PropTypes.func.isRequired,
+  show_more_option: PropTypes.bool.isRequired
 };
 
 NewNavbar.defaultProps = {
-  has_notifications: false
+  has_notifications: false,
+  show_more_option: false
 };
 
 const mapStateToProps = state => ({

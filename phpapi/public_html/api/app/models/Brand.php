@@ -11,6 +11,12 @@
             $this->db = new Database;
         }
 
+        public function search($field) {
+            $this->db->query('call proc_search_marcas(:p_field);');
+            $this->db->bind(':p_field', $field);
+            return $this->db->resultSet();
+        }
+
         public function get() {
             $this->db->query('call proc_get_marcas();');
             return $this->db->resultSet();

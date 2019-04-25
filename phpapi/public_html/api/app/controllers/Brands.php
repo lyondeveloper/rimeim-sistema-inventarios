@@ -22,6 +22,22 @@
         public function get() {
             $this->useGetRequest();
             $brands = $this->brandModel->get();
+            foreach($brands as &$brand) {
+                $brand = $this->parse_item_to_send($brand);
+            }
+            $this->response($brands);
+        }
+
+        public function search() {
+            $this->usePostRequest();
+            $data = getJsonData();
+            if (!isset($data->field)) {
+                $this->response(null);
+            }
+            $brands = $this->brandModel->search($data->field);
+            foreach($brands as &$brand) {
+                $brand = $this->parse_item_to_send($brand);
+            }
             $this->response($brands);
         }
 
@@ -31,6 +47,7 @@
             if (is_null($brand)) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $brand = $this->parse_item_to_send($brand);
             $this->response($brand);
         }
 
@@ -40,6 +57,7 @@
             $newId = $this->brandModel->add($data);
             $this->checkNewId($newId);
             $new_brand = $this->brandModel->get_by_id($newId);
+            $new_brand = $this->parse_item_to_send($new_brand);
             $this->response($new_brand);
         }
 
@@ -60,14 +78,12 @@
         }
 
         public function update($id) {
-            $this->usePutRequest();
+            $this->usePostRequest();
             $data = $this->validate_update_data(getJsonData('json_data'), $id);
-            $success = $this->brandModel->update($data);
-            if (!$success) {
-                $this->response(null, ERROR_NOTFOUND);
-            } 
+            $success = $this->brandModel->update($data); 
             $this->delete_image_if_need(isset($data->imagen) ? $data->imagen : null, $data->id_archivo);
             $updated_brand = $this->brandModel->get_by_id($id);
+            $updated_brand = $this->parse_item_to_send($updated_brand);
             $this->response($updated_brand);
         }
 
@@ -126,10 +142,10 @@
             if ($item->id_archivo) {
                 $item->imagen = $this->fileModel->get_file_by_id($item->id_archivo);
                 $item->imagen->url = get_server_file_url($item->imagen->url);
-                unset($item->id_archivo);
             } else {
                 $item->imagen = null;
             }
+            unset($item->id_archivo);
             return $item;
         }
     }

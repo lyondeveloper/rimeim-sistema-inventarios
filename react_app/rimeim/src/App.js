@@ -40,6 +40,9 @@ import Products from './components/pages/products/Products';
 import NewProduct from './components/pages/products/NewProduct';
 import SearchProduct from './components/pages/products/SearchProduct';
 import Brands from './components/pages/products/Brands';
+import Brand from './components/pages/products/Brand';
+import NewBrand from './components/pages/products/NewBrand';
+import EditBrand from './components/pages/products/EditBrand';
 import VehicleType from './components/pages/products/VehicleType';
 
 // Clients
@@ -180,6 +183,19 @@ class App extends Component {
             </Switch>
             <Switch>
               <PrivateRoute exact path="/marcas" component={Brands} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/marcas/:id" component={Brand} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/nueva_marca" component={NewBrand} />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/editar_marca/:id"
+                component={EditBrand}
+              />
             </Switch>
             <Switch>
               <PrivateRoute exact path="/vehiculos" component={VehicleType} />

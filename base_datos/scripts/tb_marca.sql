@@ -1,3 +1,4 @@
+/*
 drop function if exists func_get_next_marca_id;
 delimiter $$
 create function func_get_next_marca_id()
@@ -104,5 +105,24 @@ begin
             fecha_creado = current_timestamp()
         where id = p_id;
     end if;
+end $$
+delimiter ;
+*/
+
+
+drop procedure if exists `proc_search_marcas`;
+delimiter $$
+create procedure proc_search_marcas(in p_field varchar(255))
+begin
+	set p_field = trim(p_field);
+    select m.id,
+            m.id_archivo,
+            m.nombre,
+            m.descripcion,
+            m.fecha_creado
+    from tb_marca m 
+    where eliminado = false
+    and m.nombre like concat('%',p_field,'%')
+    order by m.nombre asc;
 end $$
 delimiter ;

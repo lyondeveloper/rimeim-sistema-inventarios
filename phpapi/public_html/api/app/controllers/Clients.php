@@ -220,11 +220,11 @@
                     $product_price->id_cliente = $id_cliente;
                     if (isset($product_price->eliminado) && 
                         $product_price->eliminado == true) {
-                        $this->clientProductModel->delete_by_id($product_price->id_producto);
+                        $this->clientProductModel->delete_by_id($product_price->id);
 
                     } elseif(isset($product_price->actualizado) && 
                         $product_price->actualizado == true) {
-                        $this->clientProductModel->update_by_idp_idc($product_price);
+                        $this->clientProductModel->update_by_id($product_price->id, $product_price->precio);
 
                     } elseif (!isset($product_price->id) && 
                         $this->clientProductModel->get_by_idc_idp($id_cliente, $product_price->id_producto) == null) {

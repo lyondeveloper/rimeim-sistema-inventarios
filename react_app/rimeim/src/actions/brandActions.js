@@ -17,7 +17,6 @@ import {
 
 export const getBrands = () => dispatch => {
   dispatch(brandLoadingObject());
-  dispatch(clearErrors());
   axios
     .get('/brands/get')
     .then(res => {
@@ -33,7 +32,6 @@ export const getBrands = () => dispatch => {
 
 export const getBrand = id => dispatch => {
   dispatch(brandLoadingObject());
-  dispatch(clearErrors());
   axios
     .get(`/brands/get_one/${id}`)
     .then(res => {
@@ -43,15 +41,33 @@ export const getBrand = id => dispatch => {
         type: GET_BRAND,
         payload: response.data
       });
+      dispatch(clearErrors());
     })
     .catch(err => handleError(err, dispatch, BRAND_END_LOADING));
 };
 
-export const updateBrand = (id, newBrandData) => dispatch => {
+export const searchBrand = data => dispatch => {
   dispatch(brandLoadingObject());
-  dispatch(clearErrors());
   axios
-    .put(`/brands/update/${id}`, newBrandData)
+    .post('/brands/search', data)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_BRANDS,
+        payload: response.data
+      });
+      dispatch(clearErrors());
+    })
+    .catch(err => handleError(err, dispatch, BRAND_END_LOADING));
+};
+
+export const addBrand = (brandData, history) => dispatch => {
+  dispatch(brandLoadingObject());
+  axios
+    .post('/brands/add', brandData, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -59,13 +75,32 @@ export const updateBrand = (id, newBrandData) => dispatch => {
         type: GET_BRAND,
         payload: response.data
       });
+      dispatch(clearErrors());
+      history.push(`/marcas/${response.data.id}`);
+    })
+    .catch(err => handleError(err, dispatch, BRAND_END_LOADING));
+};
+
+export const updateBrand = (id, newBrandData) => dispatch => {
+  dispatch(brandLoadingObject());
+  axios
+    .post(`/brands/update/${id}`, newBrandData, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_BRAND,
+        payload: response.data
+      });
+      dispatch(clearErrors());
     })
     .catch(err => handleError(err, dispatch, BRAND_END_LOADING));
 };
 
 export const deleteBrand = (id, history, new_url) => dispatch => {
   dispatch(brandLoadingObject());
-  dispatch(clearErrors());
   axios
     .delete(`/brands/delete/${id}`)
     .then(res => {
@@ -73,6 +108,7 @@ export const deleteBrand = (id, history, new_url) => dispatch => {
       dispatch({
         type: BRAND_END_LOADING
       });
+      dispatch(clearErrors());
       history.push(new_url);
     })
     .catch(err => handleError(err, dispatch, BRAND_END_LOADING));
