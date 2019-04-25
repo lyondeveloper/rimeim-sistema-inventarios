@@ -135,7 +135,8 @@
             }
             $data = $this->validate_update_data(getJsonData(), $id);
             $success = $this->clientModel->update($data);
-            $this->update_client_products_prices(isset($data->precios_productos) ? 
+            $this->update_client_products_prices($id, 
+                                                isset($data->precios_productos) ? 
                                                     $data->precios_productos : []);
 
             $updated_client = $this->clientModel->get_by_id($id);
