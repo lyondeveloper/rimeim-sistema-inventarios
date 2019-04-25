@@ -30,10 +30,7 @@ class NewProvider extends Component {
     correo: '',
     contacto: '',
     producto_seleccionado: '0',
-    producto_nombre: '',
-    producto_descripcion: '',
-    producto_precio: '',
-    producto_codigo: '',
+    producto_precio_especial: '0',
     productos: [],
     needs_config_selects: false
   };
@@ -74,19 +71,25 @@ class NewProvider extends Component {
     e.preventDefault();
     const { products } = this.props.products;
 
-    const { producto_seleccionado, productos } = this.state;
+    const {
+      producto_seleccionado,
+      productos,
+      producto_precio_especial
+    } = this.state;
 
     const productIndex = products.findIndex(
       p => p.id.toString() === producto_seleccionado
     );
 
-    productos.push(products[productIndex]);
+    const productData = {
+      ...products[productIndex],
+      producto_precio_especial
+    };
+
+    productos.push(productData);
 
     this.setState({
-      producto_nombre: '',
       producto_precio: '0',
-      producto_descripcion: '',
-      producto_codigo: '0',
       needs_config_selects: false
     });
   };
@@ -137,7 +140,8 @@ class NewProvider extends Component {
       correo,
       contacto,
       producto_seleccionado,
-      productos
+      productos,
+      producto_precio_especial
     } = this.state;
 
     const productsOptions = [];
@@ -225,8 +229,6 @@ class NewProvider extends Component {
                           <thead>
                             <tr>
                               <th>Nombre</th>
-                              <th>Codigo</th>
-                              <th>Descripcion</th>
                               <th>Precio</th>
                               <th>Acciones</th>
                             </tr>
@@ -235,21 +237,17 @@ class NewProvider extends Component {
                             {productos.map((producto, i) => (
                               <tr key={producto.id}>
                                 <td>{producto.nombre}</td>
-                                <td>{producto.codigo}</td>
-                                <td>{producto.descripcion}</td>
                                 <td>{producto.precio}</td>
                                 <td>
-                                  <button
-                                    className='cursor-pointer'
+                                  <i
+                                    className='material-icons cursor-pointer center'
                                     onClick={this.onDeleteProduct.bind(
                                       this,
                                       producto
                                     )}
                                   >
-                                    <i className='material-icons center'>
-                                      delete_sweep
-                                    </i>
-                                  </button>
+                                    delete_sweep
+                                  </i>
                                 </td>
                               </tr>
                             ))}
@@ -269,6 +267,13 @@ class NewProvider extends Component {
                           value={producto_seleccionado}
                           onchange={this.onChangeTextInput}
                           options={productsOptions}
+                        />
+
+                        <TextInputField
+                          id='producto_precio_especial'
+                          label='Precio Especial'
+                          onchange={this.onChangeTextInput}
+                          value={producto_precio_especial}
                         />
 
                         <div className='modal-footer'>
