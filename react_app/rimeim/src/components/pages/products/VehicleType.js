@@ -1,49 +1,111 @@
-import React, { Component } from 'react'
-
-import { VEHICLE_TYPE } from "../../layout/NavTypes"
-import Navbar from "../../layout/Navbar"
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import NewNavBar from '../../layout/NewNavbar';
+import PropTypes from 'prop-types';
+import uuid from 'uuid';
 
 import {
-    configMaterialComponents,
-    removeMaterialComponents
-} from "../../../utils/MaterialFunctions"
+  configMaterialComponents,
+  removeMaterialComponents
+} from '../../../utils/MaterialFunctions';
 
-import VehicleTypeCard from "../../common/VehicleTypeCard"
+import VehicleTypeCard from '../../common/VehicleTypeCard';
+
+import { getVehicles, searchVehicle } from '../../../actions/vehicleActions';
+import Spinner from '../../common/Spinner';
 
 class VehicleType extends Component {
+  componentWillMount() {
+    removeMaterialComponents();
+  }
 
-    state = {
-        vehiculos: []
+  componentDidMount() {
+    configMaterialComponents();
+    this.props.getVehicles();
+  }
+
+  render() {
+    const { vehicles, loading } = this.props.vehicle;
+    let vehiclesData;
+
+    if (loading) {
+      vehiclesData = <Spinner fullWidth />;
+    } else {
+      vehiclesData = vehicles.map(vehicle => (
+        <div className="col s12 m6 l4" key={uuid()}>
+          <VehicleTypeCard vehiculo={vehicle} key={uuid()} />
+        </div>
+      ));
     }
+    return (
+      <React.Fragment>
+        <NewNavBar active_nav="PRODUCTOS">
+          <ul id="dropdown_more" className="dropdown-content">
+            <li>
+              <Link to="/nuevo_vehiculo">
+                <i className="material-icons">add</i>
+                Nuevo
+              </Link>
+            </li>
+            <li>
+              <a href="#modal_buscar" className="modal-trigger">
+                <i className="material-icons">search</i>
+                Buscar
+              </a>
+            </li>
+          </ul>
 
-    componentWillMount() {
-        removeMaterialComponents()
-    }
+          <div className="nav-wrapper">
+            <a href="#!" className="brand-logo">
+              Tipos de vehiculo
+            </a>
+            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
+              <i className="material-icons">menu</i>
+            </a>
 
-    componentDidMount() {
-        configMaterialComponents()
-    }
+            <ul className="right hide-on-small-only">
+              <li>
+                <Link to="/nuevo_vehiculo">
+                  <i className="material-icons">add</i>
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="#modal_buscar"
+                  className="modal-trigger tooltipped"
+                  data-position="bottom"
+                  data-tooltip="Buscar"
+                >
+                  <i className="material-icons">search</i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </NewNavBar>
 
-    render() {
-        const { vehiculos } = this.state
-        return (
-            <React.Fragment>
-                <Navbar navtype={VEHICLE_TYPE} />
-
-                <main>
-                    <div className="row">
-                        {vehiculos.map((vehiculo, i) => {
-                            return (
-                                <div className="col s12 m6 l4">
-                                    <VehicleTypeCard vehiculo={vehiculo} key={vehiculo.id} />
-                                </div>
-                            )
-                        })}
-                    </div>
-                </main>
-            </React.Fragment>
-        )
-    }
+        <main>
+          <div className="row">{vehiclesData}</div>
+        </main>
+      </React.Fragment>
+    );
+  }
 }
 
-export default VehicleType
+VehicleType.propTypes = {
+  vehicle: PropTypes.object.isRequired,
+  getVehicles: PropTypes.func.isRequired,
+  searchVehicle: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => ({
+  vehicle: state.vehicle
+});
+
+export default connect(
+  mapStateToProps,
+  {
+    getVehicles,
+    searchVehicle
+  }
+)(VehicleType);

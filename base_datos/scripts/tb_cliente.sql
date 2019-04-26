@@ -1,4 +1,4 @@
-/*
+
 drop function if exists func_get_next_cliente_id;
 delimiter $$
 create function func_get_next_cliente_id()
@@ -20,6 +20,7 @@ delimiter $$
 create procedure proc_get_clientes()
 begin
 	select c.id,
+			c.id_archivo,
 			c.nombre,
             c.codigo,
             c.rtn,
@@ -38,6 +39,7 @@ create procedure proc_get_cliente_by_id(in p_id bigint)
 begin
 	if (valid_int_id(p_id)) then
 		select c.id,
+				c.id_archivo,
 				c.nombre,
 				c.codigo,
 				c.rtn,
@@ -58,6 +60,7 @@ begin
 	set p_codigo = trim(p_codigo);
 	if (!is_empty(p_codigo)) then
 		select c.id,
+				c.id_archivo,
 				c.nombre,
 				c.codigo,
 				c.rtn,
@@ -78,6 +81,7 @@ begin
 	set p_correo = remove_spaces(p_correo);
 	if (!is_empty(p_correo)) then
 		select c.id,
+				c.id_archivo,
 				c.nombre,
 				c.codigo,
 				c.rtn,
@@ -98,6 +102,7 @@ begin
 	set p_rtn = remove_spaces(p_rtn);
 	if (!is_empty(p_rtn)) then
 		select c.id,
+				c.id_archivo,
 				c.nombre,
 				c.codigo,
 				c.rtn,
@@ -118,6 +123,7 @@ begin
 	set p_telefono = remove_spaces(p_telefono);
 	if (!is_empty(p_telefono)) then
 		select c.id,
+				c.id_archivo,
 				c.nombre,
 				c.codigo,
 				c.rtn,
@@ -135,6 +141,7 @@ drop procedure if exists `proc_add_cliente`;
 delimiter $$
 create procedure proc_add_cliente(in id_local_registrado bigint,
 									in id_empleado_creado_por bigint,
+									in p_id_archivo bigint,
 									in p_nombre varchar(255),
                                     in p_codigo varchar(50),
                                     in p_rtn varchar(100),
@@ -158,6 +165,7 @@ begin
         set @new_id = func_get_next_cliente_id();
         INSERT INTO tb_cliente
 					(`id`,
+					`id_archivo`,
 					`id_local_registrado`,
 					`id_empleado_creado_por`,
 					`nombre`,
@@ -168,6 +176,7 @@ begin
 					`es_empresa`)
 					VALUES
 					(@new_id,
+                    p_id_archivo,
 					id_local_registrado,
 					id_empleado_creado_por,
 					p_nombre,
@@ -181,7 +190,7 @@ begin
     select @new_id as 'id';
 end $$
 delimiter ;
-*/
+
 
 
 drop procedure if exists `proc_delete_cliente_by_id`;
@@ -206,10 +215,11 @@ end $$
 delimiter ;
 
 
-/*
+
 drop procedure if exists `proc_update_cliente_by_id`;
 delimiter $$
 create procedure proc_update_cliente_by_id(in p_id bigint,
+											in p_id_archivo bigint,
 											in p_nombre varchar(255),
                                             in p_codigo varchar(50),
                                             in p_rtn varchar(100),
@@ -232,14 +242,15 @@ begin
             rtn = p_rtn,
             correo = p_correo,
             telefono = p_telefono,
-            es_empresa = p_es_empresa
+            es_empresa = p_es_empresa,
+            id_archivo = p_id_archivo
 		where id = p_id;
     end if;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists proc_search_client;
 delimiter $$
 create procedure proc_search_client(in p_field varchar(255))
@@ -248,6 +259,7 @@ begin
     if (!is_empty(p_field)) then
 		select distinct 
 			c.id,
+            c.id_archivo,
 			c.nombre,
             c.codigo,
             c.rtn,
@@ -267,5 +279,5 @@ begin
     end if;
 end $$
 delimiter ;
-*/
+
 

@@ -18,7 +18,7 @@ import {
 
 export const getVehicles = () => dispatch => {
   dispatch(vehicleLoadingObject());
-  dispatch(clearErrors());
+
   axios
     .get('/vehicles/get')
     .then(res => {
@@ -28,13 +28,13 @@ export const getVehicles = () => dispatch => {
         type: GET_VEHICLES,
         payload: response.data
       });
+      dispatch(clearErrors());
     })
     .catch(err => handleError(err, dispatch, VEHICLE_END_LOADING));
 };
 
 export const getVehicle = id => dispatch => {
   dispatch(vehicleLoadingObject());
-  dispatch(clearErrors());
   axios
     .get(`/vehicles/get_one/${id}`)
     .then(res => {
@@ -44,15 +44,34 @@ export const getVehicle = id => dispatch => {
         type: GET_VEHICLE,
         payload: response.data
       });
+      dispatch(clearErrors());
     })
     .catch(err => handleError(err, dispatch, VEHICLE_END_LOADING));
 };
 
-export const updateVehicle = (id, newBrandData) => dispatch => {
+export const searchVehicle = vehicleData => dispatch => {
   dispatch(vehicleLoadingObject());
-  dispatch(clearErrors());
+
   axios
-    .put(`/vehicles/update/${id}`, newBrandData)
+    .post('/vehicles/search', vehicleData)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_VEHICLES,
+        payload: response.data
+      });
+      dispatch(clearErrors());
+    })
+    .catch(err => handleError(err, dispatch, VEHICLE_END_LOADING));
+};
+
+export const addVehicle = (newVehicleData, history) => dispatch => {
+  dispatch(vehicleLoadingObject());
+  axios
+    .post('/vehicles/add', newVehicleData, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -60,13 +79,32 @@ export const updateVehicle = (id, newBrandData) => dispatch => {
         type: GET_VEHICLE,
         payload: response.data
       });
+      history.push(`/vehiculos/${response.data.id}`);
+      dispatch(clearErrors());
+    });
+};
+
+export const updateVehicle = (id, newBrandData) => dispatch => {
+  dispatch(vehicleLoadingObject());
+  axios
+    .post(`/vehicles/update/${id}`, newBrandData, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_VEHICLE,
+        payload: response.data
+      });
+      dispatch(clearErrors());
     })
     .catch(err => handleError(err, dispatch, VEHICLE_END_LOADING));
 };
 
 export const deleteVehicle = (id, history, new_url) => dispatch => {
   dispatch(vehicleLoadingObject());
-  dispatch(clearErrors());
+
   axios
     .delete(`/vehicles/delete/${id}`)
     .then(res => {
@@ -74,6 +112,7 @@ export const deleteVehicle = (id, history, new_url) => dispatch => {
       dispatch({
         type: VEHICLE_END_LOADING
       });
+      dispatch(clearErrors());
       history.push(new_url);
     })
     .catch(err => handleError(err, dispatch, VEHICLE_END_LOADING));

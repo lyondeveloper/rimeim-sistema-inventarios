@@ -44,6 +44,9 @@ import Brand from './components/pages/products/Brand';
 import NewBrand from './components/pages/products/NewBrand';
 import EditBrand from './components/pages/products/EditBrand';
 import VehicleType from './components/pages/products/VehicleType';
+import NewVehicleType from './components/pages/products/NewVehicleType';
+import EditVehicleType from './components/pages/products/EditVehicleType';
+import ShowVehicleType from './components/pages/products/ShowVehicleType';
 
 // Clients
 import Clients from './components/pages/clients/Clients';
@@ -199,6 +202,27 @@ class App extends Component {
             </Switch>
             <Switch>
               <PrivateRoute exact path="/vehiculos" component={VehicleType} />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/vehiculos/:id"
+                component={ShowVehicleType}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/nuevo_vehiculo"
+                component={NewVehicleType}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/editar_vehiculo/:id"
+                component={EditVehicleType}
+              />
             </Switch>
 
             {/* Clients */}

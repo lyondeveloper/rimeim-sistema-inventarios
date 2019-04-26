@@ -47,7 +47,7 @@
         }
 
         public function add($params) {
-            $this->db->query('call proc_add_cliente(:p_id_local, :p_id_empleado, :p_nombre, :p_codigo, :p_rtn, :p_correo, :p_telefono, :p_es_empresa);');
+            $this->db->query('call proc_add_cliente(:p_id_local, :p_id_empleado, :p_id_archivo, :p_nombre, :p_codigo, :p_rtn, :p_correo, :p_telefono, :p_es_empresa);');
             $this->db->bind(':p_id_local', $params->id_local);
             $this->db->bind(':p_id_empleado', $params->id_empleado);
             $this->db->bind(':p_nombre', $params->nombre);
@@ -56,11 +56,12 @@
             $this->db->bind(':p_correo', $params->correo);
             $this->db->bind(':p_telefono', $params->telefono);
             $this->db->bind(':p_es_empresa', $params->es_empresa);
+            $this->db->bind(':p_id_archivo', $params->id_archivo);
             return $this->db->newId();
         }
 
         public function update($params) {
-            $this->db->query('call proc_update_cliente_by_id(:p_id, :p_nombre, :p_codigo, :p_rtn, :p_correo, :p_telefono, :p_es_empresa);');
+            $this->db->query('call proc_update_cliente_by_id(:p_id, :p_id_archivo, :p_nombre, :p_codigo, :p_rtn, :p_correo, :p_telefono, :p_es_empresa);');
             $this->db->bind(':p_id', $params->id);
             $this->db->bind(':p_nombre', $params->nombre);
             $this->db->bind(':p_codigo', $params->codigo);
@@ -68,6 +69,7 @@
             $this->db->bind(':p_correo', $params->correo);
             $this->db->bind(':p_telefono', $params->telefono);
             $this->db->bind(':p_es_empresa', $params->es_empresa);
+            $this->db->bind(':p_id_archivo', $params->id_archivo);
             return $this->db->success();
         }
 
