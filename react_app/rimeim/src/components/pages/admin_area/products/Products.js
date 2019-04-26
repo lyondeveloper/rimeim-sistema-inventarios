@@ -12,8 +12,7 @@ import {
 
 import { getProducts } from '../../../../actions/productActions';
 
-import Spinner from '../../../common/Spinner';
-import ProductCard from '../../../common/ProductCard';
+import MapProducts from "../../../common/MapProducts"
 
 class AdminProducts extends Component {
   componentWillMount() {
@@ -57,19 +56,7 @@ class AdminProducts extends Component {
 
         <main>
           <div className="row">
-            {loading ? (
-              <Spinner fullWidth />
-            ) : (
-              products.map(product => (
-                <div className="col s12 m6 l4" key={`prod${product.id}`}>
-                  <ProductCard
-                    product={product}
-                    key={product.id}
-                    admin={this.props.user.user.admin}
-                  />
-                </div>
-              ))
-            )}
+            <MapProducts loading={loading} products={products} admin={true} />
           </div>
         </main>
       </React.Fragment>

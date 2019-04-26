@@ -24,9 +24,25 @@ export const getProducts = id_local => dispatch => {
         type: GET_PRODUCTS,
         payload: response.data
       });
+      dispatch(clearErrors())
     })
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };
+
+export const searchProduct = searchData => dispatch => {
+  dispatch(productLoadingObject())
+  axios.post('/products/search', searchData)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_PRODUCTS,
+        payload: response.data
+      });
+      dispatch(clearErrors())
+    })
+    .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING))
+}
 
 export const getProductById = id => dispatch => {
   dispatch(productLoadingObject());

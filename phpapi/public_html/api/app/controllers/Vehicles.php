@@ -70,11 +70,11 @@
 
         public function update($id) {
             $this->usePostRequest();
-            $dataUpdated = $this->validate_update_data(getJsonData('json_data'), $id);
-            $success = $this->vehicleModel->update($dataUpdated);
-            if (!$success) {
+            if ( $this->vehicleModel->get_by_id($id) == null) {
                 $this->response(null, ERROR_NOTFOUND);
             }
+            $dataUpdated = $this->validate_update_data(getJsonData('json_data'), $id);
+            $success = $this->vehicleModel->update($dataUpdated);
             $this->delete_image_if_need(isset($data->imagen) ? $data->imagen : null, $data->id_archivo);
             $updatedVehicle = $this->vehicleModel->get_by_id($id);
             $updatedVehicle = $this->parse_item_to_send($updatedVehicle);

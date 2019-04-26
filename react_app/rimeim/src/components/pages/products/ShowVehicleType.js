@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom"
 
 import NewNavBar from '../../layout/NewNavbar';
 
 import {
   configMaterialComponents,
-  removeMaterialComponents
+  removeMaterialComponents,
+  configMaterialBoxedImages
 } from '../../../utils/MaterialFunctions';
 
 import { getVehicle, deleteVehicle } from '../../../actions/vehicleActions';
@@ -22,6 +24,13 @@ class ShowVehicleType extends Component {
   componentDidMount() {
     configMaterialComponents();
     this.props.getVehicle(this.props.match.params.id);
+  }
+
+  componentDidUpdate() {
+    if (this.props.vehicle.vehicle &&
+      this.props.vehicle.vehicle.imagen) {
+      configMaterialBoxedImages()
+    }
   }
 
   onDeleteVehicleType = () => {
@@ -103,9 +112,9 @@ class ShowVehicleType extends Component {
 
             <ul className="right">
               <li>
-                <a href={`/editar_vehiculo/${this.props.match.params.id}`}>
+                <Link to={`/editar_vehiculo/${this.props.match.params.id}`}>
                   <i className="material-icons">edit</i>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

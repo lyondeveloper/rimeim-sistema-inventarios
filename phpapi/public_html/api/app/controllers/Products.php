@@ -46,30 +46,24 @@
             $this->response($products);
         }
 
-        private function parse_product_to_send($product, $is_singular = false) {
-            $product->marca = $this->brandModel->get_by_id($product->id_marca);
-            $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
-
-            if ($is_singular) {
-                $product->imagenes = $this->productImagesModel->get_by_product($product->id);
-                $product->distribucion = $this->productLocalModel->get_by_id_product($product->id);
-
-                foreach($product->distribucion as &$distribucion) {
-                    $distribucion->local = $this->localModel->get_by_id($distribucion->id_local);
-
-                    $ubicacion = $this->productLocalUbicationModal->get($distribucion->id);
-                    if (count($ubicacion) > 0) {
-                        $distribucion->ubicacion = $ubicacion[0]->ubicacion;
-                        $distribucion->id_ubicacion = $ubicacion[0]->id;
-                    }
-                }
-            } else {
-                $product->imagen = $this->productImagesModel->get_principal_image($product->id);
+        public function search() {
+            $this->usePostRequest();
+            $json_data = getJsonData();
+            
+            if (!isset($json_data->field) || 
+                !isset($json_data->id_local) ||
+                !($json_data->id_local >= 0)) {
+                $this->response(null, ERROR_NOTFOUND);
             }
 
-            unset($product->id_marca);
-            unset($product->id_tipo_vehiculo);
-            return $product;
+            $products = $this->productModel->search($json_data->field, $json_data->id_local);
+            foreach ($products as &$product) {
+                if (!is_null($json_data->id_local) && $json_data->id_local > 0) {
+                    $product = $this->productModel->get_by_id($product->id_producto);
+                } 
+                $product = $this->parse_product_to_send($product);
+            }
+            $this->response($products);
         }
 
         public function get_one($id) {
@@ -400,5 +394,31 @@
                 $productLocal->id_ubicacion = $productLocalUbication[0]->id;
             }
             return $productLocal;
+        }
+
+        private function parse_product_to_send($product, $is_singular = false) {
+            $product->marca = $this->brandModel->get_by_id($product->id_marca);
+            $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
+
+            if ($is_singular) {
+                $product->imagenes = $this->productImagesModel->get_by_product($product->id);
+                $product->distribucion = $this->productLocalModel->get_by_id_product($product->id);
+
+                foreach($product->distribucion as &$distribucion) {
+                    $distribucion->local = $this->localModel->get_by_id($distribucion->id_local);
+
+                    $ubicacion = $this->productLocalUbicationModal->get($distribucion->id);
+                    if (count($ubicacion) > 0) {
+                        $distribucion->ubicacion = $ubicacion[0]->ubicacion;
+                        $distribucion->id_ubicacion = $ubicacion[0]->id;
+                    }
+                }
+            } else {
+                $product->imagen = $this->productImagesModel->get_principal_image($product->id);
+            }
+
+            unset($product->id_marca);
+            unset($product->id_tipo_vehiculo);
+            return $product;
         }
     }

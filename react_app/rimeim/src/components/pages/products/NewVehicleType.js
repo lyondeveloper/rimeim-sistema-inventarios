@@ -39,19 +39,9 @@ class NewVehicleType extends Component {
         errors: nextProps.errors
       });
     }
-
-    if (
-      nextProps.vehicle &&
-      !nextProps.vehicle.loading &&
-      !this.state.is_in_request
-    ) {
-      const { imagen, nombre, descripcion } = nextProps.vehicle.vehicle;
-      this.setState({
-        imagen,
-        nombre,
-        descripcion
-      });
-    }
+    this.setState({
+      is_in_request: false
+    })
   }
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
@@ -94,9 +84,9 @@ class NewVehicleType extends Component {
       const newVehicleData = new FormData();
       newVehicleData.append('file_uploads[]', imagen.file, imagen.name);
       newVehicleData.append('json_data', JSON.stringify(newVehicle));
-      this.props.addVehicle(this.props.match.params.id, newVehicleData);
+      this.props.addVehicle(newVehicleData, this.props.history);
     } else {
-      this.props.addVehicle(this.props.match.params.id, newVehicle);
+      this.props.addVehicle(newVehicle, this.props.history);
     }
 
     this.setState({
@@ -137,6 +127,7 @@ class NewVehicleType extends Component {
           <div className="row">
             <div className="col s12">
               <div className="card">
+                {this.state.is_in_request && <Spinner fullWidth />}
                 <div className="card-content">
                   <div className="row">
                     <SelectFiles
