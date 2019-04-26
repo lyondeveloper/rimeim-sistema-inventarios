@@ -56,7 +56,14 @@
                 $this->response(null, ERROR_NOTFOUND);
             }
 
-            $products = $this->productModel->search($json_data->field, $json_data->id_local);
+            if (!empty(trim($json_data->field)) && $json_data->id_local > 0) {
+                $products = $this->productModel->search($json_data->field, $json_data->id_local);
+            } elseif($json_data->id_local > 0) {
+                $products = $this->productLocalModel->get_by_local($json_data->id_local);
+            } elseif ($this->is_current_user_admin()) {
+                $products = $this->productModel->get();
+            }
+
             foreach ($products as &$product) {
                 if (!is_null($json_data->id_local) && $json_data->id_local > 0) {
                     $product = $this->productModel->get_by_id($product->id_producto);

@@ -80,8 +80,16 @@
          public function resultSet() {
              $results = null;
              if ($this->execute()) {
-                $results = $this->stmt->fetchAll(PDO::FETCH_OBJ);
-                $this->stmt->closeCursor();
+                 try {
+                    $results = $this->stmt->fetchAll(PDO::FETCH_OBJ);
+                    $this->stmt->closeCursor();
+                 } catch(PDOException $e) {
+                    $this->error = $e;
+                    $this->reportError();
+                 } catch(Exception $e) {
+                    $this->error = $e;
+                    $this->reportError();
+                 }
              }
              return is_null($results) ? [] : $results;
          }
