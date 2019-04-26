@@ -28,6 +28,47 @@ begin
 end $$
 delimiter ;
 
+drop procedure if exists `proc_search_producto`;
+delimiter $$
+create procedure proc_search_producto(in p_field varchar(255), in p_id_local bigint)
+begin
+    set p_field = trim(p_field);
+    if (!is_empty(p_field)) then 
+        if (p_id_local > 0) then 
+            select pl.id,
+                    pl.id_producto,
+                    pl.id_local,
+                    pl.existencia
+            from tb_producto_local pl
+            join tb_producto p on p.id = pl.id_producto
+            where p.eliminado = false and
+            pl.eliminado = false and 
+            (
+                p.nombre like concat('%', p_field ,'%') or 
+                p.codigo_barra like concat('%', p_field ,'%')
+            ) and 
+            pl.id_local = p_id_local
+            order by p.nombre asc;   
+
+        else 
+            select p.id,
+                    p.id_tipo_vehiculo,
+                    p.id_marca,
+                    p.nombre,
+                    p.precio,
+                    p.existencia
+            from tb_producto p
+            where p.eliminado = false
+            and (
+                p.nombre like concat('%', p_field ,'%') or 
+                p.codigo_barra like concat('%', p_field ,'%')
+            )
+            order by p.nombre asc;
+        end if;
+    end if;
+end $$
+delimiter ;
+
 
 drop procedure if exists `proc_get_producto_by_id`;
 delimiter $$

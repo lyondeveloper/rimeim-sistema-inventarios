@@ -23,6 +23,12 @@
             return $this->db->single()->exists;
         }
 
+        public function search($field) {
+            $this->db->query('call proc_search_proveedor(:p_field);');
+            $this->db->bind(':p_field', $field);
+            return $this->db->resultSet();
+        }
+
         public function get() {
             $this->db->query('call proc_get_proveedores();');
             return $this->db->resultSet();

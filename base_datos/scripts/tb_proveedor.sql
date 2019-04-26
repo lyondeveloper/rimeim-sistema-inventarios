@@ -58,6 +58,28 @@ begin
 end $$
 delimiter ;
 
+drop procedure if exists proc_search_proveedor;
+delimiter $$
+create procedure proc_search_proveedor(in p_field varchar(255))
+begin
+    set p_field = trim(p_field);
+    select p.id,
+            p.id_imagen,
+            p.nombre,
+            p.fecha_creado
+        from tb_proveedor p 
+        where p.eliminado = false
+        and 
+        (
+            p.nombre like concat('%', p_field ,'%') or 
+            p.rtn like concat('%', p_field ,'%') or 
+            p.correo like concat('%', p_field ,'%') or 
+            p.telefono like concat('%', p_field ,'%')
+        )
+    order by p.nombre asc;
+end $$
+delimiter ;
+
 
 
 drop procedure if exists `proc_get_proveedores`;

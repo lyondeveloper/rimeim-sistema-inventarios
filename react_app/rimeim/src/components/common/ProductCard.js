@@ -9,13 +9,13 @@ const ProductCard = props => {
   } = props;
   return (
     <div className="card hoverable">
-      <Link to={`${admin && '/admin'}/productos/${id}`}>
+      <Link to={`${admin ? '/admin' : ''}/productos/${id}`}>
         <div className="card-image border-bottom card-product">
           {imagen && imagen.url ? (
             <img src={imagen.url} alt="" />
           ) : (
-            <img src="" alt="" />
-          )}
+              <img src="" alt="" />
+            )}
         </div>
         <div className="card-content">
           <h5 className="d-block">{nombre}</h5>

@@ -15,6 +15,13 @@
             return $this->convert_product_bool_values($this->db->resultSet());
         }
 
+        public function search($field, $id_local) {
+            $this->db->query('call proc_search_producto(:p_field, :p_id_local);');
+            $this->db->bind(':p_field', $field);
+            $this->db->bind(':p_id_local', $id_local);
+            return $this->convert_product_bool_values($this->db->resultSet());
+        }
+
         public function get_by_id($id) {
             $this->db->query('call proc_get_producto_by_id(:p_id);');
             $this->db->bind(':p_id', $id);

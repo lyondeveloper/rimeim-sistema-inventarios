@@ -18,6 +18,19 @@
             $this->productModel = $this->model('Product');
         }
 
+        public function search() {
+            $this->usePostRequest();
+            $json_data = getJsonData();
+            if (!isset($json_data->field)) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+            $providers = $this->providerModel->search($json_data->field);
+            foreach($providers as &$provider) {
+                $provider = $this->parse_provider_to_send($provider);
+            }
+            $this->response($providers);
+        }
+
         public function get() {
             $this->useGetRequest();
             $providers = $this->providerModel->get();
