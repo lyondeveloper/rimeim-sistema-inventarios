@@ -47,8 +47,13 @@
             
             if ($is_singular) {
                 $provider->productos = $this->providerProductModel->get_by_provider($provider->id);
-                foreach($provider->productos as &$producto) {
-                    $producto->producto = $this->productModel->get_by_id($producto->id_producto);
+                foreach($provider->productos as &$proveedor_producto) {
+                    $producto = $this->productModel->get_by_id($proveedor_producto->id_producto);
+                    $proveedor_producto->precio_especial = $proveedor_producto->precio;
+                    $proveedor_producto->producto_nombre = $producto->nombre;
+                    $proveedor_producto->producto_precio = $producto->precio;
+                    unset($proveedor_producto->id_proveedor);
+                    unset($proveedor_producto->precio);
                 }
             }
             unset($provider->id_imagen);

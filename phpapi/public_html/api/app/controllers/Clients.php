@@ -12,6 +12,8 @@
 
         public function __construct() {
             $this->initController(CTR_EMPLEADO);
+            $this->fileupload = new FileUpload();
+            $this->fileModel = $this->model('DBFile');
             $this->clientModel = $this->model('Client');
             $this->clientProductModel = $this->model('ClientProductPrice');
         }
@@ -19,6 +21,9 @@
         public function get() {
             $this->useGetRequest();
             $clients = $this->clientModel->get_all();
+            foreach($clients as &$client) {
+                $client = $this->parse_client_to_send($client);
+            }
             $this->response($clients);
         }
 
@@ -29,12 +34,13 @@
                 $this->response(null, ERROR_NOTFOUND);
             }
             $client->precios_productos = $this->clientProductModel->get($id);
+            $client = $this->parse_client_to_send($client);
             $this->response($client);
         }
 
         public function add() {
             $this->usePostRequest();
-            $data = $this->validate_add_data(getJsonData());
+            $data = $this->validate_add_data(getJsonData('json_data'));
             $new_id = $this->clientModel->add($data);
             if (is_null($new_id)) {
                 $this->response(null, ERROR_PROCESS);
@@ -42,9 +48,10 @@
             $this->add_clients_products_prices($new_id, 
                                                 isset($data->precios_productos) ? 
                                                     $data->precios_productos : []);
-            $new_empleado = $this->clientModel->get_by_id($new_id);
-            $new_empleado->precios_productos = $this->clientProductModel->get($new_id);
-            $this->response($new_empleado);
+            $new_client = $this->clientModel->get_by_id($new_id);
+            $new_client->precios_productos = $this->clientProductModel->get($new_id);
+            $new_client = $this->parse_client_to_send($new_client);
+            $this->response($new_client);
         }
 
         private function validate_add_data($data) {
@@ -111,6 +118,10 @@
 
             $data->id_local = $this->get_current_id_local();
             $data->id_empleado = $this->get_current_id_empleado();
+            $new_image_id = $this->get_new_image_id();
+            $data->id_archivo = $new_image_id != null ? 
+                                            $new_image_id : 
+                                            (isset($data->imagen->id) ? $data->imagen->id : null);
             return $data;
         }
 
@@ -133,14 +144,16 @@
             if ($this->clientModel->get_by_id($id) == null) {
                 $this->response(null, ERROR_NOTFOUND);
             }
-            $data = $this->validate_update_data(getJsonData(), $id);
+            $data = $this->validate_update_data(getJsonData('json_data'), $id);
             $success = $this->clientModel->update($data);
             $this->update_client_products_prices($id, 
                                                 isset($data->precios_productos) ? 
                                                     $data->precios_productos : []);
+            $this->delete_image_if_need(isset($data->imagen) ? $data->imagen : null, $data->id_archivo);
 
             $updated_client = $this->clientModel->get_by_id($id);
             $updated_client->precios_productos = $this->clientProductModel->get($id);
+            $updated_client = $this->parse_client_to_send($updated_client);
             $this->response($updated_client);
         }
 
@@ -209,6 +222,12 @@
             }
 
             $data->id = $id;
+            $new_image_id = $this->get_new_image_id();
+            $data->id_archivo = $new_image_id != null ? 
+                                            $new_image_id : 
+                                            (isset($data->imagen->id) ? $data->imagen->id : null);
+            
+            
             return $data;
         }
 
@@ -249,6 +268,9 @@
         public function search($field) {
             $this->useGetRequest();
             $clients = $this->clientModel->search($field);
+            foreach($clients as &$client) {
+                $client = $this->parse_client_to_send($client);
+            }
             $this->response($clients);
         }
 
@@ -335,5 +357,40 @@
                 $this->response(null, ERROR_NOTFOUND);
             }
             $this->response();
+        }
+
+        private function parse_client_to_send($client) {
+            if ($client->id_archivo) {
+                $client->imagen = $this->fileModel->get_file_by_id($client->id_archivo);
+                $client->imagen->url = get_server_file_url($client->imagen->url);
+            } else {
+                $client->imagen = null;
+            }
+
+            unset($client->id_archivo);
+            return $client;
+        }
+
+        // Helpers
+        
+        private function delete_image_if_need($currentImage, $new_image_id) {
+            if ($new_image_id != null && 
+                $currentImage != null &&
+                $currentImage->id != $new_image_id) {
+                $file_url = str_replace(URLROOT, "", $currentImage->url);
+                if ($this->fileupload->delete_file($file_url)) {
+                    $this->fileModel->delete_by_id($currentImage->id);
+                }
+            }
+        }
+
+        private function get_new_image_id() {
+            $files = $this->fileModel->save_all_files($this->fileupload, 
+                                                        $this->get_current_user_id(), 
+                                                        1);
+            if (count($files) > 0) {
+                return $files[0]->id;
+            }
+            return null;
         }
     }
