@@ -50,6 +50,8 @@ import ProviderMobile from './mobilemenu/ProviderMobile';
 import ProvidersWrapper from './topnav/ProvidersWrapper';
 import ProviderWrapper from './topnav/ProviderWrapper';
 import NewProviderWrapper from './topnav/NewProviderWrapper';
+import EditProviderWrapper from './topnav/EditProviderWrapper';
+import SearchProviderWrapper from './topnav/SearchProviderWrapper';
 
 // Navbar Types
 import {
@@ -77,7 +79,9 @@ import {
   SEARCH_CLIENT,
   PROVIDERS,
   PROVIDER,
-  NEW_PROVIDER
+  NEW_PROVIDER,
+  EDIT_PROVIDER,
+  SEARCH_PROVIDER
 } from './NavTypes';
 
 // Functions
@@ -101,7 +105,7 @@ class Navbar extends Component {
       active_orders,
       active_products,
       active_clients,
-      active_provider = null;
+      active_providers = null;
 
     switch (navtype) {
       case NEW_SELL:
@@ -225,19 +229,29 @@ class Navbar extends Component {
 
       // Provider
       case PROVIDER:
-        active_provider = true;
+        active_providers = true;
         MobileMenu = ProviderMobile;
         NavWrapper = ProviderWrapper;
         break;
 
       case NEW_PROVIDER:
-        active_provider = true;
+        active_providers = true;
         NavWrapper = NewProviderWrapper;
         break;
 
+      case EDIT_PROVIDER:
+        active_providers = true;
+        NavWrapper = EditProviderWrapper;
+        break;
+
       case PROVIDERS:
-        active_provider = true;
+        active_providers = true;
         NavWrapper = ProvidersWrapper;
+        break;
+
+      case SEARCH_PROVIDER:
+        active_providers = true;
+        NavWrapper = SearchProviderWrapper;
         break;
 
       default:
@@ -378,7 +392,7 @@ class Navbar extends Component {
                   </ul>
                 </div>
               </li>
-              <li className={`bold ${active_provider && 'active'}`}>
+              <li className={`bold ${active_providers && 'active'}`}>
                 <a className='collapsible-header' tabIndex='0' href='#!'>
                   <i className='material-icons'>perm_contact_calendar</i>
                   Proveedor
@@ -390,6 +404,9 @@ class Navbar extends Component {
                     </li>
                     <li>
                       <Link to='/proveedores'>Ver todos</Link>
+                    </li>
+                    <li>
+                      <Link to='/buscar_proveedor'>Buscar</Link>
                     </li>
                   </ul>
                 </div>

@@ -34,8 +34,10 @@ export const SEARCH_CLIENT = 'SEARCH_CLIENT';
 
 // Providers
 export const NEW_PROVIDER = 'NEW_PROVIDER';
+export const EDIT_PROVIDER = 'EDIT_PROVIDER';
 export const PROVIDERS = 'PROVIDERS';
 export const PROVIDER = 'PROVIDER';
+export const SEARCH_PROVIDER = 'SEARCH_PROVIDER';
 
 // Account
 export const NOTIFICATIONS = 'NOTIFICATIONS';

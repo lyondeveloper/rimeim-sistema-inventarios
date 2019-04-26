@@ -16,11 +16,9 @@ import ProviderCard from '../../common/ProviderCard';
 
 import { getProviders } from '../../../actions/providerActions';
 
-class Providers extends Component {
-  state = {
-    proveedores: []
-  };
+import Spinner from '../../common/Spinner';
 
+class Providers extends Component {
   componentWillMount() {
     removeMaterialComponents();
   }
@@ -31,20 +29,31 @@ class Providers extends Component {
   }
 
   render() {
-    const { proveedores } = this.state;
+    const { providers, loading } = this.props.providers;
+
+    let providersContent;
+
+    if (loading) {
+      providersContent = <Spinner fullWidth />;
+    } else {
+      if (providers.length <= 0) {
+        providersContent = <h1>No providers</h1>;
+      } else {
+        providersContent = providers.map((provider, i) => {
+          return (
+            <div className='col s12 m6 l6' key={provider.id}>
+              <ProviderCard provider={provider} />
+            </div>
+          );
+        });
+      }
+    }
+
     return (
       <React.Fragment>
         <Navbar navtype={PROVIDERS} />
         <main>
-          <div className='row'>
-            {proveedores.map((proveedor, i) => {
-              return (
-                <div className='col s12 m6 l4' key={proveedor.id}>
-                  <ProviderCard proveedor={proveedor} />
-                </div>
-              );
-            })}
-          </div>
+          <div className='row'>{providersContent}</div>
         </main>
       </React.Fragment>
     );

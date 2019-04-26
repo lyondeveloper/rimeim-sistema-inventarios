@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import uuid from 'uuid';
 import {
   createClient,
-  editClient,
   getClient,
   addSpecialProductPrice
 } from '../../../actions/clientActions';
@@ -382,7 +382,7 @@ class NewClient extends Component {
                                     producto.eliminado ? (
                                       ''
                                     ) : (
-                                      <tr key={producto.id_producto}>
+                                      <tr key={uuid()}>
                                         <td>{producto.id_producto}</td>
                                         <td>{producto.precio}</td>
                                         <td>

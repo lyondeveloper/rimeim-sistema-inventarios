@@ -53,6 +53,7 @@ import SearchClient from './components/pages/clients/SearchClient';
 
 // Providers
 import NewProvider from './components/pages/providers/NewProvider';
+import EditProvider from './components/pages/providers/EditProvider';
 import Provider from './components/pages/providers/Provider';
 import Providers from './components/pages/providers/Providers';
 
@@ -88,6 +89,7 @@ import PrivateRoute from './components/common/PrivateRoute';
 
 // Custom functions
 import checkAppStatus from './utils/checkAppStatus';
+
 checkAppStatus(store);
 
 class App extends Component {
@@ -97,37 +99,37 @@ class App extends Component {
         <Router>
           <React.Fragment>
             <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/notfound" component={NotFound} />
+              <Route exact path='/' component={Home} />
+              <Route exact path='/login' component={Login} />
+              <Route exact path='/notfound' component={NotFound} />
             </Switch>
 
             {/* Sells */}
             <Switch>
-              <PrivateRoute exact path="/ventas" component={Sells} />
+              <PrivateRoute exact path='/ventas' component={Sells} />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/nueva_venta" component={NewSell} />
+              <PrivateRoute exact path='/nueva_venta' component={NewSell} />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/buscar_venta" component={SearchSell} />
+              <PrivateRoute exact path='/buscar_venta' component={SearchSell} />
             </Switch>
 
             {/* Quotations */}
             <Switch>
               <PrivateRoute
                 exact
-                path="/nueva_cotizacion"
+                path='/nueva_cotizacion'
                 component={NewQuotation}
               />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/cotizaciones" component={Quotations} />
+              <PrivateRoute exact path='/cotizaciones' component={Quotations} />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/buscar_cotizacion"
+                path='/buscar_cotizacion'
                 component={SearchQuotation}
               />
             </Switch>
@@ -136,89 +138,89 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/devoluciones"
+                path='/devoluciones'
                 component={Devolutions}
               />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/buscar_devolucion"
+                path='/buscar_devolucion'
                 component={SearchDevolution}
               />
             </Switch>
 
             {/* Orders */}
             <Switch>
-              <PrivateRoute exact path="/pedidos" component={Orders} />
+              <PrivateRoute exact path='/pedidos' component={Orders} />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/nuevo_pedido" component={NewOrder} />
+              <PrivateRoute exact path='/nuevo_pedido' component={NewOrder} />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/buscar_pedido"
+                path='/buscar_pedido'
                 component={SearchOrder}
               />
             </Switch>
 
             {/* Products */}
             <Switch>
-              <PrivateRoute exact path="/productos" component={Products} />
+              <PrivateRoute exact path='/productos' component={Products} />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/nuevo_producto"
+                path='/nuevo_producto'
                 component={NewProduct}
               />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/buscar_producto"
+                path='/buscar_producto'
                 component={SearchProduct}
               />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/marcas" component={Brands} />
+              <PrivateRoute exact path='/marcas' component={Brands} />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/marcas/:id" component={Brand} />
+              <PrivateRoute exact path='/marcas/:id' component={Brand} />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/nueva_marca" component={NewBrand} />
+              <PrivateRoute exact path='/nueva_marca' component={NewBrand} />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/editar_marca/:id"
+                path='/editar_marca/:id'
                 component={EditBrand}
               />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/vehiculos" component={VehicleType} />
+              <PrivateRoute exact path='/vehiculos' component={VehicleType} />
             </Switch>
 
             {/* Clients */}
             <Switch>
-              <PrivateRoute exact path="/clientes" component={Clients} />
+              <PrivateRoute exact path='/clientes' component={Clients} />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/buscar_cliente"
+                path='/buscar_cliente'
                 component={SearchClient}
               />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/nuevo_cliente" component={NewClient} />
+              <PrivateRoute exact path='/nuevo_cliente' component={NewClient} />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/editar_cliente/:id"
+                path='/editar_cliente/:id'
                 component={EditClient}
               />
             </Switch>
@@ -227,17 +229,25 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/nuevo_proveedor"
+                path='/nuevo_proveedor'
                 component={NewProvider}
               />
             </Switch>
+
             <Switch>
-              <PrivateRoute exact path="/proveedores" component={Providers} />
+              <PrivateRoute
+                exact
+                path='/editar_proveedor/:id'
+                component={EditProvider}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path='/proveedores' component={Providers} />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/proveedores/:id"
+                path='/proveedores/:id'
                 component={Provider}
               />
             </Switch>
@@ -246,7 +256,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/configuracion"
+                path='/configuracion'
                 component={ConfigurationView}
               />
             </Switch>
@@ -256,7 +266,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/seleccionar_local"
+                path='/seleccionar_local'
                 component={ChoseLocal}
                 isSelectLocal={true}
               />
@@ -266,7 +276,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin_area"
+                path='/admin_area'
                 component={AdminArea}
                 isAdminRoute={true}
               />
@@ -274,7 +284,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/locales"
+                path='/admin/locales'
                 component={AdminLocals}
                 isAdminRoute={true}
               />
@@ -282,7 +292,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/locales/:id"
+                path='/admin/locales/:id'
                 component={AdminLocal}
                 isAdminRoute={true}
               />
@@ -290,7 +300,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/locales/editar/:id"
+                path='/admin/locales/editar/:id'
                 component={AdminEditLocal}
                 isAdminRoute={true}
               />
@@ -298,7 +308,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/nuevo_local"
+                path='/admin/nuevo_local'
                 component={AdminNewLocal}
                 isAdminRoute={true}
               />
@@ -308,7 +318,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/empleados"
+                path='/admin/empleados'
                 component={AdminEmployes}
                 isAdminRoute={true}
               />
@@ -316,7 +326,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/empleados/:id"
+                path='/admin/empleados/:id'
                 component={AdminEmploye}
                 isAdminRoute={true}
               />
@@ -326,7 +336,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/usuarios"
+                path='/admin/usuarios'
                 component={AdminUsers}
                 isAdminRoute={true}
               />
@@ -334,7 +344,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/usuarios/:id"
+                path='/admin/usuarios/:id'
                 component={AdminUser}
                 isAdminRoute={true}
               />
@@ -342,7 +352,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/nuevo_usuario"
+                path='/admin/nuevo_usuario'
                 component={AdminNewUser}
                 isAdminRoute={true}
               />
@@ -352,7 +362,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/productos"
+                path='/admin/productos'
                 component={AdminProducts}
                 isAdminRoute={true}
               />
@@ -360,7 +370,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/productos/:id"
+                path='/admin/productos/:id'
                 component={AdminProduct}
                 isAdminRoute={true}
               />
@@ -368,7 +378,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/nuevo_producto"
+                path='/admin/nuevo_producto'
                 component={AdminNewProduct}
                 isAdminRoute={true}
               />
@@ -376,7 +386,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/editar_producto/:id"
+                path='/admin/editar_producto/:id'
                 component={AdminEditProduct}
                 isAdminRoute={true}
               />
@@ -386,7 +396,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/admin/configuracion"
+                path='/admin/configuracion'
                 component={AdminConfiguration}
                 isAdminRoute={true}
               />

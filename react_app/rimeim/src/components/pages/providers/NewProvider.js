@@ -13,6 +13,8 @@ import {
 
 import { connect } from 'react-redux';
 
+import uuid from 'uuid';
+
 import { withRouter } from 'react-router-dom';
 
 import TextInputField from '../../common/TextInputField';
@@ -28,11 +30,12 @@ class NewProvider extends Component {
     rtn: '',
     correo: '',
     contacto: '',
+    telefono: '',
     producto_seleccionado: '0',
-    precio: '0',
+    id_nuevo_producto: '',
+    precio_especial: '0',
     productos: [],
-    needs_config_selects: false,
-    editMode: false
+    needs_config_selects: false
   };
 
   componentWillMount() {
@@ -71,21 +74,22 @@ class NewProvider extends Component {
     e.preventDefault();
     const { products } = this.props.products;
 
-    const { producto_seleccionado, productos, precio } = this.state;
+    const { productos, precio_especial, id_nuevo_producto } = this.state;
 
-    const productIndex = products.findIndex(
-      p => p.id.toString() === producto_seleccionado
-    );
+    const productIndex = products.findIndex(p => p.id === id_nuevo_producto);
 
     const productData = {
-      ...products[productIndex],
-      precio
+      id_producto: products[productIndex].id,
+      nombre: products[productIndex].nombre,
+      precio: products[productIndex].precio,
+      precio_especial
     };
 
     productos.push(productData);
 
     this.setState({
-      producto_precio: '0',
+      producto_seleccionado: id_nuevo_producto,
+      precio_especial: '0',
       needs_config_selects: false
     });
   };
@@ -93,34 +97,43 @@ class NewProvider extends Component {
   onAddProductClick = () => {
     this.setState({
       producto_seleccionado: '',
-      precio: '0'
+      id_nuevo_producto: '',
+      precio_especial: '0'
     });
   };
 
   onEditProductClick = producto => {
-    const { precio, id } = producto;
+    const { precio_especial, id_producto } = producto;
 
     this.setState({
-      producto_seleccionado: id,
-      precio,
+      id_nuevo_producto: id_producto,
+      producto_seleccionado: id_producto,
+      precio_especial,
       editMode: true
     });
   };
 
   onEditProduct = () => {
-    const { productos, producto_seleccionado, precio } = this.state;
+    const {
+      productos,
+      producto_seleccionado,
+      precio_especial,
+      id_nuevo_producto
+    } = this.state;
 
     const productIndex = productos.findIndex(
-      p => p.id === producto_seleccionado
+      p => p.id_producto === producto_seleccionado
     );
 
-    productos[productIndex].id = producto_seleccionado;
-    productos[productIndex].precio = precio;
+    productos[productIndex].id_producto = id_nuevo_producto;
+    productos[productIndex].precio_especial = precio_especial;
+    productos[productIndex].nombre = precio_especial;
     productos[productIndex].actualizado = true;
 
     this.setState({
+      id_nuevo_producto: '',
       producto_seleccionado: '',
-      precio: '0',
+      precio_especial: '0',
       editMode: false
     });
   };
@@ -128,15 +141,18 @@ class NewProvider extends Component {
   onDeleteProduct = producto => {
     const { productos } = this.state;
 
-    const productIndex = productos.findIndex(p => p.id === producto.id);
+    const productIndex = productos.findIndex(
+      p => p.id_producto === producto.id_producto
+    );
 
     delete productos[productIndex].actualizado;
 
     productos[productIndex].eliminado = true;
 
     this.setState({
+      id_nuevo_producto: '',
       producto_seleccionado: '',
-      precio: '0'
+      precio_especial: '0'
     });
   };
 
@@ -148,6 +164,7 @@ class NewProvider extends Component {
       rtn: this.state.rtn,
       contacto: this.state.contacto,
       correo: this.state.correo,
+      telefono: this.state.telefono,
       productos: this.state.productos
     };
 
@@ -162,9 +179,10 @@ class NewProvider extends Component {
       rtn,
       correo,
       contacto,
-      producto_seleccionado,
+      telefono,
+      id_nuevo_producto,
       productos,
-      precio
+      precio_especial
     } = this.state;
 
     const productsOptions = [];
@@ -234,6 +252,15 @@ class NewProvider extends Component {
                       />
                     </div>
 
+                    <div className='row'>
+                      <TextInputField
+                        id='telefono'
+                        label='Telefono'
+                        onchange={this.onChangeTextInput}
+                        value={telefono}
+                      />
+                    </div>
+
                     <div className='col s12 center mb-1'>
                       <h5>Productos</h5>
                       <button
@@ -251,7 +278,7 @@ class NewProvider extends Component {
                         <table className='striped table-bordered'>
                           <thead>
                             <tr>
-                              <th>Nombre</th>
+                              <th>ID</th>
                               <th>Precio Original</th>
                               <th>Precio Especial</th>
                               <th>Acciones</th>
@@ -262,10 +289,10 @@ class NewProvider extends Component {
                               producto.eliminado ? (
                                 ''
                               ) : (
-                                <tr key={producto.id}>
-                                  <td>{producto.nombre}</td>
+                                <tr key={uuid()}>
+                                  <td>{producto.id_producto}</td>
                                   <td>{producto.precio}</td>
-                                  <td>{producto.precio}</td>
+                                  <td>{producto.precio_especial}</td>
                                   <td>
                                     <i
                                       className='material-icons cursor-pointer center'
@@ -302,18 +329,18 @@ class NewProvider extends Component {
                       <div className='modal-content'>
                         {this.props.products.loading && <Spinner fullWidth />}
                         <SelectInputField
-                          id='producto_seleccionado'
+                          id='id_nuevo_producto'
                           label='Producto'
-                          value={producto_seleccionado}
+                          value={id_nuevo_producto}
                           onchange={this.onChangeTextInput}
                           options={productsOptions}
                         />
 
                         <TextInputField
-                          id='precio'
+                          id='precio_especial'
                           label='Precio Especial'
                           onchange={this.onChangeTextInput}
-                          value={precio}
+                          value={precio_especial}
                         />
 
                         <div className='modal-footer'>
