@@ -171,15 +171,22 @@
             if($this->productModel->get_by_id($id) == null) {
                 $this->response(null, ERROR_NOTFOUND);
             }
-
             $id_local = $this->get_current_id_local();
             $data = $this->validate_update_data(getJsonData('json_data'), $id);
+            $updated_product = null;
             
-            $this->productModel->update($data);
-            $this->update_producto_distribution($id, isset($data->distribucion) ? $data->distribucion: []);
+            if (isset($data->id_producto_local) && 
+                $data->id_producto_local > 0) {
+                
+            } elseif ($id_local > 0 && 
+                    $this->is_current_user_admin()) {
+                $this->productModel->update($data);
+                $this->update_producto_distribution($id, isset($data->distribucion) ? $data->distribucion: []);
+            }
+
             $this->update_product_images($id, isset($data->imagenes) ? $data->imagenes : []);
             $updated_product = $this->productModel->get_by_id($id);
-            $updated_product = $this->parse_product_to_send($updated_product, true);
+            $updated_product = $this->parse_product_to_send($updated_product, true, $id_local);
             $this->response($updated_product);
         }
 

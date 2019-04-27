@@ -117,7 +117,7 @@
             $this->checkErrors($errors);
 
             $data->id_local = $this->get_current_id_local();
-            $data->id_empleado = $this->get_current_id_empleado();
+            $data->id_empleado = $this->get_current_employe_id();
             $new_image_id = $this->get_new_image_id();
             $data->id_archivo = $new_image_id != null ? 
                                             $new_image_id : 
@@ -258,7 +258,7 @@
         public function delete($id) {
             $this->useDeleteRequest();
             $success = $this->clientModel->delete_by_id($id, 
-                                            $this->get_current_id_empleado());
+                                            $this->get_current_employe_id());
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
             }
