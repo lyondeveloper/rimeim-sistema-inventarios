@@ -14,6 +14,7 @@
          private $dbh; //DB Handler
          private $stmt;
          private $error;
+         private $stmt_params = [];
 
          public function __construct() {
              $dsn = 'mysql:host=' . $this->host . ';dbname='. $this->dbname;
@@ -33,6 +34,7 @@
          // Prepare statement with query
          public function query($sql) {
             $this->stmt = $this->dbh->prepare($sql);
+            $this->stmt_params = [];
          }
 
          // Bind values
@@ -56,6 +58,7 @@
                 }
             }
             $this->stmt->bindValue($param, $value, $type);
+            array_push($this->stmt_params, "($param => $value)");
          }
          
          // Execute the prepared statement
@@ -80,8 +83,16 @@
          public function resultSet() {
              $results = null;
              if ($this->execute()) {
-                $results = $this->stmt->fetchAll(PDO::FETCH_OBJ);
-                $this->stmt->closeCursor();
+                 try {
+                    $results = $this->stmt->fetchAll(PDO::FETCH_OBJ);
+                    $this->stmt->closeCursor();
+                 } catch(PDOException $e) {
+                    $this->error = $e;
+                    $this->reportError();
+                 } catch(Exception $e) {
+                    $this->error = $e;
+                    $this->reportError();
+                 }
              }
              return is_null($results) ? [] : $results;
          }
@@ -121,7 +132,11 @@
                 return;
             }
             $query = is_null($this->stmt) ? "null" : $this->stmt->queryString; 
-            errorLog("Database: query -> " . $query . " : error -> " . $this->error->getMessage());
+            $str_params = "";
+            foreach($this->stmt_params as $param) {
+                $str_params .= $param . " - ";
+            }
+            errorLog("Database: error -> " . $this->error->getMessage() . " : query -> " . $query . " : params: " . $str_params);
         }
      }
     

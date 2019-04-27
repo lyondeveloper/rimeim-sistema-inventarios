@@ -1,3 +1,4 @@
+/*
 drop function if exists func_get_next_producto_id;
 delimiter $$
 create function func_get_next_producto_id()
@@ -92,8 +93,28 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
 
+drop procedure if exists proc_get_producto_minified_by_id;
+delimiter $$
+create procedure proc_get_producto_minified_by_id(in p_id bigint)
+begin
+	if (valid_int_id(p_id)) then
+		select p.id,
+				p.id_tipo_vehiculo,
+				p.id_marca,
+				p.nombre,
+				p.precio,
+				p.existencia
+		from tb_producto p
+		where p.eliminado = false
+		and p.id = p_id;
+    end if;
+end $$
+delimiter ;
+
+/*
 drop procedure if exists `proc_get_producto_by_codigo_barra`;
 delimiter $$
 create procedure proc_get_producto_by_codigo_barra(in p_codigo_barra varchar(100))
@@ -229,3 +250,4 @@ begin
     end if;
 end $$
 delimiter ;
+*/

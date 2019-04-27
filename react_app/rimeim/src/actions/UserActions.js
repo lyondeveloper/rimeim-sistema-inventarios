@@ -1,6 +1,7 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from '../utils/setAuthToken';
+import setCurrentLocalHeader from '../utils/setCurrentLocalHeader';
 
 import {
   SET_CURRENT_USER,
@@ -65,6 +66,7 @@ export const getLocalsForCurrentUser = () => dispatch => {
 
 export const setCurrentLocal = local => dispatch => {
   var currentLocal = !isEmpty(local) ? local : {};
+  setCurrentLocalHeader(currentLocal);
   if (isEmpty(currentLocal)) {
     localStorage.removeItem('rimeim_current_local');
   } else {
@@ -199,12 +201,15 @@ export const setUsers = users => {
 
 export const logoutUser = () => dispatch => {
   localStorage.removeItem('rimeim_token');
+  localStorage.removeItem('rimeim_current_local');
   setAuthToken(false);
+  setCurrentLocal(null);
   dispatch(setCurrentUser({}));
 };
 
 export const logOutUserWithDispatch = dispatch => {
   localStorage.removeItem('rimeim_token');
+  localStorage.removeItem('rimeim_current_local');
   setAuthToken(false);
   dispatch(setCurrentUser({}));
 };

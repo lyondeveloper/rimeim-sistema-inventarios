@@ -28,6 +28,12 @@
             return $this->convert_product_bool_values($this->db->single());
         }
 
+        public function get_minified_by_id($id) {
+            $this->db->query('call proc_get_producto_minified_by_id(:p_id);');
+            $this->db->bind(':p_id', $id);
+            return $this->db->single();
+        }
+
         public function get_by_codigo_barra($codigo) {
             $this->db->query('call proc_get_producto_by_codigo_barra(:p_codigo_barra);');
             $this->db->bind(':p_codigo_barra', $codigo);

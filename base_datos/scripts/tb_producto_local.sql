@@ -15,7 +15,7 @@ delimiter ;
 */
 
 -- Verifica si existe un producto en un local 
-
+/*
 drop function if exists func_exists_producto_local_by_idp_idl;
 delimiter $$
 create function func_exists_producto_local_by_idp_idl(p_id_producto bigint,
@@ -37,9 +37,9 @@ begin
     return @response;
 end $$
 delimiter ;
+*/
 
-
-
+/*
 drop procedure if exists `proc_get_producto_local`;
 delimiter $$
 create procedure proc_get_producto_local(in p_id_local bigint)
@@ -49,6 +49,7 @@ begin
                 pl.id_producto,
                 pl.id_local,
                 pl.existencia,
+                pl.cantidad_minima,
                 p.nombre,
                 p.precio
         from tb_producto_local pl
@@ -59,8 +60,9 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
-
+/*
 drop procedure if exists proc_get_producto_local_distribucion_by_id;
 delimiter $$
 create procedure proc_get_producto_local_distribucion_by_id(in p_id_producto bigint)
@@ -77,9 +79,37 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
+drop procedure if exists proc_get_producto_local_by_product_and_local;
+delimiter $$
+create procedure proc_get_producto_local_by_product_and_local(in p_id_producto bigint,
+																in p_id_local bigint)
+begin 
+	if (valid_int_id(p_id_producto) and 
+		valid_int_id(p_id_local)) then
+		select p.id,
+				pl.id as 'id_producto_local',
+				pl.id_local,
+                pl.existencia,
+                p.nombre,
+                p.descripcion,
+                p.raro,
+                p.codigo_barra,
+                p.id_tipo_vehiculo,
+                p.id_marca,
+                p.fecha_creado
+        from tb_producto_local pl
+        join tb_producto p on p.id = pl.id_producto
+						and p.eliminado = false
+        where pl.id_producto = p_id_producto
+        and pl.id_local = p_id_local
+        and pl.eliminado = false;
+    end if;
+end $$
+delimiter ;
 
-
+/*
 drop procedure if exists proc_get_producto_local_by_id;
 delimiter $$
 create procedure proc_get_producto_local_by_id(in p_producto_local_id bigint)
@@ -191,3 +221,4 @@ begin
     end if;
 end $$
 delimiter ;
+*/

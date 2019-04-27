@@ -72,7 +72,7 @@
             $func = new ReflectionMethod($this->currentController, $this->currentMethod);
             $count_parameter_required = $func->getNumberOfParameters();
 
-            if (count($this->params) < $count_parameter_required) {
+            if (count($this->params) != $count_parameter_required) {
                 notFoundHeader(true);
             }
         }

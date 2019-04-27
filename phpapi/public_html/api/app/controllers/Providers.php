@@ -235,7 +235,7 @@
 
         private function update_provider_products($id_proveedor, $productos) {
             foreach($productos as &$producto) {
-                if (isset($producto->precio)) {
+                if (isset($producto->precio_especial)) {
 
                     if (isset($producto->eliminado) && 
                         $producto->eliminado == true) {
@@ -243,13 +243,14 @@
 
                     } elseif (isset($producto->actualizado) && 
                                     $producto->actualizado == true) {
-                        $this->providerProductModel->update($producto->id, $producto->precio);
+                        $this->providerProductModel->update($producto->id, $producto->precio_especial);
 
                     } elseif (!isset($producto->id) && 
                         isset($producto->id_producto) && 
                         !$this->providerProductModel->exists_by_idprod_idp($producto->id_producto, $id_proveedor)) {
 
                         $producto->id_proveedor = $id_proveedor;
+                        $producto->precio = $producto->precio_especial;
                         $this->providerProductModel->add($producto);
                     }
                     
