@@ -48,8 +48,15 @@
             return $this->db->single();
         }
 
+        public function get_by_user_and_local($id_usuario, $id_local) {
+            $this->db->query('call proc_get_empleado_by_user_and_local_id(:p_usuario, :p_local);');
+            $this->db->bind(':p_usuario', $id_usuario);
+            $this->db->bind(':p_local', $id_local);
+            return convert_to_bool_values($this->db->single(), ['admin', 'habilitado']);
+        }
+
         public function get_by_user_id($id) {
-            $this->db->query('call proc_get_empleado_by_user_id(:p_id);');
+            $this->db->query('call proc_get_empleados_by_user_id(:p_id);');
             $this->db->bind(':p_id', $id);
             return convert_to_bool_values($this->db->resultSet(), ['admin', 'habilitado']);
         }

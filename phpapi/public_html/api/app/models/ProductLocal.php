@@ -30,6 +30,13 @@
             return $this->db->resultSet();
         }
 
+        public function get_by_product_and_local($id_producto, $id_local) {
+            $this->db->query('call proc_get_producto_local_by_product_and_local(:p_id_producto, :p_id_local)');
+            $this->db->bind(':p_id_producto', $id_producto);
+            $this->db->bind(':p_id_local', $id_local);
+            return convert_to_bool_values($this->db->single(), ['raro']);
+        }
+
         public function get_minified_byid($id) {
             $this->db->query('call proc_get_minified_producto_local_byid(:p_id);');
             $this->db->bind(':p_id', $id);

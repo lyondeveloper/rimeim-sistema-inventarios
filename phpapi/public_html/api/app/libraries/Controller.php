@@ -8,6 +8,8 @@
     class Controller {
 
         private $current_token = null;
+        private $current_id_local = null;
+        private $current_id_employe = null;
         public $userModel;
         public $employeModel;
 
@@ -116,17 +118,12 @@
 
         public function get_new_token($user)
         {
-            $info_employe = $this->employeModel->get_by_user_id($user->id);
             $token_arr = [
                 'id' => $user->id,
                 'name' => $user->nombre,
                 'admin' => $user->admin,
                 'dt_expire' => strtotime("+" . TOKEN_DURATION . " seconds", curent_time())
             ];
-            if (!is_null($info_employe)) {
-                $token_arr['id_empleado'] = $info_employe->id;
-                $token_arr['id_local'] = $info_employe->id_local;
-            }
             $token = JWT::encode($token_arr, KEY_TOKEN);
             return $token;
         }
@@ -156,21 +153,16 @@
                 $this->response(['error' => "InvalidSession"], ERROR_FORBIDDEN, false);
             }
             $this->current_token = $token;
+            $this->config_current_employe_id();
         }
 
         private function get_token_from_header()
         {
             $valid = false;
             $headers = apache_request_headers();
-            $token_header = isset($headers['Authorization']) ? $headers['Authorization'] : null;
-            $token_header = (is_null($token_header) && isset($headers['authorization']))
-                             ? $headers['authorization'] : $token_header;
-            
-            // Medida para cuando la funcion apache_request_headers no esta definida y en cambio
-            // se esta usando una obtenida en php.net
-            $token_header = (is_null($token_header) && isset($headers['AUTH'])) ? $headers['AUTH'] : $token_header;
-            $token_header = (is_null($token_header) && isset($headers['Auth'])) ? $headers['Auth'] : $token_header;
-            $token_header = (is_null($token_header) && isset($headers['auth'])) ? $headers['auth'] : $token_header;
+            $this->config_current_id_local_from_headers($headers);
+            $token_header = $this->get_current_token_from_heders($headers);
+
             if (!is_null($token_header)) {
                 $matches = [];
                 if (preg_match('/' . KEY_BEARER . '\s(\S+)/', $token_header, $matches)) {
@@ -201,7 +193,8 @@
 
         public function route_for_empleado()
         { 
-            if (!$this->employeModel->is_enabled_by_id($this->get_current_employe_id())) {
+            if (is_null($this->get_current_id_local()) || 
+                is_null($this->get_current_employe_id())) {
                 $this->response(['error' => "InvalidPermissions"], ERROR_FORBIDDEN);
             }  
         }
@@ -225,24 +218,13 @@
 
         public function get_current_employe_id()
         {
-            return (!is_null($this->current_token) &&
-                isset($this->current_token->id_empleado)) ? $this->current_token->id_empleado : null;
+            return $this->current_id_employe;
         }
 
         public function get_current_id_local()
         {
-            // Necesita actualizacion
-            return (!is_null($this->current_token) &&
-                isset($this->current_token->id_local)) ? $this->current_token->id_local : 1;
+            return $this->current_id_local;
         }
-
-        public function get_current_id_empleado()
-        {
-            // Necesita actualizacion
-            return (!is_null($this->current_token) &&
-                isset($this->current_token->id_empleado)) ? $this->current_token->id_empleado : 1;
-        }
-
         public function config_route($private_type, $id_user_request = 0)
         {
             if (
@@ -252,12 +234,15 @@
                 return;
             }
 
-            if ($this->is_current_user_admin()) {
-                return;
-            }
-
             switch ($private_type) {
                 case CTR_EMPLEADO:
+                    if ($this->is_current_user_admin()) {
+                        $id_local = $this->get_current_id_local();
+                        if ($id_local == 0) {
+                            return;
+                        } 
+                    }
+                    
                     $this->route_for_empleado();
                     break;
 
@@ -273,6 +258,45 @@
 
         public function is_current_user_admin() {
             return $this->userModel->is_user_admin($this->get_current_user_id());
+        }
+
+        private function get_current_token_from_heders($headers) {
+            $possible_names = ['AUTH', 'Auth', 'auth', 'Authorization', 'authorization' ];
+            $token_header = null;
+
+            foreach($possible_names as $header_name) {
+                if (isset($headers[$header_name]) && 
+                    is_null($token_header)) {
+                    $token_header = $headers[$header_name];
+                    break;
+                }
+            }
+
+            return $token_header;
+        }
+
+        private function config_current_id_local_from_headers($headers) {
+            $possible_names = ['IDLocal', 'IDLOCAL', 'idlocal'];
+            foreach($possible_names as $id_name) {
+                if (isset($headers[$id_name])) {
+                    $this->current_id_local = $headers[$id_name];
+                    break;
+                }
+            }
+        }
+
+        private function config_current_employe_id() {
+            $id_local = $this->get_current_id_local();
+
+            if (is_null($id_local)) { return; }
+
+            $employe = $this->employeModel->get_by_user_and_local($this->get_current_user_id(), 
+                                                                    $id_local);
+            if(!is_null($employe) && 
+                $employe->habilitado == true) {
+                $this->current_id_employe = $employe->id;
+            }
+
         }
     }
 

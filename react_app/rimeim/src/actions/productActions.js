@@ -13,10 +13,10 @@ import {
   PRODUCT_END_LOADING
 } from './types';
 
-export const getProducts = id_local => dispatch => {
+export const getProducts = () => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .get(`/products/get/${id_local}`)
+    .get(`/products/get`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -24,14 +24,15 @@ export const getProducts = id_local => dispatch => {
         type: GET_PRODUCTS,
         payload: response.data
       });
-      dispatch(clearErrors())
+      dispatch(clearErrors());
     })
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };
 
 export const searchProduct = searchData => dispatch => {
-  dispatch(productLoadingObject())
-  axios.post('/products/search', searchData)
+  dispatch(productLoadingObject());
+  axios
+    .post('/products/search', searchData)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -39,10 +40,10 @@ export const searchProduct = searchData => dispatch => {
         type: GET_PRODUCTS,
         payload: response.data
       });
-      dispatch(clearErrors())
+      dispatch(clearErrors());
     })
-    .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING))
-}
+    .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
+};
 
 export const getProductById = id => dispatch => {
   dispatch(productLoadingObject());

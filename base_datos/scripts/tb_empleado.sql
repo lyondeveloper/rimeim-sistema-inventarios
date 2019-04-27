@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_get_next_empledo_id;
 delimiter $$
 create function func_get_next_empledo_id()
@@ -56,9 +56,33 @@ begin
 	return @response;
 end $$
 delimiter ;
+*/
 
 
+drop procedure if exists `proc_get_empleado_by_user_and_local_id`;
+delimiter $$
+create procedure proc_get_empleado_by_user_and_local_id(in p_user_id bigint,
+														in p_local_id bigint)
+begin
+	if (valid_int_id(p_user_id) and 
+		valid_int_id(p_local_id)) then
+		select e.id,
+				e.id_local,
+				e.id_usuario,
+				e.id_usuario_creado_por,
+				e.admin,
+				e.habilitado,
+				e.fecha_creado
+		from tb_empleado e
+		where e.id_usuario = p_user_id 
+        and e.id_local = p_local_id
+        and e.eliminado = false;
+    end if;
+end $$
+delimiter ;
 
+
+/*
 drop procedure if exists `proc_get_empleados`;
 delimiter $$
 create procedure proc_get_empleados()
@@ -119,10 +143,12 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
-drop procedure if exists `proc_get_empleado_by_user_id`;
+/*
+drop procedure if exists `proc_get_empleados_by_user_id`;
 delimiter $$
-create procedure proc_get_empleado_by_user_id(in p_id bigint)
+create procedure proc_get_empleados_by_user_id(in p_id bigint)
 begin
 	if (valid_int_id(p_id)) then
 		select e.id,
@@ -138,7 +164,9 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists `proc_add_empleado`;
 delimiter $$
 create procedure proc_add_empleado(in p_id_local bigint,
@@ -240,6 +268,6 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/
 
 
