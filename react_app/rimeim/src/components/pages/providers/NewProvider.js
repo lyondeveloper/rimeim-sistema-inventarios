@@ -18,6 +18,7 @@ import uuid from 'uuid';
 import { withRouter } from 'react-router-dom';
 
 import TextInputField from '../../common/TextInputField';
+import SelectFiles from '../../common/SelectFiles';
 import SelectInputField from '../../common/SelectInputField';
 import Spinner from '../../common/Spinner';
 
@@ -31,6 +32,7 @@ class NewProvider extends Component {
     correo: '',
     contacto: '',
     telefono: '',
+    imagen: null,
     producto_seleccionado: '0',
     id_nuevo_producto: '',
     precio_especial: '0',
@@ -150,6 +152,33 @@ class NewProvider extends Component {
     });
   };
 
+  onChangeFiles = e => {
+    const { files } = e.target;
+    let nueva_imagen = null;
+
+    for (var i = 0; i < files.length; i++) {
+      const file = files[i];
+      var reader = new FileReader();
+      reader.onload = result => {
+        nueva_imagen = {
+          name: file.name,
+          url: result.target.result,
+          file
+        };
+
+        if (i === files.length) {
+          this.setState({ imagen: nueva_imagen });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  onDeleteFile = () => {
+    this.setState({ imagen: null });
+    document.getElementById('imagen').value = null;
+  };
+
   onSubmit = e => {
     e.preventDefault();
 
@@ -159,10 +188,22 @@ class NewProvider extends Component {
       contacto: this.state.contacto,
       correo: this.state.correo,
       telefono: this.state.telefono,
+      imagen: this.state.imagen,
       productos: this.state.productos
     };
 
-    this.props.addProvider(providerData, this.props.history);
+    if (this.state.imagen !== null) {
+      const newProviderData = new FormData();
+      newProviderData.append(
+        'file_uploads[]',
+        this.state.imagen.file,
+        this.state.imagen.name
+      );
+      newProviderData.append('json_data', JSON.stringify(providerData));
+      this.props.addProvider(newProviderData, this.props.history, '/clientes');
+    } else {
+      this.props.addProvider(providerData, this.props.history, '/clientes');
+    }
   };
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
@@ -174,6 +215,7 @@ class NewProvider extends Component {
       correo,
       contacto,
       telefono,
+      imagen,
       id_nuevo_producto,
       productos,
       precio_especial
@@ -200,16 +242,13 @@ class NewProvider extends Component {
                 <div className='card-content'>
                   <form className='' onSubmit={this.onSubmit}>
                     <div className='row'>
-                      <div className='col s12 m12 center'>
-                        <img
-                          src={LogoRimeim}
-                          className='responsive-img bordered'
-                          alt=''
-                        />
-                        <div className='d-block'>
-                          <button className='btn'>Cambiar</button>
-                        </div>
-                      </div>
+                      <SelectFiles
+                        id='imagen'
+                        files={[imagen]}
+                        label='Seleccionar Imagen'
+                        onchange={this.onChangeFiles}
+                        onDeleteFileClick={this.onDeleteFile}
+                      />
                     </div>
                     <div className='row'>
                       <TextInputField

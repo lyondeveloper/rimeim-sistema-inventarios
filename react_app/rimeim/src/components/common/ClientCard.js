@@ -20,8 +20,10 @@ class ClientCard extends Component {
 
   render() {
     const {
-      client: { id, img, nombre }
+      client: { id, imagen, nombre }
     } = this.props;
+
+    console.log(this.props.client);
 
     const { loading } = this.props.clients;
 
@@ -32,7 +34,7 @@ class ClientCard extends Component {
     return (
       <div className='card hoverable medium'>
         <div className='card-image waves-effect waves-block waves-light'>
-          <img src={LogoRimeim} alt='' />
+          <img src={imagen ? imagen.url : ''} alt='' />
         </div>
         <div className='card-content center p-1'>
           <span className='card-title grey-text text-darken-4'>{nombre}</span>

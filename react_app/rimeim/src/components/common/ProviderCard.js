@@ -20,7 +20,7 @@ class ProviderCard extends Component {
 
   render() {
     const {
-      provider: { id, img, nombre }
+      provider: { id, imagen, nombre }
     } = this.props;
 
     const { loading } = this.props.providers;
@@ -30,7 +30,7 @@ class ProviderCard extends Component {
     return (
       <div className='card hoverable medium'>
         <div className='card-image waves-effect waves-block waves-light'>
-          <img className='activator' src={LogoRimeim} alt={'Logo'} />
+          <img src={imagen ? imagen.url : ''} alt={'Logo'} />
         </div>
         <div className='card-content center p-1'>
           <span className='card-title grey-text text-darken-4'>{nombre}</span>

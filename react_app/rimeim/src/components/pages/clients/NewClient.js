@@ -10,8 +10,6 @@ import Navbar from '../../layout/Navbar';
 
 import { withRouter } from 'react-router-dom';
 
-import LogoRimeim from '../../../public/img/logo_rimeim.png';
-
 import {
   configMaterialComponents,
   removeMaterialComponents,
@@ -229,8 +227,8 @@ class NewClient extends Component {
     if (imagen !== null) {
       const newClientData = new FormData();
       newClientData.append('file_uploads[]', imagen.file, imagen.name);
-      newClientData.append('json_data', JSON.stringify(newClientData));
-      this.props.createClient(clientData, this.props.history, '/clientes');
+      newClientData.append('json_data', JSON.stringify(clientData));
+      this.props.createClient(newClientData, this.props.history, '/clientes');
     } else {
       this.props.createClient(clientData, this.props.history, '/clientes');
     }

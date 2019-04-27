@@ -10,8 +10,6 @@ import Navbar from '../../layout/Navbar';
 
 import { withRouter } from 'react-router-dom';
 
-import LogoRimeim from '../../../public/img/logo_rimeim.png';
-
 import isEmpty from '../../../actions/isEmpty';
 
 import {
@@ -21,7 +19,7 @@ import {
 } from '../../../utils/MaterialFunctions';
 
 import Spinner from '../../common/Spinner';
-
+import SelectFiles from '../../common/SelectFiles';
 import TextInputField from '../../common/TextInputField';
 import CheckInputField from '../../common/CheckInputField';
 import SelectInputField from '../../common/SelectInputField';
@@ -35,6 +33,7 @@ class EditClient extends Component {
     telefono: '',
     codigo: '',
     es_empresa: false,
+    imagen: null,
     id_producto: '',
     precio: '',
     producto_seleccionado: '',
@@ -90,6 +89,7 @@ class EditClient extends Component {
       client.telefono = !isEmpty(client.telefono) ? client.telefono : '';
       client.codigo = !isEmpty(client.codigo) ? client.codigo : '';
       client.es_empresa = !isEmpty(client.es_empresa) ? client.es_empresa : '';
+      client.imagen = !isEmpty(client.imagen) ? client.imagen : '';
       client.precios_productos = !isEmpty(client.precios_productos)
         ? client.precios_productos
         : [];
@@ -102,6 +102,7 @@ class EditClient extends Component {
         telefono: client.telefono,
         codigo: client.codigo,
         es_empresa: client.es_empresa,
+        imagen: client.imagen,
         productos_especiales: client.precios_productos
       });
     }
@@ -201,10 +202,39 @@ class EditClient extends Component {
     });
   };
 
+  onChangeFiles = e => {
+    const { files } = e.target;
+    let nueva_imagen = null;
+
+    for (var i = 0; i < files.length; i++) {
+      const file = files[i];
+      var reader = new FileReader();
+      reader.onload = result => {
+        nueva_imagen = {
+          name: file.name,
+          url: result.target.result,
+          file
+        };
+
+        if (i === files.length) {
+          this.setState({ imagen: nueva_imagen });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  onDeleteFile = () => {
+    this.setState({ imagen: null });
+    document.getElementById('imagen').value = null;
+  };
+
   onSubmit = e => {
     e.preventDefault();
 
     const { id } = this.props.match.params;
+
+    const { client } = this.props.clients;
 
     const {
       nombre,
@@ -213,6 +243,7 @@ class EditClient extends Component {
       contacto,
       telefono,
       codigo,
+      imagen,
       es_empresa,
       productos_especiales
     } = this.state;
@@ -228,7 +259,19 @@ class EditClient extends Component {
       precios_productos: productos_especiales
     };
 
-    this.props.editClient(clientData, id, this.props.history, '/clientes');
+    if (imagen !== null && imagen !== client.imagen) {
+      const clientDataUpdated = new FormData();
+      clientDataUpdated.append('file_uploads[]', imagen.file, imagen.name);
+      clientDataUpdated.append('json_data', JSON.stringify(clientData));
+      this.props.editClient(
+        clientDataUpdated,
+        id,
+        this.props.history,
+        '/clientes'
+      );
+    } else {
+      this.props.editClient(clientData, id, this.props.history, '/clientes');
+    }
   };
 
   render() {
@@ -239,6 +282,7 @@ class EditClient extends Component {
       contacto,
       telefono,
       codigo,
+      imagen,
       es_empresa,
       id_producto,
       precio_especial,
@@ -271,20 +315,17 @@ class EditClient extends Component {
             <div className='card '>
               <div className='card-content'>
                 <div className='row'>
-                  <div className='col s12 m12 center'>
-                    <img
-                      src={LogoRimeim}
-                      className='responsive-img bordered'
-                      alt=''
-                    />
-                    <div className='d-block'>
-                      <button className='btn'>Cambiar</button>
-                    </div>
-                  </div>
-                </div>
-                <div className='row'>
                   <div className='col s12 m12'>
                     <form onSubmit={this.onSubmit}>
+                      <div className='row'>
+                        <SelectFiles
+                          id='imagen'
+                          files={[imagen]}
+                          label='Seleccionar Imagen'
+                          onchange={this.onChangeFiles}
+                          onDeleteFileClick={this.onDeleteFile}
+                        />
+                      </div>
                       <div className='row'>
                         <TextInputField
                           id='nombre'
