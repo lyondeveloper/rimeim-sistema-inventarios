@@ -34,6 +34,7 @@ class EditProvider extends Component {
     producto_seleccionado: '0',
     id_nuevo_producto: '',
     precio_especial: '0',
+    nuevo_producto_nombre: '',
     productos: [],
     needs_config_selects: false,
     editMode: false
@@ -105,14 +106,15 @@ class EditProvider extends Component {
 
     const productData = {
       id_producto: products[productIndex].id,
-      nombre: products[productIndex].nombre,
-      precio: products[productIndex].precio,
+      producto_nombre: products[productIndex].nombre,
+      producto_precio: products[productIndex].precio,
       precio_especial
     };
 
     productos.push(productData);
 
     this.setState({
+      nuevo_producto_nombre: '',
       producto_seleccionado: id_nuevo_producto,
       precio_especial: '0',
       needs_config_selects: false
@@ -121,9 +123,11 @@ class EditProvider extends Component {
 
   onAddProductClick = () => {
     this.setState({
+      nuevo_producto_nombre: '',
       producto_seleccionado: '',
       id_nuevo_producto: '',
-      precio_especial: '0'
+      precio_especial: '0',
+      editMode: false
     });
   };
 
@@ -139,20 +143,13 @@ class EditProvider extends Component {
   };
 
   onEditProduct = () => {
-    const {
-      productos,
-      producto_seleccionado,
-      precio_especial,
-      id_nuevo_producto
-    } = this.state;
+    const { productos, producto_seleccionado, precio_especial } = this.state;
 
     const productIndex = productos.findIndex(
       p => p.id_producto === producto_seleccionado
     );
 
-    productos[productIndex].id_producto = id_nuevo_producto;
     productos[productIndex].precio_especial = precio_especial;
-    productos[productIndex].nombre = precio_especial;
     productos[productIndex].actualizado = true;
 
     this.setState({
@@ -193,7 +190,11 @@ class EditProvider extends Component {
       productos: this.state.productos
     };
 
-    this.props.addProvider(providerData, this.props.history);
+    this.props.editProvider(
+      providerData,
+      this.props.history,
+      this.props.match.params.id
+    );
   };
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
@@ -205,7 +206,7 @@ class EditProvider extends Component {
       correo,
       contacto,
       telefono,
-      producto_seleccionado,
+      id_nuevo_producto,
       productos,
       precio_especial
     } = this.state;
@@ -311,6 +312,7 @@ class EditProvider extends Component {
                       <table className='striped table-bordered'>
                         <thead>
                           <tr>
+                            <th>ID</th>
                             <th>Nombre</th>
                             <th>Precio Original</th>
                             <th>Precio Especial</th>
@@ -324,7 +326,8 @@ class EditProvider extends Component {
                             ) : (
                               <tr key={uuid()}>
                                 <td>{producto.id_producto}</td>
-                                <td>{producto.precio}</td>
+                                <td>{producto.producto_nombre}</td>
+                                <td>{producto.producto_precio}</td>
                                 <td>{producto.precio_especial}</td>
                                 <td>
                                   <i
@@ -378,21 +381,33 @@ class EditProvider extends Component {
           <div className='modal' id='modal_agregar_productos'>
             <div className='modal-content'>
               {this.props.products.loading && <Spinner fullWidth />}
-              <SelectInputField
-                id='producto_seleccionado'
-                label='Producto'
-                value={producto_seleccionado}
-                onchange={this.onChangeTextInput}
-                options={productsOptions}
-              />
 
-              <TextInputField
-                id='precio_especial'
-                label='Precio Especial'
-                onchange={this.onChangeTextInput}
-                value={precio_especial}
-                active_label={true}
-              />
+              {this.state.editMode ? (
+                <TextInputField
+                  id='precio_especial'
+                  label='Precio Especial'
+                  onchange={this.onChangeTextInput}
+                  value={precio_especial}
+                  active_label={this.state.editMode ? true : false}
+                />
+              ) : (
+                <div>
+                  <SelectInputField
+                    id='id_nuevo_producto'
+                    label='Producto'
+                    value={id_nuevo_producto}
+                    onchange={this.onChangeTextInput}
+                    options={productsOptions}
+                  />
+                  <SelectInputField
+                    id='id_nuevo_producto'
+                    label='Producto'
+                    value={id_nuevo_producto}
+                    onchange={this.onChangeTextInput}
+                    options={productsOptions}
+                  />
+                </div>
+              )}
 
               <div className='modal-footer'>
                 <a

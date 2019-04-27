@@ -23,17 +23,6 @@ export const createClient = (data, history, newUrl) => dispatch => {
     .catch(err => handleError(err, dispatch));
 };
 
-export const addSpecialProductPrice = data => dispatch => {
-  dispatch(clearErrors());
-  axios
-    .post('/clients/add_clients_products_prices', data)
-    .then(res => {
-      const response = res.data;
-      configUserFromResponse(response, dispatch);
-    })
-    .catch(err => handleError(err, dispatch));
-};
-
 export const getClients = () => dispatch => {
   dispatch(clientLoading());
   dispatch(clearErrors());

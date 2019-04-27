@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import uuid from "uuid"
-import {
-  createClient,
-  editClient,
-  getClient,
-  addSpecialProductPrice
-} from '../../../actions/clientActions';
+import uuid from 'uuid';
+import { editClient, getClient } from '../../../actions/clientActions';
 
 import { getProducts } from '../../../actions/productActions';
 
@@ -44,7 +39,7 @@ class EditClient extends Component {
     precio: '',
     producto_seleccionado: '',
     productos_especiales: [],
-    editar_precio: false,
+    editMode: false,
     needs_config_selects: false,
     errors: {}
   };
@@ -133,54 +128,59 @@ class EditClient extends Component {
   onAddSpecialProductPrice = e => {
     e.preventDefault();
 
-    const { productos_especiales, id_producto, precio } = this.state;
+    const { products } = this.props.products;
+
+    const { productos_especiales, id_producto, precio_especial } = this.state;
+
+    const productIndex = products.findIndex(p => p.id === id_producto);
 
     const productData = {
       id_producto,
-      precio
+      producto_nombre: products[productIndex].nombre,
+      precio: precio_especial
     };
 
     productos_especiales.push(productData);
 
     this.setState({
       id_producto: '',
-      precio: '',
+      nuevo_producto_nombre: '',
+      precio_especial: '',
       producto_seleccionado: ''
     });
   };
 
-  onEditSpecialProductPrice = producto => {
+  onEditSpecialProductPrice = () => {
     const {
-      id_producto,
-      precio,
+      precio_especial,
       productos_especiales,
       producto_seleccionado
     } = this.state;
 
     const productIndex = productos_especiales.findIndex(
-      p => p.id_producto === producto_seleccionado
+      p => p.id === producto_seleccionado
     );
 
-    productos_especiales[productIndex].id_producto = id_producto;
-    productos_especiales[productIndex].precio = precio;
+    productos_especiales[productIndex].precio = precio_especial;
     productos_especiales[productIndex].actualizado = true;
 
     this.setState({
       id_producto: '',
-      precio: '',
+      precio_especial: '',
       producto_seleccionado: '',
-      editar_precio: false
+      nuevo_producto_nombre: '',
+      editMode: false
     });
   };
 
   onEditSpecialProductPriceClick = producto => {
-    const { precio, id_producto } = producto;
+    const { precio, id } = producto;
 
     this.setState({
-      id_producto,
-      precio: precio,
-      producto_seleccionado: id_producto,
-      editar_precio: true
+      id_producto: id,
+      precio_especial: precio,
+      producto_seleccionado: id,
+      editMode: true
     });
   };
 
@@ -188,7 +188,7 @@ class EditClient extends Component {
     const { productos_especiales } = this.state;
 
     const productIndex = productos_especiales.findIndex(
-      p => p.id_producto === producto.id_producto
+      p => p.id.toString() === producto.id
     );
 
     delete productos_especiales[productIndex].actualizado;
@@ -197,7 +197,7 @@ class EditClient extends Component {
 
     this.setState({
       id_producto: '',
-      precio: ''
+      precio_especial: ''
     });
   };
 
@@ -241,7 +241,7 @@ class EditClient extends Component {
       codigo,
       es_empresa,
       id_producto,
-      precio,
+      precio_especial,
       productos_especiales
     } = this.state;
 
@@ -353,12 +353,8 @@ class EditClient extends Component {
                           <h5>Precio Especial a Producto</h5>
                           <button
                             className='modal-trigger btn-floating'
-                            data-target='modal_editar_precio_producto'
-                            onClick={
-                              this.state.editar_precio
-                                ? this.onEditSpecialProductPriceClick
-                                : this.onAddSpecialProductPriceClick
-                            }
+                            data-target='modal_editMode_producto'
+                            onClick={this.onAddSpecialProductPriceClick}
                           >
                             <i className='material-icons'>add</i>
                           </button>
@@ -370,6 +366,7 @@ class EditClient extends Component {
                               <thead>
                                 <tr>
                                   <th>ID Producto</th>
+                                  <th>Nombre</th>
                                   <th>Precio</th>
                                   <th>Acciones</th>
                                 </tr>
@@ -377,40 +374,41 @@ class EditClient extends Component {
                               <tbody>
                                 {productos_especiales.map((producto, i) =>
                                   producto.eliminado ? (
-                                    undefined
+                                    ''
                                   ) : (
-                                      <tr key={uuid()}>
-                                        <td>{producto.id_producto}</td>
-                                        <td>{producto.precio}</td>
-                                        <td>
-                                          <i
-                                            onClick={this.onDeleteSpecialProductPrice.bind(
-                                              this,
-                                              producto
-                                            )}
-                                            className='material-icons cursor-pointer'
-                                          >
-                                            delete_sweep
+                                    <tr key={uuid()}>
+                                      <td>{producto.id_producto}</td>
+                                      <td>{producto.nombre}</td>
+                                      <td>{producto.precio}</td>
+                                      <td>
+                                        <i
+                                          onClick={this.onDeleteSpecialProductPrice.bind(
+                                            this,
+                                            producto
+                                          )}
+                                          className='material-icons cursor-pointer'
+                                        >
+                                          delete_sweep
                                         </i>
-                                          <i
-                                            onClick={this.onEditSpecialProductPriceClick.bind(
-                                              this,
-                                              producto
-                                            )}
-                                            data-target='modal_editar_precio_producto'
-                                            className='material-icons cursor-pointer modal-trigger'
-                                          >
-                                            create
+                                        <i
+                                          onClick={this.onEditSpecialProductPriceClick.bind(
+                                            this,
+                                            producto
+                                          )}
+                                          data-target='modal_editMode_producto'
+                                          className='material-icons cursor-pointer modal-trigger'
+                                        >
+                                          create
                                         </i>
-                                        </td>
-                                      </tr>
-                                    )
+                                      </td>
+                                    </tr>
+                                  )
                                 )}
                               </tbody>
                             </table>
                           ) : (
-                              undefined
-                            )}
+                            ''
+                          )}
                         </div>
                       </div>
                       <div className='d-block center mt-1'>
@@ -433,29 +431,42 @@ class EditClient extends Component {
         <Navbar navtype={EDIT_CLIENT} />
         <main>{newClientContent}</main>
 
-        <div className='modal' id='modal_editar_precio_producto'>
+        <div className='modal' id='modal_editMode_producto'>
           {this.props.products.loading && <Spinner fullWidth />}
 
           <div className='modal-content center'>
             <h5>Precio Especial a Producto</h5>
-            <div className='row'>
-              <SelectInputField
-                id='id_producto'
-                label='Producto'
-                onchange={this.onChangeTextInput}
-                value={id_producto}
-                options={productsOptions}
-              />
-            </div>
-            <div className='row'>
-              <TextInputField
-                id='precio'
-                label='Precio'
-                onchange={this.onChangeTextInput}
-                value={precio}
-                active_label={true}
-              />
-            </div>
+            {this.state.editMode ? (
+              <div className='row'>
+                <TextInputField
+                  id='precio_especial'
+                  label='Precio Especial'
+                  onchange={this.onChangeTextInput}
+                  value={precio_especial}
+                  active_label={true}
+                />
+              </div>
+            ) : (
+              <div>
+                <div className='row'>
+                  <SelectInputField
+                    id='id_producto'
+                    label='Producto'
+                    onchange={this.onChangeTextInput}
+                    value={id_producto}
+                    options={productsOptions}
+                  />
+                </div>
+                <div className='row'>
+                  <TextInputField
+                    id='precio_especial'
+                    label='Precio Especial'
+                    onchange={this.onChangeTextInput}
+                    value={precio_especial}
+                  />
+                </div>
+              </div>
+            )}
           </div>
           <div className='modal-footer'>
             <a
@@ -468,7 +479,7 @@ class EditClient extends Component {
               href='#!'
               className='modal-close waves-effect waves-green btn text-white mb-1'
               onClick={
-                this.state.editar_precio
+                this.state.editMode
                   ? this.onEditSpecialProductPrice
                   : this.onAddSpecialProductPrice
               }
@@ -490,5 +501,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { createClient, editClient, getClient, getProducts, addSpecialProductPrice }
+  { editClient, getClient, getProducts }
 )(withRouter(EditClient));

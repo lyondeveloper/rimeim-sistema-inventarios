@@ -19,24 +19,24 @@ const SelectFiles = props => {
   );
   if (process_files.length > 0) {
     scroll_files = (
-      <div className="horizontal-scroll-container bordered">
+      <div className='horizontal-scroll-container bordered center'>
         {process_files.map(file => (
           <div
             key={uuid()}
-            className="item"
+            className='item'
             style={{
               background: `url('${file.url}') no-repeat center center / cover`
             }}
           >
             <div
-              className="red close-button cursor-pointer"
+              className='red close-button cursor-pointer'
               onClick={() => {
                 if (onDeleteFileClick) {
                   onDeleteFileClick(file);
                 }
               }}
             >
-              <i className="material-icons">close</i>
+              <i className='material-icons'>close</i>
             </div>
           </div>
         ))}
@@ -46,20 +46,20 @@ const SelectFiles = props => {
   return (
     <div className={`col ${input_size}`}>
       {scroll_files}
-      <div className="file-field input-field overflow-x-hidden">
-        <div className="btn">
+      <div className='file-field input-field overflow-x-hidden'>
+        <div className='btn'>
           <span>{label}</span>
           <input
             id={id}
             name={id}
-            type="file"
+            type='file'
             accept={accept}
             onChange={onchange}
             multiple={multiple ? 'multiple' : ''}
           />
         </div>
-        <div className="file-path-wrapper d-none">
-          <input className="file-path validate" type="text" />
+        <div className='file-path-wrapper d-none'>
+          <input className='file-path validate' type='text' />
         </div>
       </div>
     </div>

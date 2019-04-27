@@ -57,8 +57,8 @@ import SearchClient from './components/pages/clients/SearchClient';
 // Providers
 import NewProvider from './components/pages/providers/NewProvider';
 import EditProvider from './components/pages/providers/EditProvider';
-import Provider from './components/pages/providers/Provider';
 import Providers from './components/pages/providers/Providers';
+import SearchProvider from './components/pages/providers/SearchProvider';
 
 // Account
 import ConfigurationView from './components/pages/account/ConfigurationView';
@@ -208,21 +208,21 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/vehiculos/:id"
+                path='/vehiculos/:id'
                 component={ShowVehicleType}
               />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/nuevo_vehiculo"
+                path='/nuevo_vehiculo'
                 component={NewVehicleType}
               />
             </Switch>
             <Switch>
               <PrivateRoute
                 exact
-                path="/editar_vehiculo/:id"
+                path='/editar_vehiculo/:id'
                 component={EditVehicleType}
               />
             </Switch>
@@ -261,19 +261,20 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
+                path='/buscar_proveedor'
+                component={SearchProvider}
+              />
+            </Switch>
+
+            <Switch>
+              <PrivateRoute
+                exact
                 path='/editar_proveedor/:id'
                 component={EditProvider}
               />
             </Switch>
             <Switch>
               <PrivateRoute exact path='/proveedores' component={Providers} />
-            </Switch>
-            <Switch>
-              <PrivateRoute
-                exact
-                path='/proveedores/:id'
-                component={Provider}
-              />
             </Switch>
 
             {/* Account */}

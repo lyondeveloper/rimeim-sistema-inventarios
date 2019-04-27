@@ -35,7 +35,8 @@ class NewProvider extends Component {
     id_nuevo_producto: '',
     precio_especial: '0',
     productos: [],
-    needs_config_selects: false
+    needs_config_selects: false,
+    editMode: false
   };
 
   componentWillMount() {
@@ -114,20 +115,13 @@ class NewProvider extends Component {
   };
 
   onEditProduct = () => {
-    const {
-      productos,
-      producto_seleccionado,
-      precio_especial,
-      id_nuevo_producto
-    } = this.state;
+    const { productos, producto_seleccionado, precio_especial } = this.state;
 
     const productIndex = productos.findIndex(
       p => p.id_producto === producto_seleccionado
     );
 
-    productos[productIndex].id_producto = id_nuevo_producto;
     productos[productIndex].precio_especial = precio_especial;
-    productos[productIndex].nombre = precio_especial;
     productos[productIndex].actualizado = true;
 
     this.setState({
@@ -279,6 +273,7 @@ class NewProvider extends Component {
                           <thead>
                             <tr>
                               <th>ID</th>
+                              <th>Nombre</th>
                               <th>Precio Original</th>
                               <th>Precio Especial</th>
                               <th>Acciones</th>
@@ -291,6 +286,7 @@ class NewProvider extends Component {
                               ) : (
                                 <tr key={uuid()}>
                                   <td>{producto.id_producto}</td>
+                                  <td> {producto.nombre} </td>
                                   <td>{producto.precio}</td>
                                   <td>{producto.precio_especial}</td>
                                   <td>
@@ -328,20 +324,40 @@ class NewProvider extends Component {
                     <div className='modal' id='modal_agregar_productos'>
                       <div className='modal-content'>
                         {this.props.products.loading && <Spinner fullWidth />}
-                        <SelectInputField
-                          id='id_nuevo_producto'
-                          label='Producto'
-                          value={id_nuevo_producto}
-                          onchange={this.onChangeTextInput}
-                          options={productsOptions}
-                        />
-
-                        <TextInputField
-                          id='precio_especial'
-                          label='Precio Especial'
-                          onchange={this.onChangeTextInput}
-                          value={precio_especial}
-                        />
+                        {this.state.editMode ? (
+                          <div className='row'>
+                            <TextInputField
+                              id='precio_especial'
+                              label='Precio Especial'
+                              onchange={this.onChangeTextInput}
+                              value={precio_especial}
+                              active_label={this.state.editMode ? true : false}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <div className='row'>
+                              <SelectInputField
+                                id='id_nuevo_producto'
+                                label='Producto'
+                                value={id_nuevo_producto}
+                                onchange={this.onChangeTextInput}
+                                options={productsOptions}
+                              />
+                            </div>
+                            <div className='row'>
+                              <TextInputField
+                                id='precio_especial'
+                                label='Precio Especial'
+                                onchange={this.onChangeTextInput}
+                                value={precio_especial}
+                                active_label={
+                                  this.state.editMode ? true : false
+                                }
+                              />
+                            </div>
+                          </div>
+                        )}
 
                         <div className='modal-footer'>
                           <a

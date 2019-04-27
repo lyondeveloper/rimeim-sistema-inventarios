@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function SearchClientWrapper() {
+export default function SearchProviderWrapper() {
   return (
     <div className='nav-wrapper'>
       <a href='#!' className='brand-logo'>
@@ -11,7 +11,7 @@ export default function SearchClientWrapper() {
       </a>
       <ul className='right'>
         <li>
-          <a href='#modal_buscar_cliente' className='modal-trigger'>
+          <a href='#modal_buscar_proveedor' className='modal-trigger'>
             <i className='material-icons'>search</i>
           </a>
         </li>

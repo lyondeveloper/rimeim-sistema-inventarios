@@ -78,7 +78,24 @@ export const getProviders = () => dispatch => {
     })
     .catch(err => handleError(err, dispatch));
 };
-export const searchProvider = data => dispatch => {};
+export const searchProvider = data => dispatch => {
+  dispatch(providerLoading());
+  axios
+    .get(`/providers/search/${data}`)
+    .then(res => {
+      const response = res.data;
+
+      configUserFromResponse(response, dispatch);
+
+      dispatch({
+        type: GET_PROVIDERS,
+        payload: response.data
+      });
+
+      setTimeout(() => providerLoadingEnd(), 10);
+    })
+    .catch(err => handleError(err, dispatch));
+};
 export const deleteProvider = id => dispatch => {
   dispatch(clearErrors());
   dispatch(providerLoading());

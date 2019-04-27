@@ -36,7 +36,7 @@ class Clients extends Component {
     } else {
       clientsContent = clients.map((client, index) => {
         return (
-          <div className="col s12 m6 l6" key={uuid()}>
+          <div className='col s12 m6 l4' key={uuid()}>
             <ClientCard client={client} key={uuid()} />
           </div>
         );
@@ -47,7 +47,7 @@ class Clients extends Component {
       <React.Fragment>
         <Navbar navtype={CLIENTS} />
         <main>
-          <div className="row">{clientsContent}</div>
+          <div className='row'>{clientsContent}</div>
         </main>
       </React.Fragment>
     );

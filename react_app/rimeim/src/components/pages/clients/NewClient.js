@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import uuid from 'uuid';
-import {
-  createClient,
-  getClient,
-  addSpecialProductPrice
-} from '../../../actions/clientActions';
+import { createClient, getClient } from '../../../actions/clientActions';
 
 import { getProducts } from '../../../actions/productActions';
 
@@ -16,8 +12,6 @@ import { withRouter } from 'react-router-dom';
 
 import LogoRimeim from '../../../public/img/logo_rimeim.png';
 
-import isEmpty from '../../../actions/isEmpty';
-
 import {
   configMaterialComponents,
   removeMaterialComponents,
@@ -25,10 +19,10 @@ import {
 } from '../../../utils/MaterialFunctions';
 
 import Spinner from '../../common/Spinner';
-
 import TextInputField from '../../common/TextInputField';
 import CheckInputField from '../../common/CheckInputField';
 import SelectInputField from '../../common/SelectInputField';
+import SelectFiles from '../../common/SelectFiles';
 
 class NewClient extends Component {
   state = {
@@ -38,11 +32,13 @@ class NewClient extends Component {
     contacto: '',
     telefono: '',
     codigo: '',
+    imagen: null,
     es_empresa: false,
     id_producto: '',
     producto_seleccionado: '',
     precio_especial: '',
-    editar_precio: false,
+    nuevo_producto_nombre: '',
+    editMode: false,
     productos_especiales: [],
     needs_config_selects: false,
     errors: {}
@@ -83,6 +79,33 @@ class NewClient extends Component {
     }
   }
 
+  onChangeFiles = e => {
+    const { files } = e.target;
+    let nueva_imagen = null;
+
+    for (var i = 0; i < files.length; i++) {
+      const file = files[i];
+      var reader = new FileReader();
+      reader.onload = result => {
+        nueva_imagen = {
+          name: file.name,
+          url: result.target.result,
+          file
+        };
+
+        if (i === files.length) {
+          this.setState({ imagen: nueva_imagen });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  onDeleteFile = () => {
+    this.setState({ imagen: null });
+    document.getElementById('imagen').value = null;
+  };
+
   onChangeTextInput = e => {
     if (e.target.name === 'es_empresa') {
       const value = this.state.es_empresa ? false : true;
@@ -104,10 +127,15 @@ class NewClient extends Component {
   onAddSpecialProductPrice = e => {
     e.preventDefault();
 
+    const { products } = this.props.products;
+
     const { productos_especiales, id_producto, precio_especial } = this.state;
+
+    const productIndex = products.findIndex(p => p.id === id_producto);
 
     const productData = {
       id_producto,
+      producto_nombre: products[productIndex].nombre,
       precio: precio_especial
     };
 
@@ -115,14 +143,14 @@ class NewClient extends Component {
 
     this.setState({
       id_producto: '',
+      nuevo_producto_nombre: '',
       precio_especial: '',
       producto_seleccionado: ''
     });
   };
 
-  onEditSpecialProductPrice = producto => {
+  onEditSpecialProductPrice = () => {
     const {
-      id_producto,
       precio_especial,
       productos_especiales,
       producto_seleccionado
@@ -132,7 +160,6 @@ class NewClient extends Component {
       p => p.id === producto_seleccionado
     );
 
-    productos_especiales[productIndex].id = id_producto;
     productos_especiales[productIndex].precio = precio_especial;
     productos_especiales[productIndex].actualizado = true;
 
@@ -140,7 +167,8 @@ class NewClient extends Component {
       id_producto: '',
       precio_especial: '',
       producto_seleccionado: '',
-      editar_precio: false
+      nuevo_producto_nombre: '',
+      editMode: false
     });
   };
 
@@ -151,7 +179,7 @@ class NewClient extends Component {
       id_producto: id,
       precio_especial: precio,
       producto_seleccionado: id,
-      editar_precio: true
+      editMode: true
     });
   };
 
@@ -182,6 +210,7 @@ class NewClient extends Component {
       contacto,
       telefono,
       codigo,
+      imagen,
       es_empresa,
       productos_especiales
     } = this.state;
@@ -197,7 +226,14 @@ class NewClient extends Component {
       precios_productos: productos_especiales
     };
 
-    this.props.createClient(clientData, this.props.history, '/clientes');
+    if (imagen !== null) {
+      const newClientData = new FormData();
+      newClientData.append('file_uploads[]', imagen.file, imagen.name);
+      newClientData.append('json_data', JSON.stringify(newClientData));
+      this.props.createClient(clientData, this.props.history, '/clientes');
+    } else {
+      this.props.createClient(clientData, this.props.history, '/clientes');
+    }
   };
 
   render() {
@@ -210,6 +246,7 @@ class NewClient extends Component {
       codigo,
       es_empresa,
       id_producto,
+      imagen,
       precio_especial,
       productos_especiales
     } = this.state;
@@ -234,20 +271,17 @@ class NewClient extends Component {
               <div className='card '>
                 <div className='card-content'>
                   <div className='row'>
-                    <div className='col s12 m12 center'>
-                      <img
-                        src={LogoRimeim}
-                        className='responsive-img bordered'
-                        alt=''
-                      />
-                      <div className='d-block'>
-                        <button className='btn'>Cambiar</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='row'>
                     <div className='col s12 m12'>
                       <form onSubmit={this.onSubmit}>
+                        <div className='row'>
+                          <SelectFiles
+                            id='imagen'
+                            files={[imagen]}
+                            label='Seleccionar Imagen'
+                            onchange={this.onChangeFiles}
+                            onDeleteFileClick={this.onDeleteFile}
+                          />
+                        </div>
                         <div className='row'>
                           <TextInputField
                             id='nombre'
@@ -327,23 +361,37 @@ class NewClient extends Component {
                             <div>
                               <div className='modal-content center'>
                                 <h5>Precio Especial a Producto</h5>
-                                <div className='row'>
-                                  <SelectInputField
-                                    id='id_producto'
-                                    label='Producto'
-                                    onchange={this.onChangeTextInput}
-                                    value={id_producto}
-                                    options={productsOptions}
-                                  />
-                                </div>
-                                <div className='row'>
-                                  <TextInputField
-                                    id='precio_especial'
-                                    label='Precio Especial'
-                                    onchange={this.onChangeTextInput}
-                                    value={precio_especial}
-                                  />
-                                </div>
+                                {this.state.editMode ? (
+                                  <div className='row'>
+                                    <TextInputField
+                                      id='precio_especial'
+                                      label='Precio Especial'
+                                      onchange={this.onChangeTextInput}
+                                      value={precio_especial}
+                                      active_label={true}
+                                    />
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <div className='row'>
+                                      <SelectInputField
+                                        id='id_producto'
+                                        label='Producto'
+                                        onchange={this.onChangeTextInput}
+                                        value={id_producto}
+                                        options={productsOptions}
+                                      />
+                                    </div>
+                                    <div className='row'>
+                                      <TextInputField
+                                        id='precio_especial'
+                                        label='Precio Especial'
+                                        onchange={this.onChangeTextInput}
+                                        value={precio_especial}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                               <div className='modal-footer'>
                                 <a
@@ -356,7 +404,7 @@ class NewClient extends Component {
                                   href='#!'
                                   className='modal-close waves-effect waves-green btn text-white mb-1'
                                   onClick={
-                                    this.state.editar_precio
+                                    this.state.editMode
                                       ? this.onEditSpecialProductPrice
                                       : this.onAddSpecialProductPrice
                                   }
@@ -373,6 +421,7 @@ class NewClient extends Component {
                                 <thead>
                                   <tr>
                                     <th>ID Producto</th>
+                                    <th>Nombre</th>
                                     <th>Precio</th>
                                     <th>Acciones</th>
                                   </tr>
@@ -384,6 +433,7 @@ class NewClient extends Component {
                                     ) : (
                                       <tr key={uuid()}>
                                         <td>{producto.id_producto}</td>
+                                        <td>{producto.producto_nombre}</td>
                                         <td>{producto.precio}</td>
                                         <td>
                                           <i
@@ -442,5 +492,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { createClient, getClient, getProducts, addSpecialProductPrice }
+  { createClient, getClient, getProducts }
 )(withRouter(NewClient));

@@ -2,18 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const CheckInputField = props => {
-  const { label, size, checked, id, onchange, disabled } = props;
+  const { label, size, checked, id, onchange, disabled, readOnly } = props;
   return (
     <div className={`col ${size}`}>
       <label>
         <input
-          type="checkbox"
-          className="filled-in"
+          type='checkbox'
+          className='filled-in'
           checked={checked ? 'checked' : ''}
           id={id}
           name={id}
           onChange={onchange}
           disabled={disabled ? 'disabled' : ''}
+          readOnly={readOnly}
         />
         <span>{label}</span>
       </label>
@@ -27,7 +28,8 @@ CheckInputField.propTypes = {
   checked: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
   onchange: PropTypes.func,
-  disabled: PropTypes.bool.isRequired
+  disabled: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool
 };
 
 CheckInputField.defaultProps = {
