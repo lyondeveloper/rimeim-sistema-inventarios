@@ -256,6 +256,7 @@ class EditClient extends Component {
       telefono,
       codigo,
       es_empresa,
+      imagen: client.imagen,
       precios_productos: productos_especiales
     };
 
@@ -286,7 +287,8 @@ class EditClient extends Component {
       es_empresa,
       id_producto,
       precio_especial,
-      productos_especiales
+      productos_especiales,
+      errors
     } = this.state;
 
     const { loading } = this.props.clients;
@@ -332,7 +334,7 @@ class EditClient extends Component {
                           label='Nombre'
                           onchange={this.onChangeTextInput}
                           value={nombre}
-                          active_label={true}
+                          active_label={nombre ? true : false}
                         />
                       </div>
                       <div className='row'>
@@ -341,7 +343,7 @@ class EditClient extends Component {
                           label='RTN'
                           onchange={this.onChangeTextInput}
                           value={rtn}
-                          active_label={true}
+                          active_label={rtn ? true : false}
                         />
                       </div>
                       <div className='row'>
@@ -351,7 +353,7 @@ class EditClient extends Component {
                           label='Correo'
                           onchange={this.onChangeTextInput}
                           value={correo}
-                          active_label={true}
+                          active_label={correo ? true : false}
                         />
                       </div>
                       <div className='row'>
@@ -360,7 +362,7 @@ class EditClient extends Component {
                           label='Contacto'
                           onchange={this.onChangeTextInput}
                           value={contacto}
-                          active_label={true}
+                          active_label={contacto ? true : false}
                         />
                       </div>
                       <div className='row'>
@@ -369,7 +371,7 @@ class EditClient extends Component {
                           label='Telefono'
                           onchange={this.onChangeTextInput}
                           value={telefono}
-                          active_label={true}
+                          active_label={telefono ? true : false}
                         />
                       </div>
                       <div className='row'>
@@ -378,7 +380,7 @@ class EditClient extends Component {
                           label='Codigo'
                           onchange={this.onChangeTextInput}
                           value={codigo}
-                          active_label={true}
+                          active_label={codigo ? true : false}
                         />
                       </div>
                       <div className='row'>
@@ -484,7 +486,7 @@ class EditClient extends Component {
                   label='Precio Especial'
                   onchange={this.onChangeTextInput}
                   value={precio_especial}
-                  active_label={true}
+                  active_label={this.state.editMode ? true : false}
                 />
               </div>
             ) : (
@@ -504,6 +506,7 @@ class EditClient extends Component {
                     label='Precio Especial'
                     onchange={this.onChangeTextInput}
                     value={precio_especial}
+                    active_label={this.state.editMode ? true : false}
                   />
                 </div>
               </div>

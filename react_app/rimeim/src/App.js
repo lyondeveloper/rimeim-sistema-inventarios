@@ -50,6 +50,7 @@ import ShowVehicleType from './components/pages/products/ShowVehicleType';
 
 // Clients
 import Clients from './components/pages/clients/Clients';
+import Client from './components/pages/clients/Client';
 import NewClient from './components/pages/clients/NewClient';
 import EditClient from './components/pages/clients/EditClient';
 import SearchClient from './components/pages/clients/SearchClient';
@@ -58,6 +59,7 @@ import SearchClient from './components/pages/clients/SearchClient';
 import NewProvider from './components/pages/providers/NewProvider';
 import EditProvider from './components/pages/providers/EditProvider';
 import Providers from './components/pages/providers/Providers';
+import Provider from './components/pages/providers/Provider';
 import SearchProvider from './components/pages/providers/SearchProvider';
 
 // Account
@@ -232,6 +234,9 @@ class App extends Component {
               <PrivateRoute exact path='/clientes' component={Clients} />
             </Switch>
             <Switch>
+              <PrivateRoute exact path='/clientes/:id' component={Client} />
+            </Switch>
+            <Switch>
               <PrivateRoute
                 exact
                 path='/buscar_cliente'
@@ -275,6 +280,13 @@ class App extends Component {
             </Switch>
             <Switch>
               <PrivateRoute exact path='/proveedores' component={Providers} />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path='/proveedores/:id'
+                component={Provider}
+              />
             </Switch>
 
             {/* Account */}

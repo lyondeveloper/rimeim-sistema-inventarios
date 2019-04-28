@@ -188,7 +188,6 @@ class NewProvider extends Component {
       contacto: this.state.contacto,
       correo: this.state.correo,
       telefono: this.state.telefono,
-      imagen: this.state.imagen,
       productos: this.state.productos
     };
 

@@ -9,15 +9,13 @@ import {
   configMaterialBoxedImages
 } from '../../../utils/MaterialFunctions';
 
-import NewNavBar from '../../layout/NewNavbar';
 import Spinner from '../../common/Spinner';
+import NewNavBar from '../../layout/NewNavbar';
 import ConfirmationModal from '../../layout/modals/ConfirmationModal';
 
 import { getBrand, deleteBrand } from '../../../actions/brandActions';
 
 class Brand extends Component {
-  state = {};
-
   componentWillMount() {
     removeMaterialComponents();
   }
@@ -50,21 +48,20 @@ class Brand extends Component {
       brandContent = <Spinner fullWidth />;
     } else {
       brandContent = (
-        <div className="col s12">
-          <div className="card">
-            <div className="card-content">
+        <div className='col s12'>
+          <div className='card'>
+            <div className='card-content'>
               {imagen && (
-                <div className="horizontal-scroll-container">
-                  <div className="img-item">
+                <div className='horizontal-scroll-container'>
+                  <div className='img-item'>
                     <img
                       src={imagen.url}
-                      className="materialboxed adjust"
-                      alt=""
+                      className='materialboxed adjust'
+                      alt=''
                     />
                   </div>
                 </div>
               )}
-
               <table>
                 <tbody>
                   <tr>
@@ -85,8 +82,8 @@ class Brand extends Component {
           </div>
 
           <button
-            className="btn red darken-3 modal-trigger"
-            data-target="modal_confirmar_evento"
+            className='btn red darken-3 modal-trigger'
+            data-target='modal_confirmar_evento'
           >
             Eliminar
           </button>
@@ -95,19 +92,19 @@ class Brand extends Component {
     }
     return (
       <React.Fragment>
-        <NewNavBar active_nav="PRODUCTOS">
-          <div className="nav-wrapper">
-            <a href="#!" className="brand-logo">
+        <NewNavBar active_nav='PRODUCTOS'>
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
               Marca
             </a>
-            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
-              <i className="material-icons">menu</i>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
             </a>
 
-            <ul className="right">
+            <ul className='right'>
               <li>
                 <Link to={`/editar_marca/${this.props.match.params.id}`}>
-                  <i className="material-icons">edit</i>
+                  <i className='material-icons'>edit</i>
                 </Link>
               </li>
             </ul>
@@ -115,12 +112,12 @@ class Brand extends Component {
         </NewNavBar>
 
         <main>
-          <div className="row">{brandContent}</div>
+          <div className='row'>{brandContent}</div>
         </main>
 
         <ConfirmationModal
-          title="Eliminar marca"
-          message="Esta seguro de que quiere eliminar esta marca? No se podra revertir la operacion"
+          title='Eliminar marca'
+          message='Esta seguro de que quiere eliminar esta marca? No se podra revertir la operacion'
           onAccept={this.onConfirmDeleteBrand}
         />
       </React.Fragment>
