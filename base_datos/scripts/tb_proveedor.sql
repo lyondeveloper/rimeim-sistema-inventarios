@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_get_next_proveedor_id;
 delimiter $$
 create function func_get_next_proveedor_id()
@@ -262,7 +262,7 @@ begin
 
 end $$
 delimiter ;
-
+*/
 
 
 drop procedure if exists `proc_delete_proveedor_by_id`;
@@ -270,15 +270,17 @@ delimiter $$
 create procedure proc_delete_proveedor_by_id(in p_id bigint)
 begin 
     if (valid_int_id(p_id)) then
+		update tb_proveedor_producto
+        set eliminado = true,
+			fecha_eliminado = current_timestamp()
+		where id_proveedor = p_id
+        and eliminado = false;
+        
         update tb_proveedor
         set eliminado = true,
             fecha_eliminado = current_timestamp()
-        where id = p_id;
-        
-        update tb_proveedor_producto
-        set eliminado = true,
-			fecha_eliminado = current_timestamp()
-		where id_proveedor = p_id;
+        where id = p_id
+        and eliminado = false;
     end if;
 end $$
 delimiter ;

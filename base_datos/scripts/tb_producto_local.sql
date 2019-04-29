@@ -81,7 +81,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists proc_get_producto_local_by_product_and_local;
 delimiter $$
 create procedure proc_get_producto_local_by_product_and_local(in p_id_producto bigint,
@@ -111,6 +111,7 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
 
         
@@ -256,12 +257,19 @@ begin
     end if;
 end $$
 delimiter ;
+*/
+
 
 drop procedure if exists `proc_delete_producto_local_by_id`;
 delimiter $$
 create procedure proc_delete_producto_local_by_id(in p_id bigint)
 begin
     if (valid_int_id(p_id)) then
+		update tb_producto_local_ubicacion
+        set eliminado = true
+        where id_producto_local = p_id;
+        
+        
         update tb_producto_local
         set eliminado = true,
             fecha_eliminado = current_timestamp()
@@ -269,4 +277,3 @@ begin
     end if;
 end $$
 delimiter ;
-*/

@@ -178,6 +178,17 @@
                 $data->id_producto_local > 0) {
                 $this->productLocalModel->update_product_and_product_local($data);
 
+                if (isset($data->ubicacion)) {
+                    if (isset($data->id_ubicacion) && 
+                        $data->id_ubicacion > 0) {
+                        $this->productLocalUbicationModal->update($data->id_ubicacion, 
+                                                                $data->ubicacion);
+                    } elseif (!empty($data->ubicacion)) {
+                        $this->productLocalUbicationModal->add($data->id_producto_local, $data->ubicacion);
+                    }
+                    
+                }
+
             } elseif ($this->is_current_user_admin()) {
                 $this->productModel->update($data);
                 $this->update_producto_distribution($id, isset($data->distribucion) ? $data->distribucion: []);
@@ -271,9 +282,15 @@
                     } elseif(isset($distribucion->actualizado) &&
                         $distribucion->actualizado == true) {
                         $this->productLocalModel->update($distribucion);
-                        $this->productLocalUbicationModal->update($distribucion->id_ubicacion, 
-                                                                    $distribucion->ubicacion);
 
+                        if(isset($distribucion->id_ubicacion) && 
+                            isset($distribucion->ubicacion)) {
+                                $this->productLocalUbicationModal->update($distribucion->id_ubicacion, 
+                                $distribucion->ubicacion);
+                        } else {
+                            $this->productLocalUbicationModal->add($distribucion->id, $distribucion->ubicacion);
+                        }
+                        
                     } elseif (!isset($distribucion->id)) {
                         if (!$this->productLocalModel->exists_by_idp_idl($id_producto, $distribucion->id_local)) {
 
@@ -448,6 +465,14 @@
                 
             } else {
                 $product->imagen = $this->productImagesModel->get_principal_image($product->id);
+            }
+
+            if (isset($product->id_producto_local)) {
+                $ubicacion = $this->productLocalUbicationModal->get($product->id_producto_local);
+                if (count($ubicacion) > 0) {
+                    $product->ubicacion = $ubicacion[0]->ubicacion;
+                    $product->id_ubicacion = $ubicacion[0]->id;
+                }
             }
 
             unset($product->id_marca);

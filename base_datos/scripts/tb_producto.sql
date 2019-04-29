@@ -95,7 +95,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists proc_get_producto_minified_by_id;
 delimiter $$
 create procedure proc_get_producto_minified_by_id(in p_id bigint)
@@ -113,6 +113,7 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
 /*
 drop procedure if exists `proc_get_producto_by_codigo_barra`;
@@ -236,13 +237,21 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/
 
 drop procedure if exists `proc_delete_producto_by_id`;
 delimiter $$
 create procedure proc_delete_producto_by_id(in p_id bigint)
 begin
     if (valid_int_id(p_id)) then
+		update tb_producto_imagenes
+        set eliminado = true
+        where id_producto = p_id ;
+        
+        update tb_producto_local
+        set eliminado = true 
+        where id_producto = p_id;
+        
         update tb_producto
         set eliminado = true,
             fecha_eliminado = current_timestamp()
@@ -250,4 +259,3 @@ begin
     end if;
 end $$
 delimiter ;
-*/

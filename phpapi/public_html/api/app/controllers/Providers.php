@@ -264,7 +264,7 @@
             $success = $this->providerModel->delete($id);
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
-            }
+            } 
             $this->response();
         }
         

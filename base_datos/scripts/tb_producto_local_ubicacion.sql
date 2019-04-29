@@ -1,4 +1,4 @@
-drop function if exists func_get_next_producto_local_ubicacion_id;
+/*drop function if exists func_get_next_producto_local_ubicacion_id;
 delimiter $$
 create function func_get_next_producto_local_ubicacion_id()
 returns bigint 
@@ -11,7 +11,7 @@ begin
     return @new_id;
 end $$
 delimiter ;
-
+*/
 
 drop procedure if exists `proc_get_producto_local_ubicacion`;
 delimiter $$
@@ -24,11 +24,14 @@ begin
                 p.fecha_creado
         from tb_producto_local_ubicacion p
         where p.id_producto_local = p_id_producto_local
-        and p.eliminado = false;
+        and p.eliminado = false
+        order by p.fecha_creado desc;
     end if;
 end $$
 delimiter ;
 
+
+/*
 drop procedure if exists `proc_add_producto_local_ubicacion`;
 delimiter $$
 create procedure proc_add_producto_local_ubicacion(in p_id_producto_local bigint,
@@ -83,3 +86,4 @@ begin
     end if;
 end $$
 delimiter ;
+*/

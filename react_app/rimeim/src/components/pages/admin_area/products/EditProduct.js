@@ -363,7 +363,7 @@ class EditProduct extends Component {
     const { id_local, cantidad_minima, existencia, ubicacion } = productLocal;
     this.setState({
       local_cantidad: existencia,
-      local_ubicacion: ubicacion,
+      local_ubicacion: ubicacion ? ubicacion : '',
       local_cantidad_minima: cantidad_minima,
       local_seleccionado: id_local,
       is_modal_editing: true,
@@ -665,6 +665,10 @@ class EditProduct extends Component {
                 </table>
               </div>
             </div>
+
+            <button className="btn" onClick={this.onSaveProduct}>
+              Actualizar
+            </button>
           </div>
         </div>
       );
