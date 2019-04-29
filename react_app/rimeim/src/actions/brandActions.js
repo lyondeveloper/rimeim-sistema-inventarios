@@ -125,3 +125,12 @@ export const brandEndLoadingObject = () => {
     type: BRAND_END_LOADING
   };
 };
+
+// Helpers
+export const brandsToSelectOptions = brands => {
+  const brandOptions = [];
+  brands.forEach(brand =>
+    brandOptions.push({ value: brand.id, label: brand.nombre })
+  );
+  return brandOptions;
+};

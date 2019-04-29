@@ -81,6 +81,7 @@ end $$
 delimiter ;
 */
 
+
 drop procedure if exists proc_get_producto_local_by_product_and_local;
 delimiter $$
 create procedure proc_get_producto_local_by_product_and_local(in p_id_producto bigint,
@@ -92,8 +93,10 @@ begin
 				pl.id as 'id_producto_local',
 				pl.id_local,
                 pl.existencia,
+                pl.cantidad_minima,
                 p.nombre,
                 p.descripcion,
+                p.precio,
                 p.raro,
                 p.codigo_barra,
                 p.id_tipo_vehiculo,
@@ -109,20 +112,24 @@ begin
 end $$
 delimiter ;
 
+
+        
 /*
 drop procedure if exists proc_get_producto_local_by_id;
 delimiter $$
 create procedure proc_get_producto_local_by_id(in p_producto_local_id bigint)
 begin 
 	if (valid_int_id(p_producto_local_id)) then
-		select pl.id,
+		select p.id,
+				pl.id as 'id_producto_local',
 				pl.id_local,
-                pl.id_producto,
                 pl.existencia,
                 p.nombre,
                 p.descripcion,
                 p.raro,
                 p.codigo_barra,
+                p.id_tipo_vehiculo,
+                p.id_marca,
                 p.fecha_creado
         from tb_producto_local pl
         join tb_producto p on p.id = pl.id_producto
@@ -132,9 +139,50 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
+/*
+drop procedure if exists `proc_update_producto_and_producto_local_by_plid`;
+delimiter $$
+create procedure proc_update_producto_and_producto_local_by_plid(
+													in p_id bigint,
+                                                    in p_id_producto bigint,
+                                                    in p_id_tipo_vehiculo bigint,
+													in p_id_marca bigint,
+													in p_existencia bigint,
+                                                    in p_cantidad_minima int(11),
+													in p_codigo_barra varchar(100),
+													in p_nombre varchar(255),
+													in p_descripcion text,
+													in p_raro boolean)
+begin
+    if (valid_int_id(p_id) and 
+		valid_int_id(p_id_producto) and
+        p_existencia >= 0 and 
+        p_cantidad_minima >= 0) then
 
+		update tb_producto 
+        set id_tipo_vehiculo = p_id_tipo_vehiculo,
+			id_marca = p_id_marca,
+            codigo_barra = p_codigo_barra,
+            nombre = p_nombre,
+            descripcion = p_descripcion,
+            raro = p_raro
+		where eliminado = false 
+        and id = p_id_producto;
+            
+        update tb_producto_local 
+        set existencia = p_existencia,
+            cantidad_minima = p_cantidad_minima
+        where eliminado = false 
+        and id = p_id;
+        
+    end if;
+end $$
+delimiter ;
+*/
 
+/*
 drop procedure if exists proc_get_minified_producto_local_byid;
 delimiter $$
 create procedure proc_get_minified_producto_local_byid(in p_id bigint)

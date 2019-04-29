@@ -129,3 +129,10 @@ export const vehicleEndLoadingObject = () => {
     type: VEHICLE_END_LOADING
   };
 };
+
+// Helpers
+export const vehiclesToSelectOptions = vehicles => {
+  const vehicleOptions = [];
+  vehicles.forEach(v => vehicleOptions.push({ value: v.id, label: v.nombre }));
+  return vehicleOptions;
+};

@@ -171,30 +171,44 @@
             if($this->productModel->get_by_id($id) == null) {
                 $this->response(null, ERROR_NOTFOUND);
             }
-            $id_local = $this->get_current_id_local();
+            
             $data = $this->validate_update_data(getJsonData('json_data'), $id);
-            $updated_product = null;
             
             if (isset($data->id_producto_local) && 
                 $data->id_producto_local > 0) {
-                
-            } elseif ($id_local > 0 && 
-                    $this->is_current_user_admin()) {
+                $this->productLocalModel->update_product_and_product_local($data);
+
+            } elseif ($this->is_current_user_admin()) {
                 $this->productModel->update($data);
                 $this->update_producto_distribution($id, isset($data->distribucion) ? $data->distribucion: []);
+            } else {
+                $this->response(null, ERROR_PROCESS);
             }
 
             $this->update_product_images($id, isset($data->imagenes) ? $data->imagenes : []);
-            $updated_product = $this->productModel->get_by_id($id);
-            $updated_product = $this->parse_product_to_send($updated_product, true, $id_local);
+
+            $id_local = $this->get_current_id_local();
+            $updated_product = null;
+            if ($this->is_current_user_admin()) {
+                $updated_product = $this->productModel->get_by_id($id);
+            } elseif($id_local > 0) {
+                $updated_product = $this->productLocalModel->get_by_product_and_local($id, $id_local);
+            }
+            
+            if (!is_null($updated_product)) {
+                $updated_product = $this->parse_product_to_send($updated_product, true, $id_local);
+            }
+            
             $this->response($updated_product);
         }
 
         private function validate_update_data($data, $id) {
             $errors = [];
-            if (isset($data->id_tipo_vehiculo)) {
+            if (!isset($data->id_tipo_vehiculo)) {
+                $data->id_tipo_vehiculo = null;
             }
-            if (isset($data->id_marca)) {
+            if (!isset($data->id_marca)) {
+                $data->id_marca = null;
             }
             if (!isset($data->codigo_barra) || 
                 empty($data->codigo_barra)) {
@@ -216,10 +230,6 @@
                 !is_bool($data->raro)) {
                 $errors['raro_error'] = "Campo invalido";
             }
-            if (!isset($data->precio) || 
-                !($data->precio >= 0) ) {
-                $errors['precio_error'] = "Campo invalido";
-            }
             if (!isset($data->existencia) || 
                 !($data->existencia >= 0)) {
                 $errors['existencia_error'] = "Campo invalido";
@@ -228,6 +238,13 @@
                 !($data->cantidad_minima >= 0)) {
                 $errors['cantidad_minima_error'] = "Campo invalido";
             } 
+
+            if (!isset($data->id_producto_local)) {
+                if (!isset($data->precio) || 
+                    !($data->precio >= 0) ) {
+                    $errors['precio_error'] = "Campo invalido";
+                }
+            }
 
             $this->checkErrors($errors);
             $data->id = $id;

@@ -6,6 +6,10 @@
   color: #d32f2f !important;
 }
 
+.text-center {
+  text-align: center;
+}
+
 /* Icon size */
 .m2x {
   font-size: 24px;

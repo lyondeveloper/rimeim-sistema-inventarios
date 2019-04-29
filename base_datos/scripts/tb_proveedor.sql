@@ -208,6 +208,7 @@ begin
         insert into tb_proveedor(
             `id`,
             `id_empleado_creado_por`,
+			`id_imagen`,
             `nombre`,
             `rtn`,
             `telefono`,
@@ -215,6 +216,7 @@ begin
         ) values (
             @new_id,
             p_id_empleado_creado_por,
+            p_id_imagen,
             p_nombre,
             p_rtn,
             p_telefono,
@@ -251,7 +253,8 @@ begin
         set nombre = p_nombre,
             rtn = p_rtn,
             telefono = p_telefono,
-            correo = p_correo
+            correo = p_correo,
+            id_imagen = p_id_imagen
         where id = p_id
         and eliminado = false;
 
