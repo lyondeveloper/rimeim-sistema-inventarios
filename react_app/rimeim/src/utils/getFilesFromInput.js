@@ -1,4 +1,4 @@
-const getFilesFromInput = input => {
+const getFilesFromInput = (input, callback) => {
   const { files } = input.target;
   const new_images = [];
 
@@ -13,7 +13,7 @@ const getFilesFromInput = input => {
       });
 
       if (i === files.length) {
-        return new_images;
+        callback(new_images);
       }
     };
     reader.readAsDataURL(file);

@@ -15,7 +15,15 @@
             $this->db->query('call proc_get_producto_local_ubicacion(:p_id);');
             $this->db->bind(':p_id', $id_producto_local);
             return $this->db->resultSet();
-        }   
+        } 
+        
+        // Get by id_producto_local and id_local
+        public function get_by_ipl_idl($id_pl, $id_lcl) {
+            $this->db->query('call proc_get_producto_local_ubicacion_by_idpl_idlc(:p_idpl,:p_idlc);');
+            $this->db->bind(':p_idpl', $id_pl);
+            $this->db->bind(':p_idlc', $id_lcl);
+            return $this->db->single();
+        }
 
         public function add($id_producto_local, $ubicacion) {
             $this->db->query('call proc_add_producto_local_ubicacion(:p_id_producto_local, :p_ubicacion);');

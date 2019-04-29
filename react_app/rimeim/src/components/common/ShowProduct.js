@@ -30,11 +30,46 @@ class ShowProduct extends Component {
         raro,
         precio,
         existencia,
+        ubicacion,
         cantidad_minima,
         fecha_creado,
         distribucion,
         imagenes
       } = product;
+      let distribucionContent;
+
+      if (distribucion) {
+        distribucionContent = (
+          <div className="card">
+            <div className="card-content">
+              <h5>Distribucion</h5>
+              <table className="table-bordered">
+                <thead>
+                  <tr>
+                    <th>Local</th>
+                    <th>Existencia</th>
+                    <th>Cantidad minima</th>
+                    <th>Ubicacion</th>
+                  </tr>
+                </thead>
+
+                {distribucion.length > 0 && (
+                  <tbody>
+                    {distribucion.map(dist => (
+                      <tr key={uuid()}>
+                        <td>{dist.local && dist.local.nombre}</td>
+                        <td>{dist.existencia}</td>
+                        <td>{dist.cantidad_minima}</td>
+                        <td>{dist.ubicacion}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                )}
+              </table>
+            </div>
+          </div>
+        );
+      }
       productContent = (
         <div className="col s12">
           <div className="card">
@@ -81,6 +116,12 @@ class ShowProduct extends Component {
                       <td>{tipo_vehiculo.nombre}</td>
                     </tr>
                   )}
+                  {ubicacion && (
+                    <tr>
+                      <td>Ubicacion</td>
+                      <td>{ubicacion}</td>
+                    </tr>
+                  )}
                   {descripcion && (
                     <tr>
                       <td>Descripcion</td>
@@ -123,41 +164,16 @@ class ShowProduct extends Component {
             </div>
           </div>
 
-          <div className="card">
-            <div className="card-content">
-              <h5>Distribucion</h5>
-              <table className="table-bordered">
-                <thead>
-                  <tr>
-                    <th>Local</th>
-                    <th>Existencia</th>
-                    <th>Cantidad minima</th>
-                    <th>Ubicacion</th>
-                  </tr>
-                </thead>
+          {distribucionContent}
 
-                {distribucion && distribucion.length > 0 && (
-                  <tbody>
-                    {distribucion.map(dist => (
-                      <tr key={uuid()}>
-                        <td>{dist.local && dist.local.nombre}</td>
-                        <td>{dist.existencia}</td>
-                        <td>{dist.cantidad_minima}</td>
-                        <td>{dist.ubicacion}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                )}
-              </table>
-            </div>
-          </div>
-
-          <button
-            className="btn red darken-3"
-            onClick={this.onDeleteProductClick}
-          >
-            Borrar
-          </button>
+          {onDeleteProduct && (
+            <button
+              className="btn red darken-3"
+              onClick={this.onDeleteProductClick}
+            >
+              Borrar
+            </button>
+          )}
         </div>
       );
     } else {
@@ -166,11 +182,14 @@ class ShowProduct extends Component {
     return (
       <React.Fragment>
         {productContent}
-        <ConfirmationModal
-          onAccept={onDeleteProduct}
-          title="Borrar producto"
-          message="Esta seguro de borrar este producto? No sera posible deshacer la accion."
-        />
+
+        {onDeleteProduct && (
+          <ConfirmationModal
+            onAccept={onDeleteProduct}
+            title="Borrar producto"
+            message="Esta seguro de borrar este producto? No sera posible deshacer la accion."
+          />
+        )}
       </React.Fragment>
     );
   }
@@ -178,7 +197,11 @@ class ShowProduct extends Component {
 ShowProduct.propTypes = {
   product: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
-  onDeleteProduct: PropTypes.func.isRequired
+  onDeleteProduct: PropTypes.func
+};
+
+ShowProduct.defaultProps = {
+  onDeleteProduct: null
 };
 
 export default ShowProduct;

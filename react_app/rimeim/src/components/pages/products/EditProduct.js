@@ -15,7 +15,6 @@ import {
   updateProductById
 } from '../../../actions/productActions';
 
-import { getLocals } from '../../../actions/LocalActions';
 import { getBrands } from '../../../actions/brandActions';
 import { getVehicles } from '../../../actions/vehicleActions';
 import getFilesFromInput from '../../../utils/getFilesFromInput';
@@ -33,6 +32,9 @@ class EditProduct extends Component {
     cantidad_minima: '0',
     es_raro: false,
     imagenes: [],
+    ubicacion: '',
+    id_producto_local: null,
+    id_ubicacion: null,
     needs_config_selects: false,
     is_product_setted: false,
     errors: {}
@@ -44,7 +46,6 @@ class EditProduct extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-    this.props.getLocals();
     this.props.getBrands();
     this.props.getVehicles();
     this.props.getProductById(this.props.match.params.id);
@@ -80,7 +81,10 @@ class EditProduct extends Component {
         cantidad_minima,
         marca,
         tipo_vehiculo,
-        imagenes
+        imagenes,
+        ubicacion,
+        id_producto_local,
+        id_ubicacion
       } = nextProps.product.product;
 
       this.setState({
@@ -94,6 +98,9 @@ class EditProduct extends Component {
         cantidad_minima,
         es_raro: raro,
         imagenes: imagenes,
+        ubicacion: ubicacion ? ubicacion : '',
+        id_producto_local: id_producto_local ? id_producto_local : null,
+        id_ubicacion: id_ubicacion ? id_ubicacion : null,
         is_product_setted: true
       });
     }
@@ -127,39 +134,88 @@ class EditProduct extends Component {
   };
 
   onSelectFiles = e => {
-    const new_images = getFilesFromInput(e);
-    this.setState({
-      imagenes: new_images
+    getFilesFromInput(e, new_images => {
+      const { imagenes } = this.state;
+      new_images.forEach(img => {
+        if (imagenes.findIndex(i => i.name === img.name) === -1) {
+          imagenes.push(img);
+        }
+      });
+      this.setState({
+        imagenes
+      });
     });
   };
 
-  onDeleteFile = file => {};
-
-  onSaveProduct = () => {};
+  onDeleteFile = file => {
+    if (file.id) {
+      const { imagenes } = this.state;
+      const fileIndex = imagenes.findIndex(img => img === file);
+      if (fileIndex >= 0) {
+        imagenes[fileIndex].eliminado = true;
+        this.setState({
+          imagenes
+        });
+      }
+    } else {
+      this.setState({
+        imagenes: this.state.imagenes.filter(img => img !== file)
+      });
+    }
+    document.getElementById('imagenes').value = null;
+  };
 
   getProductFromState = () => {
     const {
       codigo_barra,
       nombre,
       marca,
-      tipo_vehiculomarca,
+      tipo_vehiculo,
       descripcion,
-      existenciamarca,
-      cantidad_minimamarca,
+      existencia,
+      cantidad_minima,
       es_raro,
-      imagenes
+      ubicacion,
+      imagenes,
+      id_ubicacion,
+      id_producto_local
     } = this.state;
     return {
       codigo_barra,
       nombre,
       marca,
-      tipo_vehiculomarca,
+      tipo_vehiculo,
       descripcion,
-      existenciamarca,
-      cantidad_minimamarca,
+      existencia,
+      cantidad_minima,
       es_raro,
+      ubicacion,
+      id_ubicacion,
+      id_producto_local,
       imagenes
     };
+  };
+
+  onSaveProduct = () => {
+    const product = this.getProductFromState();
+    product.id_marca = this.state.marca;
+    product.id_tipo_vehiculo = this.state.tipo_vehiculo;
+    product.raro = product.es_raro;
+    const newImages = product.imagenes.filter(img => !img.id);
+
+    if (newImages.length > 0) {
+      const updatedProductData = new FormData();
+      newImages.forEach(img =>
+        updatedProductData.append('file_uploads[]', img.file, img.name)
+      );
+      updatedProductData.append('json_data', JSON.stringify(product));
+      this.props.updateProductById(
+        this.props.match.params.id,
+        updatedProductData
+      );
+    } else {
+      this.props.updateProductById(this.props.match.params.id, product);
+    }
   };
 
   render() {
@@ -218,10 +274,8 @@ EditProduct.propTypes = {
   user: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
   product: PropTypes.object.isRequired,
-  local: PropTypes.object.isRequired,
   brand: PropTypes.object.isRequired,
   vehicle: PropTypes.object.isRequired,
-  getLocals: PropTypes.func.isRequired,
   getBrands: PropTypes.func.isRequired,
   getVehicles: PropTypes.func.isRequired,
   updateProductById: PropTypes.func.isRequired,
@@ -233,8 +287,7 @@ const mapStateToProps = state => ({
   product: state.product,
   brand: state.brand,
   vehicle: state.vehicle,
-  errors: state.errors,
-  local: state.local
+  errors: state.errors
 });
 
 export default connect(
@@ -242,7 +295,6 @@ export default connect(
   {
     updateProductById,
     getProductById,
-    getLocals,
     getVehicles,
     getBrands
   }

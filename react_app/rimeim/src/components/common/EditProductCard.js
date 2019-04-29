@@ -6,6 +6,11 @@ import EmptyIcon from './EmptyIcon';
 import Spinner from './Spinner';
 import { brandsToSelectOptions } from '../../actions/brandActions';
 import { vehiclesToSelectOptions } from '../../actions/vehicleActions';
+import SelectFiles from './SelectFiles';
+import TextInputField from './TextInputField';
+import TextAreaInputField from './TextAreaInputField';
+import SelectInputField from './SelectInputField';
+import CheckInputField from './CheckInputField';
 
 const EditProductCard = props => {
   let productContent;
@@ -31,6 +36,7 @@ const EditProductCard = props => {
         precio,
         existencia,
         cantidad_minima,
+        ubicacion,
         es_raro
       },
       errors: {
@@ -39,7 +45,8 @@ const EditProductCard = props => {
         descripcion_error,
         precio_error,
         existencia_error,
-        cantidad_minima_error
+        cantidad_minima_error,
+        ubicacion_error
       }
     } = props;
 
@@ -99,6 +106,21 @@ const EditProductCard = props => {
               options={vehicleOptions}
             />
           </div>
+
+          {!is_admin && (
+            <div className="row">
+              <TextInputField
+                id="ubicacion"
+                label="Ubicacion"
+                value={ubicacion}
+                error={ubicacion_error}
+                onchange={onChangeTextInput}
+                required={true}
+                active_label={true}
+              />
+            </div>
+          )}
+
           <div className="row">
             <TextAreaInputField
               id="descripcion"
@@ -183,4 +205,4 @@ EditProductCard.defaultProps = {
   is_admin: false
 };
 
-export default EditProductForm;
+export default EditProductCard;

@@ -7,13 +7,11 @@ import NewNavbar from '../../layout/NewNavbar';
 
 import {
   configMaterialComponents,
-  removeMaterialComponents
+  removeMaterialComponents,
+  configMaterialBoxedImages
 } from '../../../utils/MaterialFunctions';
 
-import {
-  getProductById,
-  deleteProductById
-} from '../../../actions/productActions';
+import { getProductById } from '../../../actions/productActions';
 
 import ShowProduct from '../../common/ShowProduct';
 
@@ -27,47 +25,26 @@ class Products extends Component {
     this.props.getProductById(this.props.match.params.id);
   }
 
-  onDeleteProduct = () => {
-    const { history, match } = this.props;
-    this.props.deleteProductById(match.params.id, history, '/productos');
-  };
-
+  componentDidUpdate() {
+    configMaterialBoxedImages();
+  }
   render() {
     const { loading, product } = this.props.product;
     return (
       <React.Fragment>
-        <NewNavbar active_nav="PRODUCTOS" show_more_option={true}>
-          <ul id="dropdown_more" className="dropdown-content">
-            <li>
-              <Link to="/nuevo_producto">
-                <i className="material-icons">add</i>
-              </Link>
-            </li>
-            <li>
-              <a href="#modal_search" className="modal-trigger">
-                <i className="material-icons">search</i>
-              </a>
-            </li>
-          </ul>
-
+        <NewNavbar active_nav="PRODUCTOS">
           <div className="nav-wrapper">
             <a href="#!" className="brand-logo">
-              Inventario
+              Detalles de producto
             </a>
             <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
               <i className="material-icons">menu</i>
             </a>
-            <ul className="right hide-on-small-only">
+            <ul className="right">
               <li>
-                <Link to="/nuevo_producto">
-                  <i className="material-icons">add</i>
+                <Link to={`/editar_producto/${this.props.match.params.id}`}>
+                  <i className="material-icons">edit</i>
                 </Link>
-              </li>
-
-              <li>
-                <a href="#modal_search" className="modal-trigger">
-                  <i className="material-icons">search</i>
-                </a>
               </li>
             </ul>
           </div>
@@ -75,11 +52,7 @@ class Products extends Component {
 
         <main>
           <div className="row">
-            <ShowProduct
-              loading={loading}
-              product={product}
-              onDeleteProduct={this.onDeleteProduct}
-            />
+            <ShowProduct loading={loading} product={product} />
           </div>
         </main>
       </React.Fragment>
@@ -89,7 +62,6 @@ class Products extends Component {
 
 Products.propTypes = {
   getProductById: PropTypes.func.isRequired,
-  deleteProductById: PropTypes.func.isRequired,
   product: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired
 };
@@ -101,5 +73,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getProductById, deleteProductById }
+  { getProductById }
 )(Products);

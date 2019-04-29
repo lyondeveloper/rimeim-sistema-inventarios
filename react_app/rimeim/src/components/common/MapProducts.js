@@ -10,7 +10,7 @@ const MapProducts = props => {
 
   if (loading) {
     productsContent = <Spinner fullWidth />;
-  } else if (products.length > 0 && false) {
+  } else if (products.length > 0) {
     productsContent = products.map(product => (
       <div className="col s12 m6 l4" key={`prod${product.id}`}>
         <ProductCard product={product} key={product.id} admin={admin} />

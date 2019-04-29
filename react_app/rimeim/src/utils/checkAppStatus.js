@@ -18,9 +18,9 @@ const checkAppStatus = store => {
     if (invalidSession) return;
 
     let current_local = localStorage.getItem('rimeim_current_local');
-    setCurrentLocalHeader(current_local);
     if (current_local) {
       let obj_current_local = JSON.parse(current_local);
+      setCurrentLocalHeader(obj_current_local);
       if (obj_current_local) {
         store.dispatch(setCurrentLocalToState(obj_current_local));
       } else {
