@@ -46,7 +46,6 @@ export const getClient = id => dispatch => {
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
-
       dispatch({
         type: GET_CLIENT,
         payload: response.data
@@ -85,7 +84,7 @@ export const searchClient = data => dispatch => {
     })
     .catch(err => handleError(err, dispatch));
 };
-export const deleteClient = id => dispatch => {
+export const deleteClient = (id, history, newUrl) => dispatch => {
   dispatch(clearErrors());
   dispatch(clientLoading());
   axios
@@ -94,6 +93,7 @@ export const deleteClient = id => dispatch => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
       dispatch(getClients());
+      history.push(newUrl);
       setTimeout(() => clientLoadingEnd(), 10);
     })
     .catch(err => handleError(err, dispatch));

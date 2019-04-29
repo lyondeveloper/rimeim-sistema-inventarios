@@ -39,7 +39,6 @@ class Providers extends Component {
       if (providers.length <= 0) {
         providersContent = <h1>No providers</h1>;
       } else {
-        console.log(providers);
         providersContent = providers.map((provider, i) => {
           return (
             <div className='col s12 m6 l4' key={provider.id}>

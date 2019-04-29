@@ -18,6 +18,7 @@ import { withRouter } from 'react-router-dom';
 
 import TextInputField from '../../common/TextInputField';
 import SelectInputField from '../../common/SelectInputField';
+import SelectFiles from '../../common/SelectFiles';
 import Spinner from '../../common/Spinner';
 import isEmpty from '../../../actions/isEmpty';
 
@@ -31,6 +32,7 @@ class EditProvider extends Component {
     correo: '',
     contacto: '',
     telefono: '',
+    imagen: null,
     producto_seleccionado: '0',
     id_nuevo_producto: '',
     precio_especial: '0',
@@ -83,6 +85,7 @@ class EditProvider extends Component {
         correo: provider.correo,
         contacto: provider.contacto,
         telefono: provider.telefono,
+        imagen: provider.imagen,
         productos: provider.productos
       });
     }
@@ -178,23 +181,68 @@ class EditProvider extends Component {
     });
   };
 
+  onChangeFiles = e => {
+    const { files } = e.target;
+    let nueva_imagen = null;
+
+    for (var i = 0; i < files.length; i++) {
+      const file = files[i];
+      var reader = new FileReader();
+      reader.onload = result => {
+        nueva_imagen = {
+          name: file.name,
+          url: result.target.result,
+          file
+        };
+
+        if (i === files.length) {
+          this.setState({ imagen: nueva_imagen });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  onDeleteFile = () => {
+    this.setState({ imagen: null });
+    document.getElementById('imagen').value = null;
+  };
+
   onSubmit = e => {
     e.preventDefault();
 
+    const { provider } = this.props.providers;
+
+    const { id } = this.props.match.params;
+
+    const {
+      nombre,
+      rtn,
+      correo,
+      contacto,
+      telefono,
+      imagen,
+      productos
+    } = this.state;
+
     const providerData = {
-      nombre: this.state.nombre,
-      rtn: this.state.rtn,
-      contacto: this.state.contacto,
-      correo: this.state.correo,
-      telefono: this.state.telefono,
-      productos: this.state.productos
+      nombre,
+      rtn,
+      contacto,
+      correo,
+      telefono,
+      imagen: provider.imagen,
+      productos
     };
 
-    this.props.editProvider(
-      providerData,
-      this.props.history,
-      this.props.match.params.id
-    );
+    if (imagen !== null || imagen !== provider.imagen) {
+      const providerUpdated = new FormData();
+      providerUpdated.append('file_uploads[]', imagen.file, imagen.name);
+      providerUpdated.append('json_data', JSON.stringify(providerData));
+      this.props.editProvider(providerUpdated, this.props.history, id);
+    } else {
+      this.props.editProvider(providerData, this.props.history, id);
+    }
   };
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
@@ -208,6 +256,7 @@ class EditProvider extends Component {
       telefono,
       id_nuevo_producto,
       productos,
+      imagen,
       precio_especial
     } = this.state;
 
@@ -235,16 +284,13 @@ class EditProvider extends Component {
               <div className='card-content'>
                 <form className='' onSubmit={this.onSubmit}>
                   <div className='row'>
-                    <div className='col s12 m12 center'>
-                      <img
-                        src={LogoRimeim}
-                        className='responsive-img bordered'
-                        alt=''
-                      />
-                      <div className='d-block'>
-                        <button className='btn'>Cambiar</button>
-                      </div>
-                    </div>
+                    <SelectFiles
+                      id='imagen'
+                      files={[imagen]}
+                      label='Seleccionar Imagen'
+                      onchange={this.onChangeFiles}
+                      onDeleteFileClick={this.onDeleteFile}
+                    />
                   </div>
                   <div className='row'>
                     <TextInputField
@@ -252,7 +298,7 @@ class EditProvider extends Component {
                       label='Nombre'
                       onchange={this.onChangeTextInput}
                       value={nombre}
-                      active_label={true}
+                      active_label={nombre ? true : false}
                     />
                   </div>
                   <div className='row'>
@@ -261,10 +307,9 @@ class EditProvider extends Component {
                       label='RTN'
                       onchange={this.onChangeTextInput}
                       value={rtn}
-                      active_label={true}
+                      active_label={rtn ? true : false}
                     />
                   </div>
-
                   <div className='row'>
                     <TextInputField
                       id='correo'
@@ -272,7 +317,6 @@ class EditProvider extends Component {
                       label='Correo'
                       onchange={this.onChangeTextInput}
                       value={correo}
-                      active_label={true}
                     />
                   </div>
                   <div className='row'>
@@ -281,7 +325,7 @@ class EditProvider extends Component {
                       label='Contacto'
                       onchange={this.onChangeTextInput}
                       value={contacto}
-                      active_label={true}
+                      active_label={contacto ? true : false}
                     />
                   </div>
 
@@ -291,7 +335,7 @@ class EditProvider extends Component {
                       label='Telefono'
                       onchange={this.onChangeTextInput}
                       value={telefono}
-                      active_label={true}
+                      active_label={telefono ? true : false}
                     />
                   </div>
 
@@ -399,12 +443,12 @@ class EditProvider extends Component {
                     onchange={this.onChangeTextInput}
                     options={productsOptions}
                   />
-                  <SelectInputField
-                    id='id_nuevo_producto'
-                    label='Producto'
-                    value={id_nuevo_producto}
+                  <TextInputField
+                    id='precio_especial'
+                    label='Precio Especial'
                     onchange={this.onChangeTextInput}
-                    options={productsOptions}
+                    value={precio_especial}
+                    active_label={this.state.editMode ? true : false}
                   />
                 </div>
               )}

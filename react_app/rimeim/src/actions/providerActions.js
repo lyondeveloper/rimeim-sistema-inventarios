@@ -96,17 +96,14 @@ export const searchProvider = data => dispatch => {
     })
     .catch(err => handleError(err, dispatch));
 };
-export const deleteProvider = id => dispatch => {
+export const deleteProvider = (id, history) => dispatch => {
   dispatch(clearErrors());
-  dispatch(providerLoading());
-
   axios
     .delete(`/providers/delete/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
-      dispatch(getProviders());
-      setTimeout(() => providerLoadingEnd(), 10);
+      history.push('/proveedores');
     })
     .catch(err => handleError(err, dispatch));
 };
