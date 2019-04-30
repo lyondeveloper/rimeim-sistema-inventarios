@@ -259,7 +259,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists `proc_delete_producto_local_by_id`;
 delimiter $$
 create procedure proc_delete_producto_local_by_id(in p_id bigint)
@@ -277,3 +277,26 @@ begin
     end if;
 end $$
 delimiter ;
+*/
+
+drop procedure if exists proc_add_producto_local_inventario;
+delimiter $$
+create procedure proc_add_producto_local_inventario(in p_id_producto bigint,
+													in p_id_local bigint,
+													in p_cantidad int(255))
+begin
+	if (valid_int_id(p_id_producto) and 
+		valid_int_id(p_id_local) and
+		p_cantidad > 0) then
+        
+		update tb_producto_local
+			set existencia = (existencia + p_cantidad)
+        where id_producto = p_id_producto
+        and id_local = p_id_local
+        and eliminado = false;
+        
+	end if;
+end $$
+delimiter ;
+
+

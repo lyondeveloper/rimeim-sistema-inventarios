@@ -1,3 +1,4 @@
+/*
 drop function if exists func_get_next_pedido_id;
 delimiter $$
 create function func_get_next_pedido_id()
@@ -11,7 +12,76 @@ begin
     return @new_id;
 end $$
 delimiter ;
+*/
 
+/*
+drop function if exists func_exists_pedido_with_code;
+delimiter $$
+create function func_exists_pedido_with_code(p_codigo varchar(50))
+returns bool
+begin
+	set p_codigo = trim(p_codigo);
+    set @response = false;
+    
+    if (!is_empty(p_codigo)) then
+		set @response = exists(
+			select * from tb_pedido p
+            where p.codigo = p_codigo
+        );
+    end if;
+    
+    return @response;
+end $$
+delimiter ;
+*/
+
+/*
+drop function if exists func_exists_pedido_with_id;
+delimiter $$
+create function func_exists_pedido_with_id(p_id bigint)
+returns bool
+begin
+    set @response = false;
+    
+    if (valid_int_id(p_id)) then
+		set @response = exists(
+			select * from tb_pedido p
+            where p.id = p_id
+            and p.eliminado = false
+        );
+    end if;
+    
+    return @response;
+end $$
+delimiter ;
+*/
+
+/*
+drop function if exists func_exists_order_by_code_and_not_same ;
+delimiter $$
+create function func_exists_order_by_code_and_not_same(p_codigo varchar(50),
+														p_id bigint)
+returns bool
+begin 
+	set @response = false;
+    set p_codigo = trim(p_codigo);
+    
+    if (!is_empty(p_codigo) and 
+		valid_int_id(p_id)) then
+		set @response = exists(
+			select * from 
+            tb_pedido p
+            where p.codigo = p_codigo
+            and p.id != p_id
+        );
+    end if;
+    
+    return @response;
+end $$
+delimiter ;
+*/
+
+/*
 drop procedure if exists `proc_get_pedidos`;
 delimiter $$
 create procedure proc_get_pedidos()
@@ -30,7 +100,9 @@ begin
     order by p.fecha_creado desc;
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists `proc_get_pedido_by_id`;
 delimiter $$
 create procedure proc_get_pedido_by_id(in p_id bigint)
@@ -44,21 +116,24 @@ begin
 				p.codigo,
 				p.es_compra,
 				p.recibido,
-				p.fecha_creado
+				p.fecha_creado,
+                p.fecha_prevista_entrega
 		from tb_pedido p 
 		where p.eliminado = false
         and p.id = p_id;
     end if;
 end $$
 delimiter ;
+*/
 
+
+/*
 drop procedure if exists `proc_get_pedidos_by_local`;
 delimiter $$
 create procedure proc_get_pedidos_by_local(in p_id_local bigint)
 begin
     if (valid_int_id(p_id_local)) then
         select p.id,
-                p.id_empleado_creado_por,
                 p.id_local_solicitado,
                 p.id_proveedor,
                 p.codigo,
@@ -72,7 +147,9 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists `proc_add_pedido`;
 delimiter $$
 create procedure proc_add_pedido(in p_id_empleado_creado_por bigint,
@@ -89,7 +166,8 @@ begin
         valid_int_id(p_id_local)) then
         
         set @new_id = func_get_next_pedido_id();
-
+		set @es_compra = (p_id_proveedor is not null);
+        
         insert into tb_pedido(
             `id`,
             `id_empleado_creado_por`,
@@ -97,7 +175,8 @@ begin
             `id_local_solicitado`,
             `id_proveedor`,
             `codigo`,
-            `fecha_prevista_entrega`
+            `fecha_prevista_entrega`,
+            `es_compra`
         ) values (
             @new_id,
             p_id_empleado_creado_por,
@@ -105,31 +184,40 @@ begin
             p_id_local_solicitado,
             p_id_proveedor,
             p_codigo,
-            p_fecha_prevista_entrega
+            p_fecha_prevista_entrega,
+            @es_compra
         );
     end if;
 
     select @new_id as 'id';
 end $$
 delimiter ; 
+*/
 
+/*
 drop procedure if exists `proc_update_pedido_by_id`;
 delimiter $$
 create procedure proc_update_pedido_by_id(in p_id bigint,
-                                            in p_fecha_prevista_entrega datetime,
-                                            in p_recibido boolean)
+											in p_id_proveedor bigint,
+                                            in p_id_local_solicitado bigint,
+											in p_codigo varchar(50),
+                                            in p_fecha_prevista_entrega datetime)
 begin
     if (valid_int_id(p_id)) then
         update tb_pedido 
         set fecha_prevista_entrega = p_fecha_prevista_entrega,
-            recibido = p_recibido
+			id_proveedor = p_id_proveedor,
+			id_local_solicitado = p_id_local_solicitado,
+            codigo = p_codigo
         where id = p_id and 
         eliminado = false;
 
     end if;
 end $$
 delimiter ; 
+*/
 
+/*
 drop procedure if exists `proc_delete_pedido_by_id`;
 delimiter $$
 create procedure proc_delete_pedido_by_id(in p_id bigint,
@@ -146,3 +234,18 @@ begin
     end if;
 end $$
 delimiter ;
+*/
+
+drop procedure if exists proc_update_pedido_mark_received_by_id;
+delimiter $$
+create procedure proc_update_pedido_mark_received_by_id(in p_id bigint)
+begin
+	if (valid_int_id(p_id)) then
+		update tb_pedido
+        set recibido = true,
+			fecha_recibido = current_timestamp()
+        where id = p_id;
+    end if;
+end $$
+delimiter ;
+

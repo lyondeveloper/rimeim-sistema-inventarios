@@ -45,6 +45,12 @@
             return $this->get_user_with_converted_fields($this->db->single());
         }
 
+        public function get_minified_user_by_id_empleado($id_empleado) {
+            $this->db->query('call proc_get_minified_usuario_by_id_empleado(:p_id_empleado);');
+            $this->db->bind(':p_id_empleado', $id_empleado);
+            return $this->db->single();
+        }
+
         public function can_user_update_username($id_user_to_update, $username) {
             $this->db->query("select func_exists_usuario_with_username_and_not_same(:p_username, :p_id_user) as 'exists';");
             $this->db->bind(':p_username', $username);

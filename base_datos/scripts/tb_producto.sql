@@ -104,6 +104,7 @@ begin
 		select p.id,
 				p.id_tipo_vehiculo,
 				p.id_marca,
+                p.codigo_barra,
 				p.nombre,
 				p.precio,
 				p.existencia
@@ -239,6 +240,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop procedure if exists `proc_delete_producto_by_id`;
 delimiter $$
 create procedure proc_delete_producto_by_id(in p_id bigint)
@@ -257,5 +259,21 @@ begin
             fecha_eliminado = current_timestamp()
         where id = p_id;
     end if;
+end $$
+delimiter ;
+*/
+
+drop procedure if exists proc_add_producto_inventario;
+delimiter $$
+create procedure proc_add_producto_inventario(in p_id bigint,
+												in p_cantidad int(255))
+begin
+	if (valid_int_id(p_id) and 
+		p_cantidad > 0) then
+		update tb_producto 
+		set existencia = (existencia + p_cantidad)
+        where id = p_id
+        and eliminado = false;
+	end if;
 end $$
 delimiter ;

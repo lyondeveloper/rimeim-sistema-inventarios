@@ -75,6 +75,14 @@
             return $this->db->success();
         }
 
+        public function add_inventario($id_producto, $id_local, $cantidad) {
+            $this->db->query('call proc_add_producto_local_inventario(:p_id_producto, :p_id_local, :p_cantidad);');
+            $this->db->bind(':p_id_producto', $id_producto);
+            $this->db->bind(':p_id_local', $id_local);
+            $this->db->bind(':p_cantidad', $cantidad);
+            return $this->db->success();
+        } 
+
         public function delete($id) {
             $this->db->query('call proc_delete_producto_local_by_id(:p_id);');
             $this->db->bind(':p_id', $id);

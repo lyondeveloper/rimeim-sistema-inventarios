@@ -18,17 +18,19 @@
         }
 
         public function add($params) {
-            $this->db->query('call proc_add_pedido_producto(:p_id_pedido, :p_id_producto, :p_cantidad);');
+            $this->db->query('call proc_add_pedido_producto(:p_id_pedido, :p_id_producto, :p_cantidad, :p_costo);');
             $this->db->bind(':p_id_pedido', $params->id_pedido);
             $this->db->bind(':p_id_producto', $params->id_producto);
             $this->db->bind(':p_cantidad', $params->cantidad);
+            $this->db->bind(':p_costo', $params->costo);
             return $this->db->newId();
         }
 
-        public function update($id, $cantidad) {
-            $this->db->query('call proc_update_pedido_producto_by_id(:p_id, :p_cantidad);');
-            $this->db->bind(':p_id', $id);
-            $this->db->bind(':p_cantidad', $cantidad);
+        public function update($params) {
+            $this->db->query('call proc_update_pedido_producto_by_id(:p_id, :p_cantidad, :p_costo);');
+            $this->db->bind(':p_id', $params->id);
+            $this->db->bind(':p_cantidad', $params->cantidad);
+            $this->db->bind(':p_costo', $params->costo);
             return $this->db->success();
         }        
 
