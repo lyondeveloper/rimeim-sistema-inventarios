@@ -12,7 +12,7 @@
     class Locals extends Controller {
 
         public function __construct() {
-            $this->initController(CTR_ADMIN);
+            $this->initController(CTR_EMPLEADO);
             $this->localModel = $this->model('Local');
         }
 
@@ -24,6 +24,7 @@
 
         public function get_one($id) {
             $this->useGetRequest();
+            $this->private_route(CTR_ADMIN);
             $local = $this->localModel->get_by_id($id);
             if (is_null($local)) {
                 $this->response(null, ERROR_NOTFOUND);
@@ -34,6 +35,7 @@
 
         public function add() {
             $this->usePostRequest();
+            $this->private_route(CTR_ADMIN);
             $data = $this->validate_add_data(getJsonData());
 
             $newId = $this->localModel->add($data);
@@ -83,6 +85,7 @@
         // Update
         public function update($id) {
             $this->usePutRequest();
+            $this->private_route(CTR_ADMIN);
             $data = $this->validate_update_data(getJsonData(), $id);
             $successLocal = $this->localModel->update($data);
             $successEmployes = $this->employeModel->update_by_local($data->empleados);
@@ -152,6 +155,7 @@
 
         public function delete($id) {
             $this->useDeleteRequest();
+            $this->private_route(CTR_ADMIN);
             $success = $this->localModel->delete_by_id($id, $this->get_current_user_id());
             if (!$success) {
                 $this->response(null, ERROR_NOTFOUND);
