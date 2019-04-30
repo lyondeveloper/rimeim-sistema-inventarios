@@ -58,7 +58,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists `proc_get_empleado_by_user_and_local_id`;
 delimiter $$
 create procedure proc_get_empleado_by_user_and_local_id(in p_user_id bigint,
@@ -80,7 +80,7 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/
 
 /*
 drop procedure if exists `proc_get_empleados`;
@@ -241,6 +241,7 @@ delimiter ;
 
 
 
+*/
 
 drop procedure if exists proc_get_locals_for_employe_by_userid;
 delimiter $$
@@ -248,14 +249,7 @@ create procedure proc_get_locals_for_employe_by_userid(in p_id bigint)
 begin
 	if (valid_int_id(p_id)) then 
 		
-        if (func_is_user_admin(p_id)) then 
-			select l.id, 
-					l.codigo,
-                    l.nombre 
-			from tb_local l 
-            where l.eliminado = false;
-        else 
-			select distinct 
+        select distinct 
 					l.id,
 					l.codigo,
 					l.nombre
@@ -264,10 +258,9 @@ begin
 								and e.id_usuario = p_id
 			where e.eliminado = false and
 					l.eliminado = false;
-        end if;
     end if;
 end $$
 delimiter ;
-*/
+
 
 

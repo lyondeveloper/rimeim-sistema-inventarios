@@ -302,6 +302,7 @@ delimiter ;
 
 */
 
+/*
 drop procedure if exists `proc_update_usuario_by_id`;
 delimiter $$
 create procedure proc_update_usuario_by_id(in p_id_usuario bigint,
@@ -327,7 +328,7 @@ begin
 	
 end $$
 delimiter ;
-
+*/
 
 /*
 drop procedure if exists `proc_update_password_usuario_by_id`;
@@ -384,3 +385,18 @@ begin
 end $$
 delimiter ;
 */
+
+drop procedure if exists proc_get_minified_usuario_by_id_empleado;
+delimiter $$
+create procedure proc_get_minified_usuario_by_id_empleado(in p_id_empleado bigint)
+begin
+	if (valid_int_id(p_id_empleado)) then
+		select u.id,
+			   u.nombre
+		from tb_usuario u 
+        join tb_empleado em on em.id = p_id_empleado
+        where u.id = em.id_usuario;
+    end if;
+end $$
+delimiter ;
+
