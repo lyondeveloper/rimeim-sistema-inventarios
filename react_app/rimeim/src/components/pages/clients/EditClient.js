@@ -316,152 +316,148 @@ class EditClient extends Component {
           <div className='col s12'>
             <div className='card '>
               <div className='card-content'>
-                <div className='row'>
-                  <div className='col s12 m12'>
-                    <form onSubmit={this.onSubmit}>
-                      <div className='row'>
-                        <SelectFiles
-                          id='imagen'
-                          files={[imagen]}
-                          label='Seleccionar Imagen'
-                          onchange={this.onChangeFiles}
-                          onDeleteFileClick={this.onDeleteFile}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='nombre'
-                          label='Nombre'
-                          onchange={this.onChangeTextInput}
-                          value={nombre}
-                          active_label={nombre ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='rtn'
-                          label='RTN'
-                          onchange={this.onChangeTextInput}
-                          value={rtn}
-                          active_label={rtn ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='correo'
-                          type='email'
-                          label='Correo'
-                          onchange={this.onChangeTextInput}
-                          value={correo}
-                          active_label={correo ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='contacto'
-                          label='Contacto'
-                          onchange={this.onChangeTextInput}
-                          value={contacto}
-                          active_label={contacto ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='telefono'
-                          label='Telefono'
-                          onchange={this.onChangeTextInput}
-                          value={telefono}
-                          active_label={telefono ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <TextInputField
-                          id='codigo'
-                          label='Codigo'
-                          onchange={this.onChangeTextInput}
-                          value={codigo}
-                          active_label={codigo ? true : false}
-                        />
-                      </div>
-                      <div className='row'>
-                        <CheckInputField
-                          id='es_empresa'
-                          checked={es_empresa}
-                          onchange={this.onChangeTextInput}
-                          label='Es empresa'
-                        />
-                      </div>
-                      <div className='col s12 center mb-1'>
-                        <div className='d-block'>
-                          <h5>Precio Especial a Producto</h5>
-                          <button
-                            className='modal-trigger btn-floating'
-                            data-target='modal_editMode_producto'
-                            onClick={this.onAddSpecialProductPriceClick}
-                          >
-                            <i className='material-icons'>add</i>
-                          </button>
-                        </div>
-
-                        <div className='row'>
-                          {productos_especiales.length > 0 ? (
-                            <table className='striped table-bordered mt-1'>
-                              <thead>
-                                <tr>
-                                  <th>ID Producto</th>
-                                  <th>Nombre</th>
-                                  <th>Precio</th>
-                                  <th>Acciones</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {productos_especiales.map((producto, i) =>
-                                  producto.eliminado ? (
-                                    ''
-                                  ) : (
-                                    <tr key={uuid()}>
-                                      <td>{producto.id_producto}</td>
-                                      <td>{producto.nombre}</td>
-                                      <td>{producto.precio}</td>
-                                      <td>
-                                        <i
-                                          onClick={this.onDeleteSpecialProductPrice.bind(
-                                            this,
-                                            producto
-                                          )}
-                                          className='material-icons cursor-pointer'
-                                        >
-                                          delete_sweep
-                                        </i>
-                                        <i
-                                          onClick={this.onEditSpecialProductPriceClick.bind(
-                                            this,
-                                            producto
-                                          )}
-                                          data-target='modal_editMode_producto'
-                                          className='material-icons cursor-pointer modal-trigger'
-                                        >
-                                          create
-                                        </i>
-                                      </td>
-                                    </tr>
-                                  )
-                                )}
-                              </tbody>
-                            </table>
-                          ) : (
-                            ''
-                          )}
-                        </div>
-                      </div>
-                      <div className='d-block center mt-1'>
-                        <button className='btn' type='submit'>
-                          Guardar
-                        </button>
-                      </div>
-                    </form>
+                <form onSubmit={this.onSubmit}>
+                  <div className='row'>
+                    <SelectFiles
+                      id='imagen'
+                      files={[imagen]}
+                      label='Seleccionar Imagen'
+                      onchange={this.onChangeFiles}
+                      onDeleteFileClick={this.onDeleteFile}
+                    />
                   </div>
-                </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='nombre'
+                      label='Nombre'
+                      onchange={this.onChangeTextInput}
+                      value={nombre}
+                      active_label={nombre ? true : false}
+                    />
+                  </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='rtn'
+                      label='RTN'
+                      onchange={this.onChangeTextInput}
+                      value={rtn}
+                      active_label={rtn ? true : false}
+                    />
+                  </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='correo'
+                      type='email'
+                      label='Correo'
+                      onchange={this.onChangeTextInput}
+                      value={correo}
+                      active_label={correo ? true : false}
+                    />
+                  </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='contacto'
+                      label='Contacto'
+                      onchange={this.onChangeTextInput}
+                      value={contacto}
+                      active_label={contacto ? true : false}
+                    />
+                  </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='telefono'
+                      label='Telefono'
+                      onchange={this.onChangeTextInput}
+                      value={telefono}
+                      active_label={telefono ? true : false}
+                    />
+                  </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='codigo'
+                      label='Codigo'
+                      onchange={this.onChangeTextInput}
+                      value={codigo}
+                      active_label={codigo ? true : false}
+                    />
+                  </div>
+                  <div className='row'>
+                    <CheckInputField
+                      id='es_empresa'
+                      checked={es_empresa}
+                      onchange={this.onChangeTextInput}
+                      label='Es empresa'
+                    />
+                  </div>
+                  <div className='col s12 center mb-1'>
+                    <div className='d-block'>
+                      <h5>Precio Especial a Producto</h5>
+                      <button
+                        className='modal-trigger btn-floating'
+                        data-target='modal_editMode_producto'
+                        onClick={this.onAddSpecialProductPriceClick}
+                      >
+                        <i className='material-icons'>add</i>
+                      </button>
+                    </div>
+
+                    <div className='row'>
+                      {productos_especiales.length > 0 ? (
+                        <table className='striped table-bordered mt-1'>
+                          <thead>
+                            <tr>
+                              <th>ID Producto</th>
+                              <th>Nombre</th>
+                              <th>Precio</th>
+                              <th>Acciones</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {productos_especiales.map((producto, i) =>
+                              producto.eliminado ? (
+                                ''
+                              ) : (
+                                <tr key={uuid()}>
+                                  <td>{producto.id_producto}</td>
+                                  <td>{producto.nombre}</td>
+                                  <td>{producto.precio}</td>
+                                  <td>
+                                    <i
+                                      onClick={this.onDeleteSpecialProductPrice.bind(
+                                        this,
+                                        producto
+                                      )}
+                                      className='material-icons cursor-pointer'
+                                    >
+                                      delete_sweep
+                                    </i>
+                                    <i
+                                      onClick={this.onEditSpecialProductPriceClick.bind(
+                                        this,
+                                        producto
+                                      )}
+                                      data-target='modal_editMode_producto'
+                                      className='material-icons cursor-pointer modal-trigger'
+                                    >
+                                      create
+                                    </i>
+                                  </td>
+                                </tr>
+                              )
+                            )}
+                          </tbody>
+                        </table>
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+                  <div className='d-block center mt-1'>
+                    <button className='btn' type='submit'>
+                      Guardar
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>

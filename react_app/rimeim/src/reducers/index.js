@@ -7,6 +7,7 @@ import brandReducer from './brandReducer';
 import vehicleTypeReducer from './vehicleType';
 import clientReducer from './clientReducer';
 import providerReducer from './providerReducer';
+import orderReducer from './orderReducer';
 
 import errorReducer from './errorReducer';
 
@@ -19,5 +20,6 @@ export default combineReducers({
   vehicle: vehicleTypeReducer,
   client: clientReducer,
   provider: providerReducer,
+  order: orderReducer,
   errors: errorReducer
 });

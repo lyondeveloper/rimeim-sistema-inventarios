@@ -317,6 +317,7 @@ class EditProvider extends Component {
                       label='Correo'
                       onchange={this.onChangeTextInput}
                       value={correo}
+                      active_label={correo ? true : false}
                     />
                   </div>
                   <div className='row'>

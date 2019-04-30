@@ -6,7 +6,7 @@ import {
 } from '../actions/types';
 
 const initialState = {
-  loading: true,
+  loading: false,
   clients: [],
   client: {}
 };

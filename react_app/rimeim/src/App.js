@@ -32,6 +32,7 @@ import SearchDevolution from './components/pages/devolutions/SearchDevolution';
 
 // Orders
 import Orders from './components/pages/orders/Orders';
+import Order from './components/pages/orders/Order';
 import NewOrder from './components/pages/orders/NewOrder';
 import SearchOrder from './components/pages/orders/SearchOrder';
 
@@ -160,6 +161,9 @@ class App extends Component {
             {/* Orders */}
             <Switch>
               <PrivateRoute exact path='/pedidos' component={Orders} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path='/pedidos/:id' component={Order} />
             </Switch>
             <Switch>
               <PrivateRoute exact path='/nuevo_pedido' component={NewOrder} />

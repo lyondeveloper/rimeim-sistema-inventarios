@@ -29,10 +29,10 @@ export const getProducts = () => dispatch => {
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };
 
-export const searchProduct = searchData => dispatch => {
+export const searchProduct = field => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .post('/products/search', searchData)
+    .post('/products/search', field)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -40,6 +40,7 @@ export const searchProduct = searchData => dispatch => {
         type: GET_PRODUCTS,
         payload: response.data
       });
+      dispatch(productEndLoadingObject());
       dispatch(clearErrors());
     })
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
@@ -115,4 +116,24 @@ export const productLoadingObject = () => {
   return {
     type: PRODUCT_LOADING
   };
+};
+
+export const productEndLoadingObject = () => {
+  return {
+    type: PRODUCT_END_LOADING
+  };
+};
+
+export const clearProducts = () => dispatch => {
+  dispatch({
+    type: GET_PRODUCTS,
+    payload: []
+  });
+};
+
+export const clearProduct = () => dispatch => {
+  dispatch({
+    type: GET_PRODUCT,
+    payload: {}
+  });
 };
