@@ -1,41 +1,41 @@
 import {
-  PRODUCT_LOADING,
-  GET_PRODUCT,
-  GET_PRODUCTS,
-  PRODUCT_END_LOADING
+  GET_ORDER,
+  GET_ORDERS,
+  ORDER_LOADING,
+  ORDER_LOADING_END
 } from '../actions/types';
 
 const initialState = {
-  loading: false,
-  product: {},
-  products: []
+  order: {},
+  orders: [],
+  loading: false
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case PRODUCT_LOADING:
+    case GET_ORDER:
+      return {
+        ...state,
+        order: action.payload,
+        loading: false
+      };
+
+    case GET_ORDERS:
+      return {
+        ...state,
+        orders: action.payload,
+        loading: false
+      };
+
+    case ORDER_LOADING:
       return {
         ...state,
         loading: true
       };
 
-    case PRODUCT_END_LOADING:
+    case ORDER_LOADING_END:
       return {
         ...state,
-        loading: false
-      };
-
-    case GET_PRODUCT:
-      return {
-        ...state,
-        product: action.payload,
-        loading: false
-      };
-
-    case GET_PRODUCTS:
-      return {
-        ...state,
-        products: action.payload,
         loading: false
       };
 
