@@ -1,12 +1,12 @@
-import { CLEAR_ERRORS, GET_ERRORS } from './types';
+import { CLEAR_ERRORS, GET_ERRORS } from "./types";
 import {
   getAuthTokenFromResponse,
   setCurrentUser,
   logOutUserWithDispatch
-} from './UserActions';
-import { notificationError } from '../utils/MaterialFunctions';
+} from "./UserActions";
+import { notificationError } from "../utils/MaterialFunctions";
 
-const ERROR_INVALID_USER = 'NotValidUser';
+const ERROR_INVALID_USER = "NotValidUser";
 
 export const clearErrors = () => {
   return {
@@ -34,7 +34,7 @@ export const handleError = (err, dispatch, another_dispatch = null) => {
     err.response.data.data.error
   ) {
     if (err.response.data.data.error === ERROR_INVALID_USER) {
-      notificationError('Su usuario es invalido o ya no se encuentra activo');
+      notificationError("Su usuario es invalido o ya no se encuentra activo");
       return endApplication(dispatch);
     }
   }
@@ -57,7 +57,7 @@ export const handleError = (err, dispatch, another_dispatch = null) => {
   if (
     err.response &&
     err.response.data &&
-    typeof err.response.data.data !== 'undefined'
+    typeof err.response.data.data !== "undefined"
   ) {
     payload = err.response.data.data;
   }

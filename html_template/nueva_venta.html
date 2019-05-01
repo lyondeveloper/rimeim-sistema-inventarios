@@ -1,370 +1,430 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" />
-    <link type="text/css" rel="stylesheet" href="css/main.css">
+    <link type="text/css" rel="stylesheet" href="css/main.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Nueva venta | Rimeim </title>
+    <title>Nueva venta | Rimeim</title>
 
     <!-- Adicional -->
-    <link rel="stylesheet" href="css/ventas.css">
-</head>
+    <link rel="stylesheet" href="css/ventas.css" />
+  </head>
 
-<body>
+  <body>
     <div id="app">
+      <header>
+        <!-- Menu mobile -->
+        <ul id="dropdown_more" class="dropdown-content">
+          <li>
+            <a href="#!">
+              <i class="material-icons ">save</i>
+              Guardar
+            </a>
+          </li>
+          <li>
+            <a href="#modal_buscar_producto">
+              <i class="material-icons">search</i>
+              Buscar
+            </a>
+          </li>
+          <li>
+            <a href="#!">
+              <i class="material-icons">check</i>
+              Facturar
+            </a>
+          </li>
+        </ul>
 
-        <header>
+        <!-- Top navbar -->
+        <nav class="red lighten-1 top-nav">
+          <div class="small-container">
+            <div class="nav-wrapper">
+              <a href="#!" class="brand-logo">
+                Nueva venta
+              </a>
+              <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
+                <i class="material-icons">menu</i>
+              </a>
+              <ul class="right hide-on-small-only">
+                <li>
+                  <a
+                    href="#!"
+                    class="tooltipped"
+                    data-position="bottom"
+                    data-tooltip="Guardar"
+                  >
+                    <i class="material-icons">save</i>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#modal_buscar_producto"
+                    class="modal-trigger tooltipped"
+                    data-position="bottom"
+                    data-tooltip="Buscar producto"
+                  >
+                    <i class="material-icons">search</i>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#!"
+                    class="tooltipped"
+                    data-position="bottom"
+                    data-tooltip="Facturar"
+                  >
+                    <i class="material-icons">check</i>
+                  </a>
+                </li>
+              </ul>
 
-            <!-- Menu mobile -->
-            <ul id="dropdown_more" class="dropdown-content">
+              <!-- Right menu options mobile -->
+              <ul class="right mobile-only">
                 <li>
-                    <a href="#!">
-                        <i class="material-icons ">save</i>
-                        Guardar
-                    </a>
+                  <a
+                    class="dropdown-trigger"
+                    href="#!"
+                    data-target="dropdown_more"
+                  >
+                    <i class="material-icons right">more_vert</i>
+                  </a>
                 </li>
-                <li>
-                    <a href="#modal_buscar_producto">
-                        <i class="material-icons">search</i>
-                        Buscar
-                    </a>
-                </li>
-                <li>
-                    <a href="#!">
-                        <i class="material-icons">check</i>
-                        Facturar
-                    </a>
-                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Sidenav -->
+        <ul class="sidenav sidenav-fixed" id="nav_sidenav">
+          <li class="logo">
+            <a href="#!" class="brand-logo center mt-1">
+              <img src="img/logo_rimeim.png" class="logo-sidenav" />
+            </a>
+            <div class="divider"></div>
+          </li>
+          <li class="no-padding">
+            <ul class="collapsible collapsible-accordion">
+              <li class="bold active">
+                <a
+                  class="collapsible-header waves-effect waves-teal"
+                  tabindex="0"
+                >
+                  <i class="material-icons">monetization_on</i>
+                  Ventas
+                </a>
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="nueva_venta.html">Nueva</a>
+                    </li>
+                    <li><a href="historial_ventas.html">Historial</a></li>
+                    <li><a href="buscar_venta.html">Buscar</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li class="bold">
+                <a
+                  class="collapsible-header waves-effect waves-teal"
+                  tabindex="0"
+                >
+                  <i class="material-icons">library_books</i>
+                  Cotizaciones</a
+                >
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="nueva_cotizacion.html">Nueva</a>
+                    </li>
+                    <li><a href="cotizaciones.html">Historial</a></li>
+                    <li><a href="buscar_cotizacion.html">Buscar</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li class="bold">
+                <a
+                  class="collapsible-header waves-effect waves-teal"
+                  tabindex="0"
+                >
+                  <i class="material-icons">money_off</i>
+                  Devoluciones</a
+                >
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="devolucion.html">Nueva</a>
+                    </li>
+                    <li><a href="devoluciones.html">Historial</a></li>
+                    <li><a href="buscar_devolucion.html">Buscar</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li class="bold">
+                <a
+                  class="collapsible-header waves-effect waves-teal"
+                  tabindex="0"
+                >
+                  <i class="material-icons">border_color</i>
+                  Pedidos</a
+                >
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="nuevo_pedido.html">Nuevo</a>
+                    </li>
+                    <li><a href="pedidos.html">Historial</a></li>
+                    <li><a href="buscar_pedido.html">Buscar</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li class="bold">
+                <a
+                  class="collapsible-header waves-effect waves-teal"
+                  tabindex="0"
+                >
+                  <i class="material-icons">directions_car</i>
+                  Productos</a
+                >
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="inventario.html">Inventario</a>
+                    </li>
+                    <li><a href="buscar_producto.html">Buscar</a></li>
+                    <li><a href="nuevo_producto.html">Nuevo</a></li>
+                    <li><a href="marcas.html">Marcas</a></li>
+                    <li><a href="tipo_vehiculo.html">Tipo de vehiculo</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li class="bold">
+                <a
+                  class="collapsible-header waves-effect waves-teal"
+                  tabindex="0"
+                >
+                  <i class="material-icons">group</i>
+                  Clientes
+                </a>
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="nuevo_cliente.html">Nuevo</a>
+                    </li>
+                    <li><a href="clientes.html">Ver todos</a></li>
+                    <li><a href="buscar_cliente.html">Buscar</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li class="bold">
+                <a
+                  class="collapsible-header waves-effect waves-teal"
+                  tabindex="0"
+                >
+                  <i class="material-icons">perm_contact_calendar</i>
+                  Proveedor
+                </a>
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="nuevo_proveedor.html">Nuevo</a>
+                    </li>
+                    <li><a href="proveedores.html">Ver todos</a></li>
+                  </ul>
+                </div>
+              </li>
+              <div class="divider"></div>
+              <li class="bold">
+                <a
+                  class="collapsible-header waves-effect waves-teal"
+                  tabindex="0"
+                >
+                  <i class="material-icons notifications-active"
+                    >notifications_active</i
+                  >
+                  Cuenta
+                </a>
+                <div class="collapsible-body">
+                  <ul>
+                    <li>
+                      <a href="#!">
+                        <i class="material-icons notifications-active-color"
+                          >notifications</i
+                        >
+                        Notificaciones
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#!">
+                        <i class="material-icons">settings</i>
+                        Configuracion
+                      </a>
+                    </li>
+                    <li>
+                      <a href="index.html">
+                        <i class="material-icons">exit_to_app</i>
+                        Cerrar sesion</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </li>
             </ul>
+          </li>
+        </ul>
+      </header>
 
-            <!-- Top navbar -->
-            <nav class="red lighten-1 top-nav">
-                <div class="small-container">
-                    <div class="nav-wrapper">
-                        <a href="#!" class="brand-logo">
-                            Nueva venta
-                        </a>
-                        <a href="#!" class="sidenav-trigger" data-target="nav_sidenav">
-                            <i class="material-icons">menu</i>
-                        </a>
-                        <ul class="right hide-on-small-only">
-                            <li>
-                                <a href="#!" class="tooltipped" data-position="bottom" data-tooltip="Guardar">
-                                    <i class="material-icons">save</i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#modal_buscar_producto" class="modal-trigger tooltipped" data-position="bottom"
-                                    data-tooltip="Buscar producto">
-                                    <i class="material-icons">search</i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#!" class="tooltipped" data-position="bottom" data-tooltip="Facturar">
-                                    <i class="material-icons">check</i>
-                                </a>
-                            </li>
-                        </ul>
+      <main>
+        <div class="row venta-productos">
+          <div class="col s12 no-padding">
+            <table class="table-bordered header-fixed striped highlight">
+              <thead>
+                <tr>
+                  <th class="center">Codigo</th>
+                  <th class="center">Descripcion</th>
+                  <th class="center">Cantidad</th>
+                  <th class="center">Precio</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="active-tr-sell">
+                  <td class="td-with-input">
+                    <input type="text" class="special-input browser-default" />
+                  </td>
+                  <td class="td-with-input">
+                    Descripcion
+                  </td>
+                  <td class="td-with-input">
+                    <input type="text" class="special-input browser-default" />
+                  </td>
+                  <td class="td-with-input">
+                    <input type="text" class="special-input browser-default" />
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-                        <!-- Right menu options mobile -->
-                        <ul class="right mobile-only">
-                            <li>
-                                <a class="dropdown-trigger" href="#!" data-target="dropdown_more">
-                                    <i class="material-icons right">more_vert</i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+        <div class="row col-bordered venta-total">
+          <div class="col s4">
+            <p class="d-block">Sub total</p>
+            <p class="total-number">Lps <span>0.0</span></p>
+          </div>
+          <div class="col s4">
+            <p>Impuesto</p>
+            <p class="total-number">Lps <span>0.0</span></p>
+          </div>
+          <div class="col s4">
+            <p>Total</p>
+            <p class="total-number">Lps <span>0.0</span></p>
+          </div>
+        </div>
 
-            <!-- Sidenav -->
-            <ul class="sidenav sidenav-fixed" id="nav_sidenav">
-                <li class="logo">
-                    <a href="#!" class="brand-logo center mt-1">
-                        <img src="img/logo_rimeim.png" class="logo-sidenav">
-                    </a>
-                    <div class="divider"></div>
-                </li>
-                <li class="no-padding">
-                    <ul class="collapsible collapsible-accordion">
-                        <li class="bold active">
-                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">monetization_on</i>
-                                Ventas
-                            </a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li>
-                                        <a href="nueva_venta.html">Nueva</a>
-                                    </li>
-                                    <li><a href="historial_ventas.html">Historial</a></li>
-                                    <li><a href="buscar_venta.html">Buscar</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">library_books</i>
-                                Cotizaciones</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li>
-                                        <a href="nueva_cotizacion.html">Nueva</a>
-                                    </li>
-                                    <li><a href="cotizaciones.html">Historial</a></li>
-                                    <li><a href="buscar_cotizacion.html">Buscar</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">money_off</i>
-                                Devoluciones</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li>
-                                        <a href="devolucion.html">Nueva</a>
-                                    </li>
-                                    <li><a href="devoluciones.html">Historial</a></li>
-                                    <li><a href="buscar_devolucion.html">Buscar</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">border_color</i>
-                                Pedidos</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li>
-                                        <a href="nuevo_pedido.html">Nuevo</a>
-                                    </li>
-                                    <li><a href="pedidos.html">Historial</a></li>
-                                    <li><a href="buscar_pedido.html">Buscar</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">directions_car</i>
-                                Productos</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li>
-                                        <a href="inventario.html">Inventario</a>
-                                    </li>
-                                    <li><a href="buscar_producto.html">Buscar</a></li>
-                                    <li><a href="nuevo_producto.html">Nuevo</a></li>
-                                    <li><a href="marcas.html">Marcas</a></li>
-                                    <li><a href="tipo_vehiculo.html">Tipo de vehiculo</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">group</i>
-                                Clientes
-                            </a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li>
-                                        <a href="nuevo_cliente.html">Nuevo</a>
-                                    </li>
-                                    <li><a href="clientes.html">Ver todos</a></li>
-                                    <li><a href="buscar_cliente.html">Buscar</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons">perm_contact_calendar</i>
-                                Proveedor
-                            </a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li>
-                                        <a href="nuevo_proveedor.html">Nuevo</a>
-                                    </li>
-                                    <li><a href="proveedores.html">Ver todos</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <div class="divider"></div>
-                        <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal" tabindex="0">
-                                <i class="material-icons notifications-active">notifications_active</i>
-                                Cuenta
-                            </a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li>
-                                        <a href="#!">
-                                            <i class="material-icons notifications-active-color">notifications</i>
-                                            Notificaciones
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#!">
-                                            <i class="material-icons">settings</i>
-                                            Configuracion
-                                        </a>
-                                    </li>
-                                    <li><a href="index.html">
-                                            <i class="material-icons">exit_to_app</i>
-                                            Cerrar sesion</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </header>
-
-        <main>
-            <div class="row venta-productos">
-                <div class="col s12 no-padding">
-                    <table class="table-bordered header-fixed striped highlight">
-                        <thead>
-                            <tr>
-                                <th class="center">Codigo</th>
-                                <th class="center">Descripcion</th>
-                                <th class="center">Cantidad</th>
-                                <th class="center">Precio</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="row col-bordered venta-total">
-                <div class="col s4">
-                    <p class="d-block">Sub total</p>
-                    <p class="total-number">Lps <span>0.0</span></p>
-                </div>
-                <div class="col s4">
-                    <p>Impuesto</p>
-                    <p class="total-number">Lps <span>0.0</span></p>
-                </div>
-                <div class="col s4">
-                    <p>Total</p>
-                    <p class="total-number">Lps <span>0.0</span></p>
-                </div>
-            </div>
-
-            <!-- Modal Structure -->
-            <div id="modal_buscar_producto" class="modal">
-                <div class="modal-content">
-                    <h4>Buscar producto</h4>
-                    <p>A bunch of text</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
-                </div>
-            </div>
-        </main>
+        <!-- Modal Structure -->
+        <div id="modal_buscar_producto" class="modal">
+          <div class="modal-content">
+            <h4>Buscar producto</h4>
+            <p>A bunch of text</p>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat"
+              >Cerrar</a
+            >
+          </div>
+        </div>
+      </main>
     </div>
     <script type="text/javascript" src="js/materialize.min.js"></script>
     <script src="js/main.js"></script>
 
-    <script>
-
-    </script>
-</body>
-
+    <script></script>
+  </body>
 </html>
