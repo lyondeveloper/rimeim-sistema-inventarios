@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Spinner from '../../common/Spinner';
 import TextInputField from '../../common/TextInputField';
 
-import { searchProduct } from '../../../actions/productActions';
+import { searchProduct, cleanProducts } from '../../../actions/productActions';
 
 class SearchProductLocal extends Component {
   state = {
@@ -14,17 +14,15 @@ class SearchProductLocal extends Component {
     producto_seleccionado: {},
     productos: [],
     cantidad: '',
+    costo: '',
     productPosition: '',
     editMode: false,
     typing: false,
     typingTimeout: 0,
     searching: false,
+    needs_config_selects: false,
     errors: {}
   };
-
-  // componentDidMount() {
-  //   this.props.getProducts();
-  // }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors)
@@ -60,14 +58,53 @@ class SearchProductLocal extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onSelectModalProduct = product =>
-    this.setState({ producto_seleccionado: product });
+  onSelectProduct = producto => {
+    let selectedProduct = producto;
+    // console.log(product);
+
+    // if (selectedProduct.seleccionado) {
+    //   selectedProduct.seleccionado = false;
+    //   console.log('entra condicion');
+    // }
+
+    // selectedProduct.seleccionado = true;
+
+    // document.getElementById(`${product.id}`).checked =
+    //   selectedProduct.seleccionado;
+
+    this.setState({
+      producto_seleccionado: producto
+    });
+  };
+
+  onChangeCheckbox = e => {
+    e.preventDefault();
+
+    this.onSelectModalProduct();
+
+    const { producto_seleccionado, productos } = this.state;
+
+    if (producto_seleccionado.seleccionado !== null) {
+      producto_seleccionado.seleccionado = !producto_seleccionado.seleccionado;
+    } else {
+      producto_seleccionado.seleccionado = true;
+    }
+
+    this.setState({ productos });
+  };
 
   onAddProductClick = e => {
     e.preventDefault();
 
+    const { products } = this.props.products;
+
+    if (products.length > 0) {
+      this.props.cleanProducts();
+    }
+
     this.setState({
       producto_seleccionado: {},
+      field: '',
       cantidad: '',
       typing: false,
       typingTimeout: 0
@@ -79,13 +116,21 @@ class SearchProductLocal extends Component {
 
     const { productos, cantidad, producto_seleccionado } = this.state;
 
+    // const selecteds = productos.filter(p => p.seleccionado === true);
+
+    // selecteds.forEach(product => {
+    // });
     const productData = {
-      id: producto_seleccionado.id,
+      id_producto: producto_seleccionado.id,
       cantidad,
-      nombre: producto_seleccionado.nombre
+      costo: producto_seleccionado.precio,
+      nombre: producto_seleccionado.nombre,
+      es_compra: false
     };
 
     productos.push(productData);
+
+    this.props.onPassProductsData(productos);
 
     this.setState({
       producto_seleccionado: {},
@@ -94,6 +139,12 @@ class SearchProductLocal extends Component {
   };
 
   onEditProductClick = producto => {
+    const { products } = this.props.products;
+
+    if (products.length > 0) {
+      this.props.cleanProducts();
+    }
+
     this.setState({
       producto_seleccionado: producto,
       cantidad: producto.cantidad,
@@ -112,6 +163,9 @@ class SearchProductLocal extends Component {
 
     const productIndex = productos.findIndex(p => p.id === productPosition);
 
+    productos[productIndex].id_producto = producto_seleccionado.id;
+    productos[productIndex].costo = producto_seleccionado.precio;
+    productos[productIndex].nombre = producto_seleccionado.nombre;
     productos[productIndex].cantidad = cantidad;
     productos[productIndex].actualizado = true;
 
@@ -126,7 +180,7 @@ class SearchProductLocal extends Component {
     const { productos } = this.state;
 
     const productIndex = productos.findIndex(
-      p => p.id.toString() === producto.id
+      p => p.id_producto === producto.id_producto
     );
 
     delete productos[productIndex].actualizado;
@@ -140,28 +194,36 @@ class SearchProductLocal extends Component {
   };
 
   render() {
-    const { products, loading } = this.props.products;
+    const { productos, searching, cantidad, field, local } = this.state;
 
-    const { productos, searching, cantidad, field } = this.state;
+    const { products } = this.props;
 
     let searchResult;
 
-    if (searching || loading) {
+    if (searching || products.loading) {
       searchResult = <Spinner fullWidth />;
     } else {
       searchResult = (
         <div className='row'>
           <div className='col s12'>
-            {products.map((product, i) => {
+            {products.products.map((producto, i) => {
               return (
                 <div
                   className='d-block cursor-pointer bordered p-1'
                   key={uuid()}
-                  onClick={() => {
-                    this.onSelectModalProduct(product);
-                  }}
                 >
-                  {product.id} - {product.nombre}
+                  <label>
+                    <input
+                      type='checkbox'
+                      className='filled-in'
+                      id={`${producto.id}`}
+                      onClick={() => {
+                        this.onSelectProduct(producto);
+                      }}
+                    />
+                    <span />
+                  </label>
+                  {producto.id} - {producto.nombre}
                 </div>
               );
             })}
@@ -199,7 +261,7 @@ class SearchProductLocal extends Component {
                   ''
                 ) : (
                   <tr key={uuid()}>
-                    <td>{p.id}</td>
+                    <td>{p.id_producto}</td>
                     <td>{p.nombre}</td>
                     <td>{p.cantidad}</td>
                     <td>
@@ -274,5 +336,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { searchProduct }
+  { searchProduct, cleanProducts }
 )(SearchProductLocal);

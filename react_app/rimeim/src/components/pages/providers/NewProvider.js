@@ -199,9 +199,13 @@ class NewProvider extends Component {
         this.state.imagen.name
       );
       newProviderData.append('json_data', JSON.stringify(providerData));
-      this.props.addProvider(newProviderData, this.props.history, '/clientes');
+      this.props.addProvider(
+        newProviderData,
+        this.props.history,
+        '/proveedores'
+      );
     } else {
-      this.props.addProvider(providerData, this.props.history, '/clientes');
+      this.props.addProvider(providerData, this.props.history, '/proveedores');
     }
   };
 

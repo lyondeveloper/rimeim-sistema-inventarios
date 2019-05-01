@@ -5,24 +5,35 @@ import NewNavbar from '../../layout/NewNavbar';
 
 import {
   configMaterialComponents,
-  removeMaterialComponents
+  removeMaterialComponents,
+  configSelectInputFields
 } from '../../../utils/MaterialFunctions';
 
-import { getLocals } from '../../../actions/LocalActions';
-
 import TextInputField from '../../common/TextInputField';
+import SelectInputField from '../../common/SelectInputField';
 import SearchProductLocal from './SearchProductLocal';
 import SearchProductProvider from './SearchProductProvider';
-import SelectInputField from '../../common/SelectInputField';
-import Spinner from '../../common/Spinner';
+
+import { getLocals } from '../../../actions/LocalActions';
+import { createOrder } from '../../../actions/orderActions';
 
 class NewOrder extends Component {
-  state = {
-    codigo: '',
-    ubicacion: '',
-    providerMode: false,
-    needs_config_selects: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      codigo: '',
+      fecha_entrega: '',
+      local: '',
+      id_local: '',
+      productos: [],
+      providerMode: false,
+      needs_config_selects: false,
+      errors: {}
+    };
+
+    this.onChangeTextInput = this.onChangeTextInput.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
 
   componentWillMount() {
     removeMaterialComponents();
@@ -33,6 +44,36 @@ class NewOrder extends Component {
     this.props.getLocals();
   }
 
+  componentDidUpdate() {
+    if (this.state.needs_config_selects) {
+      configSelectInputFields();
+      this.setState({
+        needs_config_selects: false
+      });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
+
+    if (nextProps.locals.locals) {
+      const { locals } = nextProps.locals;
+      locals.forEach(local => (local.disabled = false));
+      this.setState({
+        needs_config_selects: true,
+        searching: false
+      });
+    }
+  }
+
+  onSelectLocal() {
+    this.setState({});
+  }
+
   onProviderModeChange = () =>
     this.setState({
       providerMode: !this.state.providerMode
@@ -40,81 +81,40 @@ class NewOrder extends Component {
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
-  onSubmit = e => {};
+  onReceiveProductData(productos) {
+    this.setState({
+      productos
+    });
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    const { codigo, fecha_entrega, productos, local } = this.state;
+
+    const orderData = {
+      id_local_solicitado: local,
+      codigo,
+      fecha_entrega,
+      productos
+    };
+
+    this.props.createOrder(orderData, this.props.history);
+  }
 
   render() {
-    const { codigo, ubicacion, providerMode } = this.state;
+    const { codigo, providerMode, fecha_entrega, local } = this.state;
 
-    const { locals, loading } = this.props.locals;
+    const { locals } = this.props;
 
     const localOptions = [];
 
-    locals.map(local => {
+    locals.locals.map(local => {
       localOptions.push({
         value: local.id,
-        label: local.name
+        label: local.nombre
       });
     });
-
-    let orderContent;
-
-    if (loading) {
-      orderContent = <Spinner fullWidth />;
-    } else {
-      orderContent = (
-        <div className='row'>
-          <div className='col s12'>
-            <div className='card'>
-              <div className='card-content'>
-                <div className='row'>
-                  <div className='d-block right'>
-                    <button className='btn' onClick={this.onProviderModeChange}>
-                      Cambiar a modo {providerMode ? 'Tienda' : 'Proveedor'}
-                    </button>
-                  </div>
-                </div>
-                <form onSubmit={this.onSubmit}>
-                  <div className='row'>
-                    <SelectInputField
-                      input_size='s12'
-                      id='ubicacion'
-                      label='Ubicacion'
-                      onchange={this.onChangeTextInput}
-                      value={ubicacion}
-                      options={localOptions}
-                    />
-                  </div>
-
-                  <div className='row'>
-                    <TextInputField
-                      input_size='s12'
-                      id='codigo'
-                      label='Codigo de pedido'
-                      onchange={this.onChangeTextInput}
-                      value={codigo}
-                    />
-                  </div>
-
-                  <div className='row'>
-                    {providerMode ? (
-                      <SearchProductProvider />
-                    ) : (
-                      <SearchProductLocal />
-                    )}
-                  </div>
-
-                  <div className='d-block center mt-1'>
-                    <button className='btn' type='submit'>
-                      Guardar{' '}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
 
     return (
       <React.Fragment>
@@ -152,17 +152,89 @@ class NewOrder extends Component {
           </div>
         </NewNavbar>
 
-        <main>{orderContent}</main>
+        <main>
+          <div className='row'>
+            <div className='col s12'>
+              <div className='card'>
+                <div className='card-content'>
+                  <div className='row'>
+                    <div className='d-block right'>
+                      <button
+                        className='btn'
+                        onClick={this.onProviderModeChange}
+                      >
+                        Pedido a {providerMode ? 'Local' : 'Proveedor'}
+                      </button>
+                    </div>
+                  </div>
+                  <form onSubmit={this.onSubmit}>
+                    <div className='row'>
+                      {providerMode ? (
+                        <SearchProductProvider />
+                      ) : (
+                        <React.Fragment>
+                          <div className='row'>
+                            <SelectInputField
+                              input_size='s12'
+                              id='local'
+                              label='Local'
+                              onchange={this.onChangeTextInput}
+                              value={local}
+                              options={localOptions}
+                            />
+                          </div>
+                          <SearchProductLocal
+                            onPassProductsData={this.onReceiveProductData.bind(
+                              this
+                            )}
+                          />
+                        </React.Fragment>
+                      )}
+                    </div>
+
+                    <div className='row'>
+                      <TextInputField
+                        input_size='s12'
+                        id='codigo'
+                        label='Codigo de pedido'
+                        onchange={this.onChangeTextInput}
+                        value={codigo}
+                      />
+                    </div>
+
+                    <div className='row'>
+                      <TextInputField
+                        type='date'
+                        input_size='s12'
+                        id='fecha_entrega'
+                        label='Fecha de Entrega de Pedido'
+                        onchange={this.onChangeTextInput}
+                        value={fecha_entrega}
+                      />
+                    </div>
+
+                    <div className='d-block center mt-1'>
+                      <button className='btn' type='submit'>
+                        Guardar{' '}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </React.Fragment>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  locals: state.local
+  locals: state.local,
+  orders: state.order
 });
 
 export default connect(
   mapStateToProps,
-  { getLocals }
+  { getLocals, createOrder }
 )(NewOrder);
