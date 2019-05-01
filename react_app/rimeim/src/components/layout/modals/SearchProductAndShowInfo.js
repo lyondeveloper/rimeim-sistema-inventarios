@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import uuid from "uuid";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import uuid from 'uuid';
 
-import TextInputField from "../../common/TextInputField";
-import Spinner from "../../common/Spinner";
-import EmptyIcon from "../../common/EmptyIcon";
+import TextInputField from '../../common/TextInputField';
+import Spinner from '../../common/Spinner';
+import EmptyIcon from '../../common/EmptyIcon';
 
-import { searchProduct } from "../../../actions/productActions";
+import { searchProduct } from '../../../actions/productActions';
 
 class SearchProductAndShowInfo extends Component {
   state = {
-    field: "",
+    field: '',
     typing: false,
     typingTimeout: 0,
     searching: false
@@ -27,7 +27,7 @@ class SearchProductAndShowInfo extends Component {
       field: e.target.value,
       typing: false,
       typingTimeout: setTimeout(() => {
-        if (this.state.field.trim() !== "") {
+        if (this.state.field.trim() !== '') {
           this.props.searchProduct({ field: this.state.field });
         } else {
           this.setState({ searching: false });
@@ -43,6 +43,12 @@ class SearchProductAndShowInfo extends Component {
       });
     }
   }
+
+  onHideModal = () => {
+    if (this.props.onHide) {
+      this.props.onHide();
+    }
+  };
 
   render() {
     const { field, searching } = this.state;
@@ -96,7 +102,11 @@ class SearchProductAndShowInfo extends Component {
           {productInfo}
         </div>
         <div className="modal-footer">
-          <a href="#!" className="btn-flat modal-close">
+          <a
+            href="#!"
+            className="btn-flat modal-close"
+            onClick={this.onHideModal}
+          >
             Cerrar
           </a>
         </div>
@@ -107,7 +117,8 @@ class SearchProductAndShowInfo extends Component {
 
 SearchProductAndShowInfo.propTypes = {
   searchProduct: PropTypes.func.isRequired,
-  product: PropTypes.object.isRequired
+  product: PropTypes.object.isRequired,
+  onHide: PropTypes.func
 };
 
 const mapStateToProps = state => ({

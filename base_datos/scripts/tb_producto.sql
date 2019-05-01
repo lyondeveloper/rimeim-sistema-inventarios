@@ -28,6 +28,8 @@ begin
     order by p.nombre asc;
 end $$
 delimiter ;
+*/
+
 
 drop procedure if exists `proc_search_producto`;
 delimiter $$
@@ -70,7 +72,7 @@ begin
 end $$
 delimiter ;
 
-
+/*
 drop procedure if exists `proc_get_producto_by_id`;
 delimiter $$
 create procedure proc_get_producto_by_id(in p_id bigint)
