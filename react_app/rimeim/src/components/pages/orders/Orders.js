@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import uuid from 'uuid';
 
+import OrderCard from '../../common/OrderCard';
+import Spinner from '../../common/Spinner';
 import { ORDERS } from '../../layout/NavTypes';
 import Navbar from '../../layout/Navbar';
 
@@ -8,39 +13,52 @@ import {
   removeMaterialComponents
 } from '../../../utils/MaterialFunctions';
 
-import OrderCard from '../../common/OrderCard';
+import { getOrders } from '../../../actions/orderActions';
 
 class Orders extends Component {
-  state = {
-    pedidos: []
-  };
-
   componentWillMount() {
     removeMaterialComponents();
   }
 
   componentDidMount() {
     configMaterialComponents();
+    this.props.getOrders();
   }
 
   render() {
-    const { pedidos } = this.state;
+    const { orders, loading } = this.props.orders;
+
+    let ordersContent;
+
+    if (loading) {
+      ordersContent = <Spinner fullWidth />;
+    } else {
+      ordersContent = (
+        <div className='row'>
+          <div className='col s12'>
+            {orders.map((order, i) => {
+              return <OrderCard order={order} key={uuid()} />;
+            })}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <React.Fragment>
         <Navbar navtype={ORDERS} />
 
-        <main>
-          <div className='row'>
-            <div className='col s12'>
-              {pedidos.map((pedido, i) => {
-                return <OrderCard pedido={pedido} key={pedido.id} />;
-              })}
-            </div>
-          </div>
-        </main>
+        <main>{ordersContent}</main>
       </React.Fragment>
     );
   }
 }
 
-export default Orders;
+const mapStateToProps = state => ({
+  orders: state.order
+});
+
+export default connect(
+  mapStateToProps,
+  { getOrders }
+)(withRouter(Orders));

@@ -124,14 +124,14 @@ export const productEndLoadingObject = () => {
   };
 };
 
-export const clearProducts = () => dispatch => {
+export const cleanProducts = () => dispatch => {
   dispatch({
     type: GET_PRODUCTS,
     payload: []
   });
 };
 
-export const clearProduct = () => dispatch => {
+export const cleanProduct = () => dispatch => {
   dispatch({
     type: GET_PRODUCT,
     payload: {}

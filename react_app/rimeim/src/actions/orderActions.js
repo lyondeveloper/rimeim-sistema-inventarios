@@ -7,11 +7,42 @@ import {
 import axios from 'axios';
 
 import { clearErrors, handleError } from './errorActions';
+import { configUserFromResponse } from './UserActions';
 
-export const addOrder = (data, history, newUrl) => dispatch => {};
-export const editOrder = (id, data, history, newUrl) => dispatch => {};
+export const createOrder = (data, history) => dispatch => {
+  dispatch(orderLoading());
+  axios
+    .post('/orders/add', data)
+    .then(res => {
+      const response = res.data;
+
+      configUserFromResponse(response, dispatch);
+
+      dispatch(clearErrors());
+      history.push(`pedidos/${response.data.id}`);
+    })
+    .catch(err => handleError(err, dispatch, orderEndLoading()));
+};
+export const editOrder = (id, data, history) => dispatch => {};
 export const getOrder = id => dispatch => {};
-export const getOrders = () => dispatch => {};
+export const getOrders = () => dispatch => {
+  dispatch(orderLoading());
+  axios
+    .get('orders/get')
+    .then(res => {
+      const response = res.data;
+
+      configUserFromResponse(response, dispatch);
+
+      dispatch({
+        type: GET_ORDERS,
+        payload: response.data
+      });
+      dispatch(clearErrors());
+      dispatch(orderEndLoading());
+    })
+    .catch(err => handleError(err, dispatch));
+};
 export const searchOrder = data => dispatch => {};
 export const orderLoading = () => {
   return {
