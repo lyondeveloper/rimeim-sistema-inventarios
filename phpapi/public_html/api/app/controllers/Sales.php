@@ -15,6 +15,7 @@ class Sales extends Controller
     private $clientsArray = [];
     private $employesArray = [];
     private $localsArray = [];
+    private $productsArray = [];
 
     public function __construct()
     {
@@ -46,6 +47,7 @@ class Sales extends Controller
     public function get_one($id) {
         $this->useGetRequest();
         $sale = $this->get_parsed_single_sale_by_id($id);
+        $sale->productos = $this->get_parsed_products_by_sell_id($id);
         $this->response($sale);
     }
 
@@ -76,6 +78,10 @@ class Sales extends Controller
     public function add() {
         $this->usePostRequest();
         $data = $this->validate_add_data(getJsonData());
+        $newId = $this->saleModel->add($data);
+        $this->checkNewId($newId);
+        $this->add_products_to_sell($data->productos, $newId);
+        $this->response(['id' => $newId]);
     }
 
     private function validate_add_data($data) {
@@ -99,6 +105,17 @@ class Sales extends Controller
             $errors['con_factura_error'] = "Campo invalido";
         }
 
+        if (!isset($data->metodo_pago) || 
+            empty($data->metodo_pago)) {
+            $errors['metodo_pago_error'] = "Campo invalido";
+        } else {
+            $data->metodo_pago = strtolower($data->metodo_pago);
+            if ($data->metodo_pago != "efectivo" || 
+                $data->metodo_pago != "tarjeta") {
+                $errors['metodo_pago_error'] = "Campo invalido";
+            }
+        }
+
         if (isset($data->id_cliente) && 
             $data->id_cliente > 0) {
             if (!$this->clientModel->exists_with_id($data->id_cliente))  {
@@ -109,14 +126,42 @@ class Sales extends Controller
         }
 
         if (!isset($data->productos) || 
-            !is_array($data->productos)) {
+            !is_array($data->productos) ||
+            count($data->productos) == 0 ) {
             $errors['productos_error'] = "Campo invalido";
+        }
+        $this->checkErrors($errors);
+
+        $number_of_invalid_products = 0;
+        foreach($data->productos as &$producto) {
+            if (!$this->valid_product_fields($producto)) {
+                $producto->valido = false;
+                $number_of_invalid_products++;
+            }
+        }
+
+        if ($number_of_invalid_products > 0) {
+            $errors['productos_error'] = $data->productos;
         }
         $this->checkErrors($errors);
 
         $data->es_cotizacion = false;
         return $data;
     }
+
+    private function add_products_to_sell($productos, $id_venta) {
+        foreach($productos as &$producto) {
+            if ($this->valid_product_fields(($producto))) {
+                $producto->id_venta = $id_venta;
+                if (!isset($producto->oferta)) {
+                    $producto->oferta = false;
+                }
+                $this->saleProduct->add($producto);
+            }
+        }
+    } // END OF ADD
+
+    
 
     // ====== Helpers ========
 
@@ -171,5 +216,30 @@ class Sales extends Controller
             $sale->local = $this->localsArray[$sale->id_local];
         }
         return $sale;
+    }
+
+    private function get_parsed_products_by_sell_id($id) {
+        $productos = $this->saleProduct->get_by_sale($id);
+        foreach($productos as &$producto) {
+            if (!isset($this->productsArray[$producto->id_producto])) {
+                $this->productsArray[$producto->id_producto] = $this->productModel->get_minified_by_id_for_sell_details($producto->id_producto);
+            }
+            $producto->codigo_barra = $this->productsArray[$producto->id_producto]->codigo_barra;
+            $producto->nombre = $this->productsArray[$producto->id_producto]->nombre;
+        }
+        return $productos;
+    }
+
+    private function valid_product_fields($producto) {
+        return (
+            isset($producto->id_producto) && 
+            $producto->id_producto > 0 &&
+            isset($producto->cantidad) && 
+            $producto->cantidad > 0 &&
+            isset($producto->precio) && 
+            $producto->precio >= 0 &&
+            isset($producto->total) && 
+            $producto->total >= 0
+        );
     }
 }

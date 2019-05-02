@@ -180,6 +180,32 @@ end $$
 delimiter ;
 */
 
+drop procedure if exists proc_get_producto_minified_by_id_for_selldetails;
+delimiter $$
+create procedure proc_get_producto_minified_by_id_for_selldetails(in p_id bigint)
+begin
+    if (valid_int_id(p_id)) then
+		
+        select p.id,
+				p.codigo_barra,
+                p.nombre,
+                (
+					select m.nombre
+                    from tb_marca m
+                    where m.id = p.id_marca 
+                ) as 'marca_nombre',
+                (
+					select tv.nombre
+                    from tb_tipo_vehiculo tv
+                    where tv.id = p.id_tipo_vehiculo
+                ) as 'tipo_vehiculo',
+                p.precio
+        from tb_producto p
+        where p.id = p_id;
+    end if;
+end $$
+delimiter ;
+
 /*
 drop procedure if exists `proc_add_producto`;
 delimiter $$
