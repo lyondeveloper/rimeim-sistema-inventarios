@@ -18,7 +18,7 @@ import { handleError, clearErrors } from "./errorActions";
 export const getSells = () => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .get("/sells/get")
+    .get("/sales/get")
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -34,7 +34,7 @@ export const getSells = () => dispatch => {
 export const searchSell = jsonField => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .post("/sells/search", jsonField)
+    .post("/sales/search", jsonField)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -50,7 +50,7 @@ export const searchSell = jsonField => dispatch => {
 export const getSellById = id => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .get(`/sells/get_one/${id}`)
+    .get(`/sales/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response);
@@ -70,44 +70,12 @@ export const addNewSell = (
 ) => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .post("/sells/add", newSellData)
+    .post("/sales/add", newSellData)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response);
       dispatch(clearErrors());
       history.push(`${redirect_url_base}/${response.id}`);
-    })
-    .catch(err => handleError(err, dispatch, SELL_END_LOADING));
-};
-
-export const updateSellById = (id, newSellData) => dispatch => {
-  dispatchSellLoading(dispatch);
-  axios
-    .put(`/sells/update/${id}`, newSellData)
-    .then(res => {
-      const response = res.data;
-      configUserFromResponse(response);
-      dispatch({
-        type: GET_SELL,
-        payload: response.data
-      });
-      dispatch(clearErrors());
-    })
-    .catch(err => handleError(err, dispatch, SELL_END_LOADING));
-};
-
-export const deleteSellById = (id, history, redirect_url) => dispatch => {
-  dispatchSellLoading(dispatch);
-  axios
-    .delete(`/sells/delete/${id}`)
-    .then(res => {
-      const response = res.data;
-      configUserFromResponse(response);
-      dispatch({
-        type: GET_SELL,
-        payload: {}
-      });
-      history.push(redirect_url);
     })
     .catch(err => handleError(err, dispatch, SELL_END_LOADING));
 };
