@@ -4,7 +4,7 @@ import Moment from 'react-moment';
 
 export default function OrderCard(props) {
   const {
-    order: { id, codigo, nombre, fecha_creado, local }
+    order: { id, codigo, nombre, fecha_creado, local_solicitado }
   } = props;
   return (
     <div className='card hoverable'>
@@ -15,7 +15,7 @@ export default function OrderCard(props) {
             Fecha de creacion:{' '}
             <Moment format='YYYY/MM/DD' date={fecha_creado} />{' '}
           </span>
-          <span className='d-block'>Pedido para {local}</span>
+          <span className='d-block'>Pedido para {local_solicitado.nombre}</span>
         </div>
       </Link>
     </div>

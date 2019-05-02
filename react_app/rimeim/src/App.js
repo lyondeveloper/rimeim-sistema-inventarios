@@ -34,6 +34,7 @@ import SearchDevolution from './components/pages/devolutions/SearchDevolution';
 import Orders from './components/pages/orders/Orders';
 import Order from './components/pages/orders/Order';
 import NewOrder from './components/pages/orders/NewOrder';
+import EditOrder from './components/pages/orders/EditOrder';
 import SearchOrder from './components/pages/orders/SearchOrder';
 
 // Products
@@ -167,6 +168,13 @@ class App extends Component {
             </Switch>
             <Switch>
               <PrivateRoute exact path='/nuevo_pedido' component={NewOrder} />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path='/editar_pedido/:id'
+                component={EditOrder}
+              />
             </Switch>
             <Switch>
               <PrivateRoute

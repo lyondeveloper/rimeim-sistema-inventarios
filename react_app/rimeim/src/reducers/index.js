@@ -9,7 +9,6 @@ import clientReducer from './clientReducer';
 import providerReducer from './providerReducer';
 import sellReducer from './sellReducer';
 import orderReducer from './orderReducer';
-
 import errorReducer from './errorReducer';
 
 export default combineReducers({

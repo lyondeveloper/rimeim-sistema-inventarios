@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import uuid from 'uuid';
+import Moment from 'react-moment';
 
 import {
   configMaterialComponents,
@@ -7,53 +10,42 @@ import {
 } from '../../../utils/MaterialFunctions';
 
 import NewNavbar from '../../layout/NewNavbar';
+import ConfirmationModal from '../../layout/modals/ConfirmationModal';
 import TextInputField from '../../common/TextInputField';
 
-class Order extends Component {
-  state = {
-    codigo: '',
-    ubicacion: '',
-    proveedor: ''
-  };
+import { getOrder, deleteOrder } from '../../../actions/orderActions';
+import Spinner from '../../common/Spinner';
 
+class Order extends Component {
   componentWillMount() {
     removeMaterialComponents();
   }
 
   componentDidMount() {
     configMaterialComponents();
+    this.props.getOrder(this.props.match.params.id);
   }
+
+  onConfirmDeleteOrder = () => {
+    this.props.deleteOrder(
+      this.props.match.params.id,
+      this.props.history,
+      '/pedidos'
+    );
+  };
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { codigo, ubicacion, proveedor } = this.state;
-    return (
-      <React.Fragment>
-        <NewNavbar active_nav='PEDIDOS'>
-          <div className='nav-wrapper'>
-            <a href='#!' className='brand-logo'>
-              Pedido: #{codigo}
-            </a>
-            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
-              <i className='material-icons'>menu</i>
-            </a>
-            <ul className='right'>
-              <li>
-                <a
-                  href='nuevo_pedido.html'
-                  className='tooltipped'
-                  data-position='left'
-                  data-tooltip='Editar'
-                >
-                  <i className='material-icons'>edit</i>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </NewNavbar>
+    const { order, loading } = this.props.orders;
 
-        <main>
+    let orderContent;
+
+    if (loading) {
+      orderContent = <Spinner fullWidth />;
+    } else {
+      if (Object.keys(order).length > 0) {
+        orderContent = (
           <div className='row'>
             <div className='col s12'>
               <div className='card'>
@@ -64,8 +56,8 @@ class Order extends Component {
                       id='codigo'
                       label='Codigo de pedido'
                       onchange={this.onChangeTextInput}
-                      value={codigo}
-                      active_label={codigo ? true : false}
+                      value={order.codigo}
+                      active_label={true}
                     />
                   </div>
 
@@ -74,53 +66,32 @@ class Order extends Component {
                       <table className='table-bordered striped'>
                         <thead>
                           <tr>
-                            <th>Codigo</th>
-                            <th>Descripcion</th>
+                            <th>Nombre</th>
+                            <th>Costo</th>
                             <th>Cantidad</th>
                           </tr>
                         </thead>
 
                         <tbody>
-                          <tr>
-                            <td />
-                            <td />
-                            <td />
-                          </tr>
-                          <tr>
-                            <td />
-                            <td />
-                            <td />
-                          </tr>
-                          <tr>
-                            <td />
-                            <td />
-                            <td />
-                          </tr>
-                          <tr>
-                            <td />
-                            <td />
-                            <td />
-                          </tr>
-                          <tr>
-                            <td />
-                            <td />
-                            <td />
-                          </tr>
-                          <tr>
-                            <td />
-                            <td />
-                            <td />
-                          </tr>
-                          <tr>
-                            <td />
-                            <td />
-                            <td />
-                          </tr>
-                          <tr>
-                            <td />
-                            <td />
-                            <td />
-                          </tr>
+                          {order.productos.length > 0 ? (
+                            order.productos.map((product, i) =>
+                              product.eliminado ? (
+                                ''
+                              ) : (
+                                <tr key={uuid()}>
+                                  <td>{product.nombre}</td>
+                                  <td>{product.costo}</td>
+                                  <td> {product.cantidad} </td>
+                                </tr>
+                              )
+                            )
+                          ) : (
+                            <tr>
+                              <td />
+                              <td />
+                              <td />
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
@@ -129,32 +100,95 @@ class Order extends Component {
                   <div className='row'>
                     <TextInputField
                       input_size='s12'
-                      id='ubicacion'
-                      label='Ubicacion'
+                      id='local'
+                      label='Local'
                       onchange={this.onChangeTextInput}
-                      value={ubicacion}
-                      active_label={ubicacion ? true : false}
+                      value={order.local_solicitado.nombre}
+                      active_label={true}
                     />
                   </div>
+
+                  {order.es_compra ? (
+                    <div className='row'>
+                      <TextInputField
+                        input_size='s12'
+                        id='proveedor'
+                        label='Proveedor'
+                        onchange={this.onChangeTextInput}
+                        value={order.proveedor}
+                        active_label={true}
+                      />
+                    </div>
+                  ) : (
+                    ''
+                  )}
 
                   <div className='row'>
                     <TextInputField
                       input_size='s12'
-                      id='proveedor'
-                      label='Proveedor'
+                      id='fecha_prevista_entrega'
+                      label='Fecha de Entrega de Pedido'
                       onchange={this.onChangeTextInput}
-                      value={proveedor}
-                      active_label={proveedor ? true : false}
+                      value={order.fecha_prevista_entrega}
+                      active_label={true}
                     />
                   </div>
+                  <button
+                    className='btn red darken-3 modal-trigger'
+                    data-target='modal_confirmar_evento'
+                  >
+                    Eliminar
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        </main>
+        );
+      }
+    }
+
+    return (
+      <React.Fragment>
+        <NewNavbar active_nav='PEDIDOS'>
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
+              Pedido: #{order.codigo}
+            </a>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
+            </a>
+            <ul className='right'>
+              <li>
+                <Link
+                  to={`/editar_pedido/${this.props.match.params.id}`}
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Editar'
+                >
+                  <i className='material-icons'>edit</i>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </NewNavbar>
+
+        <main>{orderContent}</main>
+
+        <ConfirmationModal
+          title='Eliminar pedido'
+          message='Esta seguro de que quiere eliminar este pedido? No se podra revertir la operacion'
+          onAccept={this.onConfirmDeleteOrder}
+        />
       </React.Fragment>
     );
   }
 }
 
-export default Order;
+const mapStateToProps = state => ({
+  orders: state.order
+});
+
+export default connect(
+  mapStateToProps,
+  { getOrder, deleteOrder }
+)(Order);
