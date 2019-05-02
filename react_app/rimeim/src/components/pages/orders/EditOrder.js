@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import NewNavbar from '../../layout/NewNavbar';
@@ -9,22 +10,24 @@ import {
   configSelectInputFields
 } from '../../../utils/MaterialFunctions';
 
+import Spinner from '../../common/Spinner';
 import TextInputField from '../../common/TextInputField';
 import SelectInputField from '../../common/SelectInputField';
 import SearchProductLocal from './SearchProductLocal';
 import SearchProductProvider from './SearchProductProvider';
 
 import { getLocals } from '../../../actions/LocalActions';
-import { createOrder } from '../../../actions/orderActions';
+import { editOrder, getOrder } from '../../../actions/orderActions';
 
-class NewOrder extends Component {
+import isEmpty from '../../../actions/isEmpty';
+
+class EditOrder extends Component {
   constructor(props) {
     super(props);
     this.state = {
       codigo: '',
       fecha_entrega: '',
-      local: '',
-      id_local: '',
+      local: {},
       productos: [],
       providerMode: false,
       needs_config_selects: false,
@@ -33,6 +36,7 @@ class NewOrder extends Component {
 
     this.onChangeTextInput = this.onChangeTextInput.bind(this);
     this.onProviderModeChange = this.onProviderModeChange.bind(this);
+    this.onReceiveProductData = this.onReceiveProductData.bind(this);
     this.onSelectLocal = this.onSelectLocal.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -44,6 +48,7 @@ class NewOrder extends Component {
   componentDidMount() {
     configMaterialComponents();
     this.props.getLocals();
+    this.props.getOrder(this.props.match.params.id);
   }
 
   componentDidUpdate() {
@@ -56,6 +61,8 @@ class NewOrder extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { order } = this.props.orders;
+
     if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors
@@ -68,6 +75,33 @@ class NewOrder extends Component {
       this.setState({
         needs_config_selects: true,
         searching: false
+      });
+    }
+
+    if (nextProps.orders.orders) {
+      const { orders } = nextProps.orders;
+      orders.forEach(order => (order.disabled = false));
+      this.setState({
+        needs_config_selects: true,
+        searching: false
+      });
+    }
+
+    if (order) {
+      order.codigo = !isEmpty(order.codigo) ? order.codigo : '';
+      order.local_solicitado = !isEmpty(order.local_solicitado)
+        ? order.local_solicitado
+        : {};
+      order.fecha_entrega = !isEmpty(order.fecha_entrega)
+        ? order.fecha_entrega
+        : '';
+      order.productos = !isEmpty(order.productos) ? order.productos : [];
+
+      this.setState({
+        codigo: order.codigo,
+        local: order.local_solicitado,
+        fecha_entrega: order.fecha_entrega,
+        productos: order.productos
       });
     }
   }
@@ -86,16 +120,23 @@ class NewOrder extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  onReceiveProductData(productos) {
-    this.setState({
-      productos
+  //A la hora de recibir la data de productos del componente hijo, este sera mapeado y agregado a nuestro array de productos
+  onReceiveProductData(newProducts) {
+    const { productos } = this.state;
+
+    newProducts.map(product => {
+      productos.push(product);
     });
+
+    this.setState({ productos });
   }
 
   onSubmit(e) {
     e.preventDefault();
 
     const { codigo, fecha_entrega, productos, local } = this.state;
+
+    const { id } = this.props.match.params;
 
     const orderData = {
       id_local_solicitado: local,
@@ -104,14 +145,21 @@ class NewOrder extends Component {
       productos
     };
 
-    this.props.createOrder(orderData, this.props.history);
+    this.props.editOrder(id, orderData, this.props.history);
   }
 
   render() {
-    const { codigo, providerMode, fecha_entrega, local } = this.state;
+    const {
+      codigo,
+      providerMode,
+      fecha_entrega,
+      local,
+      productos
+    } = this.state;
 
     const { locals } = this.props;
 
+    //Mapeando las opciones de locales para desplegarlas en el SelectInputField
     const localOptions = [];
 
     locals.locals.map(local => {
@@ -126,7 +174,7 @@ class NewOrder extends Component {
         <NewNavbar active_nav={'PEDIDOS'}>
           <div className='nav-wrapper'>
             <a href='#!' className='brand-logo'>
-              Nuevo Pedido
+              Editar Pedido
             </a>
             <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
               <i className='material-icons'>menu</i>
@@ -158,6 +206,8 @@ class NewOrder extends Component {
         </NewNavbar>
 
         <main>
+          {this.props.orders.loading && <Spinner fullWidth />}
+
           <div className='row'>
             <div className='col s12'>
               <div className='card'>
@@ -174,6 +224,7 @@ class NewOrder extends Component {
                   </div>
                   <form onSubmit={this.onSubmit}>
                     <div className='row'>
+                      {/* Si modo proveedor esta activo, mostrara el buscador de productos de proveedor, si no, usara el del local */}
                       {providerMode ? (
                         <SearchProductProvider />
                       ) : (
@@ -184,14 +235,13 @@ class NewOrder extends Component {
                               id='local'
                               label='Local'
                               onchange={this.onChangeTextInput}
-                              value={local}
+                              value={local.id}
                               options={localOptions}
                             />
                           </div>
                           <SearchProductLocal
-                            onPassProductsData={this.onReceiveProductData.bind(
-                              this
-                            )}
+                            onPassProductsData={this.onReceiveProductData}
+                            productsProps={productos}
                           />
                         </React.Fragment>
                       )}
@@ -204,6 +254,7 @@ class NewOrder extends Component {
                         label='Codigo de pedido'
                         onchange={this.onChangeTextInput}
                         value={codigo}
+                        active_label={codigo ? true : false}
                       />
                     </div>
 
@@ -241,5 +292,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getLocals, createOrder }
-)(NewOrder);
+  { editOrder, getOrder, getLocals }
+)(withRouter(EditOrder));

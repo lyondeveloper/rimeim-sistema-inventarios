@@ -29,6 +29,7 @@ class SearchProductLocal extends Component {
       this.setState({
         errors: nextProps.errors
       });
+
     if (nextProps.products.products) {
       const { products } = nextProps.products;
       products.forEach(product => (product.disabled = false));
@@ -39,6 +40,7 @@ class SearchProductLocal extends Component {
     }
   }
 
+  //Metodo para escribir un producto y despues de un retraso, empiece a buscar el producto
   onChangeSearchProductInput = e => {
     if (this.state.typingTimeout) {
       this.setState({ searching: true });
@@ -58,6 +60,7 @@ class SearchProductLocal extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+  //Metodo para seleccionar producto con checkbox
   onSelectProduct = producto => {
     let selectedProduct = producto;
     // console.log(product);
@@ -93,6 +96,7 @@ class SearchProductLocal extends Component {
     this.setState({ productos });
   };
 
+  //Metodo para que cuando demos click a agregar productos, el state este limpio
   onAddProductClick = e => {
     e.preventDefault();
 
@@ -111,33 +115,51 @@ class SearchProductLocal extends Component {
     });
   };
 
+  //Metodo para agregar productos a nuestro array
   onAddProduct = e => {
     e.preventDefault();
 
     const { productos, cantidad, producto_seleccionado } = this.state;
 
-    // const selecteds = productos.filter(p => p.seleccionado === true);
+    const { productsProps } = this.props;
 
-    // selecteds.forEach(product => {
-    // });
-    const productData = {
-      id_producto: producto_seleccionado.id,
-      cantidad,
-      costo: producto_seleccionado.precio,
-      nombre: producto_seleccionado.nombre,
-      es_compra: false
-    };
+    //Chequeando cual array estamos trabajando, si es de props, estamos en EditarPedido usando el array que nos sale de la API para agregar nuevos productos, si no, estamos en NuevoPedido usando el array del state normal
+    if (productsProps !== undefined) {
+      const productPropsData = {
+        id_producto: producto_seleccionado.id,
+        cantidad,
+        costo: producto_seleccionado.precio,
+        nombre: producto_seleccionado.nombre,
+        es_compra: false
+      };
 
-    productos.push(productData);
+      productsProps.push(productPropsData);
+    } else {
+      const productData = {
+        id_producto: producto_seleccionado.id,
+        cantidad,
+        costo: producto_seleccionado.precio,
+        nombre: producto_seleccionado.nombre,
+        es_compra: false
+      };
 
-    this.props.onPassProductsData(productos);
+      productos.push(productData);
+
+      //Pasamos datos nuevos usando metodo del componente padre
+      this.props.onPassProductsData(productos);
+    }
 
     this.setState({
       producto_seleccionado: {},
       cantidad: ''
     });
+    // const selecteds = productos.filter(p => p.seleccionado === true);
+
+    // selecteds.forEach(product => {
+    // });
   };
 
+  //Metodo para que cuando le demos click a editar un producto, se coloquen en los TextInputField la data
   onEditProductClick = producto => {
     const { products } = this.props.products;
 
@@ -153,6 +175,7 @@ class SearchProductLocal extends Component {
     });
   };
 
+  //Metodo para editar productos en nuestro array
   onEditProduct = () => {
     const {
       productos,
@@ -161,13 +184,36 @@ class SearchProductLocal extends Component {
       productPosition
     } = this.state;
 
-    const productIndex = productos.findIndex(p => p.id === productPosition);
+    const { productsProps } = this.props;
 
-    productos[productIndex].id_producto = producto_seleccionado.id;
-    productos[productIndex].costo = producto_seleccionado.precio;
-    productos[productIndex].nombre = producto_seleccionado.nombre;
-    productos[productIndex].cantidad = cantidad;
-    productos[productIndex].actualizado = true;
+    //Chequeando cual array estamos trabajando, si es de props, estamos en EditarPedido usando el array que nos sale de la API para editar productos existentes, si no, estamos en NuevoPedido usando el array del state normal
+    if (productsProps !== undefined) {
+      //Definiendo la posicion del objeto que editaremos
+      const productIndex = productsProps.findIndex(
+        p => p.id === productPosition
+      );
+
+      //Cambiandoles sus valores con el del nuevo producto seleccionado
+      productsProps[productIndex].id_producto = producto_seleccionado.id;
+      productsProps[productIndex].costo = producto_seleccionado.precio;
+      productsProps[productIndex].nombre = producto_seleccionado.nombre;
+      productsProps[productIndex].cantidad = cantidad;
+      productsProps[productIndex].actualizado = true;
+    } else {
+      //Definiendo la posicion del objeto que editaremos
+      const productIndex = productos.findIndex(
+        p => p.id_producto === productPosition
+      );
+
+      //Cambiandoles sus valores con el del nuevo producto seleccionado
+      productos[productIndex].id_producto = producto_seleccionado.id;
+      productos[productIndex].costo = producto_seleccionado.precio;
+      productos[productIndex].nombre = producto_seleccionado.nombre;
+      productos[productIndex].cantidad = cantidad;
+      productos[productIndex].actualizado = true;
+
+      this.props.onPassProductsData(productos);
+    }
 
     this.setState({
       producto_seleccionado: {},
@@ -176,16 +222,28 @@ class SearchProductLocal extends Component {
     });
   };
 
+  //Metodo para eliminar productos del array
   onDeleteProduct = producto => {
     const { productos } = this.state;
 
-    const productIndex = productos.findIndex(
-      p => p.id_producto === producto.id_producto
-    );
+    const { productsProps } = this.props;
 
-    delete productos[productIndex].actualizado;
+    //Chequeando cual array estamos trabajando, si es de props, estamos en EditarPedido usando el array que nos sale de la API para eliminar productos, si no, estamos en NuevoPedido usando el array del state normal
+    if (productsProps !== undefined) {
+      //Definimos posicion del producto a eliminar
+      const productPropsIndex = productsProps.findIndex(
+        p => p.id === producto.id
+      );
 
-    productos[productIndex].eliminado = true;
+      productsProps[productPropsIndex].eliminado = true;
+    } else {
+      //Definimos posicion del producto a eliminar
+      const productIndex = productos.findIndex(
+        p => p.id_producto === producto.id
+      );
+
+      productos[productIndex].eliminado = true;
+    }
 
     this.setState({
       id_producto: '',
@@ -194,12 +252,13 @@ class SearchProductLocal extends Component {
   };
 
   render() {
-    const { productos, searching, cantidad, field, local } = this.state;
+    const { productos, searching, cantidad, field } = this.state;
 
-    const { products } = this.props;
+    const { products, productsProps } = this.props;
 
     let searchResult;
 
+    //Contenido del buscador, si esta en modo searching o en loading, mostrara spinner y cuando ya llegue la data, la mostrara o no dependiendo de cual haya sido el resultado
     if (searching || products.loading) {
       searchResult = <Spinner fullWidth />;
     } else {
@@ -232,31 +291,69 @@ class SearchProductLocal extends Component {
       );
     }
 
-    return (
-      <React.Fragment>
-        <div className='d-block center'>
-          <h5>Agregar Productos</h5>
-          <button
-            className='modal-trigger btn-floating'
-            data-target='modal_agregar_productos'
-            onClick={this.onAddProductClick}
-          >
-            <i className='material-icons'>add</i>
-          </button>
-        </div>
+    let productsContent;
 
-        {productos.length > 0 ? (
+    if (productos.length > 0) {
+      productsContent = (
+        <table className='striped table-bordered mt-1'>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Cantidad</th>
+              <th>Costo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productos.map((p, i) =>
+              p.eliminado ? (
+                ''
+              ) : (
+                <tr key={uuid()}>
+                  <td>{p.id_producto}</td>
+                  <td>{p.nombre}</td>
+                  <td>{p.cantidad}</td>
+                  <td>{p.costo}</td>
+                  <td>
+                    <i
+                      onClick={this.onDeleteProduct.bind(this, p)}
+                      className='material-icons cursor-pointer'
+                    >
+                      delete_sweep
+                    </i>
+                    <i
+                      onClick={this.onEditProductClick.bind(this, p)}
+                      data-target='modal_agregar_productos'
+                      className='material-icons cursor-pointer modal-trigger'
+                    >
+                      create
+                    </i>
+                  </td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      );
+
+      //Chequeamos si hay productos en los props del componente
+    } else if (productsProps !== undefined) {
+      //Si es cierto y su length es mayor a 0, desplegaremos tabla con datos
+      if (productsProps.length > 0) {
+        productsContent = (
           <table className='striped table-bordered mt-1'>
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Cantidad</th>
+                <th>Costo</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {productos.map((p, i) =>
+              {productsProps.map((p, i) =>
                 p.eliminado ? (
                   ''
                 ) : (
@@ -264,6 +361,7 @@ class SearchProductLocal extends Component {
                     <td>{p.id_producto}</td>
                     <td>{p.nombre}</td>
                     <td>{p.cantidad}</td>
+                    <td>{p.costo}</td>
                     <td>
                       <i
                         onClick={this.onDeleteProduct.bind(this, p)}
@@ -284,9 +382,27 @@ class SearchProductLocal extends Component {
               )}
             </tbody>
           </table>
-        ) : (
-          ''
-        )}
+        );
+      } else {
+        //Si no, no mostraremos nada
+        productsContent = '';
+      }
+    } else {
+      productsContent = '';
+    }
+
+    return (
+      <React.Fragment>
+        <div className='d-block center'>
+          <h5>Agregar Productos</h5>
+          <button
+            className='modal-trigger btn-floating'
+            data-target='modal_agregar_productos'
+            onClick={this.onAddProductClick}
+          >
+            <i className='material-icons'>add</i>
+          </button>
+        </div>
 
         <div className='modal' id='modal_agregar_productos'>
           <div className='modal-content'>
@@ -325,6 +441,7 @@ class SearchProductLocal extends Component {
             </a>
           </div>
         </div>
+        {productsContent}
       </React.Fragment>
     );
   }

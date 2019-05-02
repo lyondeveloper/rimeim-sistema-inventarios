@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import { combineReducers } from "redux";
-import userReducer from "./userReducer";
-import localReducer from "./localReducer";
-import employeReducer from "./employeReducer";
-import productReducer from "./productReducer";
-import brandReducer from "./brandReducer";
-import vehicleTypeReducer from "./vehicleType";
-import clientReducer from "./clientReducer";
-import providerReducer from "./providerReducer";
-import sellReducer from "./sellReducer";
-=======
 import { combineReducers } from 'redux';
 import userReducer from './userReducer';
 import localReducer from './localReducer';
@@ -19,10 +7,9 @@ import brandReducer from './brandReducer';
 import vehicleTypeReducer from './vehicleType';
 import clientReducer from './clientReducer';
 import providerReducer from './providerReducer';
+import sellReducer from './sellReducer';
 import orderReducer from './orderReducer';
->>>>>>> ffe99aa19c602788699b84f32820e697346cc51c
-
-import errorReducer from "./errorReducer";
+import errorReducer from './errorReducer';
 
 export default combineReducers({
   user: userReducer,
@@ -33,10 +20,7 @@ export default combineReducers({
   vehicle: vehicleTypeReducer,
   client: clientReducer,
   provider: providerReducer,
-<<<<<<< HEAD
   sell: sellReducer,
-=======
   order: orderReducer,
->>>>>>> ffe99aa19c602788699b84f32820e697346cc51c
   errors: errorReducer
 });
