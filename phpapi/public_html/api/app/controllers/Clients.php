@@ -265,9 +265,14 @@
             $this->response();
         }
 
-        public function search($field) {
-            $this->useGetRequest();
-            $clients = $this->clientModel->search($field);
+        public function search() {
+            $this->usePostRequest();
+            $data = getJsonData();
+            if (!isset($data->field) || 
+                !is_string($data->field)) {
+                $this->response(null, ERROR_PROCESS);
+            }
+            $clients = $this->clientModel->search($data->field);
             foreach($clients as &$client) {
                 $client = $this->parse_client_to_send($client);
             }

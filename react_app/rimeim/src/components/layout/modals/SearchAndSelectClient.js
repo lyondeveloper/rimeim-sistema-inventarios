@@ -82,6 +82,7 @@ class SearchAndSelectClient extends Component {
               <tr
                 key={uuid()}
                 onClick={this.onClickInClient.bind(this, client)}
+                className="cursor-pointer"
               >
                 <td>{client.id}</td>
                 <td>{client.nombre}</td>

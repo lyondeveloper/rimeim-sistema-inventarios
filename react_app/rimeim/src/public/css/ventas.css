@@ -16,6 +16,10 @@
   background-color: #bbdefb !important;
 }
 
+.active-tr-sell-error {
+  background-color: #ffcdd2 !important;
+}
+
 .venta-productos {
   margin-bottom: 0;
 }

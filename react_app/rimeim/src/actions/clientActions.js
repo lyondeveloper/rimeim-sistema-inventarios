@@ -69,10 +69,10 @@ export const editClient = (data, id, history, newUrl) => dispatch => {
     })
     .catch(err => handleError(err, dispatch));
 };
-export const searchClient = data => dispatch => {
+export const searchClient = searchJson => dispatch => {
   dispatch(clientLoading());
   axios
-    .get(`/clients/search/${data}`)
+    .post(`/clients/search`, searchJson)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

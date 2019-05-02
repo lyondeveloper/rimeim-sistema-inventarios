@@ -40,6 +40,13 @@
             return $this->convert_product_bool_values($this->db->single());
         }
 
+        public function get_by_codigo_barra_and_local($codigo_barra, $id_local) {
+            $this->db->query('call proc_get_producto_minified_by_codigo_barra_and_local(:p_codigo_barra, :p_id_local);');
+            $this->db->bind(':p_codigo_barra', $codigo_barra);
+            $this->db->bind(':p_id_local', $id_local);
+            return $this->db->single();
+        }
+
         public function add($params) {
             $this->db->query('call proc_add_producto(:p_id_tipo_vehiculo,:p_id_marca,:p_codigo_barra,:p_nombre,:p_descripcion,:p_raro,:p_precio,:p_existencia,:p_cantidad_minima);');
             $this->db->bind(':p_id_tipo_vehiculo',$params->id_tipo_vehiculo);

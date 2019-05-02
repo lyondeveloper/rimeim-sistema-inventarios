@@ -11,8 +11,11 @@ import SellColumnsDetails from '../../common/SellColumnsDetails';
 // Functions
 import {
   configMaterialComponents,
-  removeMaterialComponents
+  removeMaterialComponents,
+  getModalInstanceById
 } from '../../../utils/MaterialFunctions';
+
+import { getProductByCBForSell } from '../../../actions/productActions';
 
 // Custom css
 import '../../../public/css/ventas.css';
@@ -23,6 +26,7 @@ import SellConfigurationModal from '../../layout/modals/SellConfiguration';
 
 let current_row_changed = true;
 let current_row_index = 0;
+let sell_is_in_product_request = false;
 
 class NewSell extends Component {
   state = {
@@ -32,8 +36,14 @@ class NewSell extends Component {
     errors: {},
     products: [],
     currentClient: {},
-    initial_product_rows: 20
+    count_of_products_to_add: 20,
+    count_of_rows_to_add: 10,
+    count_of_minimum_rows: 2
   };
+
+  componentWillUnmount() {
+    document.onkeydown = null;
+  }
 
   componentWillMount() {
     removeMaterialComponents();
@@ -43,8 +53,14 @@ class NewSell extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-    const { products, initial_product_rows } = this.state;
-    for (let x = 0; x < initial_product_rows; x++) {
+
+    document.onkeydown = this.onKeyDownInAllPage;
+    this.addFreeRowsToState(this.state.count_of_products_to_add);
+  }
+
+  addFreeRowsToState = number_of_rows => {
+    const { products } = this.state;
+    for (let x = 0; x < number_of_rows; x++) {
       products.push({
         local_id: uuid(),
         id_producto: '',
@@ -55,11 +71,52 @@ class NewSell extends Component {
       });
     }
     this.setState({ products });
-  }
+  };
+
+  onKeyDownInAllPage = evt => {
+    evt = evt || window.event;
+    if (evt.keyCode === 113) {
+      getModalInstanceById('search_product_and_show_info').open();
+    }
+  };
 
   componentDidUpdate() {
-    if (current_row_changed) {
+    if (this.getCountOfTotalRowsFree() === this.state.count_of_minimum_rows) {
+      return this.addFreeRowsToState(this.state.count_of_rows_to_add);
+    }
+    if (current_row_changed && !sell_is_in_product_request) {
       this.setAutomaticInputRowFocus();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.product.product &&
+      !nextProps.product.loading &&
+      sell_is_in_product_request
+    ) {
+      const { product } = nextProps.product;
+      const { products } = this.state;
+      if (product && Object.keys(product).length > 0) {
+        products[current_row_index] = {
+          ...products[current_row_index],
+          id_producto: product.id,
+          codigo_barra: product.codigo_barra,
+          nombre: `${product.nombre} - ${product.marca_nombre}`,
+          cantidad: 1,
+          precio: product.precio
+        };
+        current_row_changed = true;
+        this.setState({
+          products
+        });
+      } else {
+        setTimeout(() => {
+          this.setInputRowFocus(current_row_index);
+          this.setBgErrorColorRowCurrentRow();
+        }, 1000);
+      }
+      sell_is_in_product_request = false;
     }
   }
 
@@ -74,21 +131,53 @@ class NewSell extends Component {
     this.onHideModal();
   };
 
+  getCountOfTotalRowsFree = () => {
+    return this.state.products.filter(prod => prod.id_producto === '').length;
+  };
+
   onInputKeyPress = (row_id, row_type, index, e) => {
+    if (sell_is_in_product_request) {
+      return;
+    }
+
     if (e.keyCode === 13) {
+      //Entar
       let newValue = document
         .getElementById(`${row_type}${row_id}`)
         .value.trim();
+
       const response = this.isValidNewInputValue(row_type, newValue);
       if (response.is_valid) {
         this.setValueToProductRow(row_type, index, `${response.value}`);
-        current_row_changed = true;
       } else {
         this.goBackToInputValue(row_type, row_id, index);
         this.setInputRowFocus(index);
       }
     } else if (e.keyCode === 27) {
+      // Escape
       this.goBackToInputValue(row_type, row_id, index);
+    } else if (e.keyCode === 46) {
+      // Delete
+      const { products } = this.state;
+      const currentProduct = products.find(prod => prod.local_id === row_id);
+      if (currentProduct.id_producto !== '') {
+        if (currentProduct) {
+          this.setState({
+            products: products.filter(prod => prod !== currentProduct)
+          });
+          current_row_changed = true;
+        }
+      }
+    } else if (e.keyCode === 17) {
+      // Control
+      return;
+    } else if (row_type === this.state.input_codigo_barra) {
+      let newValue = document
+        .getElementById(`${row_type}${row_id}`)
+        .value.trim();
+      if (newValue.length >= 7) {
+        this.setValueToProductRow(row_type, index, newValue);
+      }
     }
   };
 
@@ -151,34 +240,42 @@ class NewSell extends Component {
   };
 
   setValueToProductRow = (row_type, index, new_value) => {
-    const { products } = this.state;
+    const { products, currentClient } = this.state;
     switch (row_type) {
       case this.state.input_codigo_barra:
+        sell_is_in_product_request = true;
         products[index].codigo_barra = new_value;
-        products[index].cantidad = '1';
-        products[index].precio = '1000';
+        this.props.getProductByCBForSell({
+          codigo_barra: new_value,
+          id_ciente: currentClient.id
+        });
         break;
 
       case this.state.input_cantidad:
         products[index].cantidad = new_value;
+        current_row_changed = true;
         break;
 
       case this.state.input_precio:
         products[index].precio = new_value;
+        current_row_changed = true;
         break;
 
       default:
         break;
     }
+
+    //if (!sell_is_in_product_request) {
     this.setState({
       products
     });
+    //}
   };
 
   setAutomaticInputRowFocus = () => {
     let currentIndex = 0;
     for (let x = 0; x < this.state.products.length; x++) {
-      if (this.state.products[x].codigo_barra.trim() === '') {
+      if (this.state.products[x].id_producto === '') {
         currentIndex = x;
         break;
       }
@@ -202,13 +299,34 @@ class NewSell extends Component {
   };
 
   removeBgColorForCurrentRow = () => {
-    const row_id = this.state.products[current_row_index].local_id;
-    document.getElementById(`trow${row_id}`).classList.remove('active-tr-sell');
+    const currentProduct = this.state.products[current_row_index];
+    if (currentProduct) {
+      const row_id = currentProduct.local_id;
+      document
+        .getElementById(`trow${row_id}`)
+        .classList.remove('active-tr-sell');
+    }
   };
 
   setBgColorForCurrentRow = () => {
-    const row_id = this.state.products[current_row_index].local_id;
-    document.getElementById(`trow${row_id}`).classList.add('active-tr-sell');
+    const currentProduct = this.state.products[current_row_index];
+    if (currentProduct) {
+      const row_id = currentProduct.local_id;
+      const tr_element = document.getElementById(`trow${row_id}`);
+      tr_element.classList.remove('active-tr-sell-error');
+      tr_element.classList.add('active-tr-sell');
+    }
+  };
+
+  setBgErrorColorRowCurrentRow = () => {
+    const currentProduct = this.state.products[current_row_index];
+    if (currentProduct) {
+      const row_id = currentProduct.local_id;
+      const tr_element = document.getElementById(`trow${row_id}`);
+      tr_element.classList.remove('active-tr-sell');
+      tr_element.classList.add('active-tr-sell-error');
+      setTimeout(() => this.setBgColorForCurrentRow(), 2000);
+    }
   };
 
   getTrCodeForProduct = (index, row_id, product) => {
@@ -221,7 +339,7 @@ class NewSell extends Component {
             type="text"
             id={`${input_codigo_barra}${row_id}`}
             className="special-input browser-default"
-            onKeyDown={this.onInputKeyPress.bind(
+            onKeyUp={this.onInputKeyPress.bind(
               this,
               row_id,
               input_codigo_barra,
@@ -246,36 +364,22 @@ class NewSell extends Component {
           />
         </td>
 
-        <td className="td-with-input">
-          <input
-            id={`${input_precio}${row_id}`}
-            type="text"
-            className="special-input browser-default"
-            onKeyDown={this.onInputKeyPress.bind(
-              this,
-              row_id,
-              input_precio,
-              index
-            )}
-            defaultValue={precio}
-          />
-        </td>
+        <td className="td-with-input">{precio}</td>
       </tr>
     );
   };
 
-  getSumValues = () => {
+  getValuesForProduct = product => {
     let subtotal = 0;
     let impuesto = 15;
-    for (let x = 0; x < this.state.products.length; x++) {
-      const product = this.state.products[x];
-      const cantidad = parseInt(product.cantidad);
-      const precio = parseFloat(product.precio);
 
-      if (!isNaN(cantidad) && cantidad >= 0 && !isNaN(precio) && precio >= 0) {
-        subtotal += cantidad * precio;
-      }
+    const cantidad = parseInt(product.cantidad);
+    const precio = parseFloat(product.precio);
+
+    if (!isNaN(cantidad) && cantidad >= 0 && !isNaN(precio) && precio >= 0) {
+      subtotal += cantidad * precio;
     }
+
     impuesto = subtotal * 0.15;
     const total = subtotal + impuesto;
     return { subtotal, impuesto, total };
@@ -283,9 +387,17 @@ class NewSell extends Component {
 
   render() {
     const { products, currentClient } = this.state;
-    const sumVales = this.getSumValues();
+    const sumVales = {
+      subtotal: 0,
+      impuesto: 0,
+      total: 0
+    };
 
     let rowsProduct = products.map((product, index) => {
+      const valuesToSum = this.getValuesForProduct(product);
+      sumVales.subtotal += valuesToSum.subtotal;
+      sumVales.impuesto += valuesToSum.impuesto;
+      sumVales.total += valuesToSum.total;
       return this.getTrCodeForProduct(index, product.local_id, product);
     });
 
@@ -395,6 +507,7 @@ class NewSell extends Component {
         <SellConfigurationModal
           id_search_client_modal="modal_seleccionar_cliente"
           currentClient={currentClient}
+          onHide={this.onHideModal}
         />
       </React.Fragment>
     );
@@ -404,16 +517,15 @@ class NewSell extends Component {
 NewSell.propTypes = {
   errors: PropTypes.object.isRequired,
   product: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired
+  getProductByCBForSell: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   errors: state.errors,
-  product: state.product,
-  client: state.client
+  product: state.product
 });
 
 export default connect(
   mapStateToProps,
-  {}
+  { getProductByCBForSell }
 )(NewSell);

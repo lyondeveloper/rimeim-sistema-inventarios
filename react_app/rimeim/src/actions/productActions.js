@@ -61,6 +61,27 @@ export const getProductById = id => dispatch => {
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };
 
+export const getProductByCBForSell = productData => dispatch => {
+  dispatch(productLoadingObject());
+  axios
+    .post('/products/get_one_fsell', productData)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_PRODUCT,
+        payload: response.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_PRODUCT,
+        payload: {}
+      });
+      handleError(err, dispatch);
+    });
+};
+
 export const addNewProduct = (newProductData, history, new_url) => dispatch => {
   dispatch(productLoadingObject());
   axios

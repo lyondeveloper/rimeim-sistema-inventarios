@@ -81,7 +81,7 @@ end $$
 delimiter ;
 */
 
-/*
+
 drop procedure if exists `proc_get_pedidos`;
 delimiter $$
 create procedure proc_get_pedidos()
@@ -94,15 +94,16 @@ begin
             p.codigo,
             p.es_compra,
             p.recibido,
+            p.fecha_recibido,
             p.fecha_creado
     from tb_pedido p 
     where p.eliminado = false
     order by p.fecha_creado desc;
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists `proc_get_pedido_by_id`;
 delimiter $$
 create procedure proc_get_pedido_by_id(in p_id bigint)
@@ -117,6 +118,7 @@ begin
 				p.es_compra,
 				p.recibido,
 				p.fecha_creado,
+                p.fecha_recibido,
                 p.fecha_prevista_entrega
 		from tb_pedido p 
 		where p.eliminado = false
@@ -124,10 +126,10 @@ begin
     end if;
 end $$
 delimiter ;
-*/
 
 
-/*
+
+
 drop procedure if exists `proc_get_pedidos_by_local`;
 delimiter $$
 create procedure proc_get_pedidos_by_local(in p_id_local bigint)
@@ -139,6 +141,7 @@ begin
                 p.codigo,
                 p.es_compra,
                 p.recibido,
+                p.fecha_recibido,
                 p.fecha_creado
         from tb_pedido p 
         where p.eliminado = false and
@@ -147,7 +150,7 @@ begin
     end if;
 end $$
 delimiter ;
-*/
+
 
 /*
 drop procedure if exists `proc_add_pedido`;
@@ -236,6 +239,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop procedure if exists proc_update_pedido_mark_received_by_id;
 delimiter $$
 create procedure proc_update_pedido_mark_received_by_id(in p_id bigint)
@@ -248,4 +252,4 @@ begin
     end if;
 end $$
 delimiter ;
-
+*/

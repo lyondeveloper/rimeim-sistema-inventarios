@@ -16,6 +16,13 @@ class SellConfiguration extends Component {
     }
   };
 
+  onCloseClick = () => {
+    this.closeCurrentModal();
+    if (this.props.onHide) {
+      this.props.onHide();
+    }
+  };
+
   render() {
     const { currentClient } = this.props;
 
@@ -25,7 +32,9 @@ class SellConfiguration extends Component {
       currentClientContent = (
         <div className="row">
           <div className="col s9">
-            <span>{currentClient.nombre}</span>
+            <h6>
+              {currentClient.nombre} - {currentClient.rtn}
+            </h6>
           </div>
           <div className="col s3">
             <button className="btn" onClick={this.onChangeCurrentClient}>
@@ -48,11 +57,11 @@ class SellConfiguration extends Component {
     return (
       <div className="modal" id="modal_sell_configuracion">
         <div className="modal-content">
-          <span>Cliente:</span>
+          <h5>Cliente</h5>
           {currentClientContent}
         </div>
         <div className="modal-footer">
-          <a href="#!" className="btn-flat" onClick={this.closeCurrentModal}>
+          <a href="#!" className="btn-flat" onClick={this.onCloseClick}>
             Cerrar
           </a>
         </div>
@@ -63,7 +72,8 @@ class SellConfiguration extends Component {
 
 SellConfiguration.propTypes = {
   id_search_client_modal: PropTypes.string,
-  currentClient: PropTypes.object.isRequired
+  currentClient: PropTypes.object.isRequired,
+  onHide: PropTypes.func
 };
 
 export default SellConfiguration;

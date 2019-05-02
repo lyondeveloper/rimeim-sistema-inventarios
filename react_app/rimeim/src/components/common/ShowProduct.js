@@ -37,6 +37,7 @@ class ShowProduct extends Component {
         imagenes
       } = product;
       let distribucionContent;
+      let imagesContent;
 
       if (distribucion) {
         distribucionContent = (
@@ -70,25 +71,24 @@ class ShowProduct extends Component {
           </div>
         );
       }
+      if (imagenes && imagenes.length > 0) {
+        imagesContent = (
+          <div className="w-100">
+            <div className="horizontal-scroll-container">
+              {imagenes.map(img => (
+                <div className="img-item" key={uuid()}>
+                  <img src={img.url} className="materialboxed adjust" alt="" />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
       productContent = (
         <div className="col s12">
           <div className="card">
             <div className="card-content">
-              {imagenes && imagenes.length > 0 && (
-                <div className="w-100">
-                  <div className="horizontal-scroll-container">
-                    {imagenes.map(img => (
-                      <div className="img-item" key={uuid()}>
-                        <img
-                          src={img.url}
-                          className="materialboxed adjust"
-                          alt=""
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {imagesContent}
 
               <table className="table-bordered">
                 <tbody>
@@ -122,25 +122,22 @@ class ShowProduct extends Component {
                       <td>{ubicacion}</td>
                     </tr>
                   )}
-                  {descripcion && (
+                  {descripcion && descripcion.trim() !== '' && (
                     <tr>
                       <td>Descripcion</td>
                       <td>{descripcion}</td>
                     </tr>
                   )}
-
                   <tr>
                     <td>Es raro</td>
                     <td>{raro ? 'Si' : 'No'}</td>
                   </tr>
-
                   {precio && (
                     <tr>
                       <td>Precio</td>
                       <td>{precio}</td>
                     </tr>
                   )}
-
                   <tr>
                     <td>Existecia</td>
                     <td>{existencia}</td>
