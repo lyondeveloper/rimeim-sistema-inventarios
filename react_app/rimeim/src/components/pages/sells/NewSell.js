@@ -1,124 +1,404 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import uuid from "uuid";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import uuid from 'uuid';
 
-import NewNavbar from "../../layout/NewNavbar";
+import NewNavbar from '../../layout/NewNavbar';
 
 // Custom components
-import SellColumnsDetails from "../../common/SellColumnsDetails";
+import SellColumnsDetails from '../../common/SellColumnsDetails';
 
-// Functions
 // Functions
 import {
   configMaterialComponents,
-  removeMaterialComponents
-} from "../../../utils/MaterialFunctions";
+  removeMaterialComponents,
+  getModalInstanceById
+} from '../../../utils/MaterialFunctions';
+
+import { getProductByCBForSell } from '../../../actions/productActions';
 
 // Custom css
-import "../../../public/css/ventas.css";
+import '../../../public/css/ventas.css';
 
-import SearchProductModal from "../../layout/modals/SearchProductAndShowInfo";
+import SearchProductModal from '../../layout/modals/SearchProductAndShowInfo';
+import SearchClientModal from '../../layout/modals/SearchAndSelectClient';
+import SellConfigurationModal from '../../layout/modals/SellConfiguration';
+
+let current_row_changed = true;
+let current_row_index = 0;
+let sell_is_in_product_request = false;
 
 class NewSell extends Component {
   state = {
-    input_codigo_barra: "inputcbr",
-    input_cantidad: "inputcant",
-    input_precio: "inputprec",
+    input_codigo_barra: 'inputcbr',
+    input_cantidad: 'inputcant',
+    input_precio: 'inputprec',
     errors: {},
-    products: [
-      {
-        codigo_barra: "",
-        cantidad: "1",
-        nombre: "Llanta",
-        precio: "100"
-      }
-    ],
-    products_count_to_add: 10,
-    subtotal: 0,
-    impuesto: 0,
-    total: 0
+    products: [],
+    currentClient: {},
+    count_of_products_to_add: 20,
+    count_of_rows_to_add: 10,
+    count_of_minimum_rows: 2
   };
+
+  componentWillUnmount() {
+    document.onkeydown = null;
+  }
 
   componentWillMount() {
     removeMaterialComponents();
+    current_row_index = 0;
+    current_row_changed = true;
   }
 
   componentDidMount() {
     configMaterialComponents();
+
+    document.onkeydown = this.onKeyDownInAllPage;
+    this.addFreeRowsToState(this.state.count_of_products_to_add);
   }
 
-  onInputKeyPress = (value, row_type, index, e) => {
-    if (e.keyCode === 13 || e.which === 13) {
-      console.log(value);
+  addFreeRowsToState = number_of_rows => {
+    const { products } = this.state;
+    for (let x = 0; x < number_of_rows; x++) {
+      products.push({
+        local_id: uuid(),
+        id_producto: '',
+        codigo_barra: '',
+        cantidad: '',
+        nombre: '',
+        precio: ''
+      });
+    }
+    this.setState({ products });
+  };
+
+  onKeyDownInAllPage = evt => {
+    evt = evt || window.event;
+    if (evt.keyCode === 113) {
+      getModalInstanceById('search_product_and_show_info').open();
+    }
+  };
+
+  componentDidUpdate() {
+    if (this.getCountOfTotalRowsFree() === this.state.count_of_minimum_rows) {
+      return this.addFreeRowsToState(this.state.count_of_rows_to_add);
+    }
+    if (current_row_changed && !sell_is_in_product_request) {
+      this.setAutomaticInputRowFocus();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.product.product &&
+      !nextProps.product.loading &&
+      sell_is_in_product_request
+    ) {
+      const { product } = nextProps.product;
+      const { products } = this.state;
+      if (product && Object.keys(product).length > 0) {
+        products[current_row_index] = {
+          ...products[current_row_index],
+          id_producto: product.id,
+          codigo_barra: product.codigo_barra,
+          nombre: `${product.nombre} - ${product.marca_nombre}`,
+          cantidad: 1,
+          precio: product.precio
+        };
+        current_row_changed = true;
+        this.setState({
+          products
+        });
+      } else {
+        setTimeout(() => {
+          this.setInputRowFocus(current_row_index);
+          this.setBgErrorColorRowCurrentRow();
+        }, 1000);
+      }
+      sell_is_in_product_request = false;
+    }
+  }
+
+  onHideModal = () => {
+    setTimeout(() => this.setAutomaticInputRowFocus(), 1000);
+  };
+
+  onSelectClient = newClient => {
+    this.setState({
+      currentClient: newClient
+    });
+    this.onHideModal();
+  };
+
+  getCountOfTotalRowsFree = () => {
+    return this.state.products.filter(prod => prod.id_producto === '').length;
+  };
+
+  onInputKeyPress = (row_id, row_type, index, e) => {
+    if (sell_is_in_product_request) {
+      return;
+    }
+
+    if (e.keyCode === 13) {
+      //Entar
+      let newValue = document
+        .getElementById(`${row_type}${row_id}`)
+        .value.trim();
+
+      const response = this.isValidNewInputValue(row_type, newValue);
+      if (response.is_valid) {
+        this.setValueToProductRow(row_type, index, `${response.value}`);
+      } else {
+        this.goBackToInputValue(row_type, row_id, index);
+        this.setInputRowFocus(index);
+      }
+    } else if (e.keyCode === 27) {
+      // Escape
+      this.goBackToInputValue(row_type, row_id, index);
+    } else if (e.keyCode === 46) {
+      // Delete
+      const { products } = this.state;
+      const currentProduct = products.find(prod => prod.local_id === row_id);
+      if (currentProduct.id_producto !== '') {
+        if (currentProduct) {
+          this.setState({
+            products: products.filter(prod => prod !== currentProduct)
+          });
+          current_row_changed = true;
+        }
+      }
+    } else if (e.keyCode === 17) {
+      // Control
+      return;
+    } else if (row_type === this.state.input_codigo_barra) {
+      let newValue = document
+        .getElementById(`${row_type}${row_id}`)
+        .value.trim();
+      if (newValue.length >= 7) {
+        this.setValueToProductRow(row_type, index, newValue);
+      }
+    }
+  };
+
+  goBackToInputValue = (row_type, row_id, index) => {
+    document.getElementById(
+      `${row_type}${row_id}`
+    ).value = this.getBackInputValue(row_type, index);
+  };
+
+  getBackInputValue = (row_type, index) => {
+    let backValue = '';
+    switch (row_type) {
+      case this.state.input_codigo_barra:
+        backValue = this.state.products[index].codigo_barra;
+        break;
+
+      case this.state.input_cantidad:
+        backValue = this.state.products[index].cantidad;
+        break;
+
+      case this.state.input_precio:
+        backValue = this.state.products[index].precio;
+        break;
+
+      default:
+        break;
+    }
+    return backValue;
+  };
+
+  isValidNewInputValue = (row_type, value) => {
+    let new_value = '';
+    let is_valid = false;
+    switch (row_type) {
+      case this.state.input_codigo_barra:
+        if (value !== '') {
+          new_value = value;
+          is_valid = true;
+        }
+        break;
+
+      case this.state.input_cantidad:
+        new_value = parseInt(value);
+        if (!isNaN(new_value) && new_value >= 0) {
+          is_valid = true;
+        }
+        break;
+
+      case this.state.input_precio:
+        new_value = parseFloat(value);
+        if (!isNaN(new_value) && new_value >= 0) {
+          is_valid = true;
+        }
+        break;
+
+      default:
+        break;
+    }
+    return { is_valid, value: new_value };
+  };
+
+  setValueToProductRow = (row_type, index, new_value) => {
+    const { products, currentClient } = this.state;
+    switch (row_type) {
+      case this.state.input_codigo_barra:
+        sell_is_in_product_request = true;
+        products[index].codigo_barra = new_value;
+        this.props.getProductByCBForSell({
+          codigo_barra: new_value,
+          id_ciente: currentClient.id
+        });
+        break;
+
+      case this.state.input_cantidad:
+        products[index].cantidad = new_value;
+        current_row_changed = true;
+        break;
+
+      case this.state.input_precio:
+        products[index].precio = new_value;
+        current_row_changed = true;
+        break;
+
+      default:
+        break;
+    }
+
+    //if (!sell_is_in_product_request) {
+    this.setState({
+      products
+    });
+    //}
+  };
+
+  setAutomaticInputRowFocus = () => {
+    let currentIndex = 0;
+    for (let x = 0; x < this.state.products.length; x++) {
+      if (this.state.products[x].id_producto === '') {
+        currentIndex = x;
+        break;
+      }
+    }
+    this.removeBgColorForCurrentRow();
+    current_row_changed = false;
+    current_row_index = currentIndex;
+
+    this.setInputRowFocus(currentIndex);
+    this.setBgColorForCurrentRow();
+  };
+
+  setInputRowFocus = index => {
+    const element_id = `${this.state.input_codigo_barra}${
+      this.state.products[index].local_id
+    }`;
+    const input_codigo_barra = document.getElementById(element_id);
+    if (input_codigo_barra) {
+      input_codigo_barra.focus();
+    }
+  };
+
+  removeBgColorForCurrentRow = () => {
+    const currentProduct = this.state.products[current_row_index];
+    if (currentProduct) {
+      const row_id = currentProduct.local_id;
+      document
+        .getElementById(`trow${row_id}`)
+        .classList.remove('active-tr-sell');
+    }
+  };
+
+  setBgColorForCurrentRow = () => {
+    const currentProduct = this.state.products[current_row_index];
+    if (currentProduct) {
+      const row_id = currentProduct.local_id;
+      const tr_element = document.getElementById(`trow${row_id}`);
+      tr_element.classList.remove('active-tr-sell-error');
+      tr_element.classList.add('active-tr-sell');
+    }
+  };
+
+  setBgErrorColorRowCurrentRow = () => {
+    const currentProduct = this.state.products[current_row_index];
+    if (currentProduct) {
+      const row_id = currentProduct.local_id;
+      const tr_element = document.getElementById(`trow${row_id}`);
+      tr_element.classList.remove('active-tr-sell');
+      tr_element.classList.add('active-tr-sell-error');
+      setTimeout(() => this.setBgColorForCurrentRow(), 2000);
     }
   };
 
   getTrCodeForProduct = (index, row_id, product) => {
     const { input_codigo_barra, input_cantidad, input_precio } = this.state;
+    const { codigo_barra, nombre, cantidad, precio } = product;
     return (
-      <tr
-        className={index == 0 && "active-tr-sell"}
-        id={`trow${row_id}`}
-        key={uuid()}
-      >
+      <tr id={`trow${row_id}`} key={uuid()}>
         <td className="td-with-input">
           <input
             type="text"
             id={`${input_codigo_barra}${row_id}`}
             className="special-input browser-default"
-            onKeyPress={this.onInputKeyPress.bind(
+            onKeyUp={this.onInputKeyPress.bind(
               this,
               row_id,
               input_codigo_barra,
               index
             )}
-            value={product.codigo_barra}
-            readOnly
+            defaultValue={codigo_barra}
           />
         </td>
-        <td className="td-with-input">{product.nombre}</td>
+        <td className="td-with-input">{nombre}</td>
         <td className="td-with-input">
           <input
             id={`${input_cantidad}${row_id}`}
             type="text"
             className="special-input browser-default"
-            onKeyPress={this.onInputKeyPress.bind(
+            onKeyDown={this.onInputKeyPress.bind(
               this,
               row_id,
               input_cantidad,
               index
             )}
-            value={product.cantidad}
-            readOnly
+            defaultValue={cantidad}
           />
         </td>
 
-        <td className="td-with-input">
-          <input
-            id={`${input_precio}${row_id}`}
-            type="text"
-            className="special-input browser-default"
-            onKeyPress={this.onInputKeyPress.bind(
-              this,
-              row_id,
-              input_precio,
-              index
-            )}
-            value={product.precio}
-            readOnly
-          />
-        </td>
+        <td className="td-with-input">{precio}</td>
       </tr>
     );
   };
 
+  getValuesForProduct = product => {
+    let subtotal = 0;
+    let impuesto = 15;
+
+    const cantidad = parseInt(product.cantidad);
+    const precio = parseFloat(product.precio);
+
+    if (!isNaN(cantidad) && cantidad >= 0 && !isNaN(precio) && precio >= 0) {
+      subtotal += cantidad * precio;
+    }
+
+    impuesto = subtotal * 0.15;
+    const total = subtotal + impuesto;
+    return { subtotal, impuesto, total };
+  };
+
   render() {
-    const { products, subtotal, impuesto, total } = this.state;
+    const { products, currentClient } = this.state;
+    const sumVales = {
+      subtotal: 0,
+      impuesto: 0,
+      total: 0
+    };
 
     let rowsProduct = products.map((product, index) => {
-      const row_id = uuid();
-      return this.getTrCodeForProduct(index, row_id, product);
+      const valuesToSum = this.getValuesForProduct(product);
+      sumVales.subtotal += valuesToSum.subtotal;
+      sumVales.impuesto += valuesToSum.impuesto;
+      sumVales.total += valuesToSum.total;
+      return this.getTrCodeForProduct(index, product.local_id, product);
     });
 
     return (
@@ -128,6 +408,11 @@ class NewSell extends Component {
             <li>
               <a href="#search_product_and_show_info" className="modal-trigger">
                 <i className="material-icons">search</i>
+              </a>
+            </li>
+            <li>
+              <a href="#modal_sell_configuracion" className="modal-trigger">
+                <i className="material-icons">settings</i>
               </a>
             </li>
             <li>
@@ -161,6 +446,11 @@ class NewSell extends Component {
                 </a>
               </li>
               <li>
+                <a href="#modal_sell_configuracion" className="modal-trigger">
+                  <i className="material-icons">settings</i>
+                </a>
+              </li>
+              <li>
                 <a
                   href="#!"
                   className="tooltipped"
@@ -187,7 +477,7 @@ class NewSell extends Component {
         <main>
           <div className="row venta-productos">
             <div className="col s12 no-padding">
-              <table className="table-bordered header-fixed striped highlight">
+              <table className="table-bordered header-fixed striped">
                 <thead>
                   <tr>
                     <th className="center">Codigo</th>
@@ -202,13 +492,23 @@ class NewSell extends Component {
           </div>
 
           <div className="row col-bordered venta-total">
-            <SellColumnsDetails title="Sub total" value={subtotal} />
-            <SellColumnsDetails title="Impuesto" value={impuesto} />
-            <SellColumnsDetails title="Total" value={total} />
+            <SellColumnsDetails title="Sub total" value={sumVales.subtotal} />
+            <SellColumnsDetails title="Impuesto" value={sumVales.impuesto} />
+            <SellColumnsDetails title="Total" value={sumVales.total} />
           </div>
         </main>
 
-        <SearchProductModal />
+        <SearchProductModal onHide={this.onHideModal} />
+        <SearchClientModal
+          onHide={this.onHideModal}
+          currentClient={currentClient}
+          onSelectClient={this.onSelectClient}
+        />
+        <SellConfigurationModal
+          id_search_client_modal="modal_seleccionar_cliente"
+          currentClient={currentClient}
+          onHide={this.onHideModal}
+        />
       </React.Fragment>
     );
   }
@@ -217,16 +517,15 @@ class NewSell extends Component {
 NewSell.propTypes = {
   errors: PropTypes.object.isRequired,
   product: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired
+  getProductByCBForSell: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   errors: state.errors,
-  product: state.product,
-  client: state.client
+  product: state.product
 });
 
 export default connect(
   mapStateToProps,
-  {}
+  { getProductByCBForSell }
 )(NewSell);

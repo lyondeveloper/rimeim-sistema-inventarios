@@ -23,6 +23,8 @@
             $this->brandModel = $this->model('Brand');
             $this->vehiculeType = $this->model('VehiculeType');
             $this->localModel = $this->model('Local');
+
+            $this->clientProductPrice = $this->model('ClientProductPrice');
         }
 
         public function get() {
@@ -77,6 +79,31 @@
                 $this->response(null, ERROR_NOTFOUND);
             }
             $product = $this->parse_product_to_send($product, true, $id_local);
+            $this->response($product);
+        }
+
+        // Get one for sell
+        public function get_one_fsell() {
+            $this->usePostRequest();
+            $data = getJsonData();
+            if (!isset($data->codigo_barra) || 
+                empty($data->codigo_barra)) {
+                $this->response(null, ERROR_NOTFOUND);
+            }
+            $id_local = $this->get_current_id_local();
+            $product = $this->productModel->get_by_codigo_barra_and_local($data->codigo_barra, $id_local);
+
+            if (is_null($product)) {
+                $this->response(null, ERROR_NOTFOUND);
+            } 
+
+            if (isset($data->id_cliente) && 
+                $data->id_cliente > 0) {
+                $product_price = $this->clientProductPrice->get_by_idc_idp($data->id_cliente, $product->id);
+                if (!is_null($product_price)) {
+                    $product->precio = $product_price->precio;
+                }
+            }
             $this->response($product);
         }
 

@@ -1,5 +1,5 @@
 .special-input {
-  height: 20px !important;
+  height: 100% !important;
   width: 99% !important;
   background: transparent;
   border: none;
@@ -7,12 +7,17 @@
 }
 
 .td-with-input {
+  height: 32px !important;
   margin: 0 !important;
   padding: 4px !important;
 }
 
 .active-tr-sell {
-  background-color: #b9f6ca !important;
+  background-color: #bbdefb !important;
+}
+
+.active-tr-sell-error {
+  background-color: #ffcdd2 !important;
 }
 
 .venta-productos {
@@ -58,7 +63,7 @@
 
 .header-fixed > tbody > tr:after,
 .header-fixed > thead > tr:after {
-  content: "  ";
+  content: '  ';
   display: block;
   visibility: hidden;
   clear: both;
@@ -67,7 +72,7 @@
 .header-fixed > tbody {
   scrollbar-width: none;
   overflow-y: auto;
-  height: calc(100vh - 64px - 70px - 54px);
+  height: calc(100vh - 64px - 70px - 54px) !important;
 }
 
 .header-fixed > tbody > tr > td,

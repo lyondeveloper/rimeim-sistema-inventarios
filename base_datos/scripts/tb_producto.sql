@@ -28,7 +28,9 @@ begin
     order by p.nombre asc;
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists `proc_search_producto`;
 delimiter $$
 create procedure proc_search_producto(in p_field varchar(255), in p_id_local bigint)
@@ -69,8 +71,9 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
-
+/*
 drop procedure if exists `proc_get_producto_by_id`;
 delimiter $$
 create procedure proc_get_producto_by_id(in p_id bigint)
@@ -140,7 +143,44 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
+/*
+drop procedure if exists proc_get_producto_minified_by_codigo_barra_and_local;
+delimiter $$
+create procedure proc_get_producto_minified_by_codigo_barra_and_local(in p_codigo_barra varchar(100),
+																		in p_id_local bigint)
+begin
+	set p_codigo_barra = trim(p_codigo_barra);
+    if (!is_empty(p_codigo_barra) and
+		valid_int_id(p_id_local)) then
+		
+        select p.id,
+				p.codigo_barra,
+                p.nombre,
+                (
+					select m.nombre
+                    from tb_marca m
+                    where m.id = p.id_marca 
+                ) as 'marca_nombre',
+                (
+					select tv.nombre
+                    from tb_tipo_vehiculo tv
+                    where tv.id = p.id_tipo_vehiculo
+                ) as 'tipo_vehiculo',
+                p.precio
+        from tb_producto p
+        join tb_producto_local pl on pl.id_local = p_id_local
+								and pl.id_producto = p.id
+        and p.codigo_barra = p_codigo_barra
+        and p.eliminado = false
+        and pl.eliminado = false;
+    end if;
+end $$
+delimiter ;
+*/
+
+/*
 drop procedure if exists `proc_add_producto`;
 delimiter $$
 create procedure proc_add_producto(in p_id_tipo_vehiculo bigint,
@@ -263,6 +303,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop procedure if exists proc_add_producto_inventario;
 delimiter $$
 create procedure proc_add_producto_inventario(in p_id bigint,
@@ -277,3 +318,4 @@ begin
 	end if;
 end $$
 delimiter ;
+*/

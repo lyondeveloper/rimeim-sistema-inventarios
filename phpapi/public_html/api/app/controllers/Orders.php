@@ -350,6 +350,7 @@
                     if (!isset($productos[$product->id_producto])) {
                         $productos[$product->id_producto] = $this->product->get_minified_by_id($product->id_producto);
                     }
+                    $product->nombre = $productos[$product->id_producto]->nombre;
                     $product->producto = $productos[$product->id_producto];
 
                     if ($this->is_current_user_admin()) {

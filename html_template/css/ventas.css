@@ -12,7 +12,7 @@
 }
 
 .active-tr-sell {
-  background-color: #b9f6ca !important;
+  background-color: #a5d6a7 !important;
 }
 
 .venta-productos {
@@ -58,7 +58,7 @@
 
 .header-fixed > tbody > tr:after,
 .header-fixed > thead > tr:after {
-  content: "  ";
+  content: '  ';
   display: block;
   visibility: hidden;
   clear: both;
