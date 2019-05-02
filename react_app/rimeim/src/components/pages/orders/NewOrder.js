@@ -48,7 +48,7 @@ class NewOrder extends Component {
   }
 
   componentDidUpdate() {
-    configModals();
+    // configModals();
     if (this.state.needs_config_selects) {
       configSelectInputFields();
       this.setState({
