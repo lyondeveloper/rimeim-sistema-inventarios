@@ -26,6 +26,10 @@ export const configMaterialBoxedImages = () => {
   });
 };
 
+export const configModals = () => {
+  M.Modal.init(document.querySelectorAll('.modal'), []);
+};
+
 export const onOpenEndImage = e => {
   if (e.parentElement.parentElement.classList.contains('img-item')) {
     if (e.classList.contains('adjust')) {

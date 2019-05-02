@@ -6,7 +6,8 @@ import NewNavbar from '../../layout/NewNavbar';
 import {
   configMaterialComponents,
   removeMaterialComponents,
-  configSelectInputFields
+  configSelectInputFields,
+  configModals
 } from '../../../utils/MaterialFunctions';
 
 import TextInputField from '../../common/TextInputField';
@@ -47,6 +48,7 @@ class NewOrder extends Component {
   }
 
   componentDidUpdate() {
+    configModals();
     if (this.state.needs_config_selects) {
       configSelectInputFields();
       this.setState({

@@ -16,6 +16,8 @@ import SelectInputField from '../../common/SelectInputField';
 import SearchProductLocal from './SearchProductLocal';
 import SearchProductProvider from './SearchProductProvider';
 
+import { configModals } from '../../../utils/MaterialFunctions';
+
 import { getLocals } from '../../../actions/LocalActions';
 import { editOrder, getOrder } from '../../../actions/orderActions';
 
@@ -26,7 +28,7 @@ class EditOrder extends Component {
     super(props);
     this.state = {
       codigo: '',
-      fecha_entrega: '',
+      fecha_prevista_entrega: '',
       local: {},
       productos: [],
       providerMode: false,
@@ -58,6 +60,7 @@ class EditOrder extends Component {
         needs_config_selects: false
       });
     }
+    configModals();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -92,15 +95,15 @@ class EditOrder extends Component {
       order.local_solicitado = !isEmpty(order.local_solicitado)
         ? order.local_solicitado
         : {};
-      order.fecha_entrega = !isEmpty(order.fecha_entrega)
-        ? order.fecha_entrega
+      order.fecha_prevista_entrega = !isEmpty(order.fecha_prevista_entrega)
+        ? order.fecha_prevista_entrega
         : '';
       order.productos = !isEmpty(order.productos) ? order.productos : [];
 
       this.setState({
         codigo: order.codigo,
         local: order.local_solicitado,
-        fecha_entrega: order.fecha_entrega,
+        fecha_prevista_entrega: order.fecha_prevista_entrega,
         productos: order.productos
       });
     }
@@ -134,14 +137,14 @@ class EditOrder extends Component {
   onSubmit(e) {
     e.preventDefault();
 
-    const { codigo, fecha_entrega, productos, local } = this.state;
+    const { codigo, fecha_prevista_entrega, productos, local } = this.state;
 
     const { id } = this.props.match.params;
 
     const orderData = {
       id_local_solicitado: local,
       codigo,
-      fecha_entrega,
+      fecha_prevista_entrega,
       productos
     };
 
@@ -152,12 +155,13 @@ class EditOrder extends Component {
     const {
       codigo,
       providerMode,
-      fecha_entrega,
+      fecha_prevista_entrega,
       local,
       productos
     } = this.state;
 
     const { locals } = this.props;
+    const { loading } = this.props.orders;
 
     //Mapeando las opciones de locales para desplegarlas en el SelectInputField
     const localOptions = [];
@@ -168,6 +172,16 @@ class EditOrder extends Component {
         label: local.nombre
       });
     });
+
+    // let orderContent;
+
+    // if (loading) {
+    //   orderContent = <Spinner fullWidth />;
+    // } else {
+    //   orderContent = (
+
+    //   );
+    // }
 
     return (
       <React.Fragment>
@@ -206,8 +220,6 @@ class EditOrder extends Component {
         </NewNavbar>
 
         <main>
-          {this.props.orders.loading && <Spinner fullWidth />}
-
           <div className='row'>
             <div className='col s12'>
               <div className='card'>
@@ -262,10 +274,10 @@ class EditOrder extends Component {
                       <TextInputField
                         type='date'
                         input_size='s12'
-                        id='fecha_entrega'
+                        id='fecha_prevista_entrega'
                         label='Fecha de Entrega de Pedido'
                         onchange={this.onChangeTextInput}
-                        value={fecha_entrega}
+                        value={fecha_prevista_entrega}
                       />
                     </div>
 
