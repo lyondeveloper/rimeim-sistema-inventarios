@@ -1,3 +1,4 @@
+/*
 drop function if exists func_get_next_venta_id;
 delimiter $$
 create function func_get_next_venta_id()
@@ -11,7 +12,70 @@ begin
     return @new_id;
 end $$
 delimiter ;
+*/
 
+
+drop procedure if exists proc_search_ventas;
+delimiter $$
+create procedure proc_search_ventas(in p_id_local bigint,
+                                    in p_id_cliente bigint,
+                                    in p_codigo varchar(50),
+                                    in p_con_factura boolean,
+                                    in p_metodo_pago varchar(100),
+                                    in p_fecha_inicio datetime,
+                                    in p_fecha_final datetime)
+begin
+    set p_codigo = trim(p_codigo);
+    set p_metodo_pago = trim(p_metodo_pago);
+
+    if (p_fecha_inicio is not null and 
+        p_fecha_final is not null) then
+        select distinct v.id,
+                v.id_local,
+                v.id_cliente,
+                v.id_empleado_creado_por,
+                v.codigo,
+                v.con_factura,
+                v.total,
+                v.fecha_creado
+        from tb_venta v 
+        where v.eliminado = false 
+        and v.es_cotizacion = false 
+        and v.fecha_creado between p_fecha_inicio and p_fecha_final
+        and (
+            v.id_local = p_id_local
+            or v.id_cliente = p_id_cliente
+            or v.codigo = p_codigo
+            or v.con_factura = p_con_factura
+            or v.metodo_pago = p_metodo_pago
+        );
+        order by v.fecha_creado desc;
+    else 
+
+        select distinct v.id,
+                v.id_local,
+                v.id_cliente,
+                v.id_empleado_creado_por,
+                v.codigo,
+                v.con_factura,
+                v.total,
+                v.fecha_creado
+        from tb_venta v 
+        where v.eliminado = false 
+        and v.es_cotizacion = false 
+        and (
+            v.id_local = p_id_local
+            or v.id_cliente = p_id_cliente
+            or v.codigo = p_codigo
+            or v.con_factura = p_con_factura
+            or v.metodo_pago = p_metodo_pago
+        );
+        order by v.fecha_creado desc;
+    end if;
+end $$
+delimiter ;
+
+/*
 drop procedure if exists proc_get_ventas;
 delimiter $$
 create procedure proc_get_ventas()
@@ -22,10 +86,7 @@ begin
             v.id_empleado_creado_por,
             v.codigo,
             v.con_factura,
-            v.sub_total,
-            v.impuesto,
             v.total,
-            v.metodo_pago,
             v.fecha_creado
     from tb_venta v 
     where v.eliminado = false 
@@ -72,10 +133,7 @@ begin
                 v.id_empleado_creado_por,
                 v.codigo,
                 v.con_factura,
-                v.sub_total,
-                v.impuesto,
                 v.total,
-                v.metodo_pago,
                 v.fecha_creado
         from tb_venta v 
         where v.eliminado = false 
@@ -192,4 +250,4 @@ begin
         where id = p_id;
     end if;
 end $$
-delimiter ; 
+delimiter ; */

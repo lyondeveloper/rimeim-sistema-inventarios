@@ -14,6 +14,23 @@ begin
 end $$
 delimiter ;
 
+drop function if exists func_exists_cliente_by_id;
+delimiter $$
+create function func_exists_cliente_by_id(p_id bigint)
+returns boolean
+BEGIN
+	set @response = false;
+	if (valid_int_id(p_id)) then 
+		set @response = exists(
+			select * from tb_cliente c 
+			where c.id = p_id 
+			and c.eliminado = false
+		);
+	end if;
+	return @response;
+end $$
+delimiter ;
+
 
 drop procedure if exists proc_get_clientes;
 delimiter $$
