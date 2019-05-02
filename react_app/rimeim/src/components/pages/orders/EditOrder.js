@@ -173,15 +173,57 @@ class EditOrder extends Component {
       });
     });
 
-    // let orderContent;
+    let orderContent;
 
-    // if (loading) {
-    //   orderContent = <Spinner fullWidth />;
-    // } else {
-    //   orderContent = (
+    if (loading || locals.loading) {
+      orderContent = <Spinner fullWidth />;
+    } else {
+      orderContent = (
+        <form onSubmit={this.onSubmit}>
+          <div className='row'>
+            {/* Si modo proveedor esta activo, mostrara el buscador de productos de proveedor, si no, usara el del local */}
+            {providerMode ? (
+              <SearchProductProvider />
+            ) : (
+              <React.Fragment>
+                <div className='row'>
+                  <SelectInputField
+                    input_size='s12'
+                    id='local'
+                    label='Local'
+                    onchange={this.onChangeTextInput}
+                    value={local.id}
+                    options={localOptions}
+                  />
+                </div>
+              </React.Fragment>
+            )}
+          </div>
 
-    //   );
-    // }
+          <div className='row'>
+            <TextInputField
+              input_size='s12'
+              id='codigo'
+              label='Codigo de pedido'
+              onchange={this.onChangeTextInput}
+              value={codigo}
+              active_label={codigo ? true : false}
+            />
+          </div>
+
+          <div className='row'>
+            <TextInputField
+              type='date'
+              input_size='s12'
+              id='fecha_prevista_entrega'
+              label='Fecha de Entrega de Pedido'
+              onchange={this.onChangeTextInput}
+              value={fecha_prevista_entrega}
+            />
+          </div>
+        </form>
+      );
+    }
 
     return (
       <React.Fragment>
@@ -233,60 +275,22 @@ class EditOrder extends Component {
                         Pedido a {providerMode ? 'Local' : 'Proveedor'}
                       </button>
                     </div>
-                  </div>
-                  <form onSubmit={this.onSubmit}>
-                    <div className='row'>
-                      {/* Si modo proveedor esta activo, mostrara el buscador de productos de proveedor, si no, usara el del local */}
-                      {providerMode ? (
-                        <SearchProductProvider />
-                      ) : (
-                        <React.Fragment>
-                          <div className='row'>
-                            <SelectInputField
-                              input_size='s12'
-                              id='local'
-                              label='Local'
-                              onchange={this.onChangeTextInput}
-                              value={local.id}
-                              options={localOptions}
-                            />
-                          </div>
-                          <SearchProductLocal
-                            onPassProductsData={this.onReceiveProductData}
-                            productsProps={productos}
-                          />
-                        </React.Fragment>
-                      )}
-                    </div>
+                    {orderContent}
 
-                    <div className='row'>
-                      <TextInputField
-                        input_size='s12'
-                        id='codigo'
-                        label='Codigo de pedido'
-                        onchange={this.onChangeTextInput}
-                        value={codigo}
-                        active_label={codigo ? true : false}
-                      />
-                    </div>
-
-                    <div className='row'>
-                      <TextInputField
-                        type='date'
-                        input_size='s12'
-                        id='fecha_prevista_entrega'
-                        label='Fecha de Entrega de Pedido'
-                        onchange={this.onChangeTextInput}
-                        value={fecha_prevista_entrega}
-                      />
-                    </div>
-
+                    <SearchProductLocal
+                      onPassProductsData={this.onReceiveProductData}
+                      productsProps={productos}
+                    />
                     <div className='d-block center mt-1'>
-                      <button className='btn' type='submit'>
+                      <button
+                        className='btn'
+                        type='submit'
+                        onClick={this.onSubmit}
+                      >
                         Guardar{' '}
                       </button>
                     </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>

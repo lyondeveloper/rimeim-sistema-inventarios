@@ -12,10 +12,9 @@ class SearchProductLocal extends Component {
   state = {
     field: '',
     producto_seleccionado: {},
+    productos_seleccionados: [],
     productos: [],
     cantidad: '',
-    costo: '',
-    productPosition: '',
     editMode: false,
     typing: false,
     typingTimeout: 0,
@@ -62,38 +61,40 @@ class SearchProductLocal extends Component {
 
   //Metodo para seleccionar producto con checkbox
   onSelectProduct = producto => {
-    let selectedProduct = producto;
-    // console.log(product);
+    const { productsProps } = this.props;
 
-    // if (selectedProduct.seleccionado) {
-    //   selectedProduct.seleccionado = false;
-    //   console.log('entra condicion');
-    // }
+    const { productos_seleccionados } = this.state;
 
-    // selectedProduct.seleccionado = true;
+    //Chequeamos en que array estamos, si en los props o en el normal
+    if (productsProps !== undefined) {
+      const productIndex = productsProps.findIndex(p => p.id === producto.id);
 
-    // document.getElementById(`${product.id}`).checked =
-    //   selectedProduct.seleccionado;
+      const currentProductProps = productsProps[productIndex];
 
-    this.setState({
-      producto_seleccionado: producto
-    });
-  };
-
-  onChangeCheckbox = e => {
-    e.preventDefault();
-
-    this.onSelectModalProduct();
-
-    const { producto_seleccionado, productos } = this.state;
-
-    if (producto_seleccionado.seleccionado !== null) {
-      producto_seleccionado.seleccionado = !producto_seleccionado.seleccionado;
+      if (productIndex >= 0) {
+      }
     } else {
-      producto_seleccionado.seleccionado = true;
-    }
+      const productIndex = productos_seleccionados.findIndex(
+        p => p.id === producto.id
+      );
 
-    this.setState({ productos });
+      if (productIndex >= 0) {
+        if (producto.seleccionado) producto.seleccionado = false;
+        else producto.seleccionado = true;
+      } else {
+        producto.seleccionado = true;
+
+        productos_seleccionados.push(producto);
+      }
+
+      document.getElementById(`${producto.id}`).checked = producto.seleccionado;
+
+      console.log(document.getElementById(`${producto.id}`).checked);
+
+      this.setState({
+        productos_seleccionados
+      });
+    }
   };
 
   //Metodo para que cuando demos click a agregar productos, el state este limpio
@@ -119,44 +120,51 @@ class SearchProductLocal extends Component {
   onAddProduct = e => {
     e.preventDefault();
 
-    const { productos, cantidad, producto_seleccionado } = this.state;
+    const { productos, cantidad, productos_seleccionados } = this.state;
 
     const { productsProps } = this.props;
 
     //Chequeando cual array estamos trabajando, si es de props, estamos en EditarPedido usando el array que nos sale de la API para agregar nuevos productos, si no, estamos en NuevoPedido usando el array del state normal
     if (productsProps !== undefined) {
-      const productPropsData = {
-        id_producto: producto_seleccionado.id,
-        cantidad,
-        costo: producto_seleccionado.precio,
-        nombre: producto_seleccionado.nombre,
-        es_compra: false
-      };
+      const selecteds = productos_seleccionados.filter(
+        p => p.seleccionado === true
+      );
+      selecteds.forEach(product => {
+        const productData = {
+          id_producto: product.id,
+          cantidad,
+          costo: product.precio,
+          nombre: product.nombre,
+          es_compra: false
+        };
 
-      productsProps.push(productPropsData);
+        productsProps.push(productData);
+      });
     } else {
-      const productData = {
-        id_producto: producto_seleccionado.id,
-        cantidad,
-        costo: producto_seleccionado.precio,
-        nombre: producto_seleccionado.nombre,
-        es_compra: false
-      };
+      const selecteds = productos_seleccionados.filter(
+        p => p.seleccionado === true
+      );
 
-      productos.push(productData);
+      selecteds.forEach(product => {
+        const productData = {
+          id_producto: product.id,
+          cantidad,
+          costo: product.precio,
+          nombre: product.nombre,
+          es_compra: false
+        };
 
-      //Pasamos datos nuevos usando metodo del componente padre
-      this.props.onPassProductsData(productos);
+        productos.push(productData);
+
+        //Pasamos datos nuevos usando metodo del componente padre
+        this.props.onPassProductsData(productos);
+      });
     }
 
     this.setState({
-      producto_seleccionado: {},
+      productos_seleccionados: [],
       cantidad: ''
     });
-    // const selecteds = productos.filter(p => p.seleccionado === true);
-
-    // selecteds.forEach(product => {
-    // });
   };
 
   //Metodo para que cuando le demos click a editar un producto, se coloquen en los TextInputField la data
@@ -177,12 +185,7 @@ class SearchProductLocal extends Component {
 
   //Metodo para editar productos en nuestro array
   onEditProduct = () => {
-    const {
-      productos,
-      producto_seleccionado,
-      cantidad,
-      productPosition
-    } = this.state;
+    const { productos, producto_seleccionado, cantidad } = this.state;
 
     const { productsProps } = this.props;
 
@@ -190,25 +193,19 @@ class SearchProductLocal extends Component {
     if (productsProps !== undefined) {
       //Definiendo la posicion del objeto que editaremos
       const productIndex = productsProps.findIndex(
-        p => p.id === productPosition
+        p => p.id === producto_seleccionado.id_producto
       );
 
-      //Cambiandoles sus valores con el del nuevo producto seleccionado
-      productsProps[productIndex].id_producto = producto_seleccionado.id;
-      productsProps[productIndex].costo = producto_seleccionado.precio;
-      productsProps[productIndex].nombre = producto_seleccionado.nombre;
+      //Actualizando sus valores
       productsProps[productIndex].cantidad = cantidad;
       productsProps[productIndex].actualizado = true;
     } else {
       //Definiendo la posicion del objeto que editaremos
       const productIndex = productos.findIndex(
-        p => p.id_producto === productPosition
+        p => p.id_producto === producto_seleccionado.id_producto
       );
 
-      //Cambiandoles sus valores con el del nuevo producto seleccionado
-      productos[productIndex].id_producto = producto_seleccionado.id;
-      productos[productIndex].costo = producto_seleccionado.precio;
-      productos[productIndex].nombre = producto_seleccionado.nombre;
+      //Actualizando sus valores
       productos[productIndex].cantidad = cantidad;
       productos[productIndex].actualizado = true;
 
@@ -271,14 +268,17 @@ class SearchProductLocal extends Component {
                   className='d-block cursor-pointer bordered p-1'
                   key={uuid()}
                 >
-                  <label>
+                  <label
+                    onClick={() => {
+                      this.onSelectProduct(producto);
+                    }}
+                  >
                     <input
                       type='checkbox'
                       className='filled-in'
                       id={`${producto.id}`}
-                      onClick={() => {
-                        this.onSelectProduct(producto);
-                      }}
+                      checked={false}
+                      readOnly={true}
                     />
                     <span />
                   </label>
@@ -408,19 +408,30 @@ class SearchProductLocal extends Component {
           <div className='modal-content'>
             <h5>Buscar producto</h5>
             <div className='row'>
-              <TextInputField
-                id='field'
-                label='ID o nombre del producto'
-                value={field}
-                onchange={this.onChangeSearchProductInput}
-              />
-              {searchResult}
-              <TextInputField
-                id='cantidad'
-                label='Cantidad'
-                onchange={this.onChangeTextInput}
-                value={cantidad}
-              />
+              {this.state.editMode ? (
+                <TextInputField
+                  id='cantidad'
+                  label='Cantidad'
+                  onchange={this.onChangeTextInput}
+                  value={cantidad}
+                />
+              ) : (
+                <React.Fragment>
+                  <TextInputField
+                    id='field'
+                    label='ID o nombre del producto'
+                    value={field}
+                    onchange={this.onChangeSearchProductInput}
+                  />
+                  {searchResult}
+                  <TextInputField
+                    id='cantidad'
+                    label='Cantidad'
+                    onchange={this.onChangeTextInput}
+                    value={cantidad}
+                  />
+                </React.Fragment>
+              )}
             </div>
           </div>
           <div className='modal-footer'>
