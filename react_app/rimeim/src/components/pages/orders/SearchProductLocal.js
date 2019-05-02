@@ -269,16 +269,13 @@ class SearchProductLocal extends Component {
                   key={uuid()}
                 >
                   <label
-                    onClick={() => {
-                      this.onSelectProduct(producto);
-                    }}
+                    onClick={this.onSelectProduct.bind(this, producto)}
                   >
                     <input
                       type='checkbox'
                       className='filled-in'
                       id={`${producto.id}`}
-                      checked={false}
-                      readOnly={true}
+                      defaultChecked={producto.seleccionado}
                     />
                     <span />
                   </label>
