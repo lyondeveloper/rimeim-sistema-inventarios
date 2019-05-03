@@ -21,7 +21,6 @@ begin
                 v.id_producto,
                 v.oferta,
                 v.precio,
-                v.precio,
                 v.cantidad,
                 v.total,
                 v.fecha_creado

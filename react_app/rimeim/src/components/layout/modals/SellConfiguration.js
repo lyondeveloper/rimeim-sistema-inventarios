@@ -33,7 +33,7 @@ class SellConfiguration extends Component {
         <div className="row">
           <div className="col s9">
             <h6>
-              {currentClient.nombre} - {currentClient.rtn}
+              {currentClient.nombre} {currentClient.rtn}
             </h6>
           </div>
           <div className="col s3">

@@ -16,6 +16,12 @@
             return convert_to_bool_values($this->db->resultSet(), ['es_empresa']);
         }
 
+        public function exists_with_id($id) {
+            $this->db->query("select func_exists_cliente_by_id(:p_id) as 'exists';");
+            $this->db->bind(':p_id', $id);
+            return $this->db->single()->exists;
+        }
+
         public function get_by_id($id) {
             $this->db->query('call proc_get_cliente_by_id(:p_id);');
             $this->db->bind(':p_id', $id);

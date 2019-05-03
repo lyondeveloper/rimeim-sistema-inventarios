@@ -11,21 +11,33 @@
             $this->db = new Database;
         }
 
+        public function search($params) {
+            $this->db->query('call proc_search_ventas(:p_id_local,:p_id_cliente,:p_codigo,:p_con_factura,:p_metodo_pago,:p_fecha_inicio,:p_fecha_final);');
+            $this->db->bind(':p_id_local', $params->id_local);
+            $this->db->bind(':p_id_cliente', $params->id_cliente);
+            $this->db->bind(':p_codigo', $params->codigo);
+            $this->db->bind(':p_con_factura', $params->con_factura);
+            $this->db->bind(':p_metodo_pago', $params->metodo_pago);
+            $this->db->bind(':p_fecha_inicio', $params->fecha_inicio);
+            $this->db->bind(':p_fecha_final', $params->fecha_final);
+            return convert_to_bool_values($this->db->resultSet(), ['con_factura']);
+        }
+
         public function get() {
             $this->db->query('call proc_get_ventas();');
-            return $this->db->resultSet();
+            return convert_to_bool_values($this->db->resultSet(), ['con_factura']);
         }
 
         public function get_by_id($id) {
             $this->db->query('call proc_get_venta_by_id(:p_id);');
             $this->db->bind(':p_id', $id);
-            return $this->db->single();
+            return convert_to_bool_values($this->db->single(), ['con_factura']);
         }
 
         public function get_by_local($id_local) {
             $this->db->query('call proc_get_venta_by_id_local(:p_id_local);');
             $this->db->bind(':p_id_local', $id_local);
-            return $this->db->resultSet();
+            return convert_to_bool_values($this->db->resultSet(), ['con_factura']);
         }
 
         public function add($params) {
