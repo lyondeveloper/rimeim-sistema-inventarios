@@ -61,10 +61,13 @@ class SearchAndSelectClient extends Component {
 
   render() {
     const { field_cliente, searching } = this.state;
-    const { currentClient } = this.props;
+    const {
+      currentClient,
+      client: { loading }
+    } = this.props;
     let clientsContent;
 
-    if (searching) {
+    if (searching || loading) {
       clientsContent = <Spinner fullWidth />;
     } else if (this.props.client.clients.length > 0) {
       clientsContent = (

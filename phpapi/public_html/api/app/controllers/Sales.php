@@ -25,6 +25,7 @@ class Sales extends Controller
         $this->clientModel = $this->model('Client');
 
         $this->localModel = $this->model('Local');
+        $this->productModel = $this->model('Product');
     }
 
     public function get()
@@ -110,9 +111,9 @@ class Sales extends Controller
             $errors['metodo_pago_error'] = "Campo invalido";
         } else {
             $data->metodo_pago = strtolower($data->metodo_pago);
-            if ($data->metodo_pago != "efectivo" || 
+            if ($data->metodo_pago != "efectivo" && 
                 $data->metodo_pago != "tarjeta") {
-                $errors['metodo_pago_error'] = "Campo invalido";
+                $errors['metodo_pago_error'] = "Metodo de pago invalido: " . $data->metodo_pago;
             }
         }
 
@@ -124,6 +125,15 @@ class Sales extends Controller
         } else {
             $data->id_cliente = null;
         }
+
+        if (isset($data->codigo) && 
+            !empty($data->codigo)) {
+            if ($this->saleModel->exists_by_code($data->codigo)) {
+                $errors['codigo_error'] = "Codigo en uso";
+            }
+        } else {
+            $data->codigo = null;
+        } 
 
         if (!isset($data->productos) || 
             !is_array($data->productos) ||
@@ -146,12 +156,15 @@ class Sales extends Controller
         $this->checkErrors($errors);
 
         $data->es_cotizacion = false;
+        $data->id_local = $this->get_current_id_local();
+        $data->id_empleado = $this->get_current_employe_id();
         return $data;
     }
 
     private function add_products_to_sell($productos, $id_venta) {
         foreach($productos as &$producto) {
             if ($this->valid_product_fields(($producto))) {
+                $producto->total = (int)$producto->cantidad * (double)$producto->precio;
                 $producto->id_venta = $id_venta;
                 if (!isset($producto->oferta)) {
                     $producto->oferta = false;
@@ -177,16 +190,15 @@ class Sales extends Controller
     private function get_parsed_single_sale_by_id($id) {
         $sale = $this->saleModel->get_by_id($id);
         if (is_null(($sale))) {
-            $this->response(null, ERROR_NOTFOUND);
+            $this->response(["error" => "Venta no encontrada"], ERROR_NOTFOUND);
         }
 
         $id_local = $this->get_current_id_local();
         if ($id_local != $sale->id_local) {
             if (!$this->is_current_user_admin()) {
-                $this->response(null, ERROR_NOTFOUND);
+                $this->response(["error" => "El local actual no es valido"], ERROR_NOTFOUND);
             }
         }
-
         $sale = $this->get_parsed_single_sale($sale, $id_local);
         return $sale;
     }
@@ -237,9 +249,7 @@ class Sales extends Controller
             isset($producto->cantidad) && 
             $producto->cantidad > 0 &&
             isset($producto->precio) && 
-            $producto->precio >= 0 &&
-            isset($producto->total) && 
-            $producto->total >= 0
+            $producto->precio >= 0
         );
     }
 }

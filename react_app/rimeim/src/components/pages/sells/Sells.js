@@ -1,20 +1,20 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-import NewNavbar from "../../layout/NewNavbar";
+import NewNavbar from '../../layout/NewNavbar';
 
 // Functions
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from "../../../utils/MaterialFunctions";
+} from '../../../utils/MaterialFunctions';
 
-import { getSells, searchSell } from "../../../actions/sellActions";
+import { getSells, searchSell } from '../../../actions/sellActions';
 
-import ShowSells from "../../common/ShowSells";
-import SearchSellModal from "../../common/SearchSellModal";
+import ShowSells from '../../common/ShowSells';
+import SearchSellModal from '../../layout/modals/SearchSellModal';
 
 class Sells extends Component {
   componentWillMount() {
@@ -27,7 +27,7 @@ class Sells extends Component {
   }
 
   onSearchSell = json_search => {
-    console.log(json_search);
+    this.props.searchSell(json_search);
   };
 
   render() {

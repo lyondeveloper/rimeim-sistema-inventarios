@@ -1,26 +1,31 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import isEmpty from "../../../actions/isEmpty";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import isEmpty from '../../../actions/isEmpty';
 
-import SelectInputField from "../../common/SelectInputField";
-import TextInputField from "../../common/TextInputField";
-import CheckInputField from "../../common/CheckInputField";
+import { getModalInstanceById } from '../../../utils/MaterialFunctions';
+
+import SelectInputField from '../../common/SelectInputField';
+import TextInputField from '../../common/TextInputField';
+import CheckInputField from '../../common/CheckInputField';
+
+import Spinner from '../../common/Spinner';
 
 class SellCheckout extends Component {
   state = {
-    codigo: "",
+    codigo: '',
     con_factura: false,
-    metodo_pago: "0",
+    metodo_pago: '0',
     metodos_pago: [
       {
-        value: "1",
-        label: "Tarjeta"
+        value: '1',
+        label: 'Tarjeta'
       },
       {
-        value: "1",
-        label: "Efectivo"
+        value: '2',
+        label: 'Efectivo'
       }
-    ]
+    ],
+    custom_errors: {}
   };
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
@@ -30,20 +35,83 @@ class SellCheckout extends Component {
     this.setState({ [e.target.name]: !current_value });
   };
 
+  getNumberFormatted = number => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  hideModal = () => {
+    getModalInstanceById('modal_sell_checkout').close();
+  };
+
+  onHideClick = () => {
+    if (this.props.loading) {
+      return;
+    }
+    this.hideModal();
+    if (this.props.onHide) {
+      this.props.onHide();
+    }
+  };
+
+  onAcceptClick = () => {
+    if (this.props.loading) {
+      return;
+    }
+    const { custom_errors } = this.state;
+    if (this.state.metodo_pago === '0') {
+      custom_errors.metodo_pago_error = 'Seleccione un metodo de pago';
+    } else {
+      delete custom_errors.metodo_pago_error;
+    }
+    this.setState({ custom_errors });
+    if (!isEmpty(custom_errors)) {
+      return;
+    }
+
+    if (this.props.onAccept) {
+      const { codigo, con_factura, metodo_pago, metodos_pago } = this.state;
+      const {
+        currentClient,
+        sumValues: { subtotal, impuesto, total }
+      } = this.props;
+      const obj_metodo_pago = metodos_pago.find(m => m.value === metodo_pago);
+
+      let saleData = {
+        sub_total: subtotal,
+        impuesto,
+        total,
+        codigo,
+        con_factura,
+        metodo_pago: obj_metodo_pago.label.toLowerCase()
+      };
+      if (currentClient.id) {
+        saleData.id_cliente = currentClient.id;
+      }
+      this.props.onAccept(saleData);
+    }
+  };
+
   render() {
-    const { codigo, metodos_pago, metodo_pago, con_factura } = this.state;
+    const {
+      codigo,
+      metodos_pago,
+      metodo_pago,
+      con_factura,
+      custom_errors: { metodo_pago_error }
+    } = this.state;
     const {
       currentClient,
-      errors: { codigo_error }
+      loading,
+      errors: { codigo_error },
+      sumValues: { subtotal, impuesto, total }
     } = this.props;
     let currentClientContent;
     if (currentClient && !isEmpty(currentClient)) {
       currentClientContent = (
         <div className="row">
-          <h5>Cliente</h5>
           <div className="col s12">
             <h6>
-              {currentClient.nombre} {currentClient.rtn}
+              Cliente: {currentClient.nombre} {currentClient.rtn}
             </h6>
           </div>
         </div>
@@ -55,12 +123,28 @@ class SellCheckout extends Component {
         <div className="modal-content">
           {currentClientContent}
           <div className="row">
+            <div className="col s12">
+              <h6>Sub total: Lps {this.getNumberFormatted(subtotal)}</h6>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col s12">
+              <h6>Impuesto: Lps {this.getNumberFormatted(impuesto)}</h6>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col s12">
+              <h6>Total: Lps {this.getNumberFormatted(total)}</h6>
+            </div>
+          </div>
+          <div className="row">
             <TextInputField
               id="codigo"
               label="Codigo (opcional)"
               value={codigo}
               onchange={this.onChangeTextInput}
               error={codigo_error}
+              disabled={loading}
             />
           </div>
           <div className="row">
@@ -70,6 +154,7 @@ class SellCheckout extends Component {
               value={metodo_pago}
               options={metodos_pago}
               onchange={this.onChangeTextInput}
+              error={metodo_pago_error}
             />
           </div>
           <div className="row">
@@ -78,14 +163,25 @@ class SellCheckout extends Component {
               label="Con factura"
               checked={con_factura}
               onchange={this.onChangeCheckField}
+              disabled={loading}
             />
           </div>
+
+          {loading && <Spinner fullWidth />}
         </div>
         <div className="modal-footer">
-          <a href="#!" className="btn-flat modal-close left">
+          <a
+            href="#!"
+            className={`btn-flat left ${loading && 'disabled'} `}
+            onClick={this.onHideClick}
+          >
             Cerrar
           </a>
-          <a href="#!" className="btn">
+          <a
+            href="#!"
+            className={`btn ${loading && 'disabled'}`}
+            onClick={this.onAcceptClick}
+          >
             Aceptar
           </a>
         </div>
@@ -97,7 +193,10 @@ class SellCheckout extends Component {
 SellCheckout.proptTypes = {
   currentClient: PropTypes.object,
   loading: PropTypes.bool.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  sumValues: PropTypes.object.isRequired,
+  onAccept: PropTypes.func,
+  onHide: PropTypes.func
 };
 
 export default SellCheckout;

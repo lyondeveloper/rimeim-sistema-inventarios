@@ -1,4 +1,4 @@
-/*
+
 drop function if exists func_get_next_venta_id;
 delimiter $$
 create function func_get_next_venta_id()
@@ -12,7 +12,26 @@ begin
     return @new_id;
 end $$
 delimiter ;
-*/
+
+
+drop function if exists funct_exists_sale_with_code;
+delimiter $$
+create function funct_exists_sale_with_code(p_codigo varchar(50))
+returns boolean
+begin
+	set @response = false;
+	set p_codigo = trim(p_codigo);
+    
+    if (!is_empty(p_codigo)) then 
+		set @response = exists(
+			select * from tb_venta v
+            where v.codigo = p_codigo
+        );
+    end if;
+    
+    return @response;
+end $$
+delimiter ;
 
 
 drop procedure if exists proc_search_ventas;
@@ -48,7 +67,7 @@ begin
             or v.codigo = p_codigo
             or v.con_factura = p_con_factura
             or v.metodo_pago = p_metodo_pago
-        );
+        )
         order by v.fecha_creado desc;
     else 
 
@@ -69,13 +88,13 @@ begin
             or v.codigo = p_codigo
             or v.con_factura = p_con_factura
             or v.metodo_pago = p_metodo_pago
-        );
+        )
         order by v.fecha_creado desc;
     end if;
 end $$
 delimiter ;
 
-/*
+
 drop procedure if exists proc_get_ventas;
 delimiter $$
 create procedure proc_get_ventas()
@@ -138,7 +157,8 @@ begin
         from tb_venta v 
         where v.eliminado = false 
         and v.id_local = p_id_local
-        and v.es_cotizacion = false;
+        and v.es_cotizacion = false
+	order by v.fecha_creado desc;
     end if;
 
 end $$
@@ -250,4 +270,4 @@ begin
         where id = p_id;
     end if;
 end $$
-delimiter ; */
+delimiter ; 

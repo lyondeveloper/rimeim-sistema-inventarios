@@ -25,7 +25,7 @@
             $this->db->bind(':p_precio', $params->precio);
             $this->db->bind(':p_cantidad', $params->cantidad);
             $this->db->bind(':p_total', $params->total);
-            return $this->newId();
+            return $this->db->newId();
         }
 
         public function update($params) {

@@ -11,6 +11,12 @@
             $this->db = new Database;
         }
 
+        public function exists_by_code($codigo) {
+            $this->db->query("select funct_exists_sale_with_code(:p_codigo) as 'exists';");
+            $this->db->bind(':p_codigo', $codigo);
+            return $this->db->single()->exists;
+        }
+
         public function search($params) {
             $this->db->query('call proc_search_ventas(:p_id_local,:p_id_cliente,:p_codigo,:p_con_factura,:p_metodo_pago,:p_fecha_inicio,:p_fecha_final);');
             $this->db->bind(':p_id_local', $params->id_local);

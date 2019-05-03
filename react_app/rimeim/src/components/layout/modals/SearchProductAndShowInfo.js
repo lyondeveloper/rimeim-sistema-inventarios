@@ -52,10 +52,10 @@ class SearchProductAndShowInfo extends Component {
 
   render() {
     const { field, searching } = this.state;
-    const { products } = this.props.product;
+    const { products, loading } = this.props.product;
     let productInfo;
 
-    if (searching) {
+    if (searching || loading) {
       productInfo = <Spinner fullWidth />;
     } else if (products && products.length > 0) {
       productInfo = (

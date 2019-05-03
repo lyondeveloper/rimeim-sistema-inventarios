@@ -1,15 +1,15 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-import TextInputField from "./TextInputField";
-import SelectInputField from "./SelectInputField";
-import CheckInputField from "./CheckInputField";
+import TextInputField from '../../common/TextInputField';
+import SelectInputField from '../../common/SelectInputField';
+import CheckInputField from '../../common/CheckInputField';
 
 class SearchSellModal extends Component {
   state = {
-    field: "",
-    cliente: "0",
-    productos: "",
+    field: '',
+    cliente: '0',
+    productos: '',
     con_factura: false
   };
 
@@ -26,7 +26,7 @@ class SearchSellModal extends Component {
       field,
       id_cliente: cliente,
       con_factura,
-      productos: productos.split(",")
+      productos: productos.split(',')
     });
   };
 

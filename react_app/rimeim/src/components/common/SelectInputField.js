@@ -10,7 +10,8 @@ const SelectInputField = props => {
     onchange,
     disabled,
     value,
-    options
+    options,
+    error
   } = props;
   return (
     <div className={`input-field col ${input_size}`}>
@@ -30,6 +31,7 @@ const SelectInputField = props => {
         ))}
       </select>
       <label htmlFor={id}>{label}</label>
+      {error && <span className="helper-text text-danger">{error}</span>}
     </div>
   );
 };
@@ -42,7 +44,8 @@ SelectInputField.propTypes = {
   onchange: PropTypes.func.isRequired,
   required: PropTypes.bool.isRequired,
   disabled: PropTypes.bool.isRequired,
-  options: PropTypes.array.isRequired
+  options: PropTypes.array.isRequired,
+  error: PropTypes.string
 };
 
 SelectInputField.defaultProps = {

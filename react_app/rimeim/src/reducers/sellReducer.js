@@ -3,10 +3,10 @@ import {
   SELL_END_LOADING,
   GET_SELL,
   GET_SELLS
-} from "../actions/types";
+} from '../actions/types';
 
 const initialState = {
-  loading: true,
+  loading: false,
   sell: {},
   sells: []
 };
