@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import uuid from 'uuid';
 import { connect } from 'react-redux';
 
@@ -11,9 +10,8 @@ import { getProviders } from '../../../actions/providerActions';
 
 class SearchProductProvider extends Component {
   state = {
-    modal_id: 'modal_agregar_producto_proveedor',
-    proveedor_seleccionado: '',
-    productos: [],
+    id_proveedor: '',
+    productos_proveedor: [],
     cantidad: '',
     needs_config_selects: false,
     editMode: false,
@@ -47,10 +45,14 @@ class SearchProductProvider extends Component {
     }
   }
 
+  onAddProviderClick = () => {
+    this.setState({ id_proveedor: '' });
+  };
+
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { productos, proveedor_seleccionado, modal_id } = this.state;
+    const { productos_proveedor, id_proveedor, modal_id } = this.state;
 
     const { providers, loading } = this.props.providers;
 
@@ -71,17 +73,17 @@ class SearchProductProvider extends Component {
       providerContent = (
         <div>
           <div className='d-block center'>
-            <h5>Agregar Productos De Proveedores</h5>
+            <h5>Agregar Proveedor</h5>
             <button
               className='modal-trigger btn-floating'
-              data-target={modal_id}
-              onClick={this.onAddProductClick}
+              data-target='modal_agregar_proveedor_pedido'
+              onClick={this.onAddProviderClick}
             >
               <i className='material-icons'>add</i>
             </button>
           </div>
 
-          {productos.length > 0 ? (
+          {productos_proveedor.length > 0 ? (
             <table className='striped table-bordered mt-1'>
               <thead>
                 <tr>
@@ -92,7 +94,7 @@ class SearchProductProvider extends Component {
                 </tr>
               </thead>
               <tbody>
-                {productos.map((p, i) =>
+                {productos_proveedor.map((p, i) =>
                   p.eliminado ? (
                     ''
                   ) : (
@@ -130,17 +132,17 @@ class SearchProductProvider extends Component {
     return (
       <React.Fragment>
         {providerContent}
-        <div className='modal' id={modal_id}>
+        <div className='modal' id='modal_agregar_proveedor_pedido'>
           <div className='modal-content'>
             <h5>Buscar producto</h5>
             <div className='row'>
               <SelectInputField
                 input_size='s12'
-                id='proveedor_seleccionado'
+                id='id_proveedor'
                 label='Proveedor'
                 onchange={this.onChangeTextInput}
                 options={providersOptions}
-                value={proveedor_seleccionado}
+                value={id_proveedor}
               />
             </div>
           </div>
@@ -154,9 +156,7 @@ class SearchProductProvider extends Component {
             <a
               href='#!'
               className='modal-close waves-effect waves-blue btn left text-white'
-              onClick={
-                this.state.editMode ? this.onEditProduct : this.onAddProduct
-              }
+              onClick={this.onAddProvider}
             >
               Guardar
             </a>

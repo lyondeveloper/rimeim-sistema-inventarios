@@ -76,7 +76,25 @@ export const getOrders = () => dispatch => {
     .catch(err => handleError(err, dispatch));
 };
 
-export const searchOrder = data => dispatch => {};
+export const searchOrder = data => dispatch => {
+  dispatch(clearErrors());
+  dispatch(orderLoading());
+  axios
+    .post('/orders/search', data)
+    .then(res => {
+      const response = res.data;
+
+      configUserFromResponse(response, dispatch);
+
+      dispatch({
+        type: GET_ORDERS,
+        payload: response.data
+      });
+
+      dispatch(orderEndLoading());
+    })
+    .catch(err => handleError(err, dispatch));
+};
 
 export const deleteOrder = (id, history, newUrl) => dispatch => {
   dispatch(clearErrors());

@@ -152,7 +152,7 @@ class Order extends Component {
         <NewNavbar active_nav='PEDIDOS'>
           <div className='nav-wrapper'>
             <a href='#!' className='brand-logo'>
-              Pedido: #{order.codigo}
+              Pedido: #{this.props.match.params.id}
             </a>
             <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
               <i className='material-icons'>menu</i>

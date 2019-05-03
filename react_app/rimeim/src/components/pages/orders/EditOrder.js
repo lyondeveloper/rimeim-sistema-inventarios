@@ -29,8 +29,10 @@ class EditOrder extends Component {
     this.state = {
       codigo: '',
       fecha_prevista_entrega: '',
+      id_local: '',
       local: {},
       productos: [],
+      es_compra: false,
       providerMode: false,
       needs_config_selects: false,
       errors: {}
@@ -39,7 +41,6 @@ class EditOrder extends Component {
     this.onChangeTextInput = this.onChangeTextInput.bind(this);
     this.onProviderModeChange = this.onProviderModeChange.bind(this);
     this.onReceiveProductData = this.onReceiveProductData.bind(this);
-    this.onSelectLocal = this.onSelectLocal.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
@@ -49,8 +50,8 @@ class EditOrder extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-    this.props.getLocals();
     this.props.getOrder(this.props.match.params.id);
+    this.props.getLocals();
   }
 
   componentDidUpdate() {
@@ -64,7 +65,7 @@ class EditOrder extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { order } = this.props.orders;
+    const { order, loading } = this.props.orders;
 
     if (nextProps.errors) {
       this.setState({
@@ -81,16 +82,16 @@ class EditOrder extends Component {
       });
     }
 
-    if (nextProps.orders.orders) {
-      const { orders } = nextProps.orders;
-      orders.forEach(order => (order.disabled = false));
-      this.setState({
-        needs_config_selects: true,
-        searching: false
-      });
-    }
+    // if (nextProps.orders.orders) {
+    //   const { orders } = nextProps.orders;
+    //   orders.forEach(order => (order.disabled = false));
+    //   this.setState({
+    //     needs_config_selects: true,
+    //     searching: false
+    //   });
+    // }
 
-    if (order) {
+    if (Object.keys(order).length > 0) {
       order.codigo = !isEmpty(order.codigo) ? order.codigo : '';
       order.local_solicitado = !isEmpty(order.local_solicitado)
         ? order.local_solicitado
@@ -102,15 +103,12 @@ class EditOrder extends Component {
 
       this.setState({
         codigo: order.codigo,
+        id_local: order.local_solicitado.id,
         local: order.local_solicitado,
         fecha_prevista_entrega: order.fecha_prevista_entrega,
         productos: order.productos
       });
     }
-  }
-
-  onSelectLocal() {
-    this.setState({});
   }
 
   onProviderModeChange() {
@@ -137,15 +135,22 @@ class EditOrder extends Component {
   onSubmit(e) {
     e.preventDefault();
 
-    const { codigo, fecha_prevista_entrega, productos, local } = this.state;
+    const {
+      codigo,
+      fecha_prevista_entrega,
+      productos,
+      local,
+      es_compra
+    } = this.state;
 
     const { id } = this.props.match.params;
 
     const orderData = {
-      id_local_solicitado: local,
+      id_local_solicitado: local.id,
       codigo,
       fecha_prevista_entrega,
-      productos
+      productos,
+      es_compra
     };
 
     this.props.editOrder(id, orderData, this.props.history);
@@ -156,17 +161,17 @@ class EditOrder extends Component {
       codigo,
       providerMode,
       fecha_prevista_entrega,
-      local,
+      id_local,
       productos
     } = this.state;
 
-    const { locals } = this.props;
-    const { loading } = this.props.orders;
+    const { locals } = this.props.locals;
+    const { loading, order } = this.props.orders;
 
     //Mapeando las opciones de locales para desplegarlas en el SelectInputField
     const localOptions = [];
 
-    locals.locals.map(local => {
+    locals.map(local => {
       localOptions.push({
         value: local.id,
         label: local.nombre
@@ -175,30 +180,26 @@ class EditOrder extends Component {
 
     let orderContent;
 
-    if (loading || locals.loading) {
+    if (loading || Object.keys(order).length < 0) {
       orderContent = <Spinner fullWidth />;
     } else {
       orderContent = (
         <form onSubmit={this.onSubmit}>
-          <div className='row'>
-            {/* Si modo proveedor esta activo, mostrara el buscador de productos de proveedor, si no, usara el del local */}
-            {providerMode ? (
-              <SearchProductProvider />
-            ) : (
-              <React.Fragment>
-                <div className='row'>
-                  <SelectInputField
-                    input_size='s12'
-                    id='local'
-                    label='Local'
-                    onchange={this.onChangeTextInput}
-                    value={local.id}
-                    options={localOptions}
-                  />
-                </div>
-              </React.Fragment>
-            )}
-          </div>
+          {/* Si modo proveedor esta activo, mostrara el buscador de productos de proveedor, si no, usara el del local */}
+          {providerMode ? (
+            <SearchProductProvider />
+          ) : (
+            <div className='row'>
+              <SelectInputField
+                input_size='s12'
+                id='id_local'
+                label='Local'
+                onchange={this.onChangeTextInput}
+                value={id_local}
+                options={localOptions}
+              />
+            </div>
+          )}
 
           <div className='row'>
             <TextInputField

@@ -16,6 +16,7 @@ import SearchProductLocal from './SearchProductLocal';
 import SearchProductProvider from './SearchProductProvider';
 
 import { getLocals } from '../../../actions/LocalActions';
+import { getProviders } from '../../../actions/providerActions';
 import { createOrder } from '../../../actions/orderActions';
 
 class NewOrder extends Component {
@@ -24,9 +25,11 @@ class NewOrder extends Component {
     this.state = {
       codigo: '',
       fecha_entrega: '',
-      local: '',
       id_local: '',
+      id_proveedor: '',
+      proveedor_actual: {},
       productos: [],
+      es_compra: false,
       providerMode: false,
       needs_config_selects: false,
       errors: {}
@@ -34,7 +37,6 @@ class NewOrder extends Component {
 
     this.onChangeTextInput = this.onChangeTextInput.bind(this);
     this.onProviderModeChange = this.onProviderModeChange.bind(this);
-    this.onSelectLocal = this.onSelectLocal.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
@@ -44,11 +46,11 @@ class NewOrder extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-    this.props.getLocals();
+    if (this.state.providerMode) this.props.getProviders();
+    else this.props.getLocals();
   }
 
   componentDidUpdate() {
-    // configModals();
     if (this.state.needs_config_selects) {
       configSelectInputFields();
       this.setState({
@@ -64,18 +66,25 @@ class NewOrder extends Component {
       });
     }
 
-    if (nextProps.locals.locals) {
-      const { locals } = nextProps.locals;
-      locals.forEach(local => (local.disabled = false));
-      this.setState({
-        needs_config_selects: true,
-        searching: false
-      });
+    if (this.state.providerMode) {
+      if (nextProps.locals.locals) {
+        const { locals } = nextProps.locals;
+        locals.forEach(local => (local.disabled = false));
+        this.setState({
+          needs_config_selects: true,
+          searching: false
+        });
+      }
+    } else {
+      if (nextProps.providers.providers) {
+        const { providers } = nextProps.providers;
+        providers.forEach(local => (local.disabled = false));
+        this.setState({
+          needs_config_selects: true,
+          searching: false
+        });
+      }
     }
-  }
-
-  onSelectLocal() {
-    this.setState({});
   }
 
   onProviderModeChange() {
@@ -97,31 +106,43 @@ class NewOrder extends Component {
   onSubmit(e) {
     e.preventDefault();
 
-    const { codigo, fecha_entrega, productos, local } = this.state;
+    const { codigo, fecha_entrega, productos, local, es_compra } = this.state;
 
     const orderData = {
       id_local_solicitado: local,
       codigo,
       fecha_entrega,
-      productos
+      productos,
+      es_compra
     };
 
     this.props.createOrder(orderData, this.props.history);
   }
 
   render() {
-    const { codigo, providerMode, fecha_entrega, local } = this.state;
+    const { codigo, providerMode, fecha_entrega, id_local } = this.state;
 
     const { locals } = this.props;
+    const { providers } = this.props.providers;
 
     const localOptions = [];
+    const providerOptions = [];
 
-    locals.locals.map(local => {
-      localOptions.push({
-        value: local.id,
-        label: local.nombre
+    if (providerMode) {
+      providers.map(provider => {
+        providerOptions.push({
+          value: provider.id,
+          label: provider.nombre
+        });
       });
-    });
+    } else {
+      locals.locals.map(local => {
+        localOptions.push({
+          value: local.id,
+          label: local.nombre
+        });
+      });
+    }
 
     return (
       <React.Fragment>
@@ -177,16 +198,22 @@ class NewOrder extends Component {
                   <form onSubmit={this.onSubmit}>
                     <div className='row'>
                       {providerMode ? (
-                        <SearchProductProvider />
+                        <React.Fragment>
+                          <SearchProductProvider
+                            onPassProductsData={this.onReceiveProductData.bind(
+                              this
+                            )}
+                          />
+                        </React.Fragment>
                       ) : (
                         <React.Fragment>
                           <div className='row'>
                             <SelectInputField
                               input_size='s12'
-                              id='local'
+                              id='id_local'
                               label='Local'
                               onchange={this.onChangeTextInput}
-                              value={local}
+                              value={id_local}
                               options={localOptions}
                             />
                           </div>
@@ -238,10 +265,11 @@ class NewOrder extends Component {
 
 const mapStateToProps = state => ({
   locals: state.local,
-  orders: state.order
+  orders: state.order,
+  providers: state.provider
 });
 
 export default connect(
   mapStateToProps,
-  { getLocals, createOrder }
+  { getLocals, createOrder, getProviders }
 )(NewOrder);

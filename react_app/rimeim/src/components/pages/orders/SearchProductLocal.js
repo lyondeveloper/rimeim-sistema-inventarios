@@ -88,8 +88,7 @@ class SearchProductLocal extends Component {
       }
 
       document.getElementById(`${producto.id}`).checked = producto.seleccionado;
-
-      console.log(document.getElementById(`${producto.id}`).checked);
+      console.log(producto.seleccionado);
 
       this.setState({
         productos_seleccionados
@@ -269,13 +268,16 @@ class SearchProductLocal extends Component {
                   key={uuid()}
                 >
                   <label
-                    onClick={this.onSelectProduct.bind(this, producto)}
+                    onClick={() => {
+                      this.onSelectProduct(producto);
+                    }}
                   >
                     <input
                       type='checkbox'
                       className='filled-in'
                       id={`${producto.id}`}
                       defaultChecked={producto.seleccionado}
+                      readOnly={true}
                     />
                     <span />
                   </label>
@@ -411,6 +413,7 @@ class SearchProductLocal extends Component {
                   label='Cantidad'
                   onchange={this.onChangeTextInput}
                   value={cantidad}
+                  active_label={cantidad ? true : false}
                 />
               ) : (
                 <React.Fragment>

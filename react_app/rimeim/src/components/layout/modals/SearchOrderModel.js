@@ -1,23 +1,23 @@
-import React from 'react'
-import TextInputField from "../../common/TextInputField"
+import React from 'react';
+import TextInputField from '../../common/TextInputField';
 
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 
-const SearchOrderModel = (props) => {
-    const { onchange,
-        onsearch,
-        values: { codigo, proveedor, local, fecha_inicio, fecha_fin } } = props
-    return (
-        <div className="modal" id="modal_buscar_pedido">
-            <div className="modal-content">
-                <h5>Buscar pedido</h5>
-                <div className="row">
-                    <TextInputField id="codigo"
-                        value={codigo}
-                        onchange={onchange}
-                        label="Codigo" />
-                </div>
-                <div className="row">
+const SearchOrderModel = props => {
+  const { onchange, onsearch, field } = props;
+  return (
+    <div className='modal' id='modal_buscar_pedido'>
+      <div className='modal-content'>
+        <h5>Buscar pedido</h5>
+        <div className='row'>
+          <TextInputField
+            id='field'
+            value={field}
+            onchange={onchange}
+            label='Parametro de Busqueda'
+          />
+        </div>
+        {/* <div className="row">
                     <TextInputField id="proveedor"
                         label="Proveedor"
                         onchange={onchange}
@@ -46,21 +46,31 @@ const SearchOrderModel = (props) => {
                         value={fecha_fin}
                         onchange={onchange}
                     />
-                </div>
-            </div>
-            <div className="modal-footer">
-                <a href="#!" className="modal-close waves-effect waves-green btn-flat left">Cerrar</a>
-                <a href="#!" className="modal-close waves-effect waves-green btn" onClick={onsearch}>Buscar</a>
-            </div>
-        </div>
-    )
-}
+                </div> */}
+      </div>
+      <div className='modal-footer'>
+        <a
+          href='#!'
+          className='modal-close waves-effect waves-green btn-flat left'
+        >
+          Cerrar
+        </a>
+        <a
+          href='#!'
+          className='modal-close waves-effect waves-green btn'
+          onClick={onsearch}
+        >
+          Buscar
+        </a>
+      </div>
+    </div>
+  );
+};
 
 SearchOrderModel.propTypes = {
-    onsearch: PropTypes.func,
-    onchange: PropTypes.func.isRequired,
-    values: PropTypes.object.isRequired
-}
+  onsearch: PropTypes.func,
+  onchange: PropTypes.func.isRequired,
+  values: PropTypes.object.isRequired
+};
 
-
-export default SearchOrderModel
+export default SearchOrderModel;

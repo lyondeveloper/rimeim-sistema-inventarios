@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import uuid from 'uuid';
 
 import { SEARCH_ORDER } from '../../layout/NavTypes';
 import Navbar from '../../layout/Navbar';
@@ -10,18 +11,16 @@ import {
 } from '../../../utils/MaterialFunctions';
 
 import SearchOrderModel from '../../layout/modals/SearchOrderModel';
+import OrderCard from '../../common/OrderCard';
 import { getCurrentDateToInput } from '../../../utils/dateFormat';
 
 import { searchOrder } from '../../../actions/orderActions';
+import Spinner from '../../common/Spinner';
 
 class SearchOrder extends Component {
   state = {
-    pedidos: [],
-    codigo: '',
-    proveedor: '',
-    local: '',
-    fecha_inicio: '',
-    fecha_fin: ''
+    field: '',
+    searching: false
   };
 
   componentWillMount() {
@@ -37,22 +36,50 @@ class SearchOrder extends Component {
     });
   }
 
+  onSearch = e => {
+    e.preventDefault();
+    this.setState({
+      searching: true
+    });
+    this.props.searchOrder(this.state.field);
+  };
+
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
-  onSearch = () => {};
-
   render() {
-    const { codigo, proveedor, local, fecha_inicio, fecha_fin } = this.state;
+    const { loading, orders } = this.props.orders;
+
+    const { searching } = this.state;
+
+    const { field } = this.props;
+
+    let searchResult;
+
+    if (loading || this.state.searching) {
+      searchResult = <Spinner fullWidth />;
+    } else {
+      if (orders.length < 0) {
+        searchResult = <h1>No se encontraron pedidos disponibles</h1>;
+      } else {
+        searchResult = orders.map(order => (
+          <div className='s12 m6 l6'>
+            <OrderCard order={order} key={uuid()} />
+          </div>
+        ));
+      }
+    }
+
     return (
       <React.Fragment>
         <Navbar navtype={SEARCH_ORDER} />
 
         <main>
           <SearchOrderModel
-            values={{ codigo, proveedor, local, fecha_inicio, fecha_fin }}
+            values={field}
             onchange={this.onChangeTextInput}
             onsearch={this.onSearch}
           />
+          {searching ? searchResult : ''}
         </main>
       </React.Fragment>
     );
@@ -63,4 +90,7 @@ const mapStateToProps = state => ({
   orders: state.order
 });
 
-export default connect()(SearchOrder);
+export default connect(
+  mapStateToProps,
+  { searchOrder }
+)(SearchOrder);
