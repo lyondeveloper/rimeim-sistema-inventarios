@@ -45,52 +45,48 @@ create procedure proc_search_ventas(in p_id_local bigint,
                                     in p_fecha_final datetime)
 begin
     set p_codigo = trim(p_codigo);
-    set p_metodo_pago = trim(p_metodo_pago);
+    set p_metodo_pago = trim_and_lower(p_metodo_pago);
+    set @sql_query = "select distinct v.id,
+                v.id_local,
+                v.id_cliente,
+                v.id_empleado_creado_por,
+                v.codigo,
+                v.con_factura,
+                v.total,
+                v.fecha_creado
+        from tb_venta v 
+        where v.eliminado = false 
+        and v.es_cotizacion = false ";
+    
+    if (valid_int_id(p_id_local)) then 
+        set @sql_query = concat(@sql_query, " and v.id_local = ", p_id_local);
+    end if;
+
+    if (valid_int_id(p_id_cliente)) then 
+        set @sql_query = concat(@sql_query, " and v.id_cliente = ", p_id_cliente);
+    end if;
 
     if (p_fecha_inicio is not null and 
         p_fecha_final is not null) then
-        select distinct v.id,
-                v.id_local,
-                v.id_cliente,
-                v.id_empleado_creado_por,
-                v.codigo,
-                v.con_factura,
-                v.total,
-                v.fecha_creado
-        from tb_venta v 
-        where v.eliminado = false 
-        and v.es_cotizacion = false 
-        and v.fecha_creado between p_fecha_inicio and p_fecha_final
-        and (
-            v.id_local = p_id_local
-            or v.id_cliente = p_id_cliente
-            or v.codigo = p_codigo
-            or v.con_factura = p_con_factura
-            or v.metodo_pago = p_metodo_pago
-        )
-        order by v.fecha_creado desc;
-    else 
-
-        select distinct v.id,
-                v.id_local,
-                v.id_cliente,
-                v.id_empleado_creado_por,
-                v.codigo,
-                v.con_factura,
-                v.total,
-                v.fecha_creado
-        from tb_venta v 
-        where v.eliminado = false 
-        and v.es_cotizacion = false 
-        and (
-            v.id_local = p_id_local
-            or v.id_cliente = p_id_cliente
-            or v.codigo = p_codigo
-            or v.con_factura = p_con_factura
-            or v.metodo_pago = p_metodo_pago
-        )
-        order by v.fecha_creado desc;
+        set @sql_query = concat(@sql_query, " and v.fecha_creado between ", p_fecha_inicio , " and ", p_fecha_final);
     end if;
+
+    if (!is_empty(p_codigo)) then 
+        set @sql_query = concat(@sql_query, " and v.codigo like concat('%', '", p_codigo, "', '%') ");
+    end if; 
+
+    if (p_con_factura is not null) then 
+        set @sql_query = concat(@sql_query, " and v.con_factura = ", p_con_factura);
+    end if;
+    
+    if (!is_empty(p_metodo_pago)) then 
+        set @sql_query = concat(@sql_query, " and v.metodo_pago = '", p_metodo_pago, "' ");
+    end if;
+
+    set @sql_query = concat(@sql_query, " order by v.fecha_creado desc;");
+
+    PREPARE sql_statement FROM @sql_query;
+    EXECUTE sql_statement;
 end $$
 delimiter ;
 

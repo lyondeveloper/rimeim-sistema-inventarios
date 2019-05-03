@@ -1,28 +1,29 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import isEmpty from '../../../actions/isEmpty';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import isEmpty from "../../../actions/isEmpty";
 
-import { getModalInstanceById } from '../../../utils/MaterialFunctions';
+import { getModalInstanceById } from "../../../utils/MaterialFunctions";
+import { getNumberFormatted } from "../../../utils/stringUtils";
 
-import SelectInputField from '../../common/SelectInputField';
-import TextInputField from '../../common/TextInputField';
-import CheckInputField from '../../common/CheckInputField';
+import SelectInputField from "../../common/SelectInputField";
+import TextInputField from "../../common/TextInputField";
+import CheckInputField from "../../common/CheckInputField";
 
-import Spinner from '../../common/Spinner';
+import Spinner from "../../common/Spinner";
 
 class SellCheckout extends Component {
   state = {
-    codigo: '',
+    codigo: "",
     con_factura: false,
-    metodo_pago: '0',
+    metodo_pago: "0",
     metodos_pago: [
       {
-        value: '1',
-        label: 'Tarjeta'
+        value: "1",
+        label: "Tarjeta"
       },
       {
-        value: '2',
-        label: 'Efectivo'
+        value: "2",
+        label: "Efectivo"
       }
     ],
     custom_errors: {}
@@ -35,12 +36,8 @@ class SellCheckout extends Component {
     this.setState({ [e.target.name]: !current_value });
   };
 
-  getNumberFormatted = number => {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
-
   hideModal = () => {
-    getModalInstanceById('modal_sell_checkout').close();
+    getModalInstanceById("modal_sell_checkout").close();
   };
 
   onHideClick = () => {
@@ -58,8 +55,8 @@ class SellCheckout extends Component {
       return;
     }
     const { custom_errors } = this.state;
-    if (this.state.metodo_pago === '0') {
-      custom_errors.metodo_pago_error = 'Seleccione un metodo de pago';
+    if (this.state.metodo_pago === "0") {
+      custom_errors.metodo_pago_error = "Seleccione un metodo de pago";
     } else {
       delete custom_errors.metodo_pago_error;
     }
@@ -124,17 +121,17 @@ class SellCheckout extends Component {
           {currentClientContent}
           <div className="row">
             <div className="col s12">
-              <h6>Sub total: Lps {this.getNumberFormatted(subtotal)}</h6>
+              <h6>Sub total: Lps {getNumberFormatted(subtotal)}</h6>
             </div>
           </div>
           <div className="row">
             <div className="col s12">
-              <h6>Impuesto: Lps {this.getNumberFormatted(impuesto)}</h6>
+              <h6>Impuesto: Lps {getNumberFormatted(impuesto)}</h6>
             </div>
           </div>
           <div className="row">
             <div className="col s12">
-              <h6>Total: Lps {this.getNumberFormatted(total)}</h6>
+              <h6>Total: Lps {getNumberFormatted(total)}</h6>
             </div>
           </div>
           <div className="row">
@@ -172,14 +169,14 @@ class SellCheckout extends Component {
         <div className="modal-footer">
           <a
             href="#!"
-            className={`btn-flat left ${loading && 'disabled'} `}
+            className={`btn-flat left ${loading ? "disabled" : ""} `}
             onClick={this.onHideClick}
           >
             Cerrar
           </a>
           <a
             href="#!"
-            className={`btn ${loading && 'disabled'}`}
+            className={`btn ${loading ? "disabled" : ""}`}
             onClick={this.onAcceptClick}
           >
             Aceptar

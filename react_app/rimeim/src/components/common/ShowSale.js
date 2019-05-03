@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
+import React from "react";
+import PropTypes from "prop-types";
+import uuid from "uuid";
 
-import Spinner from './Spinner';
-import EmptyIcon from './EmptyIcon';
-import { getNumberFormatted } from '../../utils/stringUtils';
-import isEmpty from '../../actions/isEmpty';
+import Spinner from "./Spinner";
+import EmptyIcon from "./EmptyIcon";
+import { getNumberFormatted } from "../../utils/stringUtils";
+import isEmpty from "../../actions/isEmpty";
 
 const ShowSale = props => {
   const { loading, sale } = props;
@@ -31,10 +31,12 @@ const ShowSale = props => {
     saleContent = (
       <div className="card">
         <div className="card-content venta-factura">
-          <span className="d-block bold">
-            Rimeim
-            {local && <span className="right">{local.nombre}</span>}
-          </span>
+          {local && (
+            <span className="d-block bold">
+              Local:
+              {`${local.id} - ${local.nombre}`}
+            </span>
+          )}
 
           <span className="d-block">
             <span className="bold">ID: </span>
@@ -106,13 +108,13 @@ const ShowSale = props => {
           <div className="d-block">
             <span className="bold">Metodo de pago: </span>
             <span className="ml-1">
-              {metodo_pago} - {con_factura ? 'C/F' : 'S/F'}
+              {metodo_pago} - {con_factura ? "C/F" : "S/F"}
             </span>
           </div>
         </div>
 
-        <div className="card-footer">
-          <button className="btn-flat">Generar devolucion</button>
+        <div className="card-footer p-1">
+          <button className="btn red darken-3">Generar devolucion</button>
         </div>
       </div>
     );

@@ -1,15 +1,26 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
-import TextInputField from '../../common/TextInputField';
-import SelectInputField from '../../common/SelectInputField';
-import CheckInputField from '../../common/CheckInputField';
+import TextInputField from "../../common/TextInputField";
+import SelectInputField from "../../common/SelectInputField";
+import CheckInputField from "../../common/CheckInputField";
 
 class SearchSellModal extends Component {
   state = {
-    field: '',
-    cliente: '0',
-    productos: '',
+    field: "",
+    cliente: "0",
+    productos: "",
+    metodo_pago: "0",
+    metodos_pago: [
+      {
+        value: "1",
+        label: "Efectivo"
+      },
+      {
+        value: "2",
+        label: "Tarjeta"
+      }
+    ],
     con_factura: false
   };
 
@@ -21,24 +32,46 @@ class SearchSellModal extends Component {
   };
 
   onSearchClick = () => {
-    const { field, cliente, con_factura, productos } = this.state;
+    const {
+      field,
+      cliente,
+      con_factura,
+      productos,
+      metodo_pago,
+      metodos_pago
+    } = this.state;
+    let metodo_pago_str = null;
+    let metodo_pago_encontrado = metodos_pago.find(
+      m => m.value === metodo_pago
+    );
+    if (metodo_pago_encontrado) {
+      metodo_pago_str = metodo_pago_encontrado.label;
+    }
     this.props.onSearch({
       field,
       id_cliente: cliente,
       con_factura,
-      productos: productos.split(',')
+      productos: productos.split(","),
+      metodo_pago: metodo_pago_str
     });
   };
 
   render() {
-    const { field, con_factura, cliente, productos } = this.state;
+    const {
+      field,
+      con_factura,
+      cliente,
+      productos,
+      metodos_pago,
+      metodo_pago
+    } = this.state;
     return (
       <div className="modal" id="modal_search">
         <div className="modal-content">
           <div className="row">
             <TextInputField
               id="field"
-              label="Codigo, rtn o id de venta"
+              label="Codigo o id de venta"
               value={field}
               onchange={this.onChangeTextInput}
             />
@@ -47,6 +80,7 @@ class SearchSellModal extends Component {
           <div className="row">
             <SelectInputField
               id="cliente"
+              label="Cliente"
               value={cliente}
               options={this.props.clientes}
               onchange={this.onChangeTextInput}
@@ -59,6 +93,16 @@ class SearchSellModal extends Component {
               label="Productos"
               placeholder="00192, 911201, 12212"
               value={productos}
+              onchange={this.onChangeTextInput}
+            />
+          </div>
+
+          <div className="row">
+            <SelectInputField
+              id="metodo_pago"
+              label="Metodo de pago"
+              value={metodo_pago}
+              options={metodos_pago}
               onchange={this.onChangeTextInput}
             />
           </div>

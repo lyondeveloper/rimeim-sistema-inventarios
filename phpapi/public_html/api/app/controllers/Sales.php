@@ -26,6 +26,7 @@ class Sales extends Controller
 
         $this->localModel = $this->model('Local');
         $this->productModel = $this->model('Product');
+        $this->productLocalModel = $this->model('ProductLocal');
     }
 
     public function get()
@@ -35,8 +36,10 @@ class Sales extends Controller
         $sales = null;
         if ($id_local > 0) {
             $sales = $this->saleModel->get_by_local($id_local);
-        } elseif ($this->is_current_user_admin() 
-                && $id_local == 0) {
+        } elseif (
+            $this->is_current_user_admin()
+            && $id_local == 0
+        ) {
             $sales = $this->saleModel->get();
         }
         if (!is_null($sales)) {
@@ -45,14 +48,16 @@ class Sales extends Controller
         $this->response($sales);
     }
 
-    public function get_one($id) {
+    public function get_one($id)
+    {
         $this->useGetRequest();
         $sale = $this->get_parsed_single_sale_by_id($id);
         $sale->productos = $this->get_parsed_products_by_sell_id($id);
         $this->response($sale);
     }
 
-    public function search() {
+    public function search()
+    {
         $this->usePostRequest();
         $data = getJsonData();
         if (is_null($data)) {
@@ -62,21 +67,63 @@ class Sales extends Controller
         $id_local = $this->get_current_id_local();
         if ($id_local > 0) {
             $data->id_local = $id_local;
-
-        } elseif ($data->id_local > 0 && 
-                $data->id_local != $id_local && 
-                !$this->is_current_user_admin()) {
+        } elseif (
+            $data->id_local > 0 &&
+            $data->id_local != $id_local &&
+            !$this->is_current_user_admin()
+        ) {
             $this->response(null, ERROR_FORBIDDEN);
+        }
 
-        } 
+        if (
+            isset($data->field) &&
+            !empty($data->field)
+        ) {
+            $data->codigo = $data->field;
+        }
+
         $sales = $this->saleModel->search($data);
+
+        if (
+            isset($data->productos) &&
+            is_array($data->productos)
+        ) {
+            $products_to_search = [];
+            foreach ($data->productos as $producto) {
+                if (
+                    is_string($producto) &&
+                    !empty($producto)
+                ) {
+                    array_push($products_to_search, $producto);
+                }
+            }
+
+            if (count($products_to_search) > 0) {
+                $newSales = [];
+                foreach ($sales as $sale) {
+                    $sale_productos = $this->saleProduct->get_minified_by_sale($sale->id);
+                    $num_of_valid_products = 0;
+                    foreach ($sale_productos as $producto) {
+                        if (in_array($producto->codigo_barra, $products_to_search)) {
+                            $num_of_valid_products++;
+                        }
+                    }
+                    if ($num_of_valid_products >= count($products_to_search)) {
+                        array_push($newSales, $sale);
+                    }
+                }
+                $sales = $newSales;
+            }
+        }
+
         if (!is_null($sales)) {
             $sales = $this->get_parsed_sales($sales, $data->id_local);
         }
         $this->response($sales);
     }
 
-    public function add() {
+    public function add()
+    {
         $this->usePostRequest();
         $data = $this->validate_add_data(getJsonData());
         $newId = $this->saleModel->add($data);
@@ -85,65 +132,84 @@ class Sales extends Controller
         $this->response(['id' => $newId]);
     }
 
-    private function validate_add_data($data) {
+    private function validate_add_data($data)
+    {
         $errors = [];
 
-        if (!isset($data->sub_total) || 
-            !($data->sub_total >= 0)) {
+        if (
+            !isset($data->sub_total) ||
+            !($data->sub_total >= 0)
+        ) {
             $errors['sub_total_error'] = "Campo invalido";
         }
-        if (!isset($data->impuesto) || 
-            !($data->impuesto >= 0)) {
+        if (
+            !isset($data->impuesto) ||
+            !($data->impuesto >= 0)
+        ) {
             $errors['impuesto_error'] = "Campo invalido";
         }
-        if (!isset($data->total) || 
-            !($data->total >= 0)) {
+        if (
+            !isset($data->total) ||
+            !($data->total >= 0)
+        ) {
             $errors['total_error'] = "Campo invalido";
         }
 
-        if (!isset($data->con_factura) || 
-            !is_bool($data->con_factura)) {
+        if (
+            !isset($data->con_factura) ||
+            !is_bool($data->con_factura)
+        ) {
             $errors['con_factura_error'] = "Campo invalido";
         }
 
-        if (!isset($data->metodo_pago) || 
-            empty($data->metodo_pago)) {
+        if (
+            !isset($data->metodo_pago) ||
+            empty($data->metodo_pago)
+        ) {
             $errors['metodo_pago_error'] = "Campo invalido";
         } else {
             $data->metodo_pago = strtolower($data->metodo_pago);
-            if ($data->metodo_pago != "efectivo" && 
-                $data->metodo_pago != "tarjeta") {
+            if (
+                $data->metodo_pago != "efectivo" &&
+                $data->metodo_pago != "tarjeta"
+            ) {
                 $errors['metodo_pago_error'] = "Metodo de pago invalido: " . $data->metodo_pago;
             }
         }
 
-        if (isset($data->id_cliente) && 
-            $data->id_cliente > 0) {
-            if (!$this->clientModel->exists_with_id($data->id_cliente))  {
+        if (
+            isset($data->id_cliente) &&
+            $data->id_cliente > 0
+        ) {
+            if (!$this->clientModel->exists_with_id($data->id_cliente)) {
                 $errors['cliente_error'] = "Cliente invalido";
             }
         } else {
             $data->id_cliente = null;
         }
 
-        if (isset($data->codigo) && 
-            !empty($data->codigo)) {
+        if (
+            isset($data->codigo) &&
+            !empty($data->codigo)
+        ) {
             if ($this->saleModel->exists_by_code($data->codigo)) {
                 $errors['codigo_error'] = "Codigo en uso";
             }
         } else {
             $data->codigo = null;
-        } 
+        }
 
-        if (!isset($data->productos) || 
+        if (
+            !isset($data->productos) ||
             !is_array($data->productos) ||
-            count($data->productos) == 0 ) {
+            count($data->productos) == 0
+        ) {
             $errors['productos_error'] = "Campo invalido";
         }
         $this->checkErrors($errors);
 
         $number_of_invalid_products = 0;
-        foreach($data->productos as &$producto) {
+        foreach ($data->productos as &$producto) {
             if (!$this->valid_product_fields($producto)) {
                 $producto->valido = false;
                 $number_of_invalid_products++;
@@ -161,33 +227,43 @@ class Sales extends Controller
         return $data;
     }
 
-    private function add_products_to_sell($productos, $id_venta) {
-        foreach($productos as &$producto) {
+    private function add_products_to_sell($productos, $id_venta)
+    {
+        foreach ($productos as &$producto) {
             if ($this->valid_product_fields(($producto))) {
                 $producto->total = (int)$producto->cantidad * (double)$producto->precio;
                 $producto->id_venta = $id_venta;
                 if (!isset($producto->oferta)) {
                     $producto->oferta = false;
                 }
-                $this->saleProduct->add($producto);
+                if ($this->saleProduct->add($producto)) {
+                    if ($this->productLocalModel->remove_inventario(
+                        $producto->id_producto,
+                        $this->get_current_id_local(),
+                        $producto->cantidad
+                    )) {
+                        $this->productModel->remove_inventario($producto->id_producto, $producto->cantidad);
+                    }
+                }
             }
         }
     } // END OF ADD
 
-    
+
 
     // ====== Helpers ========
 
     // Parsed sale for /sales route
-    private function get_parsed_sales($sales, $id_local) {
-
-        foreach($sales as &$sale) {
+    private function get_parsed_sales($sales, $id_local)
+    {
+        foreach ($sales as &$sale) {
             $sale = $this->get_parsed_single_sale($sale, $id_local);
         }
         return $sales;
     }
 
-    private function get_parsed_single_sale_by_id($id) {
+    private function get_parsed_single_sale_by_id($id)
+    {
         $sale = $this->saleModel->get_by_id($id);
         if (is_null(($sale))) {
             $this->response(["error" => "Venta no encontrada"], ERROR_NOTFOUND);
@@ -203,25 +279,32 @@ class Sales extends Controller
         return $sale;
     }
 
-    private function get_parsed_single_sale($sale, $id_local) {
-        if (isset($sale->id_cliente) && 
-            $sale->id_cliente > 0) {
+    private function get_parsed_single_sale($sale, $id_local)
+    {
+        if (
+            isset($sale->id_cliente) &&
+            $sale->id_cliente > 0
+        ) {
             if (!isset($this->clientsArray[$sale->id_cliente])) {
                 $this->clientsArray[$sale->id_cliente] = $this->clientModel->get_by_id($sale->id_cliente);
             }
             $sale->cliente = $this->clientsArray[$sale->id_cliente];
         }
-        if (isset($sale->id_empleado_creado_por) && 
-            $sale->id_empleado_creado_por > 0) {
+        if (
+            isset($sale->id_empleado_creado_por) &&
+            $sale->id_empleado_creado_por > 0
+        ) {
             if (!isset($this->employesArray[$sale->id_empleado_creado_por])) {
                 $this->employesArray[$sale->id_empleado_creado_por] = $this->userModel->get_minified_user_by_id_empleado($sale->id_empleado_creado_por);
             }
             $sale->usuario_creador = $this->employesArray[$sale->id_empleado_creado_por];
         }
-        if (isset($sale->id_local) && 
-            $sale->id_local > 0 && 
-            $this->is_current_user_admin() && 
-            $id_local == 0) {
+        if (
+            isset($sale->id_local) &&
+            $sale->id_local > 0 &&
+            $this->is_current_user_admin() &&
+            $id_local == 0
+        ) {
             if (!isset($this->localsArray[$sale->id_local])) {
                 $this->localsArray[$sale->id_local] = $this->localModel->get_by_id($sale->id_local);
             }
@@ -230,9 +313,10 @@ class Sales extends Controller
         return $sale;
     }
 
-    private function get_parsed_products_by_sell_id($id) {
+    private function get_parsed_products_by_sell_id($id)
+    {
         $productos = $this->saleProduct->get_by_sale($id);
-        foreach($productos as &$producto) {
+        foreach ($productos as &$producto) {
             if (!isset($this->productsArray[$producto->id_producto])) {
                 $this->productsArray[$producto->id_producto] = $this->productModel->get_minified_by_id_for_sell_details($producto->id_producto);
             }
@@ -242,14 +326,13 @@ class Sales extends Controller
         return $productos;
     }
 
-    private function valid_product_fields($producto) {
-        return (
-            isset($producto->id_producto) && 
+    private function valid_product_fields($producto)
+    {
+        return (isset($producto->id_producto) &&
             $producto->id_producto > 0 &&
-            isset($producto->cantidad) && 
+            isset($producto->cantidad) &&
             $producto->cantidad > 0 &&
-            isset($producto->precio) && 
-            $producto->precio >= 0
-        );
+            isset($producto->precio) &&
+            $producto->precio >= 0);
     }
 }

@@ -73,6 +73,63 @@ end $$
 delimiter ;
 */
 
+drop procedure if exists `proc_search_producto_by_field_and_provider`;
+delimiter $$
+create procedure proc_search_producto_by_field_and_provider(in p_field varchar(255), 
+                                                            in p_id_local bigint,
+                                                            in p_id_proveedor bigint)
+begin
+    set p_field = trim(p_field);
+    if (!is_empty(p_field)) then 
+        if (p_id_local > 0) then 
+            select distinct pl.id,
+                    pl.id_producto,
+                    pl.id_local,
+                    pl.existencia,
+                    (
+                      	select pp.precio
+                        from tb_proveedor_producto pp 
+                        where pp.id_producto = pl.id_producto
+                        and pp.eliminado = false
+                    ) as 'precio'
+            from tb_producto_local pl
+            join tb_producto p on p.id = pl.id_producto
+            where p.eliminado = false and
+            pl.eliminado = false and 
+            (
+                p.nombre like concat('%', p_field ,'%') or 
+                p.codigo_barra like concat('%', p_field ,'%') or 
+                p.id = p_field
+
+            ) and 
+            pl.id_local = 1
+            order by p.nombre asc; 
+
+        else 
+            select distinct p.id,
+                    p.id_tipo_vehiculo,
+                    p.id_marca,
+                    p.nombre,
+                    (
+                      	select pp.precio
+                        from tb_proveedor_producto pp 
+                        where pp.id_producto = p.id_producto
+                        and pp.eliminado = false
+                    ) as 'precio',
+                    p.existencia
+            from tb_producto p
+            where p.eliminado = false
+            and (
+                p.nombre like concat('%', p_field ,'%') or 
+                p.codigo_barra like concat('%', p_field ,'%') or 
+                p.id = p_field
+            )
+            order by p.nombre asc;
+        end if;
+    end if;
+end $$
+delimiter ;
+
 /*
 drop procedure if exists `proc_get_producto_by_id`;
 delimiter $$
@@ -180,6 +237,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop procedure if exists proc_get_producto_minified_by_id_for_selldetails;
 delimiter $$
 create procedure proc_get_producto_minified_by_id_for_selldetails(in p_id bigint)
@@ -205,6 +263,7 @@ begin
     end if;
 end $$
 delimiter ;
+*/
 
 /*
 drop procedure if exists `proc_add_producto`;
@@ -339,6 +398,23 @@ begin
 		p_cantidad > 0) then
 		update tb_producto 
 		set existencia = (existencia + p_cantidad)
+        where id = p_id
+        and eliminado = false;
+	end if;
+end $$
+delimiter ;
+*/
+
+/*
+drop procedure if exists proc_remove_producto_inventario;
+delimiter $$
+create procedure proc_remove_producto_inventario(in p_id bigint,
+												in p_cantidad int(255))
+begin
+	if (valid_int_id(p_id) and 
+		p_cantidad > 0) then
+		update tb_producto 
+		set existencia = (existencia - p_cantidad)
         where id = p_id
         and eliminado = false;
 	end if;

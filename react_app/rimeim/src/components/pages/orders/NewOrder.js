@@ -1,37 +1,38 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { connect } from "react-redux";
 
-import NewNavbar from '../../layout/NewNavbar';
+import NewNavbar from "../../layout/NewNavbar";
 
 import {
   configMaterialComponents,
   removeMaterialComponents,
   configSelectInputFields,
   configModals
-} from '../../../utils/MaterialFunctions';
+} from "../../../utils/MaterialFunctions";
 
-import TextInputField from '../../common/TextInputField';
-import SelectInputField from '../../common/SelectInputField';
-import SearchProductLocal from './SearchProductLocal';
-import SearchProductProvider from './SearchProductProvider';
+import TextInputField from "../../common/TextInputField";
+import SelectInputField from "../../common/SelectInputField";
+import SearchProductLocal from "./SearchProductLocal";
+import SearchProductProvider from "./SearchProductProvider";
 
-import { getLocals } from '../../../actions/LocalActions';
-import { getProviders } from '../../../actions/providerActions';
-import { createOrder } from '../../../actions/orderActions';
+import { getLocals } from "../../../actions/LocalActions";
+import { getProviders } from "../../../actions/providerActions";
+import { createOrder } from "../../../actions/orderActions";
 
 class NewOrder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      codigo: '',
-      fecha_entrega: '',
-      id_local: '',
-      id_proveedor: '',
+      codigo: "",
+      fecha_entrega: "",
+      id_local: "",
+      id_proveedor: "",
       proveedor_actual: {},
       productos: [],
       es_compra: false,
       providerMode: false,
       needs_config_selects: false,
+      needs_config_modals: false,
       errors: {}
     };
 
@@ -55,6 +56,12 @@ class NewOrder extends Component {
       configSelectInputFields();
       this.setState({
         needs_config_selects: false
+      });
+    }
+    if (this.state.needs_config_modals) {
+      configModals();
+      this.setState({
+        needs_config_modals: false
       });
     }
   }
@@ -89,7 +96,8 @@ class NewOrder extends Component {
 
   onProviderModeChange() {
     this.setState({
-      providerMode: !this.state.providerMode
+      providerMode: !this.state.providerMode,
+      needs_config_modals: true
     });
   }
 
@@ -146,34 +154,34 @@ class NewOrder extends Component {
 
     return (
       <React.Fragment>
-        <NewNavbar active_nav={'PEDIDOS'}>
-          <div className='nav-wrapper'>
-            <a href='#!' className='brand-logo'>
+        <NewNavbar active_nav={"PEDIDOS"}>
+          <div className="nav-wrapper">
+            <a href="#!" className="brand-logo">
               Nuevo Pedido
             </a>
-            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
-              <i className='material-icons'>menu</i>
+            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
+              <i className="material-icons">menu</i>
             </a>
-            <ul className='right'>
+            <ul className="right">
               <li>
                 <a
-                  href='#!'
-                  className='tooltipped'
-                  data-position='left'
-                  data-tooltip='Ver Todos'
+                  href="#!"
+                  className="tooltipped"
+                  data-position="left"
+                  data-tooltip="Ver Todos"
                 >
-                  <i className='material-icons'>group</i>
+                  <i className="material-icons">group</i>
                 </a>
               </li>
 
               <li>
                 <a
-                  href='#!'
-                  className='tooltipped'
-                  data-position='left'
-                  data-tooltip='Buscar'
+                  href="#!"
+                  className="tooltipped"
+                  data-position="left"
+                  data-tooltip="Buscar"
                 >
-                  <i className='material-icons'>search</i>
+                  <i className="material-icons">search</i>
                 </a>
               </li>
             </ul>
@@ -181,22 +189,22 @@ class NewOrder extends Component {
         </NewNavbar>
 
         <main>
-          <div className='row'>
-            <div className='col s12'>
-              <div className='card'>
-                <div className='card-content'>
-                  <div className='row'>
-                    <div className='d-block right'>
+          <div className="row">
+            <div className="col s12">
+              <div className="card">
+                <div className="card-content">
+                  <div className="row">
+                    <div className="d-block right">
                       <button
-                        className='btn'
+                        className="btn"
                         onClick={this.onProviderModeChange}
                       >
-                        Pedido a {providerMode ? 'Local' : 'Proveedor'}
+                        Pedido a {providerMode ? "Local" : "Proveedor"}
                       </button>
                     </div>
                   </div>
                   <form onSubmit={this.onSubmit}>
-                    <div className='row'>
+                    <div className="row">
                       {providerMode ? (
                         <React.Fragment>
                           <SearchProductProvider
@@ -207,11 +215,11 @@ class NewOrder extends Component {
                         </React.Fragment>
                       ) : (
                         <React.Fragment>
-                          <div className='row'>
+                          <div className="row">
                             <SelectInputField
-                              input_size='s12'
-                              id='id_local'
-                              label='Local'
+                              input_size="s12"
+                              id="id_local"
+                              label="Local"
                               onchange={this.onChangeTextInput}
                               value={id_local}
                               options={localOptions}
@@ -226,30 +234,30 @@ class NewOrder extends Component {
                       )}
                     </div>
 
-                    <div className='row'>
+                    <div className="row">
                       <TextInputField
-                        input_size='s12'
-                        id='codigo'
-                        label='Codigo de pedido'
+                        input_size="s12"
+                        id="codigo"
+                        label="Codigo de pedido"
                         onchange={this.onChangeTextInput}
                         value={codigo}
                       />
                     </div>
 
-                    <div className='row'>
+                    <div className="row">
                       <TextInputField
-                        type='date'
-                        input_size='s12'
-                        id='fecha_entrega'
-                        label='Fecha de Entrega de Pedido'
+                        type="date"
+                        input_size="s12"
+                        id="fecha_entrega"
+                        label="Fecha de Entrega de Pedido"
                         onchange={this.onChangeTextInput}
                         value={fecha_entrega}
                       />
                     </div>
 
-                    <div className='d-block center mt-1'>
-                      <button className='btn' type='submit'>
-                        Guardar{' '}
+                    <div className="d-block center mt-1">
+                      <button className="btn" type="submit">
+                        Guardar{" "}
                       </button>
                     </div>
                   </form>
