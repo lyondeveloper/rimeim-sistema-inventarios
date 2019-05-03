@@ -598,6 +598,12 @@ class Products extends Controller
                 $product_base->id_producto_local = $product->id;
                 $product = $product_base;
             }
+            if (
+                !isset($product->precio) ||
+                is_null($product->precio)
+            ) {
+                $product->precio = "";
+            }
             $product = $this->parse_product_to_send($product);
         }
         return $products;

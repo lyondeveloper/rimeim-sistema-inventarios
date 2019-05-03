@@ -102,6 +102,62 @@ begin
 end $$
 delimiter ;
 
+drop procedure if exists proc_search_pedidos;
+delimiter $$
+create procedure proc_search_pedidos(in p_id_local bigint,
+                                    in p_id_local_solicitado bigint,
+                                    in p_id_proveedor bigint,
+                                    in p_codigo varchar(50),
+                                    in p_recibido boolean,
+                                    in p_fecha_inicio datetime,
+                                    in p_fecha_final datetime)
+begin
+    set p_codigo = trim(p_codigo);
+    set @sql_query = "select distinct p.id,
+                    p.id_empleado_creado_por,
+                    p.id_local,
+                    p.id_local_solicitado,
+                    p.id_proveedor,
+                    p.codigo,
+                    p.es_compra,
+                    p.recibido,
+                    p.fecha_recibido,
+                    p.fecha_creado
+            from tb_pedido p 
+            where p.eliminado = false";
+    
+    if (valid_int_id(p_id_local)) then 
+        set @sql_query = concat(@sql_query, " and p.id_local = ", p_id_local);
+    end if;
+
+    if (valid_int_id(p_id_local_solicitado)) then 
+        set @sql_query = concat(@sql_query, " and p.id_local_solicitado = ", p_id_local_solicitado);
+    end if;
+
+    if (valid_int_id(p_id_proveedor)) then 
+        set @sql_query = concat(@sql_query, " and p.id_proveedor = ", p_id_proveedor);
+    end if;
+
+    if (p_fecha_inicio is not null and 
+        p_fecha_final is not null) then
+        set @sql_query = concat(@sql_query, " and p.fecha_creado between ", p_fecha_inicio , " and ", p_fecha_final);
+    end if;
+
+    if (!is_empty(p_codigo)) then 
+        set @sql_query = concat(@sql_query, " and p.codigo like concat('%', '", p_codigo, "', '%') ");
+    end if; 
+
+    if (p_recibido is not null) then 
+        set @sql_query = concat(@sql_query, " and p.recibido = ", p_recibido);
+    end if;
+
+    set @sql_query = concat(@sql_query, " order by p.fecha_creado desc;");
+
+    PREPARE sql_statement FROM @sql_query;
+    EXECUTE sql_statement;
+end $$
+delimiter ;
+
 
 
 drop procedure if exists `proc_get_pedido_by_id`;
