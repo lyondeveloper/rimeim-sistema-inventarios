@@ -20,26 +20,57 @@ class Orders extends Controller
     {
         $this->usePostRequest();
         $data = getJsonData();
-        if (
-            is_null($data) ||
-            !(count($data) > 0)
-        ) {
+        if (is_null($data)) {
             $this->response(null, ERROR_NOTFOUND);
         }
         $id_local = $this->get_current_id_local();
-        $data = json_set_null_params_if_not_exists($data, ['id_local', 'id_proveedor', 'codigo', 'fecha_inicio', 'fecha_final']);
+        $data = json_set_null_params_if_not_exists($data, ['id_local', 'id_local_solicitado', 'id_proveedor', 'codigo', 'recibido', 'fecha_inicio', 'fecha_final']);
 
         if ($id_local > 0) {
             $data->id_local = $id_local;
-        } elseif (
-            $data->id_local > 0 &&
-            $data->id_local != $id_local &&
-            !$this->is_current_user_admin()
+        } else if (
+            !$this->is_current_user_admin() &&
+            $data->id_local != $id_local
         ) {
             $this->response(null, ERROR_FORBIDDEN);
         }
 
-        if ($data->productos) { }
+        $orders = $this->order->search($data);
+
+        if (
+            isset($data->productos) &&
+            is_array($data->productos)
+        ) {
+
+            $products_to_search = [];
+            foreach ($data->productos as $producto) {
+                if (
+                    is_string($producto) &&
+                    !empty($producto)
+                ) {
+                    array_push($products_to_search, $producto);
+                }
+            }
+            if (count($products_to_search) > 0) {
+                $newOrders = [];
+                foreach ($orders as $order) {
+                    $order_products = $this->orderProduct->get_minified_by_order_id($order->id);
+                    $num_of_valid_products = 0;
+                    foreach ($order_products as $producto) {
+                        if (in_array($producto->codigo_barra, $products_to_search)) {
+                            $num_of_valid_products++;
+                        }
+                    }
+                    if ($num_of_valid_products >= count($products_to_search)) {
+                        array_push($newOrders, $order);
+                    }
+                }
+                $orders = $newOrders;
+            }
+        }
+
+        $orders = $this->parse_multiple_orders_to_send($orders);
+        $this->response($orders);
     }
 
     public function get()

@@ -32,6 +32,22 @@ end $$
 delimiter ;
 */
 
+drop procedure if exists `proc_get_pedido_productos_minified_by_idpedido`;
+delimiter $$
+create procedure proc_get_pedido_productos_minified_by_idpedido(in p_id_pedido bigint )
+begin
+    if (valid_int_id(p_id_pedido)) then
+        select p.id,
+                p.id_producto,
+                prod.codigo_barra
+        from tb_pedido_producto p 
+        join tb_producto prod on prod.id = p.id_producto
+        where p.eliminado = false
+        and p.id_pedido = p_id_pedido;
+    end if;
+end $$
+delimiter ;
+
 /*
 drop procedure if exists `proc_add_pedido_producto`;
 delimiter $$
