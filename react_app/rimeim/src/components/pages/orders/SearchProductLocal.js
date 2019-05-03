@@ -61,39 +61,25 @@ class SearchProductLocal extends Component {
 
   //Metodo para seleccionar producto con checkbox
   onSelectProduct = producto => {
-    const { productsProps } = this.props;
-
     const { productos_seleccionados } = this.state;
 
     //Chequeamos en que array estamos, si en los props o en el normal
-    if (productsProps !== undefined) {
-      const productIndex = productsProps.findIndex(p => p.id === producto.id);
+    const productIndex = productos_seleccionados.findIndex(
+      p => p.id === producto.id
+    );
 
-      const currentProductProps = productsProps[productIndex];
-
-      if (productIndex >= 0) {
-      }
+    if (productIndex >= 0) {
+      if (producto.seleccionado) producto.seleccionado = false;
+      else producto.seleccionado = true;
     } else {
-      const productIndex = productos_seleccionados.findIndex(
-        p => p.id === producto.id
-      );
+      producto.seleccionado = true;
 
-      if (productIndex >= 0) {
-        if (producto.seleccionado) producto.seleccionado = false;
-        else producto.seleccionado = true;
-      } else {
-        producto.seleccionado = true;
-
-        productos_seleccionados.push(producto);
-      }
-
-      document.getElementById(`${producto.id}`).checked = producto.seleccionado;
-      console.log(producto.seleccionado);
-
-      this.setState({
-        productos_seleccionados
-      });
+      productos_seleccionados.push(producto);
     }
+
+    document.getElementById(`${producto.id}`).checked = producto.seleccionado;
+
+    this.setState({ productos_seleccionados });
   };
 
   //Metodo para que cuando demos click a agregar productos, el state este limpio
@@ -110,6 +96,7 @@ class SearchProductLocal extends Component {
       producto_seleccionado: {},
       field: '',
       cantidad: '',
+      editMode: false,
       typing: false,
       typingTimeout: 0
     });
@@ -130,7 +117,8 @@ class SearchProductLocal extends Component {
       );
       selecteds.forEach(product => {
         const productData = {
-          id_producto: product.id,
+          id: product.id,
+          id_producto: product.id_producto,
           cantidad,
           costo: product.precio,
           nombre: product.nombre,
@@ -192,7 +180,7 @@ class SearchProductLocal extends Component {
     if (productsProps !== undefined) {
       //Definiendo la posicion del objeto que editaremos
       const productIndex = productsProps.findIndex(
-        p => p.id === producto_seleccionado.id_producto
+        p => p.id_producto === producto_seleccionado.id_producto
       );
 
       //Actualizando sus valores
@@ -419,7 +407,7 @@ class SearchProductLocal extends Component {
                 <React.Fragment>
                   <TextInputField
                     id='field'
-                    label='ID o nombre del producto'
+                    label='Parametro de Busqueda (ID o Nombre de Producto)'
                     value={field}
                     onchange={this.onChangeSearchProductInput}
                   />

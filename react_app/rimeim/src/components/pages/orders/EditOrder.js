@@ -35,6 +35,7 @@ class EditOrder extends Component {
       es_compra: false,
       providerMode: false,
       needs_config_selects: false,
+      nedds_config_modals: false,
       errors: {}
     };
 
@@ -61,7 +62,12 @@ class EditOrder extends Component {
         needs_config_selects: false
       });
     }
-    configModals();
+    if (this.state.needs_config_modals) {
+      configModals();
+      this.setState({
+        needs_config_modals: false
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
