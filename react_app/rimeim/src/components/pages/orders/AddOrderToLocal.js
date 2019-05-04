@@ -37,6 +37,12 @@ class AddOrderToLocal extends Component {
 
   componentDidMount() {
     this.props.getLocals();
+    if (this.state.needs_config_modals) {
+      configModals();
+      this.setState({
+        needs_config_modals: false
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -69,12 +75,6 @@ class AddOrderToLocal extends Component {
       configSelectInputFields();
       this.setState({
         needs_config_selects: false
-      });
-    }
-    if (this.state.needs_config_modals) {
-      configModals();
-      this.setState({
-        needs_config_modals: false
       });
     }
   }

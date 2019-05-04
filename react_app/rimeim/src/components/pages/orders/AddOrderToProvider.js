@@ -36,6 +36,12 @@ class EditOrderToProvider extends Component {
 
   componentDidMount() {
     this.props.getProviders();
+    if (this.state.needs_config_modals) {
+      configModals();
+      this.setState({
+        needs_config_modals: false
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -68,12 +74,6 @@ class EditOrderToProvider extends Component {
       configSelectInputFields();
       this.setState({
         needs_config_selects: false
-      });
-    }
-    if (this.state.needs_config_modals) {
-      configModals();
-      this.setState({
-        needs_config_modals: false
       });
     }
   }
