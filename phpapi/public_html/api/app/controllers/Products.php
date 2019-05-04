@@ -140,8 +140,26 @@ class Products extends Controller
     private function validate_add_data($data)
     {
         $errors = [];
-        if (isset($data->id_tipo_vehiculo)) { }
-        if (isset($data->id_marca)) { }
+        if (isset($data->id_tipo_vehiculo)) {
+            if (
+                $data->id_tipo_vehiculo == 0 ||
+                $data->id_tipo_vehiculo == "0"
+            ) {
+                $data->id_tipo_vehiculo = null;
+            }
+        } else {
+            $data->id_tipo_vehiculo = null;
+        }
+        if (isset($data->id_marca)) {
+            if (
+                $data->id_marca == 0 ||
+                $data->id_marca == "0"
+            ) {
+                $data->id_marca = null;
+            }
+        } else {
+            $data->id_marca = null;
+        }
         if (
             !isset($data->codigo_barra) ||
             empty($data->codigo_barra)

@@ -12,6 +12,7 @@ import {
 } from "../../../utils/MaterialFunctions";
 
 import { addNewSell } from "../../../actions/sellActions";
+import isEmpty from "../../../actions/isEmpty";
 
 import SalesGrid from "../../common/SalesGrid";
 import SearchProductModal from "../../layout/modals/SearchProductAndShowInfo";
@@ -20,6 +21,7 @@ import SellConfigurationModal from "../../layout/modals/SellConfiguration";
 import SellCheckoutModal from "../../layout/modals/SellCheckout";
 import ConfirmationModal from "../../layout/modals/ConfirmationModal";
 
+let is_sending_data = false;
 class NewQuotation extends Component {
   state = {
     currentClient: {},
@@ -36,12 +38,37 @@ class NewQuotation extends Component {
 
   componentDidMount() {
     configMaterialComponents();
+    document.onkeydown = this.onKeyDownInAllPage;
   }
 
+  componentWillUnmount() {
+    document.onkeydown = null;
+  }
+
+  onKeyDownInAllPage = evt => {
+    evt = evt || window.event;
+    if (evt.keyCode === 113) {
+      getModalInstanceById("search_product_and_show_info").open();
+    }
+  };
+
   componentWillReceiveProps(nextProps) {
-    if (nextProps.sell && nextProps.sell.sell_success) {
+    if (
+      nextProps.sell &&
+      is_sending_data &&
+      !nextProps.sell.loading &&
+      (!nextProps.errors || isEmpty(nextProps.errors))
+    ) {
+      let new_message = "";
+      if (nextProps.sell.sell_success) {
+        new_message = "La cotizacion se ha guardado exitosamente";
+      } else {
+        new_message =
+          "Ocurrio un error al guardar la cotizacion, por favor notifique al desarrollador";
+      }
+      is_sending_data = false;
       this.setState({
-        component_message: "La cotizacion se ha guardado exitosamente",
+        component_message: new_message,
         needsClearAll: true,
         needsReturnProducts: false
       });
@@ -64,7 +91,12 @@ class NewQuotation extends Component {
   }
 
   clearAllData = () => {
-    window.location.reload();
+    if (
+      this.state.component_message ===
+      "La cotizacion se ha guardado exitosamente"
+    ) {
+      window.location.reload();
+    }
   };
 
   onHideModal = () => {
@@ -100,6 +132,7 @@ class NewQuotation extends Component {
   onSendQuoteToServer = finalJsonData => {
     finalJsonData.productos = this.state.products_data.productos;
     finalJsonData.es_cotizacion = true;
+    is_sending_data = true;
     this.props.addNewSell(finalJsonData);
   };
 

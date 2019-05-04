@@ -7,6 +7,7 @@ import {
 import { notificationError } from "../utils/MaterialFunctions";
 
 const ERROR_INVALID_USER = "NotValidUser";
+const ERROR_INVALID_SESSION = "InvalidSession";
 
 export const clearErrors = () => {
   return {
@@ -36,6 +37,9 @@ export const handleError = (err, dispatch, another_dispatch = null) => {
     if (err.response.data.data.error === ERROR_INVALID_USER) {
       notificationError("Su usuario es invalido o ya no se encuentra activo");
       return endApplication(dispatch);
+    }
+    if (err.response.data.data.error === ERROR_INVALID_SESSION) {
+      logOutUserWithDispatch(dispatch);
     }
   }
   if (err.response && err.response.status === 409) {

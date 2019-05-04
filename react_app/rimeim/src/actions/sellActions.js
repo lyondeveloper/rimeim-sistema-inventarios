@@ -33,6 +33,22 @@ export const getSells = () => dispatch => {
     .catch(err => handleError(err, dispatch, SELL_END_LOADING));
 };
 
+export const getQuotes = () => dispatch => {
+  dispatchSellLoading(dispatch);
+  axios
+    .get("/sales/getquotes")
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_SELLS,
+        payload: response.data
+      });
+      dispatch(clearErrors());
+    })
+    .catch(err => handleError(err, dispatch, SELL_END_LOADING));
+};
+
 export const searchSell = jsonField => dispatch => {
   dispatchSellLoading(dispatch);
   axios
@@ -65,6 +81,22 @@ export const getSellById = id => dispatch => {
     .catch(err => handleError(err, dispatch, SELL_END_LOADING));
 };
 
+export const getQuotationById = id => dispatch => {
+  dispatchSellLoading(dispatch);
+  axios
+    .get(`/sales/get_quote/${id}`)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch(clearErrors());
+      dispatch({
+        type: GET_SELL,
+        payload: response.data
+      });
+    })
+    .catch(err => handleError(err, dispatch, SELL_END_LOADING));
+};
+
 export const addNewSell = newSellData => dispatch => {
   dispatchSellLoading(dispatch);
   axios
@@ -78,6 +110,19 @@ export const addNewSell = newSellData => dispatch => {
       });
     })
     .catch(err => handleError(err, dispatch, SELL_FAILED));
+};
+
+export const deleteQuotation = (id, history, new_url) => dispatch => {
+  dispatchSellLoading(dispatch);
+  axios
+    .delete(`/sales/delete_quote/${id}`)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch(clearErrors());
+      history.push(new_url);
+    })
+    .catch(err => handleError(err, dispatch, SELL_END_LOADING));
 };
 
 export const dispatchSellLoading = dispatch => {

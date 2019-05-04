@@ -1,104 +1,105 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 // Redux configuration
-import { Provider as ReduxProvider } from 'react-redux';
-import store from './store';
+import { Provider as ReduxProvider } from "react-redux";
+import store from "./store";
 
 // Css
-import './public/css/materialize.min.css';
-import './public/css/main.css';
+import "./public/css/materialize.min.css";
+import "./public/css/main.css";
 
 // Home
-import Home from './components/pages/home/Home';
-import NotFound from './components/common/NotFound';
+import Home from "./components/pages/home/Home";
+import NotFound from "./components/common/NotFound";
 
 // Auth
-import Login from './components/pages/auth/Login';
+import Login from "./components/pages/auth/Login";
 
 // Sells
-import NewSell from './components/pages/sells/NewSell';
-import Sells from './components/pages/sells/Sells';
-import SearchSell from './components/pages/sells/SearchSell';
-import ShowSale from './components/pages/sells/ShowSale';
+import NewSell from "./components/pages/sells/NewSell";
+import Sells from "./components/pages/sells/Sells";
+import SearchSell from "./components/pages/sells/SearchSell";
+import ShowSale from "./components/pages/sells/ShowSale";
 
 // Quotations
-import NewQuotation from './components/pages/quotes/NewQuotation';
-import Quotations from './components/pages/quotes/Quotations';
-import SearchQuotation from './components/pages/quotes/SearchQuotation';
+import NewQuotation from "./components/pages/quotes/NewQuotation";
+import Quotations from "./components/pages/quotes/Quotations";
+import ShowQuotation from "./components/pages/quotes/ShowQuotation";
 
 // Devolutions
-import Devolutions from './components/pages/devolutions/Devolutions';
-import SearchDevolution from './components/pages/devolutions/SearchDevolution';
+import Devolutions from "./components/pages/devolutions/Devolutions";
+import SearchDevolution from "./components/pages/devolutions/SearchDevolution";
 
 // Orders
-import Orders from './components/pages/orders/Orders';
-import Order from './components/pages/orders/Order';
-import NewOrder from './components/pages/orders/NewOrder';
-import EditOrder from './components/pages/orders/EditOrder';
-import SearchOrder from './components/pages/orders/SearchOrder';
+import Orders from "./components/pages/orders/Orders";
+import Order from "./components/pages/orders/Order";
+import NewOrder from "./components/pages/orders/NewOrder";
+import EditOrder from "./components/pages/orders/EditOrder";
+import SearchOrder from "./components/pages/orders/SearchOrder";
 
 // Products
-import Products from './components/pages/products/Products';
-import Product from './components/pages/products/Product';
-import NewProduct from './components/pages/products/NewProduct';
-import EditProduct from './components/pages/products/EditProduct';
-import SearchProduct from './components/pages/products/SearchProduct';
-import Brands from './components/pages/products/Brands';
-import Brand from './components/pages/products/Brand';
-import NewBrand from './components/pages/products/NewBrand';
-import EditBrand from './components/pages/products/EditBrand';
-import VehicleType from './components/pages/products/VehicleType';
-import NewVehicleType from './components/pages/products/NewVehicleType';
-import EditVehicleType from './components/pages/products/EditVehicleType';
-import ShowVehicleType from './components/pages/products/ShowVehicleType';
+import Products from "./components/pages/products/Products";
+import Product from "./components/pages/products/Product";
+import NewProduct from "./components/pages/products/NewProduct";
+import EditProduct from "./components/pages/products/EditProduct";
+import SearchProduct from "./components/pages/products/SearchProduct";
+import Brands from "./components/pages/products/Brands";
+import Brand from "./components/pages/products/Brand";
+import NewBrand from "./components/pages/products/NewBrand";
+import EditBrand from "./components/pages/products/EditBrand";
+import VehicleType from "./components/pages/products/VehicleType";
+import NewVehicleType from "./components/pages/products/NewVehicleType";
+import EditVehicleType from "./components/pages/products/EditVehicleType";
+import ShowVehicleType from "./components/pages/products/ShowVehicleType";
 
 // Clients
-import Clients from './components/pages/clients/Clients';
-import Client from './components/pages/clients/Client';
-import NewClient from './components/pages/clients/NewClient';
-import EditClient from './components/pages/clients/EditClient';
-import SearchClient from './components/pages/clients/SearchClient';
+import Clients from "./components/pages/clients/Clients";
+import Client from "./components/pages/clients/Client";
+import NewClient from "./components/pages/clients/NewClient";
+import EditClient from "./components/pages/clients/EditClient";
+import SearchClient from "./components/pages/clients/SearchClient";
 
 // Providers
-import NewProvider from './components/pages/providers/NewProvider';
-import EditProvider from './components/pages/providers/EditProvider';
-import Providers from './components/pages/providers/Providers';
-import Provider from './components/pages/providers/Provider';
-import SearchProvider from './components/pages/providers/SearchProvider';
+import NewProvider from "./components/pages/providers/NewProvider";
+import EditProvider from "./components/pages/providers/EditProvider";
+import Providers from "./components/pages/providers/Providers";
+import Provider from "./components/pages/providers/Provider";
+import SearchProvider from "./components/pages/providers/SearchProvider";
 
 // Account
-import ConfigurationView from './components/pages/account/ConfigurationView';
+import ConfigurationView from "./components/pages/account/ConfigurationView";
 
 // Custom component for multiple locals or admin user
-import ChoseLocal from './components/pages/auth/ChooseLocal';
+import ChoseLocal from "./components/pages/auth/ChooseLocal";
+import FirstSession from "./components/pages/auth/FirstSession";
 
 // Admin area
-import AdminArea from './components/pages/admin_area/AdminArea';
-import AdminLocal from './components/pages/admin_area/locals/Local';
-import AdminLocals from './components/pages/admin_area/locals/Locals';
-import AdminNewLocal from './components/pages/admin_area/locals/NewLocal';
-import AdminEditLocal from './components/pages/admin_area/locals/EditLocal';
+import AdminArea from "./components/pages/admin_area/AdminArea";
+import AdminLocal from "./components/pages/admin_area/locals/Local";
+import AdminLocals from "./components/pages/admin_area/locals/Locals";
+import AdminNewLocal from "./components/pages/admin_area/locals/NewLocal";
+import AdminEditLocal from "./components/pages/admin_area/locals/EditLocal";
 
-import AdminEmployes from './components/pages/admin_area/employes/Employes';
-import AdminEmploye from './components/pages/admin_area/employes/Employe';
+import AdminEmployes from "./components/pages/admin_area/employes/Employes";
+import AdminEmploye from "./components/pages/admin_area/employes/Employe";
 
-import AdminUsers from './components/pages/admin_area/users/Users';
-import AdminUser from './components/pages/admin_area/users/User';
-import AdminNewUser from './components/pages/admin_area/users/NewUser';
+import AdminUsers from "./components/pages/admin_area/users/Users";
+import AdminUser from "./components/pages/admin_area/users/User";
+import AdminNewUser from "./components/pages/admin_area/users/NewUser";
 
-import AdminProducts from './components/pages/admin_area/products/Products';
-import AdminNewProduct from './components/pages/admin_area/products/NewProduct';
-import AdminProduct from './components/pages/admin_area/products/Product';
-import AdminEditProduct from './components/pages/admin_area/products/EditProduct';
+import AdminProducts from "./components/pages/admin_area/products/Products";
+import AdminNewProduct from "./components/pages/admin_area/products/NewProduct";
+import AdminProduct from "./components/pages/admin_area/products/Product";
+import AdminEditProduct from "./components/pages/admin_area/products/EditProduct";
 
-import AdminConfiguration from './components/pages/admin_area/account/AdminConfiguration';
+import AdminConfiguration from "./components/pages/admin_area/account/AdminConfiguration";
 
 // Custom components
-import PrivateRoute from './components/common/PrivateRoute';
+import PrivateRoute from "./components/common/PrivateRoute";
 
 // Custom functions
-import checkAppStatus from './utils/checkAppStatus';
+import checkAppStatus from "./utils/checkAppStatus";
 
 checkAppStatus(store);
 
@@ -112,6 +113,13 @@ class App extends Component {
               <Route exact path="/" component={Home} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/notfound" component={NotFound} />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/primera_sesion"
+                component={FirstSession}
+              />
             </Switch>
 
             {/* Sells */}
@@ -142,8 +150,8 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/buscar_cotizacion"
-                component={SearchQuotation}
+                path="/cotizaciones/:id"
+                component={ShowQuotation}
               />
             </Switch>
 

@@ -10,13 +10,7 @@ import { logoutUser, setCurrentLocal } from "../../actions/UserActions";
 
 class NavbarAdmin extends Component {
   render() {
-    const {
-      active_nav,
-      has_notifications,
-      user: {
-        user: { admin }
-      }
-    } = this.props;
+    const { active_nav, has_notifications } = this.props;
     let mobile_nav = this.props.mobile_nav ? this.props.mobile_nav : null;
 
     return (

@@ -405,7 +405,7 @@ end $$
 delimiter ;
 */
 
-/*
+
 drop procedure if exists proc_remove_producto_inventario;
 delimiter $$
 create procedure proc_remove_producto_inventario(in p_id bigint,
@@ -413,11 +413,22 @@ create procedure proc_remove_producto_inventario(in p_id bigint,
 begin
 	if (valid_int_id(p_id) and 
 		p_cantidad > 0) then
+        set @nueva_existencia = (
+            select existencia
+            from tb_producto prod 
+            where prod.id = p_id
+            limit 1
+        );
+
+        set @nueva_existencia = @nueva_existencia - p_cantidad;
+        if (@nueva_existencia < 0 ) then
+            set @nueva_existencia = 0;
+        end if;
+
 		update tb_producto 
-		set existencia = (existencia - p_cantidad)
+		set existencia = @nueva_existencia
         where id = p_id
         and eliminado = false;
 	end if;
 end $$
 delimiter ;
-*/

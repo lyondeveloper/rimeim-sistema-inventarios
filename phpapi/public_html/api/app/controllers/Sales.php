@@ -48,12 +48,39 @@ class Sales extends Controller
         $this->response($sales);
     }
 
+    public function getquotes()
+    {
+        $this->useGetRequest();
+        $id_local = $this->get_current_id_local();
+        $sales = null;
+        if ($id_local > 0) {
+            $sales = $this->saleModel->get_quotes_by_local($id_local);
+        } elseif (
+            $this->is_current_user_admin()
+            && $id_local == 0
+        ) {
+            $sales = $this->saleModel->getquotes();
+        }
+        if (!is_null($sales)) {
+            $sales = $this->get_parsed_sales($sales, $id_local);
+        }
+        $this->response($sales);
+    }
+
     public function get_one($id)
     {
         $this->useGetRequest();
         $sale = $this->get_parsed_single_sale_by_id($id);
         $sale->productos = $this->get_parsed_products_by_sell_id($id);
         $this->response($sale);
+    }
+
+    public function get_quote($id)
+    {
+        $this->useGetRequest();
+        $quote = $this->get_parsed_single_sale_by_id($id, true);
+        $quote->productos = $this->get_parsed_products_by_sell_id($id);
+        $this->response($quote);
     }
 
     public function search()
@@ -82,6 +109,10 @@ class Sales extends Controller
             $data->codigo = $data->field;
         }
 
+        if (!isset($data->es_cotizacion)) {
+            $data->es_cotizacion = false;
+            $sales = $this->saleModel->search($data);
+        }
         $sales = $this->saleModel->search($data);
 
         if (
@@ -257,7 +288,12 @@ class Sales extends Controller
         }
     } // END OF ADD
 
-
+    public function delete_quote($id)
+    {
+        $this->useDeleteRequest();
+        $this->saleModel->delete_quote($id, $this->get_current_employe_id());
+        $this->response();
+    }
 
     // ====== Helpers ========
 
@@ -270,9 +306,15 @@ class Sales extends Controller
         return $sales;
     }
 
-    private function get_parsed_single_sale_by_id($id)
+    private function get_parsed_single_sale_by_id($id, $es_cotizacion = false)
     {
-        $sale = $this->saleModel->get_by_id($id);
+        $sale = null;
+        if ($es_cotizacion) {
+            $sale = $this->saleModel->get_quote_by_id($id);
+        } else {
+            $sale = $this->saleModel->get_by_id($id);
+        }
+
         if (is_null(($sale))) {
             $this->response(["error" => "Venta no encontrada"], ERROR_NOTFOUND);
         }

@@ -56,6 +56,12 @@ class SearchSellModal extends Component {
     });
   };
 
+  onGetAllClick = () => {
+    if (this.props.onGetAll) {
+      this.props.onGetAll();
+    }
+  };
+
   render() {
     const {
       field,
@@ -65,13 +71,14 @@ class SearchSellModal extends Component {
       metodos_pago,
       metodo_pago
     } = this.state;
+    const { es_cotizacion } = this.props;
     return (
       <div className="modal" id="modal_search">
         <div className="modal-content">
           <div className="row">
             <TextInputField
               id="field"
-              label="Codigo o id de venta"
+              label="Codigo o id"
               value={field}
               onchange={this.onChangeTextInput}
             />
@@ -97,28 +104,40 @@ class SearchSellModal extends Component {
             />
           </div>
 
-          <div className="row">
-            <SelectInputField
-              id="metodo_pago"
-              label="Metodo de pago"
-              value={metodo_pago}
-              options={metodos_pago}
-              onchange={this.onChangeTextInput}
-            />
-          </div>
+          {!es_cotizacion && (
+            <div className="row">
+              <SelectInputField
+                id="metodo_pago"
+                label="Metodo de pago"
+                value={metodo_pago}
+                options={metodos_pago}
+                onchange={this.onChangeTextInput}
+              />
+            </div>
+          )}
 
-          <div className="row">
-            <CheckInputField
-              id="con_factura"
-              label="Con factura"
-              checked={con_factura}
-              onchange={this.onChangeCheckField}
-            />
-          </div>
+          {!es_cotizacion && (
+            <div className="row">
+              <CheckInputField
+                id="con_factura"
+                label="Con factura"
+                checked={con_factura}
+                onchange={this.onChangeCheckField}
+              />
+            </div>
+          )}
         </div>
         <div className="modal-footer">
           <a href="#!" className="btn btn-flat modal-close left">
             Cerrar
+          </a>
+          <a
+            href="#!"
+            className="btn modal-close"
+            onClick={this.onGetAllClick}
+            style={{ marginRight: "20px" }}
+          >
+            Obtener todo
           </a>
           <a href="#!" className="btn modal-close" onClick={this.onSearchClick}>
             Buscar
@@ -131,7 +150,13 @@ class SearchSellModal extends Component {
 
 SearchSellModal.propTypes = {
   onSearch: PropTypes.func.isRequired,
-  clientes: PropTypes.array.isRequired
+  onGetAll: PropTypes.func.isRequired,
+  clientes: PropTypes.array.isRequired,
+  es_cotizacion: PropTypes.bool.isRequired
+};
+
+SearchSellModal.defaultProps = {
+  es_cotizacion: false
 };
 
 export default SearchSellModal;

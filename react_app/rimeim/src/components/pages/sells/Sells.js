@@ -62,6 +62,10 @@ class Sells extends Component {
     this.props.searchSell(json_search);
   };
 
+  onGetAll = () => {
+    this.props.getSells();
+  };
+
   render() {
     const { loading, sells } = this.props.sell;
     const { user, currentLocal } = this.props.user;
@@ -118,6 +122,7 @@ class Sells extends Component {
           <SearchSellModal
             onSearch={this.onSearchSell}
             clientes={this.state.clientes}
+            onGetAll={this.onGetAll}
           />
         </main>
       </React.Fragment>

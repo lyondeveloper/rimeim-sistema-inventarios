@@ -308,8 +308,21 @@ begin
     if (p_cantidad > 0 and 
         valid_int_id(p_id_producto) and 
         valid_int_id(p_id_local)) then 
+
+        set @nueva_existencia = (
+            select existencia from tb_producto_local pl 
+            where pl.id_producto = p_id_producto 
+            and pl.id_local = p_id_local
+            limit 1
+        );
+
+        set @nueva_existencia = @nueva_existencia - p_cantidad;
+        if (@nueva_existencia < 0 ) then 
+            set @nueva_existencia = 0;
+        end if;
+
         update tb_producto_local
-            set existencia = (existencia - p_cantidad)
+            set existencia = @nueva_existencia
         where id_producto = p_id_producto
         and id_local = p_id_local
         and eliminado = false;

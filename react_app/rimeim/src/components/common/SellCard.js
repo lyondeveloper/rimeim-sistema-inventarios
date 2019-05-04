@@ -14,14 +14,19 @@ const SellCard = props => {
       usuario_creador,
       cliente
     },
-    is_admin
+    is_admin,
+    es_cotizacion
   } = props;
   return (
     <div className="card hoverable">
-      <Link to={`${is_admin ? "/admin" : ""}/ventas/${id}`}>
+      <Link
+        to={`${is_admin ? "/admin" : ""}/${
+          es_cotizacion ? "cotizaciones" : "ventas"
+        }/${id}`}
+      >
         <div className="card-content">
           <div className="d-block">
-            <span>Venta: {id}</span>
+            <span>ID: {id}</span>
             <span className="right">{fecha_creado}</span>
           </div>
           {codigo && (
@@ -44,8 +49,9 @@ const SellCard = props => {
             </span>
           </div>
           <div className="d-block">
-            <span>{con_factura ? "C/F" : "S/F"}</span>
-            <span className="right">
+            {!es_cotizacion && <span>{con_factura ? "C/F" : "S/F"}</span>}
+
+            <span className={`${es_cotizacion ? "" : "right"}`}>
               Total: Lps {getNumberFormatted(total)}
             </span>
           </div>
@@ -57,7 +63,8 @@ const SellCard = props => {
 
 SellCard.propTypes = {
   sell: PropTypes.object.isRequired,
-  is_admin: PropTypes.bool.isRequired
+  is_admin: PropTypes.bool.isRequired,
+  es_cotizacion: PropTypes.bool.isRequired
 };
 
 export default SellCard;

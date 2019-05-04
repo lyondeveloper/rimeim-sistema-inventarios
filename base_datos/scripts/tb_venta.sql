@@ -41,6 +41,7 @@ create procedure proc_search_ventas(in p_id_local bigint,
                                     in p_codigo varchar(50),
                                     in p_con_factura boolean,
                                     in p_metodo_pago varchar(100),
+                                    in p_es_cotizacion boolean,
                                     in p_fecha_inicio datetime,
                                     in p_fecha_final datetime)
 begin
@@ -55,8 +56,7 @@ begin
                 v.total,
                 v.fecha_creado
         from tb_venta v 
-        where v.eliminado = false 
-        and v.es_cotizacion = false ";
+        where v.eliminado = false ";
     
     if (valid_int_id(p_id_local)) then 
         set @sql_query = concat(@sql_query, " and v.id_local = ", p_id_local);
@@ -83,6 +83,12 @@ begin
         set @sql_query = concat(@sql_query, " and v.metodo_pago = '", p_metodo_pago, "' ");
     end if;
 
+    if (p_es_cotizacion is not null) then 
+        set @sql_query = concat(@sql_query, " and v.es_cotizacion = ", p_es_cotizacion);
+    else 
+        set @sql_query = concat(@sql_query, " and v.es_cotizacion = false ");
+    end if;
+
     set @sql_query = concat(@sql_query, " order by v.fecha_creado desc;");
 
     PREPARE sql_statement FROM @sql_query;
@@ -106,6 +112,24 @@ begin
     from tb_venta v 
     where v.eliminado = false 
     and v.es_cotizacion = false
+    order by v.fecha_creado desc;
+end $$
+delimiter ;
+
+drop procedure if exists proc_get_cotizaciones;
+delimiter $$
+create procedure proc_get_cotizaciones()
+begin
+    select v.id,
+            v.id_local,
+            v.id_cliente,
+            v.id_empleado_creado_por,
+            v.codigo,
+            v.total,
+            v.fecha_creado
+    from tb_venta v 
+    where v.eliminado = false 
+    and v.es_cotizacion = true
     order by v.fecha_creado desc;
 end $$
 delimiter ;
@@ -136,6 +160,30 @@ begin
 end $$
 delimiter ;
 
+drop procedure if exists proc_get_cotizacion_by_id;
+delimiter $$
+create procedure proc_get_cotizacion_by_id(in p_id bigint)
+begin
+
+    if (valid_int_id(p_id)) then
+        select v.id,
+                v.id_local,
+                v.id_cliente,
+                v.id_empleado_creado_por,
+                v.codigo,
+                v.sub_total,
+                v.impuesto,
+                v.total,
+                v.fecha_creado
+        from tb_venta v 
+        where v.eliminado = false 
+        and v.id = p_id
+        and v.es_cotizacion = true;
+    end if;
+
+end $$
+delimiter ;
+
 drop procedure if exists proc_get_venta_by_id_local;
 delimiter $$
 create procedure proc_get_venta_by_id_local(in p_id_local bigint)
@@ -154,6 +202,29 @@ begin
         where v.eliminado = false 
         and v.id_local = p_id_local
         and v.es_cotizacion = false
+	order by v.fecha_creado desc;
+    end if;
+
+end $$
+delimiter ;
+
+drop procedure if exists proc_get_cotizaciones_by_id_local;
+delimiter $$
+create procedure proc_get_cotizaciones_by_id_local(in p_id_local bigint)
+begin
+
+    if (valid_int_id(p_id_local)) then
+        select v.id,
+                v.id_local,
+                v.id_cliente,
+                v.id_empleado_creado_por,
+                v.codigo,
+                v.total,
+                v.fecha_creado
+        from tb_venta v 
+        where v.eliminado = false 
+        and v.id_local = p_id_local
+        and v.es_cotizacion = true
 	order by v.fecha_creado desc;
     end if;
 
@@ -263,7 +334,27 @@ begin
         set id_empleado_eliminado_por = p_id_empleado_eliminado_por,
             eliminado = true,
             fecha_eliminado = current_timestamp()
-        where id = p_id;
+        where id = p_id 
+        and es_cotizacion = false;
     end if;
 end $$
 delimiter ; 
+
+drop procedure if exists proc_delete_cotizacion_by_id;
+delimiter $$
+create procedure proc_delete_cotizacion_by_id(in p_id bigint,
+                                        in p_id_empleado_eliminado_por bigint)
+begin
+    if (valid_int_id(p_id) and 
+        valid_int_id(p_id_empleado_eliminado_por)) then
+
+        update tb_venta 
+        set id_empleado_eliminado_por = p_id_empleado_eliminado_por,
+            eliminado = true,
+            fecha_eliminado = current_timestamp()
+        where id = p_id 
+        and es_cotizacion = true;
+    end if;
+end $$
+delimiter ; 
+

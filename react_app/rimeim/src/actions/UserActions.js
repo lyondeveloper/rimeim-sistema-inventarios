@@ -1,7 +1,7 @@
-import axios from 'axios';
-import jwt_decode from 'jwt-decode';
-import setAuthToken from '../utils/setAuthToken';
-import setCurrentLocalHeader from '../utils/setCurrentLocalHeader';
+import axios from "axios";
+import jwt_decode from "jwt-decode";
+import setAuthToken from "../utils/setAuthToken";
+import setCurrentLocalHeader from "../utils/setCurrentLocalHeader";
 
 import {
   SET_CURRENT_USER,
@@ -10,15 +10,15 @@ import {
   GET_USERS,
   USER_LOADING,
   USER_END_LOADING
-} from './types';
+} from "./types";
 
-import { handleError, clearErrors } from './errorActions';
+import { handleError, clearErrors } from "./errorActions";
 
-import isEmpty from './isEmpty';
+import isEmpty from "./isEmpty";
 
 export const addUser = (newUserData, history) => dispatch => {
   axios
-    .post('/users/add', newUserData)
+    .post("/users/add", newUserData)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -26,7 +26,7 @@ export const addUser = (newUserData, history) => dispatch => {
       dispatch({
         type: USER_END_LOADING
       });
-      history.push('/admin/usuarios');
+      history.push("/admin/usuarios");
     })
     .catch(err => handleError(err, dispatch));
 };
@@ -34,7 +34,7 @@ export const addUser = (newUserData, history) => dispatch => {
 export const getUsers = () => dispatch => {
   dispatch(userLoadingObject());
   axios
-    .get('/users/get')
+    .get("/users/get")
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -45,17 +45,20 @@ export const getUsers = () => dispatch => {
 
 export const loginUser = data => dispatch => {
   axios
-    .post('/users/login', data)
+    .post("/users/login", data)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
     })
-    .catch(err => handleError(err, dispatch));
+    .catch(err => {
+      console.log(err);
+      handleError(err, dispatch);
+    });
 };
 
 export const getLocalsForCurrentUser = () => dispatch => {
   axios
-    .get('/users/get_locals')
+    .get("/users/get_locals")
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -68,9 +71,9 @@ export const setCurrentLocal = local => dispatch => {
   var currentLocal = !isEmpty(local) ? local : {};
   setCurrentLocalHeader(currentLocal);
   if (isEmpty(currentLocal)) {
-    localStorage.removeItem('rimeim_current_local');
+    localStorage.removeItem("rimeim_current_local");
   } else {
-    localStorage.setItem('rimeim_current_local', JSON.stringify(currentLocal));
+    localStorage.setItem("rimeim_current_local", JSON.stringify(currentLocal));
   }
   dispatch(setCurrentLocalToState(currentLocal));
 };
@@ -134,21 +137,24 @@ export const deleteUserById = (id, history) => dispatch => {
       dispatch(clearErrors());
       const response = res.data;
       configUserFromResponse(response, dispatch);
-      history.push('/admin/usuarios');
+      history.push("/admin/usuarios");
     })
     .catch(err => handleError(err, dispatch));
 };
 
 export const getAuthTokenFromResponse = response => {
   const { token } = response;
-  localStorage.setItem('rimeim_token', token);
+  localStorage.setItem("rimeim_token", token);
   setAuthToken(token);
   const decoded = jwt_decode(token);
   return decoded;
 };
 
 export const configUserFromResponse = (response, dispatch) => {
-  const decoded = getAuthTokenFromResponse(response);
+  let decoded = getAuthTokenFromResponse(response);
+  if (response.data.primera_sesion && response.data.primera_sesion === true) {
+    decoded.primera_sesion = true;
+  }
   dispatch(setCurrentUser(decoded));
 };
 
@@ -200,16 +206,17 @@ export const setUsers = users => {
 };
 
 export const logoutUser = () => dispatch => {
-  localStorage.removeItem('rimeim_token');
-  localStorage.removeItem('rimeim_current_local');
+  localStorage.removeItem("rimeim_token");
+  localStorage.removeItem("rimeim_current_local");
   setAuthToken(false);
   setCurrentLocal(null);
   dispatch(setCurrentUser({}));
 };
 
 export const logOutUserWithDispatch = dispatch => {
-  localStorage.removeItem('rimeim_token');
-  localStorage.removeItem('rimeim_current_local');
+  localStorage.removeItem("rimeim_token");
+  localStorage.removeItem("rimeim_current_local");
   setAuthToken(false);
+  setCurrentLocal(null);
   dispatch(setCurrentUser({}));
 };

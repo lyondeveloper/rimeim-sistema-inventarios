@@ -8,7 +8,7 @@ import { getNumberFormatted } from "../../utils/stringUtils";
 import isEmpty from "../../actions/isEmpty";
 
 const ShowSale = props => {
-  const { loading, sale } = props;
+  const { loading, sale, es_cotizacion, onDelete } = props;
   let saleContent;
 
   if (loading) {
@@ -105,16 +105,31 @@ const ShowSale = props => {
             <span className="bold">Total:</span>
             <span className="ml-1">Lps {getNumberFormatted(total)}</span>
           </span>
-          <div className="d-block">
-            <span className="bold">Metodo de pago: </span>
-            <span className="ml-1">
-              {metodo_pago} - {con_factura ? "C/F" : "S/F"}
-            </span>
-          </div>
+          {!es_cotizacion && (
+            <div className="d-block">
+              <span className="bold">Metodo de pago: </span>
+              <span className="ml-1">
+                {metodo_pago} - {con_factura ? "C/F" : "S/F"}
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="card-footer p-1">
-          <button className="btn red darken-3">Generar devolucion</button>
+          {es_cotizacion ? (
+            <button
+              className="btn red darken-3"
+              onClick={() => {
+                if (onDelete) {
+                  onDelete();
+                }
+              }}
+            >
+              Eliminar cotizacion
+            </button>
+          ) : (
+            <button className="btn red darken-3">Generar devolucion</button>
+          )}
         </div>
       </div>
     );
@@ -126,7 +141,13 @@ const ShowSale = props => {
 
 ShowSale.propTypes = {
   sale: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired
+  loading: PropTypes.bool.isRequired,
+  es_cotizacion: PropTypes.bool.isRequired,
+  onDelete: PropTypes.func
+};
+
+ShowSale.defaultProps = {
+  es_cotizacion: false
 };
 
 export default ShowSale;

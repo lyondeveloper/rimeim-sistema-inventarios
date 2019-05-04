@@ -13,8 +13,10 @@ import {
   configMaterialComponents,
   removeMaterialComponents,
   getModalInstanceById,
-  notificationError
+  notificationError,
+  configSelectInputFields
 } from "../../../utils/MaterialFunctions";
+import isEmpty from "../../../actions/isEmpty";
 
 import { getProductByCBForSell } from "../../../actions/productActions";
 import { addNewSell } from "../../../actions/sellActions";
@@ -27,15 +29,21 @@ import SearchClientModal from "../../layout/modals/SearchAndSelectClient";
 import SellConfigurationModal from "../../layout/modals/SellConfiguration";
 import SellCheckoutModal from "../../layout/modals/SellCheckout";
 
+import ConfirmatioModal from "../../layout/modals/ConfirmationModal";
+
 let current_row_changed = true;
 let current_row_index = 0;
 let sell_is_in_product_request = false;
+let is_sending_data = false;
+let is_checkout = false;
 
 class NewSell extends Component {
   state = {
     input_codigo_barra: "inputcbr",
     input_cantidad: "inputcant",
     input_precio: "inputprec",
+    component_message: "",
+    guardar_como_cotizacion: false,
     errors: {},
     products: [],
     currentClient: {},
@@ -87,6 +95,10 @@ class NewSell extends Component {
     if (this.getCountOfTotalRowsFree() === this.state.count_of_minimum_rows) {
       return this.addFreeRowsToState(this.state.count_of_rows_to_add);
     }
+    if (is_checkout && current_row_changed) {
+      is_checkout = false;
+      configSelectInputFields();
+    }
     if (current_row_changed && !sell_is_in_product_request) {
       this.setAutomaticInputRowFocus();
     }
@@ -121,10 +133,46 @@ class NewSell extends Component {
       }
       sell_is_in_product_request = false;
     }
+
+    if (
+      nextProps.sell &&
+      is_sending_data &&
+      !nextProps.sell.loading &&
+      (!nextProps.errors || isEmpty(nextProps.errors))
+    ) {
+      let new_modal_message = "";
+      if (nextProps.sell.sell_success) {
+        new_modal_message = "La venta se ha guardado exitosamente";
+      } else {
+        new_modal_message =
+          "Ocurrio un error en el proceso, por favor notificar al desarrollador";
+      }
+      is_sending_data = false;
+      this.setState({
+        component_message: new_modal_message
+      });
+      getModalInstanceById("modal_sell_checkout").close();
+      getModalInstanceById("modal_confirmar_evento").open();
+    }
   }
 
+  onAcceptConfirm = () => {
+    if (
+      this.state.component_message === "La venta se ha guardado exitosamente"
+    ) {
+      window.location.reload();
+    }
+  };
+
   onHideModal = () => {
-    setTimeout(() => this.setAutomaticInputRowFocus(), 1000);
+    if (is_checkout) {
+      this.setState({
+        guardar_como_cotizacion: false
+      });
+      current_row_changed = true;
+    } else {
+      setTimeout(() => this.setAutomaticInputRowFocus(), 1000);
+    }
   };
 
   onSelectClient = newClient => {
@@ -405,10 +453,20 @@ class NewSell extends Component {
     }
   };
 
+  onSaveAsQuotation = () => {
+    this.setState({
+      guardar_como_cotizacion: true
+    });
+    is_checkout = true;
+    getModalInstanceById("modal_sell_checkout").open();
+  };
+
   onCheckOutSell = saleData => {
     saleData.productos = this.state.products.filter(
       prod => prod.id_producto !== ""
     );
+    saleData.es_cotizacion = this.state.guardar_como_cotizacion;
+    is_sending_data = true;
     this.props.addNewSell(saleData);
   };
 
@@ -443,7 +501,7 @@ class NewSell extends Component {
               </a>
             </li>
             <li>
-              <a href="#!">
+              <a href="#!" onClick={this.onSaveAsQuotation}>
                 <i className="material-icons">save</i>
               </a>
             </li>
@@ -482,7 +540,8 @@ class NewSell extends Component {
                   href="#!"
                   className="tooltipped"
                   data-position="bottom"
-                  data-tooltip="Guardar"
+                  data-tooltip="Guardar como cotizacion"
+                  onClick={this.onSaveAsQuotation}
                 >
                   <i className="material-icons">save</i>
                 </a>
@@ -542,7 +601,15 @@ class NewSell extends Component {
           loading={this.props.sell.loading}
           errors={this.props.errors}
           sumValues={sumVales}
+          onHide={this.onHideModal}
           onAccept={this.onCheckOutSell}
+          es_cotizacion={this.state.guardar_como_cotizacion}
+        />
+
+        <ConfirmatioModal
+          title="Aviso"
+          message={this.state.component_message}
+          onAccept={this.onAcceptConfirm}
         />
       </React.Fragment>
     );
