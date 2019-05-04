@@ -11,3 +11,4 @@ react_app/rimeim/node_modules/
 base_datos/scripts/db_rimeim_pruebas.sql
 base_datos/scripts/sql_compile.sql
 react_app/rimeim/package-lock.json
+react_app/rimeim/build
