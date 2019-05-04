@@ -38,7 +38,8 @@ class NewProvider extends Component {
     precio_especial: '0',
     productos: [],
     needs_config_selects: false,
-    editMode: false
+    editMode: false,
+    errors: {}
   };
 
   componentWillMount() {
@@ -221,7 +222,8 @@ class NewProvider extends Component {
       imagen,
       id_nuevo_producto,
       productos,
-      precio_especial
+      precio_especial,
+      errors: { nombre_error }
     } = this.state;
 
     const productsOptions = [];
@@ -259,6 +261,7 @@ class NewProvider extends Component {
                         label='Nombre'
                         onchange={this.onChangeTextInput}
                         value={nombre}
+                        error={nombre_error}
                       />
                     </div>
                     <div className='row'>

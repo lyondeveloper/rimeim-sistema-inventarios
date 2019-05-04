@@ -35,7 +35,8 @@ import SearchDevolution from "./components/pages/devolutions/SearchDevolution";
 import Orders from "./components/pages/orders/Orders";
 import Order from "./components/pages/orders/Order";
 import NewOrder from "./components/pages/orders/NewOrder";
-import EditOrder from "./components/pages/orders/EditOrder";
+import EditOrderToProvider from "./components/pages/orders/EditOrderToProvider";
+import EditOrderToLocal from "./components/pages/orders/EditOrderToLocal";
 import SearchOrder from "./components/pages/orders/SearchOrder";
 
 // Products
@@ -184,8 +185,15 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/editar_pedido/:id"
-                component={EditOrder}
+                path="/editar_pedido/proveedor/:id"
+                component={EditOrderToProvider}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/editar_pedido/local/:id"
+                component={EditOrderToLocal}
               />
             </Switch>
             <Switch>

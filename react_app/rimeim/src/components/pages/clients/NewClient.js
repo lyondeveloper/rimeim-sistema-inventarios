@@ -246,7 +246,8 @@ class NewClient extends Component {
       id_producto,
       imagen,
       precio_especial,
-      productos_especiales
+      productos_especiales,
+      errors: { nombre_error }
     } = this.state;
 
     const { products } = this.props.products;
@@ -286,6 +287,7 @@ class NewClient extends Component {
                             label='Nombre'
                             onchange={this.onChangeTextInput}
                             value={nombre}
+                            error={nombre_error}
                           />
                         </div>
                         <div className='row'>

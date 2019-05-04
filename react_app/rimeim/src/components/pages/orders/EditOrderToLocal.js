@@ -7,19 +7,24 @@ import { withRouter } from 'react-router-dom';
 import Spinner from '../../common/Spinner';
 import TextInputField from '../../common/TextInputField';
 import SelectInputField from '../../common/SelectInputField';
+import isEmpty from '../../../actions/isEmpty';
+
+import NewNavbar from '../../layout/NewNavbar';
 
 import {
+  configMaterialComponents,
+  removeMaterialComponents,
   configSelectInputFields,
   configModals
 } from '../../../utils/MaterialFunctions';
 
 import { getLocals } from '../../../actions/LocalActions';
-import { createOrder } from '../../../actions/orderActions';
+import { editOrder, getOrder } from '../../../actions/orderActions';
 import { searchProduct } from '../../../actions/productActions';
 
-class AddOrderToLocal extends Component {
+class EditOrderToLocal extends Component {
   state = {
-    modal_id: 'modal_agregar_productos_local',
+    modal_id: 'modal_agregar_productos_local_editar',
     id_local: '',
     field: '',
     cantidad: '',
@@ -37,8 +42,14 @@ class AddOrderToLocal extends Component {
     errors: {}
   };
 
+  componentWillMount() {
+    removeMaterialComponents();
+  }
+
   componentDidMount() {
+    configMaterialComponents();
     this.props.getLocals();
+    this.props.getOrder(this.props.match.params.id);
     if (this.state.needs_config_modals) {
       configModals();
       this.setState({
@@ -48,8 +59,29 @@ class AddOrderToLocal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { order } = nextProps.orders;
+
+    if (order) {
+      order.codigo = !isEmpty(order.codigo) ? order.codigo : '';
+      order.local_solicitado = !isEmpty(order.local_solicitado)
+        ? order.local_solicitado
+        : {};
+      order.fecha_prevista_entrega = !isEmpty(order.fecha_prevista_entrega)
+        ? order.fecha_prevista_entrega
+        : '';
+      order.productos = !isEmpty(order.productos) ? order.productos : [];
+
+      let orderDateSplited = order.fecha_prevista_entrega.split(' ')[0];
+
+      this.setState({
+        codigo: order.codigo,
+        id_local: order.id_local_solicitado,
+        fecha_entrega: orderDateSplited,
+        productos: order.productos
+      });
+    }
+
     if (nextProps.errors) {
-      console.log(nextProps);
       this.setState({
         errors: nextProps.errors
       });
@@ -231,11 +263,15 @@ class AddOrderToLocal extends Component {
     const orderData = {
       id_local_solicitado: id_local,
       codigo,
-      fecha_entrega,
+      fecha_prevista_entrega: fecha_entrega,
       productos
     };
 
-    this.props.createOrder(orderData, this.props.history);
+    this.props.editOrder(
+      this.props.match.params.id,
+      orderData,
+      this.props.history
+    );
   };
 
   render() {
@@ -249,7 +285,7 @@ class AddOrderToLocal extends Component {
       fecha_entrega,
       editMode,
       modal_id,
-      errors
+      errors: { fecha_prevista_entrega_error, local_solicitado_error }
     } = this.state;
 
     const { products } = this.props;
@@ -282,7 +318,8 @@ class AddOrderToLocal extends Component {
               onchange={this.onChangeTextInput}
               value={id_local}
               options={localOptions}
-              error={errors.local_solicitado_error}
+              active_label={id_local ? true : false}
+              error={local_solicitado_error}
             />
           </div>
           <div className='row'>
@@ -292,6 +329,7 @@ class AddOrderToLocal extends Component {
               label='Codigo de pedido'
               onchange={this.onChangeTextInput}
               value={codigo}
+              active_label={codigo ? true : false}
             />
           </div>
 
@@ -303,7 +341,7 @@ class AddOrderToLocal extends Component {
               label='Fecha de Entrega de Pedido'
               onchange={this.onChangeTextInput}
               value={fecha_entrega}
-              error={errors.fecha_prevista_entrega_error}
+              error={fecha_prevista_entrega_error}
             />
           </div>
 
@@ -412,54 +450,100 @@ class AddOrderToLocal extends Component {
 
     return (
       <React.Fragment>
-        <form onSubmit={this.onSubmit}>{localOrderContent}</form>
-        <div className='modal' id={modal_id}>
-          <div className='modal-content'>
-            <h5>Buscar producto</h5>
-            <div className='row'>
-              {editMode ? (
-                <TextInputField
-                  id='cantidad'
-                  label='Cantidad'
-                  onchange={this.onChangeTextInput}
-                  value={cantidad}
-                  active_label={cantidad ? true : false}
-                />
-              ) : (
-                <React.Fragment>
-                  <TextInputField
-                    id='field'
-                    label='Parametro de Busqueda (ID o Nombre de Producto)'
-                    value={field}
-                    onchange={this.onChangeSearchProductInput}
-                  />
-                  {searchResult}
-                  <TextInputField
-                    id='cantidad'
-                    label='Cantidad'
-                    onchange={this.onChangeTextInput}
-                    value={cantidad}
-                  />
-                </React.Fragment>
-              )}
+        <NewNavbar active_nav={'PEDIDOS'}>
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
+              Editar Pedido
+            </a>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
+            </a>
+            <ul className='right'>
+              <li>
+                <a
+                  href='#!'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Ver Todos'
+                >
+                  <i className='material-icons'>group</i>
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href='#!'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Buscar'
+                >
+                  <i className='material-icons'>search</i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </NewNavbar>
+
+        <main>
+          <div className='row'>
+            <div className='col s12'>
+              <div className='card'>
+                <div className='card-content'>
+                  <form onSubmit={this.onSubmit}>{localOrderContent}</form>
+                  <div className='modal' id={modal_id}>
+                    <div className='modal-content'>
+                      <h5>Buscar producto</h5>
+                      <div className='row'>
+                        {editMode ? (
+                          <TextInputField
+                            id='cantidad'
+                            label='Cantidad'
+                            onchange={this.onChangeTextInput}
+                            value={cantidad}
+                            active_label={cantidad ? true : false}
+                          />
+                        ) : (
+                          <React.Fragment>
+                            <TextInputField
+                              id='field'
+                              label='Parametro de Busqueda (ID o Nombre de Producto)'
+                              value={field}
+                              onchange={this.onChangeSearchProductInput}
+                            />
+                            {searchResult}
+                            <TextInputField
+                              id='cantidad'
+                              label='Cantidad'
+                              onchange={this.onChangeTextInput}
+                              value={cantidad}
+                            />
+                          </React.Fragment>
+                        )}
+                      </div>
+                    </div>
+                    <div className='modal-footer'>
+                      <a
+                        href='#!'
+                        className='modal-close waves-effect waves-green btn text-white'
+                      >
+                        Cerrar
+                      </a>
+                      <a
+                        href='#!'
+                        className='modal-close waves-effect waves-blue btn left text-white'
+                        onClick={
+                          editMode ? this.onEditProduct : this.onAddProduct
+                        }
+                      >
+                        Guardar
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className='modal-footer'>
-            <a
-              href='#!'
-              className='modal-close waves-effect waves-green btn text-white'
-            >
-              Cerrar
-            </a>
-            <a
-              href='#!'
-              className='modal-close waves-effect waves-blue btn left text-white'
-              onClick={editMode ? this.onEditProduct : this.onAddProduct}
-            >
-              Guardar
-            </a>
-          </div>
-        </div>
+        </main>
       </React.Fragment>
     );
   }
@@ -474,5 +558,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { searchProduct, createOrder, getLocals }
-)(withRouter(AddOrderToLocal));
+  { searchProduct, editOrder, getLocals, getOrder }
+)(withRouter(EditOrderToLocal));

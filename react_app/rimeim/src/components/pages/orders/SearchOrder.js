@@ -19,7 +19,11 @@ import Spinner from '../../common/Spinner';
 
 class SearchOrder extends Component {
   state = {
-    field: '',
+    codigo: '',
+    proveedor: '',
+    local: '',
+    fecha_inicio: '',
+    fecha_fin: '',
     searching: false
   };
 
@@ -38,24 +42,39 @@ class SearchOrder extends Component {
 
   onSearch = e => {
     e.preventDefault();
+
+    const searchParameters = {
+      codigo: this.state.codigo,
+      proveedor: this.state.proveedor,
+      local: this.state.local,
+      fecha_inicio: this.state.fecha_inicio,
+      fecha_fin: this.state.fecha_fin
+    };
+
     this.setState({
       searching: true
     });
-    this.props.searchOrder(this.state.field);
+    this.props.searchOrder(searchParameters);
   };
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
+    const searchParameters = {
+      codigo: this.state.codigo,
+      proveedor: this.state.proveedor,
+      local: this.state.local,
+      fecha_inicio: this.state.fecha_inicio,
+      fecha_fin: this.state.fecha_fin
+    };
+
     const { loading, orders } = this.props.orders;
 
     const { searching } = this.state;
 
-    const { field } = this.props;
-
     let searchResult;
 
-    if (loading || this.state.searching) {
+    if (loading) {
       searchResult = <Spinner fullWidth />;
     } else {
       if (orders.length < 0) {
@@ -72,10 +91,9 @@ class SearchOrder extends Component {
     return (
       <React.Fragment>
         <Navbar navtype={SEARCH_ORDER} />
-
         <main>
           <SearchOrderModel
-            values={field}
+            values={searchParameters}
             onchange={this.onChangeTextInput}
             onsearch={this.onSearch}
           />

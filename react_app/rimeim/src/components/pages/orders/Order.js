@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import uuid from 'uuid';
 import Moment from 'react-moment';
@@ -12,8 +12,13 @@ import {
 import NewNavbar from '../../layout/NewNavbar';
 import ConfirmationModal from '../../layout/modals/ConfirmationModal';
 import TextInputField from '../../common/TextInputField';
+import CheckInputField from '../../common/CheckInputField';
 
-import { getOrder, deleteOrder } from '../../../actions/orderActions';
+import {
+  getOrder,
+  deleteOrder,
+  markReceived
+} from '../../../actions/orderActions';
 import Spinner from '../../common/Spinner';
 
 class Order extends Component {
@@ -34,6 +39,10 @@ class Order extends Component {
     );
   };
 
+  onMarkReceived = () => {
+    this.props.markReceived(this.props.match.params.id, this.props.history);
+  };
+
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
@@ -45,6 +54,7 @@ class Order extends Component {
       orderContent = <Spinner fullWidth />;
     } else {
       if (Object.keys(order).length > 0) {
+        let orderDateSplited = order.fecha_prevista_entrega.split(' ')[0];
         orderContent = (
           <div className='row'>
             <div className='col s12'>
@@ -55,7 +65,6 @@ class Order extends Component {
                       input_size='12'
                       id='codigo'
                       label='Codigo de pedido'
-                      onchange={this.onChangeTextInput}
                       value={order.codigo}
                       active_label={true}
                     />
@@ -97,30 +106,26 @@ class Order extends Component {
                     </div>
                   </div>
 
-                  <div className='row'>
-                    <TextInputField
-                      input_size='s12'
-                      id='local'
-                      label='Local'
-                      onchange={this.onChangeTextInput}
-                      value={order.local_solicitado.nombre}
-                      active_label={true}
-                    />
-                  </div>
-
                   {order.es_compra ? (
                     <div className='row'>
                       <TextInputField
                         input_size='s12'
                         id='proveedor'
                         label='Proveedor'
-                        onchange={this.onChangeTextInput}
-                        value={order.proveedor}
+                        value={order.id_proveedor}
                         active_label={true}
                       />
                     </div>
                   ) : (
-                    ''
+                    <div className='row'>
+                      <TextInputField
+                        input_size='s12'
+                        id='local'
+                        label='Local'
+                        value={order.local_solicitado.nombre}
+                        active_label={true}
+                      />
+                    </div>
                   )}
 
                   <div className='row'>
@@ -128,17 +133,43 @@ class Order extends Component {
                       input_size='s12'
                       id='fecha_prevista_entrega'
                       label='Fecha de Entrega de Pedido'
-                      onchange={this.onChangeTextInput}
-                      value={order.fecha_prevista_entrega}
+                      value={orderDateSplited}
                       active_label={true}
                     />
                   </div>
+
+                  {order.recibido ? (
+                    <div className='row'>
+                      <CheckInputField
+                        input_size='s12'
+                        id='recibido'
+                        label='Completado'
+                        value={orderDateSplited}
+                        active_label={true}
+                        checked={order.recibido ? true : false}
+                      />
+                    </div>
+                  ) : (
+                    ''
+                  )}
+
                   <button
                     className='btn red darken-3 modal-trigger'
                     data-target='modal_confirmar_evento'
                   >
                     Eliminar
                   </button>
+
+                  {order.recibido ? (
+                    ''
+                  ) : (
+                    <button
+                      className='btn blue darken-3 modal-trigger right'
+                      data-target='modal_confirmar_evento_completado'
+                    >
+                      Completado
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -159,14 +190,27 @@ class Order extends Component {
             </a>
             <ul className='right'>
               <li>
-                <Link
-                  to={`/editar_pedido/${this.props.match.params.id}`}
-                  className='tooltipped'
-                  data-position='left'
-                  data-tooltip='Editar'
-                >
-                  <i className='material-icons'>edit</i>
-                </Link>
+                {order.id_proveedor !== null ? (
+                  <Link
+                    to={`/editar_pedido/proveedor/${
+                      this.props.match.params.id
+                    }`}
+                    className='tooltipped'
+                    data-position='left'
+                    data-tooltip='Editar'
+                  >
+                    <i className='material-icons'>edit</i>
+                  </Link>
+                ) : (
+                  <Link
+                    to={`/editar_pedido/local/${this.props.match.params.id}`}
+                    className='tooltipped'
+                    data-position='left'
+                    data-tooltip='Editar'
+                  >
+                    <i className='material-icons'>edit</i>
+                  </Link>
+                )}
               </li>
             </ul>
           </div>
@@ -179,6 +223,13 @@ class Order extends Component {
           message='Esta seguro de que quiere eliminar este pedido? No se podra revertir la operacion'
           onAccept={this.onConfirmDeleteOrder}
         />
+
+        <ConfirmationModal
+          title='Completar pedido'
+          message='Esta seguro de que quiere marcar este pedido como completado? No se podra revertir la operacion'
+          onAccept={this.onMarkReceived}
+          id='modal_confirmar_evento_completado'
+        />
       </React.Fragment>
     );
   }
@@ -190,5 +241,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getOrder, deleteOrder }
-)(Order);
+  { getOrder, deleteOrder, markReceived }
+)(withRouter(Order));

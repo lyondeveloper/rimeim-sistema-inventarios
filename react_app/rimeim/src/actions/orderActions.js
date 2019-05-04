@@ -14,11 +14,11 @@ export const createOrder = (data, history) => dispatch => {
   axios
     .post('/orders/add', data)
     .then(res => {
+      dispatch(clearErrors());
       const response = res.data;
 
       configUserFromResponse(response, dispatch);
 
-      dispatch(clearErrors());
       history.push(`/pedidos/${response.data.id}`);
     })
     .catch(err => handleError(err, dispatch, orderEndLoading()));
@@ -29,6 +29,7 @@ export const editOrder = (id, data, history) => dispatch => {
   axios
     .put(`/orders/update/${id}`, data)
     .then(res => {
+      dispatch(clearErrors());
       const response = res.data;
       configUserFromResponse(response, dispatch);
       dispatch({
@@ -57,6 +58,20 @@ export const getOrder = id => dispatch => {
     .catch(err => handleError(err, dispatch));
 };
 
+export const markReceived = (id, history, newUrl) => dispatch => {
+  dispatch(orderLoading());
+  axios
+    .put(`/orders/mark_received/${id}`)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch(getOrder(id));
+      history.push(`/pedidos/${response.data.id}`);
+      setTimeout(() => orderEndLoading(), 10);
+    })
+    .catch(err => handleError(err, dispatch));
+};
+
 export const getOrders = () => dispatch => {
   dispatch(orderLoading());
   axios
@@ -65,7 +80,6 @@ export const getOrders = () => dispatch => {
       const response = res.data;
 
       configUserFromResponse(response, dispatch);
-
       dispatch({
         type: GET_ORDERS,
         payload: response.data

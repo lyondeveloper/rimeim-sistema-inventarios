@@ -39,7 +39,8 @@ class EditProvider extends Component {
     nuevo_producto_nombre: '',
     productos: [],
     needs_config_selects: false,
-    editMode: false
+    editMode: false,
+    errors: {}
   };
 
   componentWillMount() {
@@ -257,7 +258,8 @@ class EditProvider extends Component {
       id_nuevo_producto,
       productos,
       imagen,
-      precio_especial
+      precio_especial,
+      errors: { nombre_error }
     } = this.state;
 
     const productsOptions = [];
@@ -299,6 +301,7 @@ class EditProvider extends Component {
                       onchange={this.onChangeTextInput}
                       value={nombre}
                       active_label={nombre ? true : false}
+                      error={nombre_error}
                     />
                   </div>
                   <div className='row'>

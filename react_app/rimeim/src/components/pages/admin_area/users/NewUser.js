@@ -35,6 +35,7 @@ class NewUser extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
     if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors
@@ -87,17 +88,17 @@ class NewUser extends Component {
     return (
       <React.Fragment>
         <NavbarAdmin>
-          <div className="nav-wrapper">
-            <a href="#!" className="brand-logo">
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
               Nuevo usuario
             </a>
-            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
-              <i className="material-icons">menu</i>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
             </a>
-            <ul className="right">
+            <ul className='right'>
               <li>
-                <a href="#!" onClick={this.onSaveNewUser}>
-                  <i className="material-icons">save</i>
+                <a href='#!' onClick={this.onSaveNewUser}>
+                  <i className='material-icons'>save</i>
                 </a>
               </li>
             </ul>
@@ -105,66 +106,66 @@ class NewUser extends Component {
         </NavbarAdmin>
 
         <main>
-          <div className="row">
-            <div className="col s12">
-              <div className="card">
-                <div className="card-content">
-                  <div className="row">
+          <div className='row'>
+            <div className='col s12'>
+              <div className='card'>
+                <div className='card-content'>
+                  <div className='row'>
                     <TextInputField
-                      id="nombre"
-                      label="Nombre"
+                      id='nombre'
+                      label='Nombre'
                       value={nombre}
                       error={nombre_error}
                       onchange={this.onChangeTextInput}
                     />
                   </div>
 
-                  <div className="row">
+                  <div className='row'>
                     <TextInputField
-                      id="nombre_usuario"
-                      label="Nombre de usuario"
+                      id='nombre_usuario'
+                      label='Nombre de usuario'
                       value={nombre_usuario}
                       error={nombre_usuario_error}
                       onchange={this.onChangeTextInput}
                     />
                   </div>
 
-                  <div className="row">
+                  <div className='row'>
                     <TextInputField
-                      id="correo"
-                      type="email"
-                      label="Correo"
+                      id='correo'
+                      type='email'
+                      label='Correo'
                       value={correo}
                       error={correo_error}
                       onchange={this.onChangeTextInput}
                     />
                   </div>
 
-                  <div className="row">
+                  <div className='row'>
                     <TextInputField
-                      id="password"
-                      type="password"
-                      label="Clave"
+                      id='password'
+                      type='password'
+                      label='Clave'
                       value={password}
                       error={password_error}
                       onchange={this.onChangeTextInput}
                     />
                   </div>
 
-                  <div className="row">
+                  <div className='row'>
                     <CheckInputField
-                      id="habilitado"
+                      id='habilitado'
                       checked={habilitado}
-                      label="Habilitado"
+                      label='Habilitado'
                       onchange={this.onChangeCheckField}
                     />
                   </div>
 
-                  <div className="row">
+                  <div className='row'>
                     <CheckInputField
-                      id="admin"
+                      id='admin'
                       checked={admin}
-                      label="Admin"
+                      label='Admin'
                       onchange={this.onChangeCheckField}
                     />
                   </div>
