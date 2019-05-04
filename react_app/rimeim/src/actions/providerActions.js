@@ -3,20 +3,21 @@ import {
   PROVIDER_LOADING_END,
   GET_PROVIDER,
   GET_PROVIDERS
-} from './types';
+} from "./types";
 
-import axios from 'axios';
+import axios from "axios";
 
-import { clearErrors, handleError } from './errorActions';
+import { clearErrors, handleError } from "./errorActions";
 
-import { configUserFromResponse } from './UserActions';
-import { clientLoadingEnd } from './clientActions';
+import { configUserFromResponse } from "./UserActions";
+import { clientLoadingEnd } from "./clientActions";
+const proxy = "https://rimeim.com/api";
 
 export const addProvider = (data, history) => dispatch => {
   dispatch(clearErrors());
   dispatch(providerLoading());
   axios
-    .post('/providers/add', data)
+    .post(`${proxy}/providers/add`, data)
     .then(res => {
       const response = res.data;
 
@@ -24,14 +25,14 @@ export const addProvider = (data, history) => dispatch => {
 
       dispatch(clientLoadingEnd);
 
-      history.push('/proveedores');
+      history.push("/proveedores");
     })
     .catch(err => handleError(err, dispatch));
 };
 export const editProvider = (data, history, id) => dispatch => {
   dispatch(clearErrors());
   axios
-    .post(`/providers/update/${id}`, data)
+    .post(`${proxy}/providers/update/${id}`, data)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -40,14 +41,14 @@ export const editProvider = (data, history, id) => dispatch => {
         payload: response.data
       });
 
-      history.push('/proveedores');
+      history.push("/proveedores");
     })
     .catch(err => handleError(err, dispatch));
 };
 export const getProvider = id => dispatch => {
   dispatch(providerLoading());
   axios
-    .get(`/providers/get_one/${id}`)
+    .get(`${proxy}/providers/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -63,7 +64,7 @@ export const getProviders = () => dispatch => {
   dispatch(providerLoading());
   dispatch(clearErrors());
   axios
-    .get('/providers/get')
+    .get(`${proxy}/providers/get`)
     .then(res => {
       const response = res.data;
 
@@ -81,7 +82,7 @@ export const getProviders = () => dispatch => {
 export const searchProvider = data => dispatch => {
   dispatch(providerLoading());
   axios
-    .get(`/providers/search/${data}`)
+    .get(`${proxy}/providers/search/${data}`)
     .then(res => {
       const response = res.data;
 
@@ -99,11 +100,11 @@ export const searchProvider = data => dispatch => {
 export const deleteProvider = (id, history) => dispatch => {
   dispatch(clearErrors());
   axios
-    .delete(`/providers/delete/${id}`)
+    .delete(`${proxy}/providers/delete/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
-      history.push('/proveedores');
+      history.push("/proveedores");
     })
     .catch(err => handleError(err, dispatch));
 };

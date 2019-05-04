@@ -4,23 +4,25 @@
     realizar consultas al servidor referente a TIPOS DE VEHICULOS
 
 */
-import axios from 'axios';
+import axios from "axios";
 
-import { configUserFromResponse } from './UserActions';
-import { handleError, clearErrors } from './errorActions';
+import { configUserFromResponse } from "./UserActions";
+import { handleError, clearErrors } from "./errorActions";
 
 import {
   GET_VEHICLE,
   GET_VEHICLES,
   VEHICLE_LOADING,
   VEHICLE_END_LOADING
-} from './types';
+} from "./types";
+
+const proxy = "https://rimeim.com/api";
 
 export const getVehicles = () => dispatch => {
   dispatch(vehicleLoadingObject());
 
   axios
-    .get('/vehicles/get')
+    .get(`${proxy}/vehicles/get`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -36,7 +38,7 @@ export const getVehicles = () => dispatch => {
 export const getVehicle = id => dispatch => {
   dispatch(vehicleLoadingObject());
   axios
-    .get(`/vehicles/get_one/${id}`)
+    .get(`${proxy}/vehicles/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -53,7 +55,7 @@ export const searchVehicle = vehicleData => dispatch => {
   dispatch(vehicleLoadingObject());
 
   axios
-    .post('/vehicles/search', vehicleData)
+    .post(`${proxy}/vehicles/searc`, vehicleData)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -69,8 +71,8 @@ export const searchVehicle = vehicleData => dispatch => {
 export const addVehicle = (newVehicleData, history) => dispatch => {
   dispatch(vehicleLoadingObject());
   axios
-    .post('/vehicles/add', newVehicleData, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    .post(`${proxy}/vehicles/add`, newVehicleData, {
+      headers: { "X-Requested-With": "XMLHttpRequest" }
     })
     .then(res => {
       const response = res.data;
@@ -87,8 +89,8 @@ export const addVehicle = (newVehicleData, history) => dispatch => {
 export const updateVehicle = (id, newBrandData) => dispatch => {
   dispatch(vehicleLoadingObject());
   axios
-    .post(`/vehicles/update/${id}`, newBrandData, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    .post(`${proxy}/vehicles/update/${id}`, newBrandData, {
+      headers: { "X-Requested-With": "XMLHttpRequest" }
     })
     .then(res => {
       const response = res.data;
@@ -106,7 +108,7 @@ export const deleteVehicle = (id, history, new_url) => dispatch => {
   dispatch(vehicleLoadingObject());
 
   axios
-    .delete(`/vehicles/delete/${id}`)
+    .delete(`${proxy}/vehicles/delete/${id}`)
     .then(res => {
       configUserFromResponse(res.data, dispatch);
       dispatch({

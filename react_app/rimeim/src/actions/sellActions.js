@@ -16,11 +16,12 @@ import {
 
 import { configUserFromResponse } from "./UserActions";
 import { handleError, clearErrors } from "./errorActions";
+const proxy = "https://rimeim.com/api";
 
 export const getSells = () => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .get("/sales/get")
+    .get(`${proxy}/sales/get`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -36,7 +37,7 @@ export const getSells = () => dispatch => {
 export const getQuotes = () => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .get("/sales/getquotes")
+    .get(`${proxy}/sales/getquotes`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -52,7 +53,7 @@ export const getQuotes = () => dispatch => {
 export const searchSell = jsonField => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .post("/sales/search", jsonField)
+    .post(`${proxy}/sales/search`, jsonField)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -68,7 +69,7 @@ export const searchSell = jsonField => dispatch => {
 export const getSellById = id => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .get(`/sales/get_one/${id}`)
+    .get(`${proxy}/sales/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -84,7 +85,7 @@ export const getSellById = id => dispatch => {
 export const getQuotationById = id => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .get(`/sales/get_quote/${id}`)
+    .get(`${proxy}/sales/get_quote/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -100,7 +101,7 @@ export const getQuotationById = id => dispatch => {
 export const addNewSell = newSellData => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .post("/sales/add", newSellData)
+    .post(`${proxy}/sales/add`, newSellData)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -115,7 +116,7 @@ export const addNewSell = newSellData => dispatch => {
 export const deleteQuotation = (id, history, new_url) => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .delete(`/sales/delete_quote/${id}`)
+    .delete(`${proxy}/sales/delete_quote/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

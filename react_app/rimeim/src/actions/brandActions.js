@@ -3,22 +3,23 @@
     realizar consultas al servidor referente a MARCAS
 
 */
-import axios from 'axios';
+import axios from "axios";
 
-import { configUserFromResponse } from './UserActions';
-import { handleError, clearErrors } from './errorActions';
+import { configUserFromResponse } from "./UserActions";
+import { handleError, clearErrors } from "./errorActions";
 
 import {
   GET_BRAND,
   GET_BRANDS,
   BRAND_LOADING,
   BRAND_END_LOADING
-} from './types';
+} from "./types";
 
+const proxy = "https://rimeim.com/api";
 export const getBrands = () => dispatch => {
   dispatch(brandLoadingObject());
   axios
-    .get('/brands/get')
+    .get(`${proxy}/brands/get`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -33,7 +34,7 @@ export const getBrands = () => dispatch => {
 export const getBrand = id => dispatch => {
   dispatch(brandLoadingObject());
   axios
-    .get(`/brands/get_one/${id}`)
+    .get(`${proxy}/brands/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -49,7 +50,7 @@ export const getBrand = id => dispatch => {
 export const searchBrand = data => dispatch => {
   dispatch(brandLoadingObject());
   axios
-    .post('/brands/search', data)
+    .post(`${proxy}/brands/search`, data)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -65,8 +66,8 @@ export const searchBrand = data => dispatch => {
 export const addBrand = (brandData, history) => dispatch => {
   dispatch(brandLoadingObject());
   axios
-    .post('/brands/add', brandData, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    .post(`${proxy}/brands/add`, brandData, {
+      headers: { "X-Requested-With": "XMLHttpRequest" }
     })
     .then(res => {
       const response = res.data;
@@ -84,8 +85,8 @@ export const addBrand = (brandData, history) => dispatch => {
 export const updateBrand = (id, newBrandData) => dispatch => {
   dispatch(brandLoadingObject());
   axios
-    .post(`/brands/update/${id}`, newBrandData, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    .post(`${proxy}/brands/update/${id}`, newBrandData, {
+      headers: { "X-Requested-With": "XMLHttpRequest" }
     })
     .then(res => {
       const response = res.data;
@@ -102,7 +103,7 @@ export const updateBrand = (id, newBrandData) => dispatch => {
 export const deleteBrand = (id, history, new_url) => dispatch => {
   dispatch(brandLoadingObject());
   axios
-    .delete(`/brands/delete/${id}`)
+    .delete(`${proxy}/brands/delete/${id}`)
     .then(res => {
       configUserFromResponse(res.data, dispatch);
       dispatch({

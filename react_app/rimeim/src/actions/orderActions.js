@@ -3,16 +3,18 @@ import {
   GET_ORDERS,
   ORDER_LOADING,
   ORDER_LOADING_END
-} from './types';
-import axios from 'axios';
+} from "./types";
+import axios from "axios";
 
-import { clearErrors, handleError } from './errorActions';
-import { configUserFromResponse } from './UserActions';
+import { clearErrors, handleError } from "./errorActions";
+import { configUserFromResponse } from "./UserActions";
+
+const proxy = "https://rimeim.com/api";
 
 export const createOrder = (data, history) => dispatch => {
   dispatch(orderLoading());
   axios
-    .post('/orders/add', data)
+    .post(`${proxy}/orders/add`, data)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -27,7 +29,7 @@ export const createOrder = (data, history) => dispatch => {
 export const editOrder = (id, data, history) => dispatch => {
   dispatch(orderLoading());
   axios
-    .put(`/orders/update/${id}`, data)
+    .put(`${proxy}/orders/update/${id}`, data)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -46,7 +48,7 @@ export const getOrder = id => dispatch => {
   dispatch(clearErrors());
   dispatch(orderLoading());
   axios
-    .get(`/orders/get_one/${id}`)
+    .get(`${proxy}/orders/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -61,7 +63,7 @@ export const getOrder = id => dispatch => {
 export const markReceived = (id, history, newUrl) => dispatch => {
   dispatch(orderLoading());
   axios
-    .put(`/orders/mark_received/${id}`)
+    .put(`${proxy}/orders/mark_received/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -75,7 +77,7 @@ export const markReceived = (id, history, newUrl) => dispatch => {
 export const getOrders = () => dispatch => {
   dispatch(orderLoading());
   axios
-    .get('/orders/get')
+    .get(`${proxy}/orders/get`)
     .then(res => {
       const response = res.data;
 
@@ -94,7 +96,7 @@ export const searchOrder = data => dispatch => {
   dispatch(clearErrors());
   dispatch(orderLoading());
   axios
-    .post('/orders/search', data)
+    .post(`${proxy}/orders/search`, data)
     .then(res => {
       const response = res.data;
 
@@ -114,7 +116,7 @@ export const deleteOrder = (id, history, newUrl) => dispatch => {
   dispatch(clearErrors());
   dispatch(orderLoading());
   axios
-    .delete(`/orders/delete/${id}`)
+    .delete(`${proxy}/orders/delete/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

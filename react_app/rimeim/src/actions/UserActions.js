@@ -15,10 +15,11 @@ import {
 import { handleError, clearErrors } from "./errorActions";
 
 import isEmpty from "./isEmpty";
+const proxy = "https://rimeim.com/api";
 
 export const addUser = (newUserData, history) => dispatch => {
   axios
-    .post("/users/add", newUserData)
+    .post(`${proxy}/users/add`, newUserData)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -34,7 +35,7 @@ export const addUser = (newUserData, history) => dispatch => {
 export const getUsers = () => dispatch => {
   dispatch(userLoadingObject());
   axios
-    .get("/users/get")
+    .get(`${proxy}/users/get`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -45,20 +46,21 @@ export const getUsers = () => dispatch => {
 
 export const loginUser = data => dispatch => {
   axios
-    .post("/users/login", data)
+    .post(`${proxy}/users/login`, data, {
+      headers: { "Access-Control-Allow-Origin": "*" }
+    })
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
     })
     .catch(err => {
-      console.log(err);
       handleError(err, dispatch);
     });
 };
 
 export const getLocalsForCurrentUser = () => dispatch => {
   axios
-    .get("/users/get_locals")
+    .get(`${proxy}/users/get_locals`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -81,7 +83,7 @@ export const setCurrentLocal = local => dispatch => {
 export const getUsersByField = field => dispatch => {
   dispatch(userLoadingObject());
   axios
-    .get(`/users/search/${field}`)
+    .get(`${proxy}/users/search/${field}`)
     .then(res => {
       dispatch(clearUsers());
       const response = res.data;
@@ -95,7 +97,7 @@ export const getUserById = id => dispatch => {
   dispatch(userLoadingObject());
   dispatch(clearUsers());
   axios
-    .get(`/users/get_one/${id}`)
+    .get(`${proxy}/users/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -106,7 +108,7 @@ export const getUserById = id => dispatch => {
 
 export const updateUserById = (id, newUserData) => dispatch => {
   axios
-    .put(`/users/update/${id}`, newUserData)
+    .put(`${proxy}/users/update/${id}`, newUserData)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -118,7 +120,7 @@ export const updateUserById = (id, newUserData) => dispatch => {
 
 export const updateUserPasswordById = (id, data) => dispatch => {
   axios
-    .put(`/users/update_password/${id}`, data)
+    .put(`${proxy}/users/update_password/${id}`, data)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -132,7 +134,7 @@ export const updateUserPasswordById = (id, data) => dispatch => {
 
 export const deleteUserById = (id, history) => dispatch => {
   axios
-    .delete(`/users/delete/${id}`)
+    .delete(`${proxy}/users/delete/${id}`)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
