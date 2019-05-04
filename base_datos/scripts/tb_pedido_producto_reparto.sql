@@ -72,9 +72,9 @@ begin
 end $$
 delimiter ; 
 
-drop procedure if exists `proc_delete_pedido_producto_by_id`;
+drop procedure if exists `proc_delete_pedido_producto_reparto_by_id`;
 delimiter $$
-create procedure proc_delete_pedido_producto_by_id(in p_id bigint)
+create procedure proc_delete_pedido_producto_reparto_by_id(in p_id bigint)
 begin
     if (valid_int_id(p_id)) then
         update tb_pedido_producto_reparto

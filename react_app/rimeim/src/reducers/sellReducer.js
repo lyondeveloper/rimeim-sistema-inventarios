@@ -2,11 +2,14 @@ import {
   SELL_LOADING,
   SELL_END_LOADING,
   GET_SELL,
-  GET_SELLS
-} from '../actions/types';
+  GET_SELLS,
+  SELL_SUCCESS,
+  SELL_FAILED
+} from "../actions/types";
 
 const initialState = {
   loading: false,
+  sell_success: false,
   sell: {},
   sells: []
 };
@@ -37,6 +40,20 @@ export default function(state = initialState, action) {
         ...state,
         loading: false,
         sells: action.payload
+      };
+
+    case SELL_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        sell_success: true
+      };
+
+    case SELL_FAILED:
+      return {
+        ...state,
+        loading: false,
+        sell_success: false
       };
 
     default:

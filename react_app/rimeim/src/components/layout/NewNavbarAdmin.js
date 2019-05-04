@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
-import logo_rimeim from '../../public/img/logo_rimeim.png';
+import logo_rimeim from "../../public/img/logo_rimeim.png";
 
 // Functions
-import { logoutUser, setCurrentLocal } from '../../actions/UserActions';
+import { logoutUser, setCurrentLocal } from "../../actions/UserActions";
 
 class NavbarAdmin extends Component {
   render() {
@@ -57,7 +57,7 @@ class NavbarAdmin extends Component {
                 </Link>
               </li>
 
-              <li className={`bold ${active_nav === 'PRODUCTOS' && 'active'}`}>
+              <li className={`bold ${active_nav === "PRODUCTOS" && "active"}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">directions_car</i>
                   Productos
@@ -74,7 +74,7 @@ class NavbarAdmin extends Component {
                 </div>
               </li>
 
-              <li className={`bold ${active_nav === 'REPORTES' && 'active'}`}>
+              <li className={`bold ${active_nav === "REPORTES" && "active"}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">trending_up</i>
                   Reportes
@@ -108,26 +108,24 @@ class NavbarAdmin extends Component {
                       <a href="#!">
                         <i
                           className={`material-icons ${has_notifications &&
-                            'notifications-active-color'}`}
+                            "notifications-active-color"}`}
                         >
                           notifications
                         </i>
                         Notificaciones
                       </a>
                     </li>
-                    {admin && (
-                      <li>
-                        <a
-                          href="#!"
-                          onClick={() => {
-                            this.props.setCurrentLocal(null);
-                          }}
-                        >
-                          <i className="material-icons">compare_arrow</i>
-                          Cambiar de local
-                        </a>
-                      </li>
-                    )}
+                    <li>
+                      <a
+                        href="#!"
+                        onClick={() => {
+                          this.props.setCurrentLocal(null);
+                        }}
+                      >
+                        <i className="material-icons">compare_arrow</i>
+                        Cambiar de local
+                      </a>
+                    </li>
                     <li>
                       <Link to="/admin/configuracion">
                         <i className="material-icons">settings</i>

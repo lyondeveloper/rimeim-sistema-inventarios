@@ -54,15 +54,18 @@ class SellCheckout extends Component {
     if (this.props.loading) {
       return;
     }
-    const { custom_errors } = this.state;
-    if (this.state.metodo_pago === "0") {
-      custom_errors.metodo_pago_error = "Seleccione un metodo de pago";
-    } else {
-      delete custom_errors.metodo_pago_error;
-    }
-    this.setState({ custom_errors });
-    if (!isEmpty(custom_errors)) {
-      return;
+
+    if (!this.props.es_cotizacion) {
+      const { custom_errors } = this.state;
+      if (this.state.metodo_pago === "0") {
+        custom_errors.metodo_pago_error = "Seleccione un metodo de pago";
+      } else {
+        delete custom_errors.metodo_pago_error;
+      }
+      this.setState({ custom_errors });
+      if (!isEmpty(custom_errors)) {
+        return;
+      }
     }
 
     if (this.props.onAccept) {
@@ -71,16 +74,19 @@ class SellCheckout extends Component {
         currentClient,
         sumValues: { subtotal, impuesto, total }
       } = this.props;
-      const obj_metodo_pago = metodos_pago.find(m => m.value === metodo_pago);
 
       let saleData = {
         sub_total: subtotal,
         impuesto,
         total,
         codigo,
-        con_factura,
-        metodo_pago: obj_metodo_pago.label.toLowerCase()
+        con_factura
       };
+
+      if (!this.props.es_cotizacion) {
+        const obj_metodo_pago = metodos_pago.find(m => m.value === metodo_pago);
+        saleData.metodo_pago = obj_metodo_pago.label.toLowerCase();
+      }
       if (currentClient.id) {
         saleData.id_cliente = currentClient.id;
       }
@@ -100,7 +106,8 @@ class SellCheckout extends Component {
       currentClient,
       loading,
       errors: { codigo_error },
-      sumValues: { subtotal, impuesto, total }
+      sumValues: { subtotal, impuesto, total },
+      es_cotizacion
     } = this.props;
     let currentClientContent;
     if (currentClient && !isEmpty(currentClient)) {
@@ -144,25 +151,30 @@ class SellCheckout extends Component {
               disabled={loading}
             />
           </div>
-          <div className="row">
-            <SelectInputField
-              id="metodo_pago"
-              label="Metodo de pago"
-              value={metodo_pago}
-              options={metodos_pago}
-              onchange={this.onChangeTextInput}
-              error={metodo_pago_error}
-            />
-          </div>
-          <div className="row">
-            <CheckInputField
-              id="con_factura"
-              label="Con factura"
-              checked={con_factura}
-              onchange={this.onChangeCheckField}
-              disabled={loading}
-            />
-          </div>
+
+          {!es_cotizacion && (
+            <React.Fragment>
+              <div className="row">
+                <SelectInputField
+                  id="metodo_pago"
+                  label="Metodo de pago"
+                  value={metodo_pago}
+                  options={metodos_pago}
+                  onchange={this.onChangeTextInput}
+                  error={metodo_pago_error}
+                />
+              </div>
+              <div className="row">
+                <CheckInputField
+                  id="con_factura"
+                  label="Con factura"
+                  checked={con_factura}
+                  onchange={this.onChangeCheckField}
+                  disabled={loading}
+                />
+              </div>
+            </React.Fragment>
+          )}
 
           {loading && <Spinner fullWidth />}
         </div>
@@ -193,7 +205,12 @@ SellCheckout.proptTypes = {
   errors: PropTypes.object.isRequired,
   sumValues: PropTypes.object.isRequired,
   onAccept: PropTypes.func,
-  onHide: PropTypes.func
+  onHide: PropTypes.func,
+  es_cotizacion: PropTypes.bool.isRequired
+};
+
+SellCheckout.defaultProps = {
+  es_cotizacion: false
 };
 
 export default SellCheckout;
