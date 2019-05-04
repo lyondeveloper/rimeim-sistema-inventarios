@@ -23,7 +23,7 @@ const SearchOrderModel = props => {
         </div>
         <div className='row'>
           <TextInputField
-            id='Codigo'
+            id='codigo'
             label='Codigo'
             onchange={onchange}
             value={codigo}

@@ -4,8 +4,7 @@ import NewNavbar from '../../layout/NewNavbar';
 
 import {
   configMaterialComponents,
-  removeMaterialComponents,
-  configModals
+  removeMaterialComponents
 } from '../../../utils/MaterialFunctions';
 
 import AddOrderToLocal from './AddOrderToLocal';
@@ -23,12 +22,6 @@ class NewOrder extends Component {
   componentDidMount() {
     configMaterialComponents();
   }
-
-  // componentDidUpdate() {
-
-  //     configModals();
-
-  // }
 
   onProviderModeChange = () => {
     this.setState({

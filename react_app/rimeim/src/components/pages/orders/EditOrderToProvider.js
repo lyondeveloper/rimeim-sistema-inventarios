@@ -1,42 +1,56 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import uuid from 'uuid';
-import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+
+import Spinner from '../../common/Spinner';
+import TextInputField from '../../common/TextInputField';
+import SelectInputField from '../../common/SelectInputField';
+import isEmpty from '../../../actions/isEmpty';
+
+import NewNavbar from '../../layout/NewNavbar';
 
 import {
+  configMaterialComponents,
+  removeMaterialComponents,
   configSelectInputFields,
   configModals
 } from '../../../utils/MaterialFunctions';
 
-import Spinner from '../../common/Spinner';
-import SelectInputField from '../../common/SelectInputField';
-import TextInputField from '../../common/TextInputField';
-
 import { getProviders } from '../../../actions/providerActions';
-import { createOrder } from '../../../actions/orderActions';
+import { editOrder, getOrder } from '../../../actions/orderActions';
 import { searchProduct } from '../../../actions/productActions';
 
 class EditOrderToProvider extends Component {
   state = {
-    modal_id: 'modal_agregar_productos_proveedor',
-    field: '',
+    modal_id: 'modal_agregar_productos_local_editar',
     id_proveedor: '',
+    field: '',
     cantidad: '',
-    fecha_entrega: '',
     codigo: '',
-    productos: [],
+    fecha_entrega: '',
+    producto_seleccionado: {},
     productos_seleccionados: [],
-    needs_config_selects: false,
-    needs_config_modals: true,
+    productos: [],
+    distribucion: [],
     editMode: false,
-    searching: false,
     typing: false,
     typingTimeout: 0,
+    searching: false,
+    needs_config_selects: false,
+    needs_config_modals: true,
     errors: {}
   };
 
+  componentWillMount() {
+    removeMaterialComponents();
+  }
+
   componentDidMount() {
+    configMaterialComponents();
     this.props.getProviders();
+    this.props.getOrder(this.props.match.params.id);
     if (this.state.needs_config_modals) {
       configModals();
       this.setState({
@@ -46,10 +60,33 @@ class EditOrderToProvider extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors)
+    const { order } = nextProps.orders;
+
+    if (order) {
+      order.codigo = !isEmpty(order.codigo) ? order.codigo : '';
+      order.id_proveedor = !isEmpty(order.id_proveedor)
+        ? order.id_proveedor
+        : {};
+      order.fecha_prevista_entrega = !isEmpty(order.fecha_prevista_entrega)
+        ? order.fecha_prevista_entrega
+        : '';
+      order.productos = !isEmpty(order.productos) ? order.productos : [];
+
+      let orderDateSplited = order.fecha_prevista_entrega.split(' ')[0];
+
+      this.setState({
+        codigo: order.codigo,
+        id_proveedor: order.id_proveedor,
+        fecha_entrega: orderDateSplited,
+        productos: order.productos
+      });
+    }
+
+    if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors
       });
+    }
 
     if (nextProps.products.products) {
       const { products } = nextProps.products;
@@ -119,9 +156,7 @@ class EditOrderToProvider extends Component {
 
     document.getElementById(`${producto.id}`).checked = producto.seleccionado;
 
-    this.setState({
-      productos_seleccionados
-    });
+    this.setState({ productos_seleccionados });
   };
 
   onCloseProviderModal = () => {
@@ -139,6 +174,7 @@ class EditOrderToProvider extends Component {
   //Metodo para que cuando demos click a agregar productos, el state este limpio
   onAddProductClick = e => {
     e.preventDefault();
+
     this.setState({
       producto_seleccionado: {},
       field: '',
@@ -176,7 +212,7 @@ class EditOrderToProvider extends Component {
     });
   };
 
-  //Metodo para que cuando le demos click a editar un producto, se coloque toda la data en los TextInputField
+  //Metodo para que cuando le demos click a editar un producto, se coloquen en los TextInputField la data
   onEditProductClick = producto => {
     this.setState({
       producto_seleccionado: producto,
@@ -231,23 +267,29 @@ class EditOrderToProvider extends Component {
     const orderData = {
       id_proveedor,
       codigo,
-      fecha_entrega,
+      fecha_prevista_entrega: fecha_entrega,
       productos
     };
 
-    this.props.createOrder(orderData, this.props.history);
+    this.props.editOrder(
+      this.props.match.params.id,
+      orderData,
+      this.props.history
+    );
   };
 
   render() {
     const {
-      productos,
       id_proveedor,
+      productos,
       searching,
       cantidad,
       field,
       codigo,
       fecha_entrega,
-      modal_id
+      editMode,
+      modal_id,
+      errors: { fecha_prevista_entrega_error, local_solicitado_error }
     } = this.state;
 
     const { providers, loading } = this.props.providers;
@@ -263,9 +305,115 @@ class EditOrderToProvider extends Component {
       });
     });
 
+    let searchResult;
+
     let providerOrderContent;
 
-    let searchResult;
+    if (loading) {
+      providerOrderContent = <Spinner fullWidth />;
+    } else {
+      providerOrderContent = (
+        <React.Fragment>
+          <div className='row'>
+            <SelectInputField
+              input_size='s12'
+              id='id_proveedor'
+              label='Proveedor'
+              onchange={this.onChangeTextInput}
+              value={id_proveedor}
+              options={providerOptions}
+              active_label={id_proveedor ? true : false}
+              error={local_solicitado_error}
+            />
+          </div>
+          <div className='row'>
+            <TextInputField
+              input_size='s12'
+              id='codigo'
+              label='Codigo de pedido'
+              onchange={this.onChangeTextInput}
+              value={codigo}
+              active_label={codigo ? true : false}
+            />
+          </div>
+
+          <div className='row'>
+            <TextInputField
+              type='date'
+              input_size='s12'
+              id='fecha_entrega'
+              label='Fecha de Entrega de Pedido'
+              onchange={this.onChangeTextInput}
+              value={fecha_entrega}
+              error={fecha_prevista_entrega_error}
+            />
+          </div>
+
+          <div className='row'>
+            <div className='d-block center'>
+              <h5>Agregar Productos</h5>
+              <button
+                className='modal-trigger btn-floating'
+                data-target={modal_id}
+                onClick={this.onAddProductClick}
+              >
+                <i className='material-icons'>add</i>
+              </button>
+            </div>
+          </div>
+
+          {productos.length > 0 ? (
+            <table className='striped table-bordered mt-1'>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Cantidad</th>
+                  <th>Costo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {productos.map((p, i) =>
+                  p.eliminado ? (
+                    ''
+                  ) : (
+                    <tr key={uuid()}>
+                      <td>{p.id_producto}</td>
+                      <td>{p.nombre}</td>
+                      <td>{p.cantidad}</td>
+                      <td>{p.costo}</td>
+                      <td>
+                        <i
+                          onClick={this.onDeleteProduct.bind(this, p)}
+                          className='material-icons cursor-pointer'
+                        >
+                          delete_sweep
+                        </i>
+                        <i
+                          onClick={this.onEditProductClick.bind(this, p)}
+                          data-target={modal_id}
+                          className='material-icons cursor-pointer modal-trigger'
+                        >
+                          create
+                        </i>
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          ) : (
+            ''
+          )}
+          <div className='d-block center mt-1'>
+            <button className='btn' type='submit'>
+              Guardar{' '}
+            </button>
+          </div>
+        </React.Fragment>
+      );
+    }
 
     //Contenido del buscador, si esta en modo searching o en loading, mostrara spinner y cuando ya llegue la data, la mostrara o no dependiendo de cual haya sido el resultado
     if (searching || products.loading) {
@@ -304,170 +452,115 @@ class EditOrderToProvider extends Component {
       );
     }
 
-    if (loading) {
-      providerOrderContent = <Spinner fullWidth />;
-    } else {
-      providerOrderContent = (
-        <React.Fragment>
-          <div className='row'>
-            <SelectInputField
-              input_size='s12'
-              id='id_proveedor'
-              label='Proveedor'
-              onchange={this.onChangeTextInput}
-              value={id_proveedor}
-              options={providerOptions}
-            />
-          </div>
-
-          <div className='row'>
-            <TextInputField
-              input_size='s12'
-              id='codigo'
-              label='Codigo de pedido'
-              onchange={this.onChangeTextInput}
-              value={codigo}
-            />
-          </div>
-
-          <div className='row'>
-            <TextInputField
-              type='date'
-              input_size='s12'
-              id='fecha_entrega'
-              label='Fecha de Entrega de Pedido'
-              onchange={this.onChangeTextInput}
-              value={fecha_entrega}
-            />
-            <div className='d-block center'>
-              <h5>Agregar Productos</h5>
-              <button
-                className='modal-trigger btn-floating'
-                data-target={modal_id}
-                onClick={this.onAddProductClick}
-              >
-                <i className='material-icons'>add</i>
-              </button>
-            </div>
-          </div>
-
-          {productos.length > 0 ? (
-            <table className='striped table-bordered mt-1'>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Cantidad</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {productos.map((p, i) =>
-                  p.eliminado ? (
-                    ''
-                  ) : (
-                    <tr key={uuid()}>
-                      <td>{p.id_producto}</td>
-                      <td>{p.nombre}</td>
-                      <td>{p.cantidad}</td>
-                      <td>
-                        <i
-                          onClick={this.onDeleteProduct.bind(this, p)}
-                          className='material-icons cursor-pointer'
-                        >
-                          delete_sweep
-                        </i>
-                        <i
-                          onClick={this.onEditProductClick.bind(this, p)}
-                          data-target={modal_id}
-                          className='material-icons cursor-pointer modal-trigger'
-                        >
-                          create
-                        </i>
-                      </td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
-          ) : (
-            ''
-          )}
-
-          <div className='d-block center mt-1'>
-            <button className='btn' type='submit'>
-              Guardar{' '}
-            </button>
-          </div>
-        </React.Fragment>
-      );
-    }
-
     return (
       <React.Fragment>
-        <form onSubmit={this.onSubmit}>{providerOrderContent}</form>
-        <div className='modal' id={modal_id}>
-          <div className='modal-content'>
-            <h5>Agregar Productos de Proveedor</h5>
-            <div className='row'>
-              {this.state.editMode ? (
-                <TextInputField
-                  id='cantidad'
-                  label='Cantidad'
-                  onchange={this.onChangeTextInput}
-                  value={cantidad}
-                  active_label={cantidad ? true : false}
-                />
-              ) : (
-                <React.Fragment>
-                  <TextInputField
-                    id='field'
-                    label='Parametro de Busqueda (ID o Nombre de Producto)'
-                    value={field}
-                    onchange={this.onChangeSearchProductInput}
-                  />
-                  {searchResult}
-                  <TextInputField
-                    id='cantidad'
-                    label='Cantidad'
-                    onchange={this.onChangeTextInput}
-                    value={cantidad}
-                  />
-                </React.Fragment>
-              )}
+        <NewNavbar active_nav={'PEDIDOS'}>
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
+              Editar Pedido
+            </a>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
+            </a>
+            <ul className='right'>
+              <li>
+                <a
+                  href='#!'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Ver Todos'
+                >
+                  <i className='material-icons'>group</i>
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href='#!'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Buscar'
+                >
+                  <i className='material-icons'>search</i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </NewNavbar>
+
+        <main>
+          <div className='row'>
+            <div className='col s12'>
+              <div className='card'>
+                <div className='card-content'>
+                  <form onSubmit={this.onSubmit}> {providerOrderContent}</form>
+                  <div className='modal' id={modal_id}>
+                    <div className='modal-content'>
+                      <h5>Buscar producto</h5>
+                      <div className='row'>
+                        {editMode ? (
+                          <TextInputField
+                            id='cantidad'
+                            label='Cantidad'
+                            onchange={this.onChangeTextInput}
+                            value={cantidad}
+                            active_label={cantidad ? true : false}
+                          />
+                        ) : (
+                          <React.Fragment>
+                            <TextInputField
+                              id='field'
+                              label='Parametro de Busqueda (ID o Nombre de Producto)'
+                              value={field}
+                              onchange={this.onChangeSearchProductInput}
+                            />
+                            {searchResult}
+                            <TextInputField
+                              id='cantidad'
+                              label='Cantidad'
+                              onchange={this.onChangeTextInput}
+                              value={cantidad}
+                            />
+                          </React.Fragment>
+                        )}
+                      </div>
+                    </div>
+                    <div className='modal-footer'>
+                      <a
+                        href='#!'
+                        className='modal-close waves-effect waves-green btn text-white'
+                      >
+                        Cerrar
+                      </a>
+                      <a
+                        href='#!'
+                        className='modal-close waves-effect waves-blue btn left text-white'
+                        onClick={
+                          editMode ? this.onEditProduct : this.onAddProduct
+                        }
+                      >
+                        Guardar
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className='modal-footer'>
-            <a
-              href='#!'
-              className='modal-close waves-effect waves-green btn text-white'
-              onClick={this.onCloseProviderModal}
-            >
-              Cerrar
-            </a>
-            <a
-              href='#!'
-              className='modal-close waves-effect waves-blue btn left text-white'
-              onClick={
-                this.state.editMode ? this.onEditProduct : this.onAddProduct
-              }
-            >
-              Guardar
-            </a>
-          </div>
-        </div>
+        </main>
       </React.Fragment>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  providers: state.provider,
+  errors: state.errors,
   products: state.product,
+  providers: state.provider,
   orders: state.order
 });
 
 export default connect(
   mapStateToProps,
-  { getProviders, searchProduct, createOrder }
+  { searchProduct, editOrder, getProviders, getOrder }
 )(withRouter(EditOrderToProvider));

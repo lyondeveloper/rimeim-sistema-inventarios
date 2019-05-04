@@ -288,7 +288,7 @@ class EditClient extends Component {
       id_producto,
       precio_especial,
       productos_especiales,
-      errors
+      errors: { nombre_error }
     } = this.state;
 
     const { loading } = this.props.clients;
@@ -333,6 +333,7 @@ class EditClient extends Component {
                       onchange={this.onChangeTextInput}
                       value={nombre}
                       active_label={nombre ? true : false}
+                      error={nombre_error}
                     />
                   </div>
                   <div className='row'>

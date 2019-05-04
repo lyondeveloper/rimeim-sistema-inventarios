@@ -74,7 +74,7 @@ class SearchOrder extends Component {
 
     let searchResult;
 
-    if (loading || this.state.searching) {
+    if (loading) {
       searchResult = <Spinner fullWidth />;
     } else {
       if (orders.length < 0) {
