@@ -313,10 +313,8 @@ class Orders extends Controller
 
     private function update_order_products($products, $id_pedido)
     {
-
         foreach ($products as &$product) {
             if ($this->valid_order_product_fields($product)) {
-
                 if (
                     isset($product->eliminado) &&
                     $product->eliminado == true &&
@@ -328,7 +326,6 @@ class Orders extends Controller
                     $product->actualizado == true
                 ) {
                     $this->orderProduct->update($product);
-
                     if (
                         isset($product->distribucion) &&
                         is_array($product->distribucion)

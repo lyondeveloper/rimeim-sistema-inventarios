@@ -49,7 +49,7 @@ class SearchSellModal extends Component {
     }
     this.props.onSearch({
       field,
-      id_cliente: cliente,
+      id_cliente: cliente !== "0" ? cliente : null,
       con_factura,
       productos: productos.split(","),
       metodo_pago: metodo_pago_str

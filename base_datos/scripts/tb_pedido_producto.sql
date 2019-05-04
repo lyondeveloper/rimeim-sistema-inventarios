@@ -104,7 +104,7 @@ delimiter $$
 create procedure proc_delete_pedido_producto_by_id(in p_id bigint)
 begin
     if (valid_int_id(p_id)) then
-		update tb_pedido_producto_reparto
+        update tb_pedido_producto_reparto
         set eliminado = true,
 			fecha_eliminado = current_timestamp()
 		where id_pedido_producto = p_id

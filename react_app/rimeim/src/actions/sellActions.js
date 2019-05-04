@@ -4,21 +4,23 @@
     al servidor referentes a VENTAS
 */
 
-import axios from 'axios';
+import axios from "axios";
 import {
   SELL_LOADING,
   SELL_END_LOADING,
   GET_SELL,
-  GET_SELLS
-} from '../actions/types';
+  GET_SELLS,
+  SELL_FAILED,
+  SELL_SUCCESS
+} from "../actions/types";
 
-import { configUserFromResponse } from './UserActions';
-import { handleError, clearErrors } from './errorActions';
+import { configUserFromResponse } from "./UserActions";
+import { handleError, clearErrors } from "./errorActions";
 
 export const getSells = () => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .get('/sales/get')
+    .get("/sales/get")
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -34,7 +36,7 @@ export const getSells = () => dispatch => {
 export const searchSell = jsonField => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .post('/sales/search', jsonField)
+    .post("/sales/search", jsonField)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -63,21 +65,19 @@ export const getSellById = id => dispatch => {
     .catch(err => handleError(err, dispatch, SELL_END_LOADING));
 };
 
-export const addNewSell = (
-  newSellData,
-  history,
-  redirect_url_base
-) => dispatch => {
+export const addNewSell = newSellData => dispatch => {
   dispatchSellLoading(dispatch);
   axios
-    .post('/sales/add', newSellData)
+    .post("/sales/add", newSellData)
     .then(res => {
       const response = res.data;
-      configUserFromResponse(response);
+      configUserFromResponse(response, dispatch);
       dispatch(clearErrors());
-      history.push(`${redirect_url_base}/${response.id}`);
+      dispatch({
+        type: SELL_SUCCESS
+      });
     })
-    .catch(err => handleError(err, dispatch, SELL_END_LOADING));
+    .catch(err => handleError(err, dispatch, SELL_FAILED));
 };
 
 export const dispatchSellLoading = dispatch => {

@@ -51,12 +51,15 @@ export const SELL_LOADING = "SELL_LOADING";
 export const SELL_END_LOADING = "SELL_END_LOADING";
 export const GET_SELL = "GET_SELL";
 export const GET_SELLS = "GET_SELLS";
+export const SELL_SEND_DATA = "SELL_SEND_DATA";
+export const SELL_SUCCESS = "SELL_SUCCESS";
+export const SELL_FAILED = "SELL_FAILED";
 
 //Orders
-export const ORDER_LOADING = 'ORDER_LOADING';
-export const ORDER_LOADING_END = 'ORDER_LOADING_END';
-export const GET_ORDER = 'GET_ORDER';
-export const GET_ORDERS = 'GET_ORDERS';
+export const ORDER_LOADING = "ORDER_LOADING";
+export const ORDER_LOADING_END = "ORDER_LOADING_END";
+export const GET_ORDER = "GET_ORDER";
+export const GET_ORDERS = "GET_ORDERS";
 
 // Error
 export const GET_ERRORS = "GET_ERRORS";

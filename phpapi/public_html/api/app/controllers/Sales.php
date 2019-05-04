@@ -135,6 +135,10 @@ class Sales extends Controller
     private function validate_add_data($data)
     {
         $errors = [];
+        if (!isset($data->es_cotizacion)) {
+            $data->es_cotizacion = false;
+        }
+
 
         if (
             !isset($data->sub_total) ||
@@ -155,26 +159,31 @@ class Sales extends Controller
             $errors['total_error'] = "Campo invalido";
         }
 
-        if (
-            !isset($data->con_factura) ||
-            !is_bool($data->con_factura)
-        ) {
-            $errors['con_factura_error'] = "Campo invalido";
-        }
-
-        if (
-            !isset($data->metodo_pago) ||
-            empty($data->metodo_pago)
-        ) {
-            $errors['metodo_pago_error'] = "Campo invalido";
-        } else {
-            $data->metodo_pago = strtolower($data->metodo_pago);
+        if (!$data->es_cotizacion) {
             if (
-                $data->metodo_pago != "efectivo" &&
-                $data->metodo_pago != "tarjeta"
+                !isset($data->con_factura) ||
+                !is_bool($data->con_factura)
             ) {
-                $errors['metodo_pago_error'] = "Metodo de pago invalido: " . $data->metodo_pago;
+                $errors['con_factura_error'] = "Campo invalido";
             }
+
+            if (
+                !isset($data->metodo_pago) ||
+                empty($data->metodo_pago)
+            ) {
+                $errors['metodo_pago_error'] = "Campo invalido";
+            } else {
+                $data->metodo_pago = strtolower($data->metodo_pago);
+                if (
+                    $data->metodo_pago != "efectivo" &&
+                    $data->metodo_pago != "tarjeta"
+                ) {
+                    $errors['metodo_pago_error'] = "Metodo de pago invalido: " . $data->metodo_pago;
+                }
+            }
+        } else {
+            $data->con_factura = false;
+            $data->metodo_pago = null;
         }
 
         if (
@@ -221,7 +230,6 @@ class Sales extends Controller
         }
         $this->checkErrors($errors);
 
-        $data->es_cotizacion = false;
         $data->id_local = $this->get_current_id_local();
         $data->id_empleado = $this->get_current_employe_id();
         return $data;
