@@ -32,6 +32,7 @@ class AddOrderToLocal extends Component {
     typingTimeout: 0,
     searching: false,
     needs_config_selects: false,
+    needs_config_modals: true,
     errors: {}
   };
 
@@ -64,8 +65,7 @@ class AddOrderToLocal extends Component {
       const { locals } = nextProps.locals;
       locals.forEach(local => (local.disabled = false));
       this.setState({
-        needs_config_selects: true,
-        needs_config_modals: true
+        needs_config_selects: true
       });
     }
   }
@@ -318,57 +318,57 @@ class AddOrderToLocal extends Component {
     } else {
       localOrderContent = (
         <React.Fragment>
-          <div className='row'>
+          <div className="row">
             <SelectInputField
-              input_size='s12'
-              id='id_local'
-              label='Local'
+              input_size="s12"
+              id="id_local"
+              label="Local"
               onchange={this.onChangeTextInput}
               value={id_local}
               options={localOptions}
             />
           </div>
-          <div className='row'>
-            <div className='d-block center'>
+          <div className="row">
+            <div className="d-block center">
               <h5>Agregar Productos</h5>
               <button
-                className='modal-trigger btn-floating'
+                className="modal-trigger btn-floating"
                 data-target={modal_id}
                 onClick={this.onAddProductClick}
               >
-                <i className='material-icons'>add</i>
+                <i className="material-icons">add</i>
               </button>
             </div>
           </div>
-          <div className='row'>
+          <div className="row">
             <TextInputField
-              input_size='s12'
-              id='codigo'
-              label='Codigo de pedido'
+              input_size="s12"
+              id="codigo"
+              label="Codigo de pedido"
               onchange={this.onChangeTextInput}
               value={codigo}
             />
           </div>
 
-          <div className='row'>
+          <div className="row">
             <TextInputField
-              type='date'
-              input_size='s12'
-              id='fecha_entrega'
-              label='Fecha de Entrega de Pedido'
+              type="date"
+              input_size="s12"
+              id="fecha_entrega"
+              label="Fecha de Entrega de Pedido"
               onchange={this.onChangeTextInput}
               value={fecha_entrega}
             />
           </div>
 
-          <div className='d-block center mt-1'>
-            <button className='btn' type='submit'>
+          <div className="d-block center mt-1">
+            <button className="btn" type="submit">
               Guardar{' '}
             </button>
           </div>
 
           {productos.length > 0 ? (
-            <table className='striped table-bordered mt-1'>
+            <table className="striped table-bordered mt-1">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -391,14 +391,14 @@ class AddOrderToLocal extends Component {
                       <td>
                         <i
                           onClick={this.onDeleteProduct.bind(this, p)}
-                          className='material-icons cursor-pointer'
+                          className="material-icons cursor-pointer"
                         >
                           delete_sweep
                         </i>
                         <i
                           onClick={this.onEditProductClick.bind(this, p)}
-                          data-target='modal_agregar_productos'
-                          className='material-icons cursor-pointer modal-trigger'
+                          data-target="modal_agregar_productos"
+                          className="material-icons cursor-pointer modal-trigger"
                         >
                           create
                         </i>
@@ -420,12 +420,12 @@ class AddOrderToLocal extends Component {
       searchResult = <Spinner fullWidth />;
     } else {
       searchResult = (
-        <div className='row'>
-          <div className='col s12'>
+        <div className="row">
+          <div className="col s12">
             {products.products.map((producto, i) => {
               return (
                 <div
-                  className='d-block cursor-pointer bordered p-1'
+                  className="d-block cursor-pointer bordered p-1"
                   key={uuid()}
                 >
                   <label
@@ -434,8 +434,8 @@ class AddOrderToLocal extends Component {
                     }}
                   >
                     <input
-                      type='checkbox'
-                      className='filled-in'
+                      type="checkbox"
+                      className="filled-in"
                       id={`${producto.id}`}
                       defaultChecked={producto.seleccionado}
                       readOnly={true}
@@ -455,14 +455,14 @@ class AddOrderToLocal extends Component {
     return (
       <React.Fragment>
         <form onSubmit={this.onSubmit}>{localOrderContent}</form>
-        <div className='modal' id={modal_id}>
-          <div className='modal-content'>
+        <div className="modal" id={modal_id}>
+          <div className="modal-content">
             <h5>Buscar producto</h5>
-            <div className='row'>
+            <div className="row">
               {editMode ? (
                 <TextInputField
-                  id='cantidad'
-                  label='Cantidad'
+                  id="cantidad"
+                  label="Cantidad"
                   onchange={this.onChangeTextInput}
                   value={cantidad}
                   active_label={cantidad ? true : false}
@@ -470,15 +470,15 @@ class AddOrderToLocal extends Component {
               ) : (
                 <React.Fragment>
                   <TextInputField
-                    id='field'
-                    label='Parametro de Busqueda (ID o Nombre de Producto)'
+                    id="field"
+                    label="Parametro de Busqueda (ID o Nombre de Producto)"
                     value={field}
                     onchange={this.onChangeSearchProductInput}
                   />
                   {searchResult}
                   <TextInputField
-                    id='cantidad'
-                    label='Cantidad'
+                    id="cantidad"
+                    label="Cantidad"
                     onchange={this.onChangeTextInput}
                     value={cantidad}
                   />
@@ -486,16 +486,16 @@ class AddOrderToLocal extends Component {
               )}
             </div>
           </div>
-          <div className='modal-footer'>
+          <div className="modal-footer">
             <a
-              href='#!'
-              className='modal-close waves-effect waves-green btn text-white'
+              href="#!"
+              className="modal-close waves-effect waves-green btn text-white"
             >
               Cerrar
             </a>
             <a
-              href='#!'
-              className='modal-close waves-effect waves-blue btn left text-white'
+              href="#!"
+              className="modal-close waves-effect waves-blue btn left text-white"
               onClick={editMode ? this.onEditProduct : this.onAddProduct}
             >
               Guardar
