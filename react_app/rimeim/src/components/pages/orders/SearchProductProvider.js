@@ -15,11 +15,14 @@ class SearchProductProvider extends Component {
     modal_id: 'modal_agregar_productos_proveedor',
     field: '',
     id_proveedor: '',
-    productos_proveedor: [],
+    productos: [],
+    productos_seleccionados: [],
     cantidad: '',
     needs_config_selects: false,
     editMode: false,
     searching: false,
+    typing: false,
+    typingTimeout: 0,
     errors: {}
   };
 
@@ -36,7 +39,8 @@ class SearchProductProvider extends Component {
       const { providers } = nextProps.providers;
       providers.forEach(provider => (provider.disabled = false));
       this.setState({
-        needs_config_selects: true
+        needs_config_selects: true,
+        searching: false
       });
     }
   }
@@ -55,7 +59,6 @@ class SearchProductProvider extends Component {
     const { productos_seleccionados } = this.state;
 
     //Chequeamos en que array estamos, si en los props o en el normal
-
     const productIndex = productos_seleccionados.findIndex(
       p => p.id === producto.id
     );
@@ -86,8 +89,170 @@ class SearchProductProvider extends Component {
       field: e.target.value,
       typing: false,
       typingTimeout: setTimeout(() => {
-        this.props.searchProduct({ field: this.state.field });
+        this.props.searchProduct({
+          field: this.state.field,
+          id_proveedor: this.state.id_proveedor
+        });
       }, 500)
+    });
+  };
+
+  onCloseProviderModal = () => {
+    this.setState({
+      typing: false,
+      typingTimeout: 0,
+      searching: false,
+      field: '',
+      cantidad: '',
+      productos: [],
+      id_proveedor: ''
+    });
+  };
+
+  //Metodo para que cuando demos click a agregar productos, el state este limpio
+  onAddProductClick = e => {
+    e.preventDefault();
+
+    const { products } = this.props.products;
+
+    if (products.length > 0) {
+      this.props.cleanProducts();
+    }
+
+    this.setState({
+      producto_seleccionado: {},
+      field: '',
+      cantidad: '',
+      editMode: false,
+      typing: false,
+      typingTimeout: 0
+    });
+  };
+
+  //Metodo para agregar productos a nuestro array
+  onAddProduct = e => {
+    e.preventDefault();
+
+    const { productos, cantidad, productos_seleccionados } = this.state;
+
+    const { productsProps } = this.props;
+
+    //Chequeando cual array estamos trabajando, si es de props, estamos en EditarPedido usando el array que nos sale de la API para agregar nuevos productos, si no, estamos en NuevoPedido usando el array del state normal
+    if (productsProps !== undefined) {
+      const selecteds = productos_seleccionados.filter(
+        p => p.seleccionado === true
+      );
+      selecteds.forEach(product => {
+        const productData = {
+          id: product.id,
+          id_producto: product.id_producto,
+          cantidad,
+          costo: product.precio,
+          nombre: product.nombre,
+          es_compra: false
+        };
+
+        productsProps.push(productData);
+      });
+    } else {
+      const selecteds = productos_seleccionados.filter(
+        p => p.seleccionado === true
+      );
+
+      selecteds.forEach(product => {
+        const productData = {
+          id_producto: product.id,
+          cantidad,
+          costo: product.precio,
+          nombre: product.nombre,
+          es_compra: false
+        };
+
+        productos.push(productData);
+
+        //Pasamos datos nuevos usando metodo del componente padre
+        this.props.onPassProductsData(productos);
+      });
+    }
+
+    this.setState({
+      productos_seleccionados: [],
+      cantidad: ''
+    });
+  };
+
+  //Metodo para que cuando le demos click a editar un producto, se coloque toda la data en los TextInputField
+  onEditProductClick = producto => {
+    this.setState({
+      producto_seleccionado: producto,
+      cantidad: producto.cantidad,
+      productPosition: producto.id,
+      editMode: true
+    });
+  };
+
+  //Metodo para editar productos en nuestro array
+  onEditProduct = () => {
+    const { productos, producto_seleccionado, cantidad } = this.state;
+
+    const { productsProps } = this.props;
+
+    //Chequeando cual array estamos trabajando, si es de props, estamos en EditarPedido usando el array que nos sale de la API para editar productos existentes, si no, estamos en NuevoPedido usando el array del state normal
+    if (productsProps !== undefined) {
+      //Definiendo la posicion del objeto que editaremos
+      const productIndex = productsProps.findIndex(
+        p => p.id_producto === producto_seleccionado.id_producto
+      );
+
+      //Actualizando sus valores
+      productsProps[productIndex].cantidad = cantidad;
+      productsProps[productIndex].actualizado = true;
+    } else {
+      //Definiendo la posicion del objeto que editaremos
+      const productIndex = productos.findIndex(
+        p => p.id_producto === producto_seleccionado.id_producto
+      );
+
+      //Actualizando sus valores
+      productos[productIndex].cantidad = cantidad;
+      productos[productIndex].actualizado = true;
+
+      this.props.onPassProductsData(productos);
+    }
+
+    this.setState({
+      producto_seleccionado: {},
+      cantidad: '',
+      editMode: false
+    });
+  };
+
+  //Metodo para eliminar productos del array
+  onDeleteProduct = producto => {
+    const { productos } = this.state;
+
+    const { productsProps } = this.props;
+
+    //Chequeando cual array estamos trabajando, si es de props, estamos en EditarPedido usando el array que nos sale de la API para eliminar productos, si no, estamos en NuevoPedido usando el array del state normal
+    if (productsProps !== undefined) {
+      //Definimos posicion del producto a eliminar
+      const productPropsIndex = productsProps.findIndex(
+        p => p.id === producto.id
+      );
+
+      productsProps[productPropsIndex].eliminado = true;
+    } else {
+      //Definimos posicion del producto a eliminar
+      const productIndex = productos.findIndex(
+        p => p.id_producto === producto.id
+      );
+
+      productos[productIndex].eliminado = true;
+    }
+
+    this.setState({
+      id_producto: '',
+      cantidad: ''
     });
   };
 
@@ -95,7 +260,7 @@ class SearchProductProvider extends Component {
 
   render() {
     const {
-      productos_proveedor,
+      productos,
       id_proveedor,
       searching,
       cantidad,
@@ -121,7 +286,8 @@ class SearchProductProvider extends Component {
     let searchResult;
 
     //Contenido del buscador, si esta en modo searching o en loading, mostrara spinner y cuando ya llegue la data, la mostrara o no dependiendo de cual haya sido el resultado
-    if (searching) {
+
+    if (searching || products.loading) {
       searchResult = <Spinner fullWidth />;
     } else {
       searchResult = (
@@ -145,7 +311,6 @@ class SearchProductProvider extends Component {
                       defaultChecked={producto.seleccionado}
                       readOnly={true}
                     />
-                    <span />
                   </label>
                   {producto.id} - {producto.nombre}
                 </div>
@@ -177,12 +342,13 @@ class SearchProductProvider extends Component {
             <button
               className='modal-trigger btn-floating'
               data-target={modal_id}
+              onClick={this.onAddProductClick}
             >
               <i className='material-icons'>add</i>
             </button>
           </div>
 
-          {productos_proveedor.length > 0 ? (
+          {productos.length > 0 ? (
             <table className='striped table-bordered mt-1'>
               <thead>
                 <tr>
@@ -193,13 +359,13 @@ class SearchProductProvider extends Component {
                 </tr>
               </thead>
               <tbody>
-                {productos_proveedor.map((p, i) =>
+                {productos.map((p, i) =>
                   p.eliminado ? (
                     ''
                   ) : (
                     <tr key={uuid()}>
                       <td>{p.id_producto}</td>
-                      <td>{p.producto_nombre}</td>
+                      <td>{p.nombre}</td>
                       <td>{p.cantidad}</td>
                       <td>
                         <i
@@ -246,12 +412,19 @@ class SearchProductProvider extends Component {
               ) : (
                 <React.Fragment>
                   <TextInputField
+                    id='id_proveedor'
+                    label='ID de Proveedor'
+                    value={id_proveedor}
+                    onchange={this.onChangeSearchProductInput}
+                    active_label={id_proveedor ? true : false}
+                  />
+                  <TextInputField
                     id='field'
                     label='Parametro de Busqueda (ID o Nombre de Producto)'
                     value={field}
                     onchange={this.onChangeSearchProductInput}
                   />
-                  {searching ? searchResult : ''}
+                  {searchResult}
                   <TextInputField
                     id='cantidad'
                     label='Cantidad'
@@ -266,13 +439,16 @@ class SearchProductProvider extends Component {
             <a
               href='#!'
               className='modal-close waves-effect waves-green btn text-white'
+              onClick={this.onCloseProviderModal}
             >
               Cerrar
             </a>
             <a
               href='#!'
               className='modal-close waves-effect waves-blue btn left text-white'
-              onClick={this.onAddProvider}
+              onClick={
+                this.state.editMode ? this.onEditProduct : this.onAddProduct
+              }
             >
               Guardar
             </a>
@@ -285,7 +461,7 @@ class SearchProductProvider extends Component {
 
 const mapStateToProps = state => ({
   providers: state.provider,
-  products: state.products
+  products: state.product
 });
 
 export default connect(

@@ -79,6 +79,7 @@ class NewOrder extends Component {
         locals.forEach(local => (local.disabled = false));
         this.setState({
           needs_config_selects: true,
+          needs_config_modals: true,
           searching: false
         });
       }

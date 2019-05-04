@@ -267,7 +267,6 @@ class SearchProductLocal extends Component {
                       defaultChecked={producto.seleccionado}
                       readOnly={true}
                     />
-                    <span />
                   </label>
                   {producto.id} - {producto.nombre}
                 </div>
