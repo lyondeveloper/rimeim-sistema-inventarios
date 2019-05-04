@@ -1,27 +1,42 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import uuid from 'uuid';
 import { connect } from 'react-redux';
 
+import {
+  configSelectInputFields,
+  configModals
+} from '../../../utils/MaterialFunctions';
+
 import Spinner from '../../common/Spinner';
+import SelectInputField from '../../common/SelectInputField';
 import TextInputField from '../../common/TextInputField';
 
-import { searchProduct, cleanProducts } from '../../../actions/productActions';
+import { getProviders } from '../../../actions/providerActions';
+import { createOrder } from '../../../actions/orderActions';
+import { searchProduct } from '../../../actions/productActions';
 
-class SearchProductLocal extends Component {
+class EditOrderToProvider extends Component {
   state = {
+    modal_id: 'modal_agregar_productos_proveedor',
     field: '',
-    producto_seleccionado: {},
-    productos_seleccionados: [],
-    productos: [],
+    id_proveedor: '',
     cantidad: '',
+    fecha_entrega: '',
+    codigo: '',
+    productos: [],
+    productos_seleccionados: [],
+    needs_config_selects: false,
+    needs_config_modals: false,
     editMode: false,
+    searching: false,
     typing: false,
     typingTimeout: 0,
-    searching: false,
-    needs_config_selects: false,
     errors: {}
   };
+
+  componentDidMount() {
+    this.props.getProviders();
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors)
@@ -37,6 +52,30 @@ class SearchProductLocal extends Component {
         searching: false
       });
     }
+
+    if (nextProps.providers.providers) {
+      const { providers } = nextProps.providers;
+      providers.forEach(provider => (provider.disabled = false));
+      this.setState({
+        needs_config_selects: true,
+        needs_config_modals: true
+      });
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.state.needs_config_selects) {
+      configSelectInputFields();
+      this.setState({
+        needs_config_selects: false
+      });
+    }
+    if (this.state.needs_config_modals) {
+      configModals();
+      this.setState({
+        needs_config_modals: false
+      });
+    }
   }
 
   //Metodo para escribir un producto y despues de un retraso, empiece a buscar el producto
@@ -50,14 +89,15 @@ class SearchProductLocal extends Component {
       field: e.target.value,
       typing: false,
       typingTimeout: setTimeout(() => {
-        this.props.searchProduct({ field: this.state.field });
+        this.props.searchProduct({
+          field: this.state.field,
+          id_proveedor: this.state.id_proveedor
+        });
       }, 500)
     });
   };
 
-  onChangeTextInput = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+  onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
   //Metodo para seleccionar producto con checkbox
   onSelectProduct = producto => {
@@ -79,19 +119,26 @@ class SearchProductLocal extends Component {
 
     document.getElementById(`${producto.id}`).checked = producto.seleccionado;
 
-    this.setState({ productos_seleccionados });
+    this.setState({
+      productos_seleccionados
+    });
+  };
+
+  onCloseProviderModal = () => {
+    this.setState({
+      typing: false,
+      typingTimeout: 0,
+      searching: false,
+      field: '',
+      cantidad: '',
+      productos: [],
+      id_proveedor: ''
+    });
   };
 
   //Metodo para que cuando demos click a agregar productos, el state este limpio
   onAddProductClick = e => {
     e.preventDefault();
-
-    const { products } = this.props.products;
-
-    if (products.length > 0) {
-      this.props.cleanProducts();
-    }
-
     this.setState({
       producto_seleccionado: {},
       field: '',
@@ -121,8 +168,7 @@ class SearchProductLocal extends Component {
           id_producto: product.id_producto,
           cantidad,
           costo: product.precio,
-          nombre: product.nombre,
-          es_compra: false
+          nombre: product.nombre
         };
 
         productsProps.push(productData);
@@ -137,14 +183,10 @@ class SearchProductLocal extends Component {
           id_producto: product.id,
           cantidad,
           costo: product.precio,
-          nombre: product.nombre,
-          es_compra: false
+          nombre: product.nombre
         };
 
         productos.push(productData);
-
-        //Pasamos datos nuevos usando metodo del componente padre
-        this.props.onPassProductsData(productos);
       });
     }
 
@@ -154,14 +196,8 @@ class SearchProductLocal extends Component {
     });
   };
 
-  //Metodo para que cuando le demos click a editar un producto, se coloquen en los TextInputField la data
+  //Metodo para que cuando le demos click a editar un producto, se coloque toda la data en los TextInputField
   onEditProductClick = producto => {
-    const { products } = this.props.products;
-
-    if (products.length > 0) {
-      this.props.cleanProducts();
-    }
-
     this.setState({
       producto_seleccionado: producto,
       cantidad: producto.cantidad,
@@ -235,10 +271,47 @@ class SearchProductLocal extends Component {
     });
   };
 
-  render() {
-    const { productos, searching, cantidad, field } = this.state;
+  onSubmit(e) {
+    e.preventDefault();
 
-    const { products, productsProps } = this.props;
+    const { codigo, fecha_entrega, productos, id_proveedor } = this.state;
+
+    const orderData = {
+      id_proveedor,
+      codigo,
+      fecha_entrega,
+      productos
+    };
+
+    this.props.createOrder(orderData, this.props.history);
+  }
+
+  render() {
+    const {
+      productos,
+      id_proveedor,
+      searching,
+      cantidad,
+      field,
+      codigo,
+      fecha_entrega,
+      modal_id
+    } = this.state;
+
+    const { providers, loading } = this.props.providers;
+
+    const { products } = this.props;
+
+    const providerOptions = [];
+
+    providers.map(provider => {
+      providerOptions.push({
+        value: provider.id,
+        label: provider.nombre
+      });
+    });
+
+    let providerOrderContent;
 
     let searchResult;
 
@@ -267,6 +340,8 @@ class SearchProductLocal extends Component {
                       defaultChecked={producto.seleccionado}
                       readOnly={true}
                     />
+                    {/* NO QUITAR */}
+                    <span />
                   </label>
                   {producto.id} - {producto.nombre}
                 </div>
@@ -277,122 +352,112 @@ class SearchProductLocal extends Component {
       );
     }
 
-    let productsContent;
-
-    if (productos.length > 0) {
-      productsContent = (
-        <table className='striped table-bordered mt-1'>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Cantidad</th>
-              <th>Costo</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productos.map((p, i) =>
-              p.eliminado ? (
-                ''
-              ) : (
-                <tr key={uuid()}>
-                  <td>{p.id_producto}</td>
-                  <td>{p.nombre}</td>
-                  <td>{p.cantidad}</td>
-                  <td>{p.costo}</td>
-                  <td>
-                    <i
-                      onClick={this.onDeleteProduct.bind(this, p)}
-                      className='material-icons cursor-pointer'
-                    >
-                      delete_sweep
-                    </i>
-                    <i
-                      onClick={this.onEditProductClick.bind(this, p)}
-                      data-target='modal_agregar_productos'
-                      className='material-icons cursor-pointer modal-trigger'
-                    >
-                      create
-                    </i>
-                  </td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
-      );
-
-      //Chequeamos si hay productos en los props del componente
-    } else if (productsProps !== undefined) {
-      //Si es cierto y su length es mayor a 0, desplegaremos tabla con datos
-      if (productsProps.length > 0) {
-        productsContent = (
-          <table className='striped table-bordered mt-1'>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Costo</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productsProps.map((p, i) =>
-                p.eliminado ? (
-                  ''
-                ) : (
-                  <tr key={uuid()}>
-                    <td>{p.id_producto}</td>
-                    <td>{p.nombre}</td>
-                    <td>{p.cantidad}</td>
-                    <td>{p.costo}</td>
-                    <td>
-                      <i
-                        onClick={this.onDeleteProduct.bind(this, p)}
-                        className='material-icons cursor-pointer'
-                      >
-                        delete_sweep
-                      </i>
-                      <i
-                        onClick={this.onEditProductClick.bind(this, p)}
-                        data-target='modal_agregar_productos'
-                        className='material-icons cursor-pointer modal-trigger'
-                      >
-                        create
-                      </i>
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-        );
-      } else {
-        //Si no, no mostraremos nada
-        productsContent = '';
-      }
+    if (loading) {
+      providerOrderContent = <Spinner fullWidth />;
     } else {
-      productsContent = '';
+      providerOrderContent = (
+        <React.Fragment>
+          <div className='row'>
+            <SelectInputField
+              input_size='s12'
+              id='id_proveedor'
+              label='Proveedor'
+              onchange={this.onChangeTextInput}
+              value={id_proveedor}
+              options={providerOptions}
+            />
+          </div>
+
+          <div className='d-block center'>
+            <h5>Agregar Productos</h5>
+            <button
+              className='modal-trigger btn-floating'
+              data-target={modal_id}
+              onClick={this.onAddProductClick}
+            >
+              <i className='material-icons'>add</i>
+            </button>
+          </div>
+
+          <div className='row'>
+            <TextInputField
+              input_size='s12'
+              id='codigo'
+              label='Codigo de pedido'
+              onchange={this.onChangeTextInput}
+              value={codigo}
+            />
+          </div>
+
+          <div className='row'>
+            <TextInputField
+              type='date'
+              input_size='s12'
+              id='fecha_entrega'
+              label='Fecha de Entrega de Pedido'
+              onchange={this.onChangeTextInput}
+              value={fecha_entrega}
+            />
+          </div>
+
+          <div className='d-block center mt-1'>
+            <button className='btn' type='submit'>
+              Guardar{' '}
+            </button>
+          </div>
+
+          {productos.length > 0 ? (
+            <table className='striped table-bordered mt-1'>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Cantidad</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {productos.map((p, i) =>
+                  p.eliminado ? (
+                    ''
+                  ) : (
+                    <tr key={uuid()}>
+                      <td>{p.id_producto}</td>
+                      <td>{p.nombre}</td>
+                      <td>{p.cantidad}</td>
+                      <td>
+                        <i
+                          onClick={this.onDeleteProduct.bind(this, p)}
+                          className='material-icons cursor-pointer'
+                        >
+                          delete_sweep
+                        </i>
+                        <i
+                          onClick={this.onEditProductClick.bind(this, p)}
+                          data-target={modal_id}
+                          className='material-icons cursor-pointer modal-trigger'
+                        >
+                          create
+                        </i>
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          ) : (
+            ''
+          )}
+        </React.Fragment>
+      );
     }
 
     return (
       <React.Fragment>
-        <div className='d-block center'>
-          <h5>Agregar Productos</h5>
-          <button
-            className='modal-trigger btn-floating'
-            data-target='modal_agregar_productos'
-            onClick={this.onAddProductClick}
-          >
-            <i className='material-icons'>add</i>
-          </button>
-        </div>
-
-        <div className='modal' id='modal_agregar_productos'>
+        <form onSubmit={this.onSubmit}>{providerOrderContent}</form>
+        <div className='modal' id={modal_id}>
           <div className='modal-content'>
-            <h5>Buscar producto</h5>
+            <h5>Agregar Productos de Proveedor</h5>
             <div className='row'>
               {this.state.editMode ? (
                 <TextInputField
@@ -425,6 +490,7 @@ class SearchProductLocal extends Component {
             <a
               href='#!'
               className='modal-close waves-effect waves-green btn text-white'
+              onClick={this.onCloseProviderModal}
             >
               Cerrar
             </a>
@@ -439,17 +505,18 @@ class SearchProductLocal extends Component {
             </a>
           </div>
         </div>
-        {productsContent}
       </React.Fragment>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  products: state.product
+  providers: state.provider,
+  products: state.product,
+  orders: state.order
 });
 
 export default connect(
   mapStateToProps,
-  { searchProduct, cleanProducts }
-)(SearchProductLocal);
+  { getProviders, searchProduct, createOrder }
+)(EditOrderToProvider);
