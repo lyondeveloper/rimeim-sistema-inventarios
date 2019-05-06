@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-import NavbarAdmin from '../../../layout/NewNavbarAdmin';
+import NavbarAdmin from "../../../layout/NewNavbarAdmin";
 
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from '../../../../utils/MaterialFunctions';
+} from "../../../../utils/MaterialFunctions";
 
-import { getProducts } from '../../../../actions/productActions';
+import { getProducts } from "../../../../actions/productActions";
 
-import MapProducts from "../../../common/MapProducts"
+import MapProducts from "../../../common/MapProducts";
+import SearchProductsModal from "../../../layout/modals/SearchProductModel";
 
 class AdminProducts extends Component {
   componentWillMount() {
@@ -21,10 +22,7 @@ class AdminProducts extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-    const id_local = this.props.user.currentLocal.id
-      ? this.props.user.currentLocal.id
-      : 0;
-    this.props.getProducts(id_local);
+    this.props.getProducts();
   }
 
   render() {
@@ -41,7 +39,7 @@ class AdminProducts extends Component {
             </a>
             <ul className="right">
               <li>
-                <a href="#!">
+                <a href="#modal_search_producto" className="modal-trigger">
                   <i className="material-icons">search</i>
                 </a>
               </li>
@@ -59,6 +57,8 @@ class AdminProducts extends Component {
             <MapProducts loading={loading} products={products} admin={true} />
           </div>
         </main>
+
+        <SearchProductsModal />
       </React.Fragment>
     );
   }
@@ -66,13 +66,11 @@ class AdminProducts extends Component {
 
 AdminProducts.propTypes = {
   product: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
   getProducts: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  product: state.product,
-  user: state.user
+  product: state.product
 });
 
 export default connect(

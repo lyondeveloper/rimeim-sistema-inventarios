@@ -7,6 +7,8 @@ import { getProductByCBForSell } from "../../actions/productActions";
 
 // Custom components
 import SellColumnsDetails from "./SellColumnsDetails";
+import SearchProductModal from "../layout/modals/SearchProductAndShowInfo";
+
 let current_row_changed = true;
 let current_row_index = 0;
 let sell_is_in_product_request = false;
@@ -87,6 +89,10 @@ class SalesGrid extends Component {
     }
   }
 
+  onHideModal = () => {
+    setTimeout(() => this.setAutomaticInputRowFocus(), 1000);
+  };
+
   addFreeRowsToState = number_of_rows => {
     const { products } = this.state;
     for (let x = 0; x < number_of_rows; x++) {
@@ -108,6 +114,41 @@ class SalesGrid extends Component {
 
   getCounfOfTotalProducts = () => {
     return this.state.products.filter(prod => prod.id_producto !== "").length;
+  };
+
+  onSelectProduct = product => {
+    if (product && Object.keys(product).length > 0) {
+      this.addProductToState(product);
+    } else {
+      setTimeout(() => {
+        this.setInputRowFocus(current_row_index);
+        this.setBgErrorColorRowCurrentRow();
+      }, 1000);
+    }
+  };
+
+  addProductToState = product => {
+    if (product && Object.keys(product).length > 0) {
+      const { products } = this.state;
+      let producto_nombre = `${product.nombre}`;
+      if (product.marca_nombre) {
+        producto_nombre = `${producto_nombre} - ${product.marca_nombre}`;
+      }
+      products[current_row_index] = {
+        ...products[current_row_index],
+        id_producto: product.id,
+        codigo_barra: product.codigo_barra,
+        nombre: producto_nombre,
+        cantidad: 1,
+        precio: product.precio
+      };
+      current_row_changed = true;
+      this.setState({
+        products
+      });
+      return true;
+    }
+    return false;
   };
 
   getSumValues = products => {
@@ -371,7 +412,20 @@ class SalesGrid extends Component {
           />
         </td>
 
-        <td className="td-with-input">{precio}</td>
+        <td className="td-with-input">
+          <input
+            id={`${input_precio}${row_id}`}
+            type="text"
+            className="special-input browser-default"
+            onKeyDown={this.onInputKeyPress.bind(
+              this,
+              row_id,
+              input_precio,
+              index
+            )}
+            defaultValue={precio}
+          />
+        </td>
       </tr>
     );
   };
@@ -431,6 +485,11 @@ class SalesGrid extends Component {
           <SellColumnsDetails title="Impuesto" value={sumVales.impuesto} />
           <SellColumnsDetails title="Total" value={sumVales.total} />
         </div>
+
+        <SearchProductModal
+          onHide={this.onHideModal}
+          onSelectProduct={this.onSelectProduct}
+        />
       </main>
     );
   }

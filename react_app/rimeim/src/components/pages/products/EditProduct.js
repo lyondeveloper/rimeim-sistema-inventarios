@@ -1,38 +1,38 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-import NewNavbar from '../../layout/NewNavbar';
+import NewNavbar from "../../layout/NewNavbar";
 
 import {
   configMaterialComponents,
   removeMaterialComponents,
   configSelectInputFields
-} from '../../../utils/MaterialFunctions';
+} from "../../../utils/MaterialFunctions";
 
 import {
   getProductById,
   updateProductById
-} from '../../../actions/productActions';
+} from "../../../actions/productActions";
 
-import { getBrands } from '../../../actions/brandActions';
-import { getVehicles } from '../../../actions/vehicleActions';
-import getFilesFromInput from '../../../utils/getFilesFromInput';
+import { getBrands } from "../../../actions/brandActions";
+import { getVehicles } from "../../../actions/vehicleActions";
+import getFilesFromInput from "../../../utils/getFilesFromInput";
 
-import EditProductCard from '../../common/EditProductCard';
+import EditProductCard from "../../common/EditProductCard";
 
 class EditProduct extends Component {
   state = {
-    codigo_barra: '',
-    nombre: '',
-    marca: '0',
-    tipo_vehiculo: '0',
-    descripcion: '',
-    existencia: '0',
-    cantidad_minima: '0',
+    codigo_barra: "",
+    nombre: "",
+    marca: "0",
+    tipo_vehiculo: "0",
+    descripcion: "",
+    existencia: "0",
+    cantidad_minima: "0",
     es_raro: false,
     imagenes: [],
-    ubicacion: '',
+    ubicacion: "",
     id_producto_local: null,
     id_ubicacion: null,
     needs_config_selects: false,
@@ -90,36 +90,28 @@ class EditProduct extends Component {
       this.setState({
         codigo_barra,
         nombre,
-        marca: marca && marca.id ? marca.id : '0',
+        marca: marca && marca.id ? marca.id : "0",
         tipo_vehiculo:
-          tipo_vehiculo && tipo_vehiculo.id ? tipo_vehiculo.id : '0',
+          tipo_vehiculo && tipo_vehiculo.id ? tipo_vehiculo.id : "0",
         descripcion,
         existencia,
         cantidad_minima,
         es_raro: raro,
         imagenes: imagenes,
-        ubicacion: ubicacion ? ubicacion : '',
+        ubicacion: ubicacion ? ubicacion : "",
         id_producto_local: id_producto_local ? id_producto_local : null,
         id_ubicacion: id_ubicacion ? id_ubicacion : null,
         is_product_setted: true
       });
     }
 
-    if (
-      nextProps.brand.brands &&
-      nextProps.brand.brands.length > 0 &&
-      !this.state.needs_config_selects
-    ) {
+    if (nextProps.brand.brands && !this.state.needs_config_selects) {
       this.setState({
         needs_config_selects: true
       });
     }
 
-    if (
-      nextProps.vehicle.vehicles &&
-      nextProps.vehicle.vehicles.length > 0 &&
-      !this.state.needs_config_selects
-    ) {
+    if (nextProps.vehicle.vehicles && !this.state.needs_config_selects) {
       this.setState({
         needs_config_selects: true
       });
@@ -162,7 +154,7 @@ class EditProduct extends Component {
         imagenes: this.state.imagenes.filter(img => img !== file)
       });
     }
-    document.getElementById('imagenes').value = null;
+    document.getElementById("imagenes").value = null;
   };
 
   getProductFromState = () => {
@@ -206,9 +198,9 @@ class EditProduct extends Component {
     if (newImages.length > 0) {
       const updatedProductData = new FormData();
       newImages.forEach(img =>
-        updatedProductData.append('file_uploads[]', img.file, img.name)
+        updatedProductData.append("file_uploads[]", img.file, img.name)
       );
-      updatedProductData.append('json_data', JSON.stringify(product));
+      updatedProductData.append("json_data", JSON.stringify(product));
       this.props.updateProductById(
         this.props.match.params.id,
         updatedProductData
@@ -222,8 +214,7 @@ class EditProduct extends Component {
     const { errors } = this.state;
     const {
       brand: { brands },
-      vehicle: { vehicles },
-      user: { user }
+      vehicle: { vehicles }
     } = this.props;
     const product = this.getProductFromState();
 
@@ -252,7 +243,7 @@ class EditProduct extends Component {
             <div className="col s12">
               <EditProductCard
                 product={product}
-                is_admin={user.admin}
+                is_admin={false}
                 loading={this.props.product.loading}
                 onSelectFiles={this.onSelectFiles}
                 onDeleteClickFile={this.onDeleteFile}

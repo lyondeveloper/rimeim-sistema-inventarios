@@ -1,16 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import isEmty from '../../actions/isEmpty';
-import EmptyIcon from './EmptyIcon';
-import Spinner from './Spinner';
-import { brandsToSelectOptions } from '../../actions/brandActions';
-import { vehiclesToSelectOptions } from '../../actions/vehicleActions';
-import SelectFiles from './SelectFiles';
-import TextInputField from './TextInputField';
-import TextAreaInputField from './TextAreaInputField';
-import SelectInputField from './SelectInputField';
-import CheckInputField from './CheckInputField';
+import isEmty from "../../actions/isEmpty";
+import EmptyIcon from "./EmptyIcon";
+import Spinner from "./Spinner";
+import { brandsToSelectOptions } from "../../actions/brandActions";
+import { vehiclesToSelectOptions } from "../../actions/vehicleActions";
+import SelectFiles from "./SelectFiles";
+import TextInputField from "./TextInputField";
+import TextAreaInputField from "./TextAreaInputField";
+import SelectInputField from "./SelectInputField";
+import CheckInputField from "./CheckInputField";
 
 const EditProductCard = props => {
   let productContent;
@@ -75,6 +75,7 @@ const EditProductCard = props => {
               onchange={onChangeTextInput}
               required={true}
               active_label={true}
+              disabled={!is_admin}
             />
           </div>
           <div className="row">

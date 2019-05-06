@@ -1,17 +1,23 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import uuid from "uuid";
 
-import TextInputField from '../../common/TextInputField';
-import Spinner from '../../common/Spinner';
-import EmptyIcon from '../../common/EmptyIcon';
+import TextInputField from "../../common/TextInputField";
+import Spinner from "../../common/Spinner";
+import EmptyIcon from "../../common/EmptyIcon";
 
-import { searchProduct } from '../../../actions/productActions';
+import { searchProduct } from "../../../actions/productActions";
+import { getModalInstanceById } from "../../../utils/MaterialFunctions";
+
+/*
+Este componente es util en el area de Ventas y Cotizaciones
+puede buscar, mostrar y brindar un metodo para seleccionar productos
+*/
 
 class SearchProductAndShowInfo extends Component {
   state = {
-    field: '',
+    field: "",
     typing: false,
     typingTimeout: 0,
     searching: false
@@ -27,7 +33,7 @@ class SearchProductAndShowInfo extends Component {
       field: e.target.value,
       typing: false,
       typingTimeout: setTimeout(() => {
-        if (this.state.field.trim() !== '') {
+        if (this.state.field.trim() !== "") {
           this.props.searchProduct({ field: this.state.field });
         } else {
           this.setState({ searching: false });
@@ -48,6 +54,14 @@ class SearchProductAndShowInfo extends Component {
     if (this.props.onHide) {
       this.props.onHide();
     }
+  };
+
+  onSelectProduct = product => {
+    if (this.props.onSelectProduct) {
+      this.props.onSelectProduct(product);
+    }
+    getModalInstanceById("search_product_and_show_info").close();
+    this.onHideModal();
   };
 
   render() {
@@ -73,7 +87,11 @@ class SearchProductAndShowInfo extends Component {
 
           <tbody>
             {products.map(product => (
-              <tr key={uuid()}>
+              <tr
+                key={uuid()}
+                className="cursor-pointer"
+                onClick={this.onSelectProduct.bind(this, product)}
+              >
                 <td>{product.id}</td>
                 <td>{product.codigo_barra}</td>
                 <td>{product.nombre}</td>
@@ -118,6 +136,7 @@ class SearchProductAndShowInfo extends Component {
 SearchProductAndShowInfo.propTypes = {
   searchProduct: PropTypes.func.isRequired,
   product: PropTypes.object.isRequired,
+  onSelectProduct: PropTypes.func,
   onHide: PropTypes.func
 };
 

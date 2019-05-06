@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Spinner from './Spinner';
-import uuid from 'uuid';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import Spinner from "./Spinner";
+import uuid from "uuid";
 
-import { getModalInstanceById } from '../../utils/MaterialFunctions';
-import ConfirmationModal from '../layout/modals/ConfirmationModal';
-import isEmpty from '../../actions/isEmpty';
-import EmptyIcon from '../common/EmptyIcon';
+import { getModalInstanceById } from "../../utils/MaterialFunctions";
+import ConfirmationModal from "../layout/modals/ConfirmationModal";
+import isEmpty from "../../actions/isEmpty";
+import EmptyIcon from "../common/EmptyIcon";
 
 class ShowProduct extends Component {
   onDeleteProductClick = () => {
-    getModalInstanceById('modal_confirmar_evento').open();
+    getModalInstanceById("modal_confirmar_evento").open();
   };
 
   render() {
@@ -89,7 +89,6 @@ class ShowProduct extends Component {
           <div className="card">
             <div className="card-content">
               {imagesContent}
-
               <table className="table-bordered">
                 <tbody>
                   <tr>
@@ -122,15 +121,17 @@ class ShowProduct extends Component {
                       <td>{ubicacion}</td>
                     </tr>
                   )}
-                  {descripcion && descripcion.trim() !== '' && (
-                    <tr>
-                      <td>Descripcion</td>
-                      <td>{descripcion}</td>
-                    </tr>
-                  )}
+                  <tr>
+                    <td>Descripcion</td>
+                    <td>
+                      {descripcion && descripcion.trim() !== ""
+                        ? descripcion
+                        : "Sin descripcion"}
+                    </td>
+                  </tr>
                   <tr>
                     <td>Es raro</td>
-                    <td>{raro ? 'Si' : 'No'}</td>
+                    <td>{raro ? "Si" : "No"}</td>
                   </tr>
                   {precio && (
                     <tr>
@@ -152,7 +153,6 @@ class ShowProduct extends Component {
                   </tr>
                 </tbody>
               </table>
-
               {/* <div className="mt-1">
                       <button className="btn">Realizar pedido</button>
       
@@ -160,9 +160,7 @@ class ShowProduct extends Component {
                     </div> */}
             </div>
           </div>
-
           {distribucionContent}
-
           {onDeleteProduct && (
             <button
               className="btn red darken-3"

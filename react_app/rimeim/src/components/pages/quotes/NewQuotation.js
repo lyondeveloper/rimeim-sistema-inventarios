@@ -15,7 +15,6 @@ import { addNewSell } from "../../../actions/sellActions";
 import isEmpty from "../../../actions/isEmpty";
 
 import SalesGrid from "../../common/SalesGrid";
-import SearchProductModal from "../../layout/modals/SearchProductAndShowInfo";
 import SearchClientModal from "../../layout/modals/SearchAndSelectClient";
 import SellConfigurationModal from "../../layout/modals/SellConfiguration";
 import SellCheckoutModal from "../../layout/modals/SellCheckout";
@@ -240,8 +239,6 @@ class NewQuotation extends Component {
           needsFocusOnRow={this.state.needsFocusToRow}
           needsClearAll={needsClearAll}
         />
-
-        <SearchProductModal onHide={this.onHideModal} />
         <SearchClientModal
           onHide={this.onHideModal}
           currentClient={currentClient}

@@ -253,18 +253,19 @@ begin
 
     if (valid_int_id(p_id) and 
 		valid_int_id(p_id_usuario_eliminado_por)) then
-        UPDATE tb_usuario SET
-		`id_usuario_eliminado_por` = p_id_usuario_eliminado_por,
-		`habilitado` = false,
-		`eliminado` = true,
-		`fecha_eliminado` = current_timestamp()
-		WHERE `id` = p_id;
         
         update tb_empleado 
         set eliminado = true,
 			id_usuario_eliminado_por = p_id_usuario_eliminado_por,
 			fecha_eliminado = current_timestamp()
 		where id_usuario = p_id;
+
+		UPDATE tb_usuario SET
+		`id_usuario_eliminado_por` = p_id_usuario_eliminado_por,
+		`habilitado` = false,
+		`eliminado` = true,
+		`fecha_eliminado` = current_timestamp()
+		WHERE `id` = p_id;
 		
     end if;
 end $$
@@ -391,12 +392,13 @@ delimiter $$
 create procedure proc_get_minified_usuario_by_id_empleado(in p_id_empleado bigint)
 begin
 	if (valid_int_id(p_id_empleado)) then
-		select u.id,
-			   u.nombre
-		from tb_usuario u 
-        join tb_empleado em on em.id = p_id_empleado
-        where u.id = em.id_usuario;
-    end if;
+	select u.id,
+		u.nombre
+	from tb_usuario u
+		join tb_empleado em on em.id = p_id_empleado
+	where u.id = em.id_usuario;
+end
+if;
 end $$
 delimiter ;
 

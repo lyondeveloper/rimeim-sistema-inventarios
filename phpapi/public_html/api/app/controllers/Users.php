@@ -91,70 +91,62 @@ class Users extends Controller
         $this->private_route(CTR_ADMIN);
 
         $newUser = $this->validate_add_user_data(getJsonData());
-        $success = $this->userModel->add_user($newUser);
-        if (!$success) {
-            $this->response(null, ERROR_NOTFOUND);
-        }
+        $newId = $this->userModel->add_user($newUser);
+        $this->checkNewId($newId);
         $this->response();
     }
 
     private function validate_add_user_data($data)
     {
         $errors = [];
-        if (is_empty_array($data)) {
-            $errors['params_error'] = "Parametros invalidos";
-        } else {
-            if (!isset($data->nombre) || empty($data->nombre)) {
-                $errors['nombre_error'] = "Nombre invalido";
-            }
-            if (
-                !isset($data->correo) ||
-                empty($data->correo) ||
-                !isEmail($data->correo)
-            ) {
-                $errors['correo_error'] = "Campo invalido";
-            }
-            if (!isset($data->nombre_usuario) || empty($data->nombre_usuario)) {
-                $errors['nombre_usuario_error'] = "Campo invalido";
-            }
-            if (!isset($data->password) || empty($data->password)) {
-                $errors['password_error'] = "Campo invalido";
-            }
-            if (!isset($data->admin) || !is_bool($data->admin)) {
-                $errors['admin_error'] = "Campo invalido";
-            }
-            if (!isset($data->habilitado) || !is_bool($data->habilitado)) {
-                $errors['habilitado_error'] = "Campo invalido";
-            }
+        if (!isset($data->nombre) || empty($data->nombre)) {
+            $errors['nombre_error'] = "Nombre invalido";
+        }
+        if (
+            !isset($data->correo) ||
+            empty($data->correo) ||
+            !isEmail($data->correo)
+        ) {
+            $errors['correo_error'] = "Campo invalido";
+        }
+        if (!isset($data->nombre_usuario) || empty($data->nombre_usuario)) {
+            $errors['nombre_usuario_error'] = "Campo invalido";
+        }
+        if (!isset($data->password) || empty($data->password)) {
+            $errors['password_error'] = "Campo invalido";
+        }
+        if (!isset($data->admin) || !is_bool($data->admin)) {
+            $errors['admin_error'] = "Campo invalido";
+        }
+        if (!isset($data->habilitado) || !is_bool($data->habilitado)) {
+            $errors['habilitado_error'] = "Campo invalido";
         }
 
-        if (count($errors) == 0) {
-            $data->nombre = trim($data->nombre);
-            $data->nombre_usuario = trim(get_if_isset($data, 'nombre_usuario'));
-            $data->correo = trim($data->correo);
-            $data->password = trim($data->password);
-            $data->id_usuario_agregado_por = $this->get_current_user_id();
+        $this->checkErrors($errors);
 
-            if (
-                !isEmail($data->correo) ||
-                $this->userModel->exists_user_with_email($data->correo)
-            ) {
-                $errors['correo_error'] = "Correo invalido o en uso";
-            }
-            if (
-                !empty($data->nombre_usuario) &&
-                $this->userModel->exists_user_with_username($data->nombre_usuario)
-            ) {
-                $errors['nombre_usuario_error'] = "Nombre de usuario en uso";
-            }
-            if (!isValidPassword($data->password)) {
-                $errors['password_error'] = "Clave invalida";
-            }
+        $data->nombre = trim($data->nombre);
+        $data->nombre_usuario = trim(get_if_isset($data, 'nombre_usuario'));
+        $data->correo = trim($data->correo);
+        $data->password = trim($data->password);
+        $data->id_usuario_agregado_por = $this->get_current_user_id();
+
+        if (
+            !isEmail($data->correo) ||
+            $this->userModel->exists_user_with_email($data->correo)
+        ) {
+            $errors['correo_error'] = "Correo invalido o en uso";
+        }
+        if (
+            !empty($data->nombre_usuario) &&
+            $this->userModel->exists_user_with_username($data->nombre_usuario)
+        ) {
+            $errors['nombre_usuario_error'] = "Nombre de usuario en uso";
+        }
+        if (!isValidPassword($data->password)) {
+            $errors['password_error'] = "Clave invalida";
         }
 
-        if (count($errors) > 0) {
-            $this->response($errors, ERROR_FORBIDDEN, false);
-        }
+        $this->checkErrors($errors);
         $data->password = get_hash_password($data->password);
         return $data;
     }

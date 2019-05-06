@@ -68,7 +68,7 @@ class Products extends Controller
         } elseif ($id_local > 0) {
             $products = $this->productLocalModel->get_by_local($id_local);
         } elseif ($this->is_current_user_admin()) {
-            $products = $this->productModel->get();
+            $products = $this->productModel->search($json_data->field, null);
         }
         $products = $this->parse_mutiple_products($products, $id_local);
         $this->response($products);

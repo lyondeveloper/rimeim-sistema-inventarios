@@ -1,8 +1,8 @@
-import React from 'react';
-import Spinner from './Spinner';
-import PropTypes from 'prop-types';
-import ProductCard from './ProductCard';
-import EmptyIcon from './EmptyIcon';
+import React from "react";
+import Spinner from "./Spinner";
+import PropTypes from "prop-types";
+import ProductCard from "./ProductCard";
+import EmptyIcon from "./EmptyIcon";
 
 const MapProducts = props => {
   const { loading, products, admin } = props;

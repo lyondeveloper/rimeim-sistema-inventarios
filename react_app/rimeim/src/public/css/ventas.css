@@ -10,6 +10,8 @@
   height: 32px !important;
   margin: 0 !important;
   padding: 4px !important;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .active-tr-sell {
@@ -63,7 +65,7 @@
 
 .header-fixed > tbody > tr:after,
 .header-fixed > thead > tr:after {
-  content: '  ';
+  content: "  ";
   display: block;
   visibility: hidden;
   clear: both;

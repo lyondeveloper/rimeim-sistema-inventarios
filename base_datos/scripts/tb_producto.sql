@@ -279,7 +279,7 @@ create procedure proc_add_producto(in p_id_tipo_vehiculo bigint,
                                     in p_cantidad_minima int(11))
 begin
     set p_codigo_barra = trim(p_codigo_barra);
-    set p_nombre = trim_and_lower(p_nombre);
+    set p_nombre = trim(p_nombre);
     set p_descripcion = trim(p_descripcion);
     set p_raro = default_bool_value(p_raro, false);
 
@@ -336,7 +336,7 @@ create procedure proc_update_producto_by_id(in p_id bigint,
                                             in p_cantidad_minima int(11))
 begin
     set p_codigo_barra = trim(p_codigo_barra);
-    set p_nombre = trim_and_lower(p_nombre);
+    set p_nombre = trim(p_nombre);
     set p_descripcion = trim(p_descripcion);
     set p_raro = default_bool_value(p_raro, false);
 

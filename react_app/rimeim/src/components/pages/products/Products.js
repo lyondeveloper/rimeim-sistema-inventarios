@@ -9,10 +9,9 @@ import {
   removeMaterialComponents
 } from "../../../utils/MaterialFunctions";
 
-import { getProducts, searchProduct } from "../../../actions/productActions";
-
+import { getProducts } from "../../../actions/productActions";
 import MapProducts from "../../common/MapProducts";
-import SearchModal from "../../layout/modals/SearchModal";
+import SearchProductModal from "../../layout/modals/SearchProductModel";
 
 class Products extends Component {
   componentWillMount() {
@@ -24,26 +23,11 @@ class Products extends Component {
     this.props.getProducts();
   }
 
-  onSearchProduct = termino_busqueda => {
-    const searchProductData = {
-      field: termino_busqueda
-    };
-    this.props.searchProduct(searchProductData);
-  };
-
   render() {
     const { loading, products } = this.props.product;
     return (
       <React.Fragment>
-        <NewNavbar active_nav="PRODUCTOS" show_more_option={true}>
-          <ul id="dropdown_more" className="dropdown-content">
-            <li>
-              <a href="#modal_search" className="modal-trigger">
-                <i className="material-icons">search</i>
-              </a>
-            </li>
-          </ul>
-
+        <NewNavbar active_nav="PRODUCTOS">
           <div className="nav-wrapper">
             <a href="#!" className="brand-logo">
               Inventario
@@ -51,9 +35,9 @@ class Products extends Component {
             <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
               <i className="material-icons">menu</i>
             </a>
-            <ul className="right hide-on-small-only">
+            <ul className="right">
               <li>
-                <a href="#modal_search" className="modal-trigger">
+                <a href="#modal_search_producto" className="modal-trigger">
                   <i className="material-icons">search</i>
                 </a>
               </li>
@@ -64,8 +48,7 @@ class Products extends Component {
         <main>
           <MapProducts loading={loading} products={products} />
         </main>
-
-        <SearchModal onSearchAction={this.onSearchProduct} />
+        <SearchProductModal />
       </React.Fragment>
     );
   }
@@ -73,17 +56,14 @@ class Products extends Component {
 
 Products.propTypes = {
   getProducts: PropTypes.func.isRequired,
-  searchProduct: PropTypes.func.isRequired,
-  product: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired
+  product: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  product: state.product,
-  user: state.user
+  product: state.product
 });
 
 export default connect(
   mapStateToProps,
-  { getProducts, searchProduct }
+  { getProducts }
 )(Products);

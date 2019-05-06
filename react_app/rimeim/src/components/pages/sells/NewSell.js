@@ -111,21 +111,7 @@ class NewSell extends Component {
       sell_is_in_product_request
     ) {
       const { product } = nextProps.product;
-      const { products } = this.state;
-      if (product && Object.keys(product).length > 0) {
-        products[current_row_index] = {
-          ...products[current_row_index],
-          id_producto: product.id,
-          codigo_barra: product.codigo_barra,
-          nombre: `${product.nombre} - ${product.marca_nombre}`,
-          cantidad: 1,
-          precio: product.precio
-        };
-        current_row_changed = true;
-        this.setState({
-          products
-        });
-      } else {
+      if (!this.addProductToState(product)) {
         setTimeout(() => {
           this.setInputRowFocus(current_row_index);
           this.setBgErrorColorRowCurrentRow();
@@ -180,6 +166,41 @@ class NewSell extends Component {
       currentClient: newClient
     });
     this.onHideModal();
+  };
+
+  onSelectProduct = product => {
+    if (product && Object.keys(product).length > 0) {
+      this.addProductToState(product);
+    } else {
+      setTimeout(() => {
+        this.setInputRowFocus(current_row_index);
+        this.setBgErrorColorRowCurrentRow();
+      }, 1000);
+    }
+  };
+
+  addProductToState = product => {
+    if (product && Object.keys(product).length > 0) {
+      const { products } = this.state;
+      let producto_nombre = `${product.nombre}`;
+      if (product.marca_nombre) {
+        producto_nombre = `${producto_nombre} - ${product.marca_nombre}`;
+      }
+      products[current_row_index] = {
+        ...products[current_row_index],
+        id_producto: product.id,
+        codigo_barra: product.codigo_barra,
+        nombre: producto_nombre,
+        cantidad: 1,
+        precio: product.precio
+      };
+      current_row_changed = true;
+      this.setState({
+        products
+      });
+      return true;
+    }
+    return false;
   };
 
   getCountOfTotalRowsFree = () => {
@@ -424,7 +445,20 @@ class NewSell extends Component {
           />
         </td>
 
-        <td className="td-with-input">{precio}</td>
+        <td className="td-with-input">
+          <input
+            id={`${input_precio}${row_id}`}
+            type="text"
+            className="special-input browser-default"
+            onKeyDown={this.onInputKeyPress.bind(
+              this,
+              row_id,
+              input_precio,
+              index
+            )}
+            defaultValue={precio}
+          />
+        </td>
       </tr>
     );
   };
@@ -585,7 +619,10 @@ class NewSell extends Component {
           </div>
         </main>
 
-        <SearchProductModal onHide={this.onHideModal} />
+        <SearchProductModal
+          onHide={this.onHideModal}
+          onSelectProduct={this.onSelectProduct}
+        />
         <SearchClientModal
           onHide={this.onHideModal}
           currentClient={currentClient}
