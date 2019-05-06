@@ -1,14 +1,13 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import { ADMIN_DEFAULT } from "../../layout/NavTypes";
-import NavbarAdmin from "../../layout/NavbarAdmin";
+import NavbarAdmin from '../../layout/NewNavbarAdmin';
 
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from "../../../utils/MaterialFunctions";
+} from '../../../utils/MaterialFunctions';
 
-import logo_rimeim from "../../../public/img/logo_rimeim.png";
+import logo_rimeim from '../../../public/img/logo_rimeim.png';
 
 class AdminArea extends Component {
   componentWillMount() {
@@ -22,11 +21,20 @@ class AdminArea extends Component {
   render() {
     return (
       <React.Fragment>
-        <NavbarAdmin navtype={ADMIN_DEFAULT} />
+        <NavbarAdmin>
+          <div className="nav-wrapper">
+            <a href="#!" className="brand-logo">
+              Area de administrador
+            </a>
+            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
+              <i className="material-icons">menu</i>
+            </a>
+          </div>
+        </NavbarAdmin>
         <main>
           <div className="container">
             <div className="row">
-              <div className="col s12" style={{ height: "500px" }}>
+              <div className="col s12" style={{ height: '500px' }}>
                 <center>
                   <img src={logo_rimeim} alt="Logo rimeim" className="mt-1" />
                 </center>

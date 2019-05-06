@@ -3,6 +3,7 @@ base_datos/disenio/diseno.mwb.bak
 phpapi/public_html/api/app/log/
 phpapi/vars/config.ini
 phpapi/vars/config.dev.ini
+phpapi/vars
 base_datos/scripts/run_all.sh
 react_app/rimeim/.vscode
 phpapi/public_html/.vscode

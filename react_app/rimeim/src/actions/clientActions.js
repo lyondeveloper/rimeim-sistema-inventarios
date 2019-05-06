@@ -1,21 +1,21 @@
-import axios from "axios";
+import axios from 'axios';
 
 import {
   CLIENT_LOADING,
   GET_CLIENT,
   GET_CLIENTS,
   CLIENT_LOADING_END
-} from "../actions/types";
+} from '../actions/types';
 
-import { clearErrors, handleError } from "./errorActions";
+import { clearErrors, handleError } from './errorActions';
 
-import { configUserFromResponse } from "./UserActions";
+import { configUserFromResponse } from './UserActions';
+import { API_URL } from '../utils/stringUtils';
 
-const proxy = "https://rimeim.com/api";
 export const createClient = (data, history, newUrl) => dispatch => {
   dispatch(clearErrors());
   axios
-    .post(`${proxy}/clients/add`, data)
+    .post(`${API_URL}/clients/add`, data)
     .then(res => {
       configUserFromResponse(res.data, dispatch);
 
@@ -28,7 +28,7 @@ export const getClients = () => dispatch => {
   dispatch(clientLoading());
   dispatch(clearErrors());
   axios
-    .get(`${proxy}/clients/get`)
+    .get(`${API_URL}/clients/get`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -43,7 +43,7 @@ export const getClient = id => dispatch => {
   dispatch(clearErrors());
   dispatch(clientLoading());
   axios
-    .get(`${proxy}/clients/get_one/${id}`)
+    .get(`${API_URL}/clients/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -57,7 +57,7 @@ export const getClient = id => dispatch => {
 export const editClient = (data, id, history, newUrl) => dispatch => {
   dispatch(clearErrors());
   axios
-    .post(`${proxy}/clients/update/${id}`, data)
+    .post(`${API_URL}/clients/update/${id}`, data)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -73,7 +73,7 @@ export const editClient = (data, id, history, newUrl) => dispatch => {
 export const searchClient = searchJson => dispatch => {
   dispatch(clientLoading());
   axios
-    .post(`${proxy}/clients/search`, searchJson)
+    .post(`${API_URL}/clients/search`, searchJson)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -89,7 +89,7 @@ export const deleteClient = (id, history, newUrl) => dispatch => {
   dispatch(clearErrors());
   dispatch(clientLoading());
   axios
-    .delete(`${proxy}/clients/delete/${id}`)
+    .delete(`${API_URL}/clients/delete/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

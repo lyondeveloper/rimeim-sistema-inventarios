@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { ADMIN_EDIT_LOCAL } from '../../../layout/NavTypes';
-import NavbarAdmin from '../../../layout/NavbarAdmin';
+import NavbarAdmin from '../../../layout/NewNavbarAdmin';
 
 import {
   configMaterialComponents,
@@ -179,10 +178,24 @@ class NewLocal extends Component {
 
     return (
       <React.Fragment>
-        <NavbarAdmin
-          navtype={ADMIN_EDIT_LOCAL}
-          obj={{ onSave: this.onSaveNewLocal }}
-        />
+        <NavbarAdmin>
+          <div className="nav-wrapper">
+            <a href="#!" className="brand-logo">
+              Nuevo local
+            </a>
+            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
+              <i className="material-icons">menu</i>
+            </a>
+
+            <ul className="right">
+              <li>
+                <a href="#!" onClick={this.onSaveNewLocal}>
+                  <i className="material-icons">save</i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </NavbarAdmin>
 
         <main>
           <div className="row">

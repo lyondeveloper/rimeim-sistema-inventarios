@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-import { ADMIN_LOCALS } from '../../../layout/NavTypes';
-import NavbarAdmin from '../../../layout/NavbarAdmin';
+import NavbarAdmin from '../../../layout/NewNavbarAdmin';
 
 import {
   configMaterialComponents,
@@ -29,7 +29,44 @@ class Locals extends Component {
     const { locals, loading } = this.props.local;
     return (
       <React.Fragment>
-        <NavbarAdmin navtype={ADMIN_LOCALS} />
+        <NavbarAdmin>
+          <ul id="dropdown_more" className="dropdown-content">
+            <li>
+              <Link to="/admin/nuevo_local">
+                <i className="material-icons">add</i>
+              </Link>
+            </li>
+          </ul>
+
+          <div className="nav-wrapper">
+            <a href="#!" className="brand-logo">
+              Locales
+            </a>
+            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
+              <i className="material-icons">menu</i>
+            </a>
+
+            <ul className="right hide-on-small-only">
+              <li>
+                <Link to="/admin/nuevo_local">
+                  <i className="material-icons">add</i>
+                </Link>
+              </li>
+            </ul>
+
+            <ul className="right mobile-only">
+              <li>
+                <a
+                  className="dropdown-trigger"
+                  href="#!"
+                  data-target="dropdown_more"
+                >
+                  <i className="material-icons right">more_vert</i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </NavbarAdmin>
 
         <main>
           <div className="row">

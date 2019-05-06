@@ -1,17 +1,16 @@
-import axios from "axios";
-import { EMPLOYE_LOADING, GET_EMPLOYE, GET_EMPLOYES } from "./types";
+import axios from 'axios';
+import { EMPLOYE_LOADING, GET_EMPLOYE, GET_EMPLOYES } from './types';
 
-import { configUserFromResponse } from "./UserActions";
+import { configUserFromResponse } from './UserActions';
 
-import { clearErrors, handleError } from "./errorActions";
-
-const proxy = "https://rimeim.com/api";
+import { clearErrors, handleError } from './errorActions';
+import { API_URL } from '../utils/stringUtils';
 
 export const getEmployes = () => dispatch => {
   dispatch(clearErrors());
   employeLoading(dispatch);
   axios
-    .get(`${proxy}/employes/`)
+    .get(`${API_URL}/employes/`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -27,7 +26,7 @@ export const getEmployeById = id => dispatch => {
   dispatch(clearErrors());
   employeLoading(dispatch);
   axios
-    .get(`${proxy}/employes/get_one/${id}`)
+    .get(`${API_URL}/employes/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -41,11 +40,11 @@ export const deleteRegisterById = (id, history) => dispatch => {
   employeLoading(dispatch);
 
   axios
-    .delete(`${proxy}/employes/delete/${id}`)
+    .delete(`${API_URL}/employes/delete/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
-      history.push("/admin/empleados");
+      history.push('/admin/empleados');
     })
     .catch(err => handleError(err, dispatch));
 };
@@ -55,7 +54,7 @@ export const updateEmployeRegisterById = (id, id_usuario, data) => dispatch => {
   dispatch(clearErrors());
   employeLoading(dispatch);
   axios
-    .put(`${proxy}/employes/update/${id}/${id_usuario}`, data)
+    .put(`${API_URL}/employes/update/${id}/${id_usuario}`, data)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

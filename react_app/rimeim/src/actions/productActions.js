@@ -1,24 +1,24 @@
 // Este archivo almacena todas las funciones necesarias
 // para poder enviar consultas a PRODUCTS
-import axios from "axios";
+import axios from 'axios';
 
-import { clearErrors, handleError } from "./errorActions";
+import { clearErrors, handleError } from './errorActions';
 
-import { configUserFromResponse } from "./UserActions";
+import { configUserFromResponse } from './UserActions';
 
 import {
   GET_PRODUCT,
   GET_PRODUCTS,
   PRODUCT_LOADING,
   PRODUCT_END_LOADING
-} from "./types";
+} from './types';
 
-const proxy = "https://rimeim.com/api";
+import { API_URL } from '../utils/stringUtils';
 
 export const getProducts = () => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .get(`${proxy}/products/get`)
+    .get(`${API_URL}/products/get`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -34,7 +34,7 @@ export const getProducts = () => dispatch => {
 export const searchProduct = field => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .post(`${proxy}/products/search`, field)
+    .post(`${API_URL}/products/search`, field)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -51,7 +51,7 @@ export const searchProduct = field => dispatch => {
 export const getProductById = id => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .get(`${proxy}/products/get_one/${id}`)
+    .get(`${API_URL}/products/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -66,7 +66,7 @@ export const getProductById = id => dispatch => {
 export const getProductByCBForSell = productData => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .post(`${proxy}/products/get_one_fsell`, productData)
+    .post(`${API_URL}/products/get_one_fsell`, productData)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -87,8 +87,8 @@ export const getProductByCBForSell = productData => dispatch => {
 export const addNewProduct = (newProductData, history, new_url) => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .post(`${proxy}/products/add`, newProductData, {
-      headers: { "X-Requested-With": "XMLHttpRequest" }
+    .post(`${API_URL}/products/add`, newProductData, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(res => {
       dispatch(clearErrors());
@@ -106,8 +106,8 @@ export const addNewProduct = (newProductData, history, new_url) => dispatch => {
 export const updateProductById = (id, newData) => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .post(`${proxy}/products/update/${id}`, newData, {
-      headers: { "X-Requested-With": "XMLHttpRequest" }
+    .post(`${API_URL}/products/update/${id}`, newData, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(res => {
       dispatch(clearErrors());
@@ -124,7 +124,7 @@ export const updateProductById = (id, newData) => dispatch => {
 export const deleteProductById = (id, history, new_url) => dispatch => {
   dispatch(productLoadingObject());
   axios
-    .delete(`${proxy}/products/delete/${id}`)
+    .delete(`${API_URL}/products/delete/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);

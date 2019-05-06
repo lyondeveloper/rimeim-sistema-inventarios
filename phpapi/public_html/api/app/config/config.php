@@ -26,5 +26,5 @@ define('CTR_ADMIN_SAME_USER', 'CONTROLLER_FOR_ADMIN_OR_SAME_USER');
 define('CTR_EMPLEADO', 'CONTROLLER_FOR_EMPLEADO');
 
 // Allow request
-header('Access-Control-Allow-Origin: *');
+//header('Access-Control-Allow-Origin: *');
     // header('Access-Control-Allow-Headers: Authorization');

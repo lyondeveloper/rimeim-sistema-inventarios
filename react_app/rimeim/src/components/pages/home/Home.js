@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from "../../../utils/MaterialFunctions";
+} from '../../../utils/MaterialFunctions';
 
 class Home extends Component {
   componentWillMount() {
@@ -43,7 +43,7 @@ class Home extends Component {
 
           <ul className="sidenav" id="nav_sidenav">
             <li>
-              <a href="#!">Login</a>
+              <Link to="/login">Login</Link>
             </li>
           </ul>
         </header>
@@ -77,7 +77,7 @@ class Home extends Component {
                 <div className="card hoverable bordered">
                   <div
                     style={{
-                      height: "150px",
+                      height: '150px',
                       background:
                         "url('https://rimeim.com/files/icons/izuzu_logo.png') no-repeat center center / cover"
                     }}
@@ -90,7 +90,7 @@ class Home extends Component {
                   <div
                     className="bg-card-jmc"
                     style={{
-                      height: "150px",
+                      height: '150px',
                       background:
                         "url('https://rimeim.com/files/icons/jmc_logo.png') no-repeat center center / cover"
                     }}
@@ -102,7 +102,7 @@ class Home extends Component {
                 <div className="card hoverable bordered">
                   <div
                     style={{
-                      height: "150px",
+                      height: '150px',
                       background:
                         "url('https://rimeim.com/files/icons/mahindra_logo.png') no-repeat center center / cover"
                     }}
@@ -120,11 +120,12 @@ class Home extends Component {
                   <a
                     href="https://www.facebook.com/pg/Rimeim-Autopartes-Especialidad-En-Repuestos-Isuzu-250893418452303"
                     target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <img
                       src="https://rimeim.com/files/icons/icono_facebook.png"
                       alt="Facebook icono"
-                      style={{ height: "40px" }}
+                      style={{ height: '40px' }}
                     />
                   </a>
                 </div>

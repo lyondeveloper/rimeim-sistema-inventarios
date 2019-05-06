@@ -1,7 +1,7 @@
-import axios from "axios";
-import jwt_decode from "jwt-decode";
-import setAuthToken from "../utils/setAuthToken";
-import setCurrentLocalHeader from "../utils/setCurrentLocalHeader";
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+import setAuthToken from '../utils/setAuthToken';
+import setCurrentLocalHeader from '../utils/setCurrentLocalHeader';
 
 import {
   SET_CURRENT_USER,
@@ -10,16 +10,16 @@ import {
   GET_USERS,
   USER_LOADING,
   USER_END_LOADING
-} from "./types";
+} from './types';
 
-import { handleError, clearErrors } from "./errorActions";
+import { handleError, clearErrors } from './errorActions';
 
-import isEmpty from "./isEmpty";
-const proxy = "https://rimeim.com/api";
+import isEmpty from './isEmpty';
+import { API_URL } from '../utils/stringUtils';
 
 export const addUser = (newUserData, history) => dispatch => {
   axios
-    .post(`${proxy}/users/add`, newUserData)
+    .post(`${API_URL}/users/add`, newUserData)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -27,7 +27,7 @@ export const addUser = (newUserData, history) => dispatch => {
       dispatch({
         type: USER_END_LOADING
       });
-      history.push("/admin/usuarios");
+      history.push('/admin/usuarios');
     })
     .catch(err => handleError(err, dispatch));
 };
@@ -35,7 +35,7 @@ export const addUser = (newUserData, history) => dispatch => {
 export const getUsers = () => dispatch => {
   dispatch(userLoadingObject());
   axios
-    .get(`${proxy}/users/get`)
+    .get(`${API_URL}/users/get`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -46,9 +46,7 @@ export const getUsers = () => dispatch => {
 
 export const loginUser = data => dispatch => {
   axios
-    .post(`${proxy}/users/login`, data, {
-      headers: { "Access-Control-Allow-Origin": "*" }
-    })
+    .post(`${API_URL}/users/login`, data)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -60,7 +58,7 @@ export const loginUser = data => dispatch => {
 
 export const getLocalsForCurrentUser = () => dispatch => {
   axios
-    .get(`${proxy}/users/get_locals`)
+    .get(`${API_URL}/users/get_locals`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -73,9 +71,9 @@ export const setCurrentLocal = local => dispatch => {
   var currentLocal = !isEmpty(local) ? local : {};
   setCurrentLocalHeader(currentLocal);
   if (isEmpty(currentLocal)) {
-    localStorage.removeItem("rimeim_current_local");
+    localStorage.removeItem('rimeim_current_local');
   } else {
-    localStorage.setItem("rimeim_current_local", JSON.stringify(currentLocal));
+    localStorage.setItem('rimeim_current_local', JSON.stringify(currentLocal));
   }
   dispatch(setCurrentLocalToState(currentLocal));
 };
@@ -83,7 +81,7 @@ export const setCurrentLocal = local => dispatch => {
 export const getUsersByField = field => dispatch => {
   dispatch(userLoadingObject());
   axios
-    .get(`${proxy}/users/search/${field}`)
+    .get(`${API_URL}/users/search/${field}`)
     .then(res => {
       dispatch(clearUsers());
       const response = res.data;
@@ -97,7 +95,7 @@ export const getUserById = id => dispatch => {
   dispatch(userLoadingObject());
   dispatch(clearUsers());
   axios
-    .get(`${proxy}/users/get_one/${id}`)
+    .get(`${API_URL}/users/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -108,7 +106,7 @@ export const getUserById = id => dispatch => {
 
 export const updateUserById = (id, newUserData) => dispatch => {
   axios
-    .put(`${proxy}/users/update/${id}`, newUserData)
+    .put(`${API_URL}/users/update/${id}`, newUserData)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -120,7 +118,7 @@ export const updateUserById = (id, newUserData) => dispatch => {
 
 export const updateUserPasswordById = (id, data) => dispatch => {
   axios
-    .put(`${proxy}/users/update_password/${id}`, data)
+    .put(`${API_URL}/users/update_password/${id}`, data)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
@@ -134,19 +132,19 @@ export const updateUserPasswordById = (id, data) => dispatch => {
 
 export const deleteUserById = (id, history) => dispatch => {
   axios
-    .delete(`${proxy}/users/delete/${id}`)
+    .delete(`${API_URL}/users/delete/${id}`)
     .then(res => {
       dispatch(clearErrors());
       const response = res.data;
       configUserFromResponse(response, dispatch);
-      history.push("/admin/usuarios");
+      history.push('/admin/usuarios');
     })
     .catch(err => handleError(err, dispatch));
 };
 
 export const getAuthTokenFromResponse = response => {
   const { token } = response;
-  localStorage.setItem("rimeim_token", token);
+  localStorage.setItem('rimeim_token', token);
   setAuthToken(token);
   const decoded = jwt_decode(token);
   return decoded;
@@ -208,16 +206,16 @@ export const setUsers = users => {
 };
 
 export const logoutUser = () => dispatch => {
-  localStorage.removeItem("rimeim_token");
-  localStorage.removeItem("rimeim_current_local");
+  localStorage.removeItem('rimeim_token');
+  localStorage.removeItem('rimeim_current_local');
   setAuthToken(false);
   setCurrentLocal(null);
   dispatch(setCurrentUser({}));
 };
 
 export const logOutUserWithDispatch = dispatch => {
-  localStorage.removeItem("rimeim_token");
-  localStorage.removeItem("rimeim_current_local");
+  localStorage.removeItem('rimeim_token');
+  localStorage.removeItem('rimeim_current_local');
   setAuthToken(false);
   setCurrentLocal(null);
   dispatch(setCurrentUser({}));

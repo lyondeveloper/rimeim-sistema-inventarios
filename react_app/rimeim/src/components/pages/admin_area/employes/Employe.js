@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { ADMIN_EMPLOYE } from '../../../layout/NavTypes';
-import Navbar from '../../../layout/NavbarAdmin';
+import NavbarAdmin from '../../../layout/NewNavbarAdmin';
 
 import {
   configMaterialComponents,
@@ -182,7 +181,16 @@ class Employe extends Component {
 
     return (
       <React.Fragment>
-        <Navbar navtype={ADMIN_EMPLOYE} />
+        <NavbarAdmin>
+          <div className="nav-wrapper">
+            <a href="#!" className="brand-logo">
+              Empleado
+            </a>
+            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
+              <i className="material-icons">menu</i>
+            </a>
+          </div>
+        </NavbarAdmin>
 
         <main>
           <div className="row">{employeData}</div>

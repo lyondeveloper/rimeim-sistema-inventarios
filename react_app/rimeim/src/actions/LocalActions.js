@@ -1,19 +1,18 @@
 // Acciones a ejecutar para locales o tiendas
-import axios from "axios";
+import axios from 'axios';
 
-import { GET_LOCALS, GET_LOCAL, LOCAL_LOADING } from "./types";
+import { GET_LOCALS, GET_LOCAL, LOCAL_LOADING } from './types';
 
-import { clearErrors, handleError } from "./errorActions";
+import { clearErrors, handleError } from './errorActions';
 
-import { configUserFromResponse } from "./UserActions";
-
-const proxy = "https://rimeim.com/api";
+import { configUserFromResponse } from './UserActions';
+import { API_URL } from '../utils/stringUtils';
 
 export const getLocals = () => dispatch => {
   dispatch(localLoading());
   dispatch(clearErrors());
   axios
-    .get(`${proxy}/locals`)
+    .get(`${API_URL}/locals`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -29,7 +28,7 @@ export const getLocal = id => dispatch => {
   dispatch(clearErrors());
   dispatch(localLoading());
   axios
-    .get(`${proxy}/locals/get_one/${id}`)
+    .get(`${API_URL}/locals/get_one/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -44,7 +43,7 @@ export const getLocal = id => dispatch => {
 export const saveNewLocal = (newLocalData, history) => dispatch => {
   dispatch(clearErrors());
   axios
-    .post(`${proxy}/locals/add`, newLocalData)
+    .post(`${API_URL}/locals/add`, newLocalData)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -57,7 +56,7 @@ export const updateLocal = (id, newLocal, history) => dispatch => {
   dispatch(clearErrors());
   dispatch(localLoading());
   axios
-    .put(`${proxy}/locals/update/${id}`, newLocal)
+    .put(`${API_URL}/locals/update/${id}`, newLocal)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -73,11 +72,11 @@ export const updateLocal = (id, newLocal, history) => dispatch => {
 export const deleteLocal = (id, history) => dispatch => {
   dispatch(clearErrors());
   axios
-    .delete(`${proxy}/locals/delete/${id}`)
+    .delete(`${API_URL}/locals/delete/${id}`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
-      history.push("/admin/locales");
+      history.push('/admin/locales');
     })
     .catch(err => handleError(err, dispatch));
 };
