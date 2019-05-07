@@ -1,35 +1,35 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-import { configSelectInputFields } from '../../utils/MaterialFunctions';
-import { getLocals, localsToSelectOptions } from '../../actions/LocalActions';
+import { configSelectInputFields } from "../../utils/MaterialFunctions";
+import { getLocals, localsToSelectOptions } from "../../actions/LocalActions";
 import {
   getClients,
   clientsToSelectOptions
-} from '../../actions/clientActions';
-import { getSellReport } from '../../actions/sellActions';
-import InputField from './TextInputField';
-import SelectInputField from './SelectInputField';
+} from "../../actions/clientActions";
+import { getSellReport } from "../../actions/sellActions";
+import InputField from "./TextInputField";
+import SelectInputField from "./SelectInputField";
 
-import { getCurrentDateToInput } from '../../utils/dateFormat';
+import { getCurrentDateToInput } from "../../utils/dateFormat";
 
 class SellReportOptions extends Component {
   state = {
-    fecha_inicio: '',
-    fecha_fin: '',
-    id_cliente: '0',
-    id_local: '0',
-    tipo_reporte: '0',
+    fecha_inicio: "",
+    fecha_final: "",
+    id_cliente: "0",
+    id_local: "0",
+    tipo_reporte: "0",
     config_selects: false,
     tipos_reporte: [
       {
-        value: '1',
-        label: 'Valores totales'
+        value: "1",
+        label: "Valores totales"
       },
       {
-        value: '2',
-        label: 'Ventas detalladas'
+        value: "2",
+        label: "Ventas detalladas"
       }
     ],
     op_locales: [],
@@ -39,7 +39,7 @@ class SellReportOptions extends Component {
   componentDidMount() {
     const fecha = getCurrentDateToInput();
     this.setState({
-      fecha_fin: fecha,
+      fecha_final: fecha,
       fecha_inicio: fecha
     });
     if (this.props.is_admin) {
@@ -78,33 +78,40 @@ class SellReportOptions extends Component {
   onGetReportClick = () => {
     let {
       fecha_inicio,
-      fecha_fin,
+      fecha_final,
       id_cliente,
       id_local,
       tipo_reporte
     } = this.state;
-    if (tipo_reporte === '0') {
-      return document.getElementById('tipo_reporte').focus();
+    if (tipo_reporte === "0") {
+      return document.getElementById("tipo_reporte").focus();
+    } else {
+      if (tipo_reporte === "1") {
+        tipo_reporte = "ventas_totales";
+      } else if (tipo_reporte === "2") {
+        tipo_reporte = "ventas_detalle";
+      }
     }
-    if (id_cliente === '0') {
+
+    if (id_cliente === "0") {
       id_cliente = null;
     }
-    if (id_local === '0') {
+    if (id_local === "0") {
       id_local = null;
     }
     const reportJson = {
       fecha_inicio,
-      fecha_fin,
+      fecha_final,
       id_cliente,
       id_local,
-      tipo_reporte
+      reporte_tipo: tipo_reporte
     };
     this.props.getSellReport(reportJson);
   };
 
   render() {
     const {
-      fecha_fin,
+      fecha_final,
       fecha_inicio,
       id_local,
       id_cliente,
@@ -127,11 +134,11 @@ class SellReportOptions extends Component {
             />
 
             <InputField
-              id="fecha_fin"
+              id="fecha_final"
               input_size="s12 m6"
               label="Fecha fin"
               type="date"
-              value={fecha_fin}
+              value={fecha_final}
               onchange={this.onChangeTextInput}
             />
           </div>

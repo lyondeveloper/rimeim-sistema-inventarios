@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_get_next_venta_id;
 delimiter $$
 create function func_get_next_venta_id()
@@ -159,7 +159,88 @@ begin
 
 end $$
 delimiter ;
+*/
 
+/*
+drop procedure if exists proc_get_ventas_reportes;
+delimiter $$
+create procedure proc_get_ventas_reportes(in p_id_local bigint,
+                                in p_id_cliente bigint, 
+                                in p_fecha_inicio datetime, 
+                                in p_fecha_final datetime)
+begin
+    set @sql_query = "select v.id,
+                            v.id_local,
+                            v.id_cliente,
+                            v.codigo,
+                            v.sub_total,
+                            v.impuesto,
+                            v.total,
+                            v.fecha_creado
+                    from tb_venta v 
+                    where v.eliminado = false 
+                    and v.es_cotizacion = false";
+    
+    if(valid_int_id(p_id_local)) THEN
+        set @sql_query = concat(@sql_query, " and v.id_local = ", p_id_local);
+    end if;
+
+    if(valid_int_id(p_id_cliente)) THEN
+        set @sql_query = concat(@sql_query, " and v.id_cliente = ", p_id_cliente);
+    end if;
+
+    set @sql_query = concat(@sql_query, " and v.fecha_creado between '", p_fecha_inicio, "' and '" , p_fecha_final, "'");
+    set @sql_query = concat(@sql_query, " order by v.fecha_creado desc;");
+
+    PREPARE sql_statement FROM @sql_query;
+    EXECUTE sql_statement;
+end $$
+delimiter ;
+*/
+
+drop procedure if exists proc_get_ventas_reportes_totales;
+delimiter $$
+create procedure proc_get_ventas_reportes_totales(in p_id_local bigint,
+                                in p_id_cliente bigint, 
+                                in p_fecha_inicio datetime, 
+                                in p_fecha_final datetime)
+begin
+    set @sql_query = "select v.id,
+		                    v.id_local,
+                            (
+                               	select concat(l.codigo,' - ' ,l.nombre)
+                                from tb_local l
+                                where l.id = v.id_local
+                            ) as 'local',
+                            (
+                            	select c.nombre 
+                                from tb_cliente c 
+                                where c.id = v.id_cliente
+                            ) as 'cliente',
+                            SUM(v.total) as 'total',
+                            DATE_FORMAT(v.fecha_creado, '%d/%m/%Y') as 'fecha_creado'
+                    from tb_venta v 
+                    where v.eliminado = false 
+                    and v.es_cotizacion = false ";
+    
+    if(valid_int_id(p_id_local)) THEN
+        set @sql_query = concat(@sql_query, " and v.id_local = ", p_id_local);
+    end if;
+
+    if(valid_int_id(p_id_cliente)) THEN
+        set @sql_query = concat(@sql_query, " and v.id_cliente = ", p_id_cliente);
+    end if;
+
+    set @sql_query = concat(@sql_query, " and v.fecha_creado between '", p_fecha_inicio, "' and '" , p_fecha_final, "'");
+    set @sql_query = concat(@sql_query, " GROUP by v.id_local, day(v.fecha_creado) ");
+    set @sql_query = concat(@sql_query, " order by v.fecha_creado asc;");
+
+    PREPARE sql_statement FROM @sql_query;
+    EXECUTE sql_statement;
+end $$
+delimiter ;
+
+/*
 drop procedure if exists proc_get_cotizacion_by_id;
 delimiter $$
 create procedure proc_get_cotizacion_by_id(in p_id bigint)
@@ -358,3 +439,4 @@ begin
 end $$
 delimiter ; 
 
+*/

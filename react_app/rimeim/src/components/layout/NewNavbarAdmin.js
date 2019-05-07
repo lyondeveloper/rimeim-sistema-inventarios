@@ -79,7 +79,7 @@ class NavbarAdmin extends Component {
                 <div className="collapsible-body">
                   <ul>
                     <li>
-                      <a href="#!">Ventas</a>
+                      <Link to="/admin/reportes/ventas">Ventas</Link>
                     </li>
                     <li>
                       <a href="#!">Inventario</a>

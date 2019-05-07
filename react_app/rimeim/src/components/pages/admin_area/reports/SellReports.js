@@ -1,14 +1,16 @@
 import React, { Component } from "react";
-import NewNavbar from "../../layout/NewNavbar";
+import NewNavbar from "../../../layout/NewNavbarAdmin";
 
 // Functions
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from "../../../utils/MaterialFunctions";
+} from "../../../../utils/MaterialFunctions";
 
-import SellReportOptionsCard from "../../common/SellReportOptions";
-import ShowSellReports from "../../common/ShowSellReports";
+import { printDivToPDF } from "../../../../utils/printPdf";
+
+import SellReportOptionsCard from "../../../common/SellReportOptions";
+import ShowSellReports from "../../../common/ShowSellReports";
 
 class SellReports extends Component {
   componentWillMount() {
@@ -18,6 +20,10 @@ class SellReports extends Component {
   componentDidMount() {
     configMaterialComponents();
   }
+
+  onPrintPDFClick = () => {
+    printDivToPDF("report_sell", "rimeim_reporte_ventas");
+  };
 
   render() {
     return (
@@ -33,7 +39,7 @@ class SellReports extends Component {
 
             <ul className="right">
               <li>
-                <a href="#!">
+                <a href="#!" onClick={this.onPrintPDFClick}>
                   <i className="material-icons">print</i>
                 </a>
               </li>
@@ -44,7 +50,7 @@ class SellReports extends Component {
         <main>
           <div className="row">
             <div className="col s12">
-              <SellReportOptionsCard />
+              <SellReportOptionsCard is_admin={true} />
             </div>
           </div>
           <div className="row">

@@ -295,8 +295,76 @@ class Sales extends Controller
         $this->response();
     }
 
-    // ====== Helpers ========
+    // ====== Reports ========
+    public function get_report()
+    {
+        $this->usePostRequest();
+        $data = $this->validate_report_data(getJsonData());
+        $sells = [];
+        switch ($data->reporte_tipo) {
+            case "ventas_totales":
+                $sells = $this->saleModel->get_sells_reports_totals($data);
+                break;
 
+            case "ventas_detalle":
+                $sells = $this->saleModel->get_sells_reports($data);
+                $sells = $this->get_parsed_sales($sells, $data->id_local);
+                foreach ($sells as &$sale) {
+                    $sale->productos = $this->get_parsed_products_by_sell_id($sale->id);
+                }
+                break;
+        }
+        $response = [
+            'fecha_inicio' => $data->fecha_inicio,
+            'fecha_final' => $data->fecha_final,
+            'type' => $data->reporte_tipo,
+            'data' => $sells
+        ];
+        if ($data->id_local > 0) {
+            $response['local'] = $this->localModel->get_by_id($data->id_local);
+        }
+        $this->response($response);
+    }
+
+    private function validate_report_data($data)
+    {
+        $data = json_set_null_params_if_not_exists($data, ['id_local', 'id_cliente', 'fecha_inicio', 'fecha_fin']);
+        $id_local = $this->get_current_id_local();
+        $errors = [];
+        if (
+            !isset($data->reporte_tipo) ||
+            !is_string($data->reporte_tipo) ||
+            empty($data->reporte_tipo)
+        ) {
+            $errors['reporte_tipo_error'] = "Campo invalido";
+        } else {
+            $data->reporte_tipo = strtolower($data->reporte_tipo);
+        }
+        if (
+            !isset($data->fecha_inicio) ||
+            !is_string($data->fecha_inicio) ||
+            empty($data->fecha_inicio)
+        ) {
+            $errors['fecha_inicio_error'] = "Campo invalido";
+        }
+        if (
+            !isset($data->fecha_final) ||
+            !is_string($data->fecha_final) ||
+            empty($data->fecha_final)
+        ) {
+            $errors['fecha_final_error'] = "Campo invalido";
+        }
+        if (is_null($data->id_local) && !$this->is_current_user_admin()) {
+            $data->id_local = $id_local;
+        }
+        if ($data->id_local > 0 && $data->id_local != $id_local && !$this->is_current_user_admin()) {
+            $errors['local_error'] = "Local invalido";
+        }
+        $this->checkErrors($errors);
+        return $data;
+    }
+
+    // ====== Helpers ========
     // Parsed sale for /sales route
     private function get_parsed_sales($sales, $id_local)
     {

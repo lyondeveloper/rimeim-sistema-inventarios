@@ -40,6 +40,26 @@ class Sale
         return convert_to_bool_values($this->db->resultSet(), ['con_factura']);
     }
 
+    public function get_sells_reports($params)
+    {
+        $this->db->query('call proc_get_ventas_reportes(:p_id_local,:p_id_cliente, :p_fecha_inicio, :p_fecha_final);');
+        $this->db->bind(':p_id_local', $params->id_local);
+        $this->db->bind(':p_id_cliente', $params->id_cliente);
+        $this->db->bind(':p_fecha_inicio', $params->fecha_inicio);
+        $this->db->bind(':p_fecha_final', $params->fecha_final);
+        return $this->db->resultSet();
+    }
+
+    public function get_sells_reports_totals($params)
+    {
+        $this->db->query('call proc_get_ventas_reportes_totales(:p_id_local,:p_id_cliente, :p_fecha_inicio, :p_fecha_final);');
+        $this->db->bind(':p_id_local', $params->id_local);
+        $this->db->bind(':p_id_cliente', $params->id_cliente);
+        $this->db->bind(':p_fecha_inicio', $params->fecha_inicio);
+        $this->db->bind(':p_fecha_final', $params->fecha_final);
+        return $this->db->resultSet();
+    }
+
     public function getquotes()
     {
         $this->db->query('call proc_get_cotizaciones();');
