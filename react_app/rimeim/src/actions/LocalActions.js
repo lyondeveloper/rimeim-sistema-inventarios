@@ -81,6 +81,14 @@ export const deleteLocal = (id, history) => dispatch => {
     .catch(err => handleError(err, dispatch));
 };
 
+export const localsToSelectOptions = locals => {
+  const newOptions = [];
+  locals.forEach(local =>
+    newOptions.push({ value: local.id, label: local.nombre })
+  );
+  return newOptions;
+};
+
 export const localLoading = () => {
   return {
     type: LOCAL_LOADING

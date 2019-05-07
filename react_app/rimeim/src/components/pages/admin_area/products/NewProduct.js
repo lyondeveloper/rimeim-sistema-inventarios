@@ -24,6 +24,7 @@ import { getBrands } from '../../../../actions/brandActions';
 import { getVehicles } from '../../../../actions/vehicleActions';
 
 import isEmpty from '../../../../actions/isEmpty';
+import getFilesFromInput from '../../../../utils/getFilesFromInput';
 
 class NewProduct extends Component {
   state = {
@@ -126,25 +127,17 @@ class NewProduct extends Component {
   };
 
   onSelectFiles = e => {
-    const { files } = e.target;
-    const new_images = [];
-
-    for (var i = 0; i < files.length; i++) {
-      const file = files[i];
-      var reader = new FileReader();
-      reader.onload = result => {
-        new_images.push({
-          name: file.name,
-          url: result.target.result,
-          file
-        });
-
-        if (i === files.length) {
-          this.setState({ imagenes: new_images });
+    getFilesFromInput(e, new_images => {
+      const { imagenes } = this.state;
+      new_images.forEach(img => {
+        if (imagenes.findIndex(i => i.name === img.name) === -1) {
+          imagenes.push(img);
         }
-      };
-      reader.readAsDataURL(file);
-    }
+      });
+      this.setState({
+        imagenes
+      });
+    });
   };
 
   onDeleteClickFile = file => {
@@ -434,17 +427,17 @@ class NewProduct extends Component {
     return (
       <React.Fragment>
         <NavbarAdmin>
-          <div className='nav-wrapper'>
-            <a href='#!' className='brand-logo'>
+          <div className="nav-wrapper">
+            <a href="#!" className="brand-logo">
               Nuevo producto
             </a>
-            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
-              <i className='material-icons'>menu</i>
+            <a href="#!" className="sidenav-trigger" data-target="nav_sidenav">
+              <i className="material-icons">menu</i>
             </a>
-            <ul className='right'>
+            <ul className="right">
               <li>
-                <a href='#!' onClick={this.onSaveNewProduct}>
-                  <i className='material-icons'>save</i>
+                <a href="#!" onClick={this.onSaveNewProduct}>
+                  <i className="material-icons">save</i>
                 </a>
               </li>
             </ul>
@@ -452,105 +445,105 @@ class NewProduct extends Component {
         </NavbarAdmin>
 
         <main>
-          <div className='row'>
-            <div className='col s12'>
-              <div className='card'>
-                <div className='card-content'>
-                  <div className='row'>
+          <div className="row">
+            <div className="col s12">
+              <div className="card">
+                <div className="card-content">
+                  <div className="row">
                     <SelectFiles
-                      id='imagenes'
-                      label='Imagenes'
+                      id="imagenes"
+                      label="Imagenes"
                       onchange={this.onSelectFiles}
                       onDeleteFileClick={this.onDeleteClickFile}
                       multiple={true}
                       files={imagenes}
                     />
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <TextInputField
-                      id='codigo_barra'
-                      label='Codigo de barra'
+                      id="codigo_barra"
+                      label="Codigo de barra"
                       value={codigo_barra}
                       error={codigo_barra_error}
                       onchange={this.onChangeTextInput}
                       required={true}
                     />
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <TextInputField
-                      id='nombre'
-                      label='Nombre'
+                      id="nombre"
+                      label="Nombre"
                       value={nombre}
                       error={nombre_error}
                       onchange={this.onChangeTextInput}
                       required={true}
                     />
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <SelectInputField
-                      id='marca'
-                      label='Marca'
+                      id="marca"
+                      label="Marca"
                       value={marca}
                       onchange={this.onChangeTextInput}
                       options={brandOptions}
                     />
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <SelectInputField
-                      id='tipo_vehiculo'
-                      label='Tipo de vehiculo'
+                      id="tipo_vehiculo"
+                      label="Tipo de vehiculo"
                       value={tipo_vehiculo}
                       onchange={this.onChangeTextInput}
                       options={vehicleOptions}
                     />
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <TextAreaInputField
-                      id='descripcion'
-                      label='Descripcion'
+                      id="descripcion"
+                      label="Descripcion"
                       onchange={this.onChangeTextInput}
                       value={descripcion}
                       error={descripcion_error}
                     />
                   </div>
 
-                  <div className='row'>
+                  <div className="row">
                     <TextInputField
-                      id='precio'
-                      label='Precio'
-                      type='number'
+                      id="precio"
+                      label="Precio"
+                      type="number"
                       onchange={this.onChangeTextInput}
                       value={precio}
                       error={precio_error}
                       required={true}
                     />
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <TextInputField
-                      id='existencia'
-                      label='Existencia'
-                      type='number'
+                      id="existencia"
+                      label="Existencia"
+                      type="number"
                       onchange={this.onChangeTextInput}
                       value={existencia}
                       error={existencia_error}
                       required={true}
                     />
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <TextInputField
-                      id='cantidad_minima'
-                      label='Cantidad minima'
-                      type='number'
+                      id="cantidad_minima"
+                      label="Cantidad minima"
+                      type="number"
                       onchange={this.onChangeTextInput}
                       value={cantidad_minima}
                       error={cantidad_minima_error}
                       required={true}
                     />
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <CheckInputField
-                      id='es_raro'
-                      label='Es raro'
+                      id="es_raro"
+                      label="Es raro"
                       checked={es_raro}
                       onchange={this.onChangeCheckField}
                     />
@@ -558,18 +551,18 @@ class NewProduct extends Component {
                 </div>
               </div>
 
-              <div className='card'>
-                <div className='card-content'>
+              <div className="card">
+                <div className="card-content">
                   <div>
                     <h5>Distribucion</h5>
                     <button
-                      className='btn-floating right'
+                      className="btn-floating right"
                       onClick={this.onAddLocalProductClick}
                     >
-                      <i className='material-icons'>add</i>
+                      <i className="material-icons">add</i>
                     </button>
                   </div>
-                  <table className='table-bordered'>
+                  <table className="table-bordered">
                     <thead>
                       <tr>
                         <th>Local</th>
@@ -583,7 +576,7 @@ class NewProduct extends Component {
                       {locals_product.map(lp => (
                         <tr
                           key={uuid()}
-                          className='cursor-pointer'
+                          className="cursor-pointer"
                           onClick={this.onLocalProductClick.bind(this, lp)}
                         >
                           <td>{lp.local.nombre}</td>
@@ -599,21 +592,21 @@ class NewProduct extends Component {
             </div>
           </div>
 
-          <div className='modal' id='modal_local_producto'>
-            <div className='modal-content'>
+          <div className="modal" id="modal_local_producto">
+            <div className="modal-content">
               <h5>Agregar o editar producto</h5>
 
               {this.props.local.loading && <Spinner fullWidth />}
 
-              <div className='row'>
-                <div className='input-field col s12'>
+              <div className="row">
+                <div className="input-field col s12">
                   <select
-                    name='local_seleccionado'
+                    name="local_seleccionado"
                     onChange={this.onChangeTextInput}
                     value={local_seleccionado}
                     disabled={this.state.is_modal_editing ? 'disabled' : ''}
                   >
-                    <option value='0'>Seleccionar</option>
+                    <option value="0">Seleccionar</option>
                     {locals.map(local => (
                       <option
                         value={local.id}
@@ -628,33 +621,33 @@ class NewProduct extends Component {
                 </div>
               </div>
 
-              <div className='row'>
+              <div className="row">
                 <TextInputField
-                  id='local_cantidad'
-                  type='number'
-                  label='Cantidad'
+                  id="local_cantidad"
+                  type="number"
+                  label="Cantidad"
                   onchange={this.onChangeTextInput}
                   value={local_cantidad}
                   error={local_cantidad_error}
                 />
               </div>
 
-              <div className='row'>
+              <div className="row">
                 <TextInputField
-                  id='local_cantidad_minima'
-                  type='number'
-                  label='Cantidad minima'
+                  id="local_cantidad_minima"
+                  type="number"
+                  label="Cantidad minima"
                   onchange={this.onChangeTextInput}
                   value={local_cantidad_minima}
                   error={local_cantidad_minima_error}
                 />
               </div>
 
-              <div className='row'>
+              <div className="row">
                 <TextInputField
-                  id='local_ubicacion'
-                  type='text'
-                  label='Ubicacion'
+                  id="local_ubicacion"
+                  type="text"
+                  label="Ubicacion"
                   onchange={this.onChangeTextInput}
                   value={local_ubicacion}
                   error={local_ubicacion_error}
@@ -662,22 +655,22 @@ class NewProduct extends Component {
               </div>
             </div>
 
-            <div className='modal-footer'>
-              <a href='#!' className='btn-flat left modal-close'>
+            <div className="modal-footer">
+              <a href="#!" className="btn-flat left modal-close">
                 Cerrar
               </a>
 
               <a
-                href='#!'
-                className='btn red darken-3 ml-1 left'
+                href="#!"
+                className="btn red darken-3 ml-1 left"
                 onClick={this.onDeleteProductLocalClick}
               >
                 Borrar
               </a>
 
               <a
-                href='#!'
-                className='btn right'
+                href="#!"
+                className="btn right"
                 onClick={this.onClickAcceptProductLocalModal}
               >
                 Aceptar

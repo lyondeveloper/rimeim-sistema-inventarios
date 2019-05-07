@@ -11,7 +11,8 @@ import {
   GET_SELL,
   GET_SELLS,
   SELL_FAILED,
-  SELL_SUCCESS
+  SELL_SUCCESS,
+  GET_SELL_REPORT
 } from '../actions/types';
 
 import { configUserFromResponse } from './UserActions';
@@ -123,6 +124,22 @@ export const deleteQuotation = (id, history, new_url) => dispatch => {
       configUserFromResponse(response, dispatch);
       dispatch(clearErrors());
       history.push(new_url);
+    })
+    .catch(err => handleError(err, dispatch, SELL_END_LOADING));
+};
+
+export const getSellReport = jsonData => dispatch => {
+  dispatchSellLoading(dispatch);
+  axios
+    .post(`${API_URL}/sales/get_report`, jsonData)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch(clearErrors());
+      dispatch({
+        type: GET_SELL_REPORT,
+        payload: response.data
+      });
     })
     .catch(err => handleError(err, dispatch, SELL_END_LOADING));
 };

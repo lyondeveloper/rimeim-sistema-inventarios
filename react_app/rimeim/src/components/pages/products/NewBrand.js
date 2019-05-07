@@ -119,6 +119,7 @@ class NewBrand extends Component {
             <div className="col s12">
               <div className="card">
                 <div className="card-content">
+                  {this.props.brand.loading && <Spinner fullWidth />}
                   <div className="row">
                     <SelectFiles
                       id="imagen"

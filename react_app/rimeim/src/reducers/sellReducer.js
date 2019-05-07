@@ -4,14 +4,16 @@ import {
   GET_SELL,
   GET_SELLS,
   SELL_SUCCESS,
-  SELL_FAILED
-} from "../actions/types";
+  SELL_FAILED,
+  GET_SELL_REPORT
+} from '../actions/types';
 
 const initialState = {
   loading: false,
   sell_success: false,
   sell: {},
-  sells: []
+  sells: [],
+  report: {}
 };
 
 export default function(state = initialState, action) {
@@ -54,6 +56,13 @@ export default function(state = initialState, action) {
         ...state,
         loading: false,
         sell_success: false
+      };
+
+    case GET_SELL_REPORT:
+      return {
+        ...state,
+        loading: false,
+        report: action.payload
       };
 
     default:

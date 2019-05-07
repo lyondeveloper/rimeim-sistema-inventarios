@@ -27,6 +27,7 @@ import { getBrands } from '../../../../actions/brandActions';
 import { getVehicles } from '../../../../actions/vehicleActions';
 
 import isEmpty from '../../../../actions/isEmpty';
+import getFilesFromInput from '../../../../utils/getFilesFromInput';
 
 class EditProduct extends Component {
   state = {
@@ -177,25 +178,17 @@ class EditProduct extends Component {
   };
 
   onSelectFiles = e => {
-    const { files } = e.target;
-    const new_images = this.state.imagenes;
-
-    for (var i = 0; i < files.length; i++) {
-      const file = files[i];
-      var reader = new FileReader();
-      reader.onload = result => {
-        new_images.push({
-          name: file.name,
-          url: result.target.result,
-          file
-        });
-
-        if (i === files.length) {
-          this.setState({ imagenes: new_images });
+    getFilesFromInput(e, new_images => {
+      const { imagenes } = this.state;
+      new_images.forEach(img => {
+        if (imagenes.findIndex(i => i.name === img.name) === -1) {
+          imagenes.push(img);
         }
-      };
-      reader.readAsDataURL(file);
-    }
+      });
+      this.setState({
+        imagenes
+      });
+    });
   };
 
   onDeleteClickFile = file => {

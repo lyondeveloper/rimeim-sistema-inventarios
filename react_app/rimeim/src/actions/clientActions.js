@@ -99,6 +99,15 @@ export const deleteClient = (id, history, newUrl) => dispatch => {
     })
     .catch(err => handleError(err, dispatch));
 };
+
+export const clientsToSelectOptions = clients => {
+  const clientsOptions = [];
+  clients.forEach(client =>
+    clientsOptions.push({ value: client.id, label: client.nombre })
+  );
+  return clientsOptions;
+};
+
 export const clientLoading = () => {
   return {
     type: CLIENT_LOADING

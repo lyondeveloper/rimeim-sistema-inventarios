@@ -1,26 +1,24 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 // Custom Components
-import Spinner from "../../common/Spinner";
-import TextInputField from "../../common/TextInputField";
-import isEmpty from "../../../actions/isEmpty";
+import Spinner from '../../common/Spinner';
+import TextInputField from '../../common/TextInputField';
+import isEmpty from '../../../actions/isEmpty';
 
 // Functions
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from "../../../utils/MaterialFunctions";
-import img_logo from "../../../public/img/logo_rimeim.png";
-
-import { loginUser } from "../../../actions/UserActions";
+} from '../../../utils/MaterialFunctions';
+import img_logo from '../../../public/img/logo_rimeim.png';
 
 class FirstSession extends Component {
   state = {
     isInRequest: false,
-    password: "",
-    password_confirmation: "",
+    password: '',
+    password_confirmation: '',
     errors: {}
   };
 
@@ -36,19 +34,19 @@ class FirstSession extends Component {
 
   onUpdatePassword = () => {
     const { password, password_confirmation, errors } = this.state;
-    if (password.trim() === "") {
-      errors.password_error = "Campo invalido";
+    if (password.trim() === '') {
+      errors.password_error = 'Campo invalido';
     } else {
       delete errors.password_error;
     }
-    if (password_confirmation.trim() === "") {
-      errors.password_confirmation_error = "Campo invalido";
+    if (password_confirmation.trim() === '') {
+      errors.password_confirmation_error = 'Campo invalido';
     } else {
       delete errors.password_confirmation_error;
     }
 
     if (password_confirmation !== password) {
-      errors.password_confirmation_error = "Las claves no coinciden";
+      errors.password_confirmation_error = 'Las claves no coinciden';
     }
     this.setState({
       errors
