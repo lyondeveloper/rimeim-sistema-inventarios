@@ -1,14 +1,15 @@
-import React, { Component } from "react";
-import NewNavbar from "../../layout/NewNavbar";
+import React, { Component } from 'react';
+import NewNavbar from '../../layout/NewNavbar';
 
 // Functions
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from "../../../utils/MaterialFunctions";
+} from '../../../utils/MaterialFunctions';
+import { printDivToPDF } from '../../../utils/printPdf';
 
-import SellReportOptionsCard from "../../common/SellReportOptions";
-import ShowSellReports from "../../common/ShowSellReports";
+import SellReportOptionsCard from '../../common/SellReportOptions';
+import ShowSellReports from '../../common/ShowSellReports';
 
 class SellReports extends Component {
   componentWillMount() {
@@ -18,6 +19,10 @@ class SellReports extends Component {
   componentDidMount() {
     configMaterialComponents();
   }
+
+  onPrintClick = () => {
+    this.printDivToPDF('report_sell', 'rimeim_reporte_ventas');
+  };
 
   render() {
     return (
@@ -33,7 +38,7 @@ class SellReports extends Component {
 
             <ul className="right">
               <li>
-                <a href="#!">
+                <a href="#!" onClick={this.onPrintClick}>
                   <i className="material-icons">print</i>
                 </a>
               </li>

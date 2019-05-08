@@ -1,24 +1,27 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import NewNavbar from "../../layout/NewNavbar";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import NewNavbar from '../../layout/NewNavbar';
 
-import "../../../public/css/ventas.css";
+import '../../../public/css/ventas.css';
 import {
   configMaterialComponents,
   removeMaterialComponents,
   getModalInstanceById,
   notificationError
-} from "../../../utils/MaterialFunctions";
+} from '../../../utils/MaterialFunctions';
 
-import { addNewSell } from "../../../actions/sellActions";
-import isEmpty from "../../../actions/isEmpty";
+import { addNewSell } from '../../../actions/sellActions';
+import isEmpty from '../../../actions/isEmpty';
 
-import SalesGrid from "../../common/SalesGrid";
-import SearchClientModal from "../../layout/modals/SearchAndSelectClient";
-import SellConfigurationModal from "../../layout/modals/SellConfiguration";
-import SellCheckoutModal from "../../layout/modals/SellCheckout";
-import ConfirmationModal from "../../layout/modals/ConfirmationModal";
+import SalesGrid from '../../common/SalesGrid';
+import SearchClientModal from '../../layout/modals/SearchAndSelectClient';
+import SellConfigurationModal from '../../layout/modals/SellConfiguration';
+import SellCheckoutModal from '../../layout/modals/SellCheckout';
+import ConfirmationModal from '../../layout/modals/ConfirmationModal';
+import PrintQuotationModal from '../../layout/modals/PrintQuotation';
+
+import '../../../public/css/ventas.css';
 
 let is_sending_data = false;
 class NewQuotation extends Component {
@@ -27,7 +30,8 @@ class NewQuotation extends Component {
     needsReturnProducts: false,
     needsFocusToRow: false,
     needsClearAll: false,
-    component_message: "",
+    to_print: false,
+    component_message: '',
     products_data: {}
   };
 
@@ -47,7 +51,7 @@ class NewQuotation extends Component {
   onKeyDownInAllPage = evt => {
     evt = evt || window.event;
     if (evt.keyCode === 113) {
-      getModalInstanceById("search_product_and_show_info").open();
+      getModalInstanceById('search_product_and_show_info').open();
     }
   };
 
@@ -58,12 +62,12 @@ class NewQuotation extends Component {
       !nextProps.sell.loading &&
       (!nextProps.errors || isEmpty(nextProps.errors))
     ) {
-      let new_message = "";
+      let new_message = '';
       if (nextProps.sell.sell_success) {
-        new_message = "La cotizacion se ha guardado exitosamente";
+        new_message = 'La cotizacion se ha guardado exitosamente';
       } else {
         new_message =
-          "Ocurrio un error al guardar la cotizacion, por favor notifique al desarrollador";
+          'Ocurrio un error al guardar la cotizacion, por favor notifique al desarrollador';
       }
       is_sending_data = false;
       this.setState({
@@ -84,15 +88,15 @@ class NewQuotation extends Component {
       this.setState({
         needsClearAll: false
       });
-      getModalInstanceById("modal_sell_checkout").close();
-      getModalInstanceById("modal_confirmar_evento").open();
+      getModalInstanceById('modal_sell_checkout').close();
+      getModalInstanceById('modal_confirmar_evento').open();
     }
   }
 
   clearAllData = () => {
     if (
       this.state.component_message ===
-      "La cotizacion se ha guardado exitosamente"
+      'La cotizacion se ha guardado exitosamente'
     ) {
       window.location.reload();
     }
@@ -110,6 +114,20 @@ class NewQuotation extends Component {
     });
   };
 
+  onPrintCotizacion = () => {
+    this.setState({
+      needsReturnProducts: true,
+      to_print: true
+    });
+  };
+
+  onCancelPrint = () => {
+    this.setState({
+      needsReturnProducts: false,
+      to_print: false
+    });
+  };
+
   onSelectClient = client => {
     this.setState({
       currentClient: client
@@ -122,9 +140,11 @@ class NewQuotation extends Component {
       products_data: salesData
     });
     if (salesData.productos.length === 0) {
-      notificationError("No hay productos seleccioandos");
+      notificationError('No hay productos seleccioandos');
+    } else if (this.state.to_print) {
+      getModalInstanceById('modal_imprimir_cotizacion').open();
     } else {
-      getModalInstanceById("modal_sell_checkout").open();
+      getModalInstanceById('modal_sell_checkout').open();
     }
   };
 
@@ -162,7 +182,7 @@ class NewQuotation extends Component {
               </a>
             </li>
             <li>
-              <a href="#!">
+              <a href="#!" onClick={this.onPrintCotizacion}>
                 <i className="material-icons">print</i>
               </a>
             </li>
@@ -201,6 +221,7 @@ class NewQuotation extends Component {
                   className="tooltipped"
                   data-position="bottom"
                   data-tooltip="Imprimir"
+                  onClick={this.onPrintCotizacion}
                 >
                   <i className="material-icons">print</i>
                 </a>
@@ -258,6 +279,16 @@ class NewQuotation extends Component {
           es_cotizacion={true}
         />
 
+        <PrintQuotationModal
+          cotizacion={{
+            productos: products_data,
+            cliente: currentClient,
+            values: sumValues,
+            local: this.props.user.currentLocal
+          }}
+          onCancel={this.onCancelPrint}
+        />
+
         <ConfirmationModal
           title="Estado de cotizacion"
           message={component_message}
@@ -271,12 +302,14 @@ class NewQuotation extends Component {
 NewQuotation.propTypes = {
   sell: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
   addNewSell: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   sell: state.sell,
-  errors: state.errors
+  errors: state.errors,
+  user: state.user
 });
 
 export default connect(

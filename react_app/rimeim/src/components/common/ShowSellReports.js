@@ -1,17 +1,18 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import uuid from "uuid";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import uuid from 'uuid';
 
-import isEmpty from "../../actions/isEmpty";
-import { getNumberFormatted } from "../../utils/stringUtils";
-import EmptyIcon from "./EmptyIcon";
+import isEmpty from '../../actions/isEmpty';
+import { getNumberFormatted } from '../../utils/stringUtils';
+import EmptyIcon from './EmptyIcon';
 
-import Spinner from "./Spinner";
+import Spinner from './Spinner';
 
 class ShowSellReports extends Component {
   getFooter = () => {
-    return <span>Fecha</span>;
+    let fecha = new Date();
+    return <span className="d-block">Fecha: {fecha}</span>;
   };
 
   getTotalSellHeader = report => {
@@ -57,6 +58,7 @@ class ShowSellReports extends Component {
             </table>
           </div>
         </div>
+        {this.getFooter()}
       </React.Fragment>
     );
   };
@@ -111,6 +113,7 @@ class ShowSellReports extends Component {
             </div>
           </div>
         ))}
+        {this.getFooter()}
       </React.Fragment>
     );
   };
@@ -122,9 +125,9 @@ class ShowSellReports extends Component {
     if (loading) {
       reportContent = <Spinner fullWidth />;
     } else if (!isEmpty(report)) {
-      if (report.type === "ventas_totales") {
+      if (report.type === 'ventas_totales') {
         reportContent = this.getTotalSellsReport(report);
-      } else if (report.type === "ventas_detalle") {
+      } else if (report.type === 'ventas_detalle') {
         reportContent = this.getSellDetailsReport(report);
       }
     } else {
@@ -142,7 +145,7 @@ ShowSellReports.propTypes = {
 };
 
 ShowSellReports.defaultProps = {
-  id: "report_sell"
+  id: 'report_sell'
 };
 
 const mapStateToProps = state => ({
