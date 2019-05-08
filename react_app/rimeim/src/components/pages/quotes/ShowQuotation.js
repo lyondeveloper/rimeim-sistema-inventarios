@@ -18,6 +18,7 @@ import {
 } from "../../../actions/sellActions";
 import ShowSaleCard from "../../common/ShowSale";
 import ConfirmationModal from "../../layout/modals/ConfirmationModal";
+import PrintQuotationModal from "../../layout/modals/PrintQuotation";
 
 class ShowQuotation extends Component {
   componentWillMount() {
@@ -38,6 +39,30 @@ class ShowQuotation extends Component {
     this.props.deleteQuotation(match.params.id, history, "/cotizaciones");
   };
 
+  getQuotationToPrint = sell => {
+    let productos = {};
+    let values = { subtotal: 0, impuesto: 0, total: 0 };
+    let cliente = {};
+    if (sell.productos) {
+      productos.productos = sell.productos;
+    }
+    if (sell.sub_total && sell.impuesto && sell.total) {
+      values.subtotal = sell.sub_total;
+      values.impuesto = sell.impuesto;
+      values.total = sell.total;
+    }
+    if (sell.cliente) {
+      cliente.nombre = sell.cliente.nombre;
+      cliente.rtn = sell.cliente.rtn;
+    }
+    return {
+      productos: productos,
+      values: values,
+      cliente: cliente,
+      local: this.props.user.currentLocal
+    };
+  };
+
   render() {
     const { loading, sell } = this.props.sell;
     return (
@@ -51,6 +76,14 @@ class ShowQuotation extends Component {
               <i className="material-icons">menu</i>
             </a>
           </div>
+
+          <ul className="right">
+            <li>
+              <a href="#modal_imprimir_cotizacion" className="modal-trigger">
+                <i className="material-icons">print</i>
+              </a>
+            </li>
+          </ul>
         </NewNavbar>
 
         <main>
@@ -71,6 +104,11 @@ class ShowQuotation extends Component {
           message="Esta seguro de borrar esta devolucion? No se podra deshacer la accion"
           onAccept={this.onConfirmDelete}
         />
+
+        <PrintQuotationModal
+          cotizacion={this.getQuotationToPrint(sell)}
+          onCancel={() => {}}
+        />
       </React.Fragment>
     );
   }
@@ -78,12 +116,14 @@ class ShowQuotation extends Component {
 
 ShowQuotation.propTypes = {
   sell: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
   getQuotationById: PropTypes.func.isRequired,
   deleteQuotation: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  sell: state.sell
+  sell: state.sell,
+  user: state.user
 });
 
 export default connect(

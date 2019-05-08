@@ -1,27 +1,27 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import NewNavbar from '../../layout/NewNavbar';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import NewNavbar from "../../layout/NewNavbar";
 
-import '../../../public/css/ventas.css';
+import "../../../public/css/ventas.css";
 import {
   configMaterialComponents,
   removeMaterialComponents,
   getModalInstanceById,
   notificationError
-} from '../../../utils/MaterialFunctions';
+} from "../../../utils/MaterialFunctions";
 
-import { addNewSell } from '../../../actions/sellActions';
-import isEmpty from '../../../actions/isEmpty';
+import { addNewSell } from "../../../actions/sellActions";
+import isEmpty from "../../../actions/isEmpty";
 
-import SalesGrid from '../../common/SalesGrid';
-import SearchClientModal from '../../layout/modals/SearchAndSelectClient';
-import SellConfigurationModal from '../../layout/modals/SellConfiguration';
-import SellCheckoutModal from '../../layout/modals/SellCheckout';
-import ConfirmationModal from '../../layout/modals/ConfirmationModal';
-import PrintQuotationModal from '../../layout/modals/PrintQuotation';
+import SalesGrid from "../../common/SalesGrid";
+import SearchClientModal from "../../layout/modals/SearchAndSelectClient";
+import SellConfigurationModal from "../../layout/modals/SellConfiguration";
+import SellCheckoutModal from "../../layout/modals/SellCheckout";
+import ConfirmationModal from "../../layout/modals/ConfirmationModal";
+import PrintQuotationModal from "../../layout/modals/PrintQuotation";
 
-import '../../../public/css/ventas.css';
+import "../../../public/css/ventas.css";
 
 let is_sending_data = false;
 class NewQuotation extends Component {
@@ -31,7 +31,7 @@ class NewQuotation extends Component {
     needsFocusToRow: false,
     needsClearAll: false,
     to_print: false,
-    component_message: '',
+    component_message: "",
     products_data: {}
   };
 
@@ -51,7 +51,7 @@ class NewQuotation extends Component {
   onKeyDownInAllPage = evt => {
     evt = evt || window.event;
     if (evt.keyCode === 113) {
-      getModalInstanceById('search_product_and_show_info').open();
+      getModalInstanceById("search_product_and_show_info").open();
     }
   };
 
@@ -62,12 +62,12 @@ class NewQuotation extends Component {
       !nextProps.sell.loading &&
       (!nextProps.errors || isEmpty(nextProps.errors))
     ) {
-      let new_message = '';
+      let new_message = "";
       if (nextProps.sell.sell_success) {
-        new_message = 'La cotizacion se ha guardado exitosamente';
+        new_message = "La cotizacion se ha guardado exitosamente";
       } else {
         new_message =
-          'Ocurrio un error al guardar la cotizacion, por favor notifique al desarrollador';
+          "Ocurrio un error al guardar la cotizacion, por favor notifique al desarrollador";
       }
       is_sending_data = false;
       this.setState({
@@ -88,15 +88,15 @@ class NewQuotation extends Component {
       this.setState({
         needsClearAll: false
       });
-      getModalInstanceById('modal_sell_checkout').close();
-      getModalInstanceById('modal_confirmar_evento').open();
+      getModalInstanceById("modal_sell_checkout").close();
+      getModalInstanceById("modal_confirmar_evento").open();
     }
   }
 
   clearAllData = () => {
     if (
       this.state.component_message ===
-      'La cotizacion se ha guardado exitosamente'
+      "La cotizacion se ha guardado exitosamente"
     ) {
       window.location.reload();
     }
@@ -139,12 +139,13 @@ class NewQuotation extends Component {
       needsReturnProducts: false,
       products_data: salesData
     });
+
     if (salesData.productos.length === 0) {
-      notificationError('No hay productos seleccioandos');
+      notificationError("No hay productos seleccioandos");
     } else if (this.state.to_print) {
-      getModalInstanceById('modal_imprimir_cotizacion').open();
+      getModalInstanceById("modal_imprimir_cotizacion").open();
     } else {
-      getModalInstanceById('modal_sell_checkout').open();
+      getModalInstanceById("modal_sell_checkout").open();
     }
   };
 

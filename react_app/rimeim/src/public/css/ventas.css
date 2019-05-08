@@ -65,7 +65,7 @@
 
 .header-fixed > tbody > tr:after,
 .header-fixed > thead > tr:after {
-  content: '  ';
+  content: "  ";
   display: block;
   visibility: hidden;
   clear: both;
@@ -89,19 +89,19 @@
 
 /* Cotizacion */
 .div_reporte {
-  width: 594px !important;
+  width: 700px !important;
   background-color: white;
-  font-size: 10px;
+  font-size: 15px;
 }
 
 .cotizacion_header {
-  background-position-y: 10px !important;
+  background-position-y: 20px !important;
   background-size: auto 40px !important;
   text-align: center;
 }
 
 .cotizacion_header .d-block {
-  margin-bottom: 0px;
+  margin-bottom: 2px;
   padding: 0;
-  line-height: 10px;
+  line-height: 15px;
 }

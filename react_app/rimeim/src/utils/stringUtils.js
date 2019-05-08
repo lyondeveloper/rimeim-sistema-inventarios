@@ -1,4 +1,4 @@
-export const API_URL = ""; //"https://rimeim.com/api";
+export const API_URL = "https://rimeim.com/api";
 
 export const getNumberFormatted = number => {
   number = Number(number).toFixed(2);

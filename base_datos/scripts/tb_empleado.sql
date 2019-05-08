@@ -252,7 +252,8 @@ begin
         select distinct 
 					l.id,
 					l.codigo,
-					l.nombre
+					l.nombre,
+					l.descripcion_ubicacion as 'ubicacion'
 			from tb_local l
 			join tb_empleado e on e.id_local = l.id
 								and e.id_usuario = p_id

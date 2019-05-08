@@ -1,25 +1,66 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import uuid from "uuid";
 
-import { getModalInstanceById } from '../../../utils/MaterialFunctions';
-import { getNumberFormatted } from '../../../utils/stringUtils';
-import { printQuotation } from '../../../utils/printPdf';
-import { getCurrentDateToInput } from '../../../utils/dateFormat';
+import { getModalInstanceById } from "../../../utils/MaterialFunctions";
+import { getNumberFormatted } from "../../../utils/stringUtils";
+import { printQuotation } from "../../../utils/printPdf";
+import { getCurrentDateToInput } from "../../../utils/dateFormat";
+import getFilesFromInput from "../../../utils/getFilesFromInput";
+
+import TextInputField from "../../common/TextInputField";
+import SelectFiles from "../../common/SelectFiles";
 
 class PrintQuotation extends Component {
   state = {
-    url_logo: 'https://rimeim.com/files/icons/logo_rimeim.png',
-    empresa_rtn: '',
+    url_logo: "https://rimeim.com/files/icons/logo_rimeim.png",
+    files: [{ url: "https://rimeim.com/files/icons/logo_rimeim.png" }],
+    empresa_rtn: "05011982038618",
     empresa_nombre:
-      'Representaciones Industriales, Mantenimiento, Exportaciones, Importaciones, Maquinaria',
-    empresa_ubicacion: '',
-    empresa_de: 'Marco Antonio Martinez Zuniga',
-    empresa_telefono: '192812912',
-    empresa_email: 'ventas@rimeim.com'
+      "Representaciones Industriales, Mantenimiento, Exportaciones, Importaciones, Maquinaria",
+    empresa_ubicacion: "",
+    empresa_de: "Marco Antonio Martinez Zuniga",
+    empresa_telefono: "SPS +504 9481-4706 | Tegus +504 9751-2044 Honduras C.A",
+    empresa_email: "ventasrimeim@gmail.com",
+    cliente_nombre: "",
+    cliente_rtn: ""
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.cotizacion && nextProps.cotizacion.cliente) {
+      const { nombre, rtn } = nextProps.cotizacion.cliente;
+      if (nombre && rtn) {
+        this.setState({
+          cliente_nombre: nombre,
+          cliente_rtn: rtn
+        });
+      }
+    }
+
+    if (nextProps.cotizacion && nextProps.cotizacion.local) {
+      const { ubicacion } = nextProps.cotizacion.local;
+      if (ubicacion) {
+        this.setState({ empresa_ubicacion: ubicacion });
+      }
+    }
+  }
+
+  onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+
+  onChangeFiles = e => {
+    getFilesFromInput(e, files => {
+      this.setState({ files });
+    });
+  };
+
+  onDeleteFile = () => {
+    const { files, url_logo } = this.state;
+    files[0].url = url_logo;
+    this.setState({ files });
+  };
+
   hideModal = () => {
-    getModalInstanceById('modal_imprimir_cotizacion').close();
+    getModalInstanceById("modal_imprimir_cotizacion").close();
   };
 
   onCancelPrint = () => {
@@ -28,75 +69,73 @@ class PrintQuotation extends Component {
   };
 
   onPrintClick = () => {
-    printQuotation('div_print_cotizacion', 'rimeim_cotizacion', () => {
+    printQuotation("div_print_cotizacion", "rimeim_cotizacion", () => {
       this.onCancelPrint();
     });
   };
 
   getQuoteData = () => {
     const {
-      cotizacion: { cliente, productos, values, local }
+      cotizacion: { productos, values }
     } = this.props;
+    const {
+      cliente_nombre,
+      cliente_rtn,
+      files,
+      empresa_nombre,
+      empresa_de,
+      empresa_ubicacion,
+      empresa_telefono,
+      empresa_email,
+      empresa_rtn
+    } = this.state;
     let clientContent, productsContent, localContent;
 
-    if (cliente) {
-      clientContent = (
-        <div className="row">
-          <div className="col s12">
-            <h6>Cotizado a:</h6>
-            <span className="d-block">{cliente.nombre}</span>
-            <span className="d-block">RTN: {cliente.rtn}</span>
-          </div>
-        </div>
-      );
-    }
+    clientContent = (
+      <div>
+        <span className="d-block">Cotizado a:</span>
+        <span className="d-block">{cliente_nombre}</span>
+        <span className="d-block">RTN: {cliente_rtn}</span>
+      </div>
+    );
     if (productos.productos) {
       productsContent = productos.productos.map(producto => (
         <tr key={uuid()}>
           <td>{producto.nombre}</td>
           <td>{producto.cantidad}</td>
           <td>{getNumberFormatted(producto.precio)}</td>
-          <td>{getNumberFormatted(producto.cantidad * producto.precio)}</td>
+          <td style={{ textAlign: "right" }}>
+            {getNumberFormatted(producto.cantidad * producto.precio)}
+          </td>
         </tr>
       ));
     }
-    if (local) {
-      const {
-        url_logo,
-        empresa_nombre,
-        empresa_de,
-        empresa_ubicacion,
-        empresa_telefono,
-        empresa_email,
-        empresa_rtn
-      } = this.state;
-      localContent = (
-        <div className="row">
-          <div className="col s12">
-            <div
-              className="cotizacion_header mt-1"
-              style={{
-                background: `url('${url_logo}') no-repeat
-    left top`
-              }}
-            >
-              <span className="d-block">{empresa_nombre}</span>
-              <span className="d-block">De: {empresa_de}</span>
-              <span className="d-block">{empresa_ubicacion}</span>
-              <span className="d-block">TEL: {empresa_telefono}</span>
-              <span className="d-block">E-mail: {empresa_email}</span>
-              <span className="d-block">RTN: {empresa_rtn}</span>
-            </div>
+
+    localContent = (
+      <div className="row">
+        <div className="col s12">
+          <div
+            className="cotizacion_header mt-1"
+            style={{
+              background: `url('${files[0].url}') no-repeat left top / cover`
+            }}
+          >
+            <span className="d-block">{empresa_nombre}</span>
+            <span className="d-block">De: {empresa_de}</span>
+            <span className="d-block">{empresa_ubicacion}</span>
+            <span className="d-block">TEL: {empresa_telefono}</span>
+            <span className="d-block">E-mail: {empresa_email}</span>
+            <span className="d-block">RTN: {empresa_rtn}</span>
           </div>
         </div>
-      );
-    }
+      </div>
+    );
 
     return (
-      <div id="div_print_cotizacion">
+      <div id="div_print_cotizacion" className="div_reporte">
         {localContent}
         {clientContent}
-        <table className="table-stripped table-bordered">
+        <table className="table-stripped table-bordered mt-1">
           <thead>
             <tr>
               <th>PRODUCTO</th>
@@ -107,21 +146,21 @@ class PrintQuotation extends Component {
           </thead>
           <tbody>{productsContent}</tbody>
         </table>
-        <div className="row">
-          <div className="col s6" />
-          <div className="col s6" style={{ textAlign: 'right' }}>
-            <span className="d-block">
-              Sub total: Lps {getNumberFormatted(values.subtotal)}
-            </span>
-            <span className="d-block">
-              Impuesto: Lps {getNumberFormatted(values.impuesto)}
-            </span>
-            <span className="d-block">
-              Total: Lps {getNumberFormatted(values.total)}
-            </span>
-          </div>
+        <div
+          className="w-100"
+          style={{ textAlign: "right", marginRight: "5px" }}
+        >
+          <span className="d-block">
+            Sub total: Lps {getNumberFormatted(values.subtotal)}
+          </span>
+          <span className="d-block">
+            Impuesto: Lps {getNumberFormatted(values.impuesto)}
+          </span>
+          <span className="d-block">
+            Total: Lps {getNumberFormatted(values.total)}
+          </span>
         </div>
-        {getCurrentDateToInput()}
+        <span className="d-block">Fecha: {getCurrentDateToInput()}</span>
       </div>
     );
   };
@@ -130,22 +169,146 @@ class PrintQuotation extends Component {
     let quoteData = this.getQuoteData();
     return (
       <div
-        className="modal modal-fixed-footer"
+        className="modal no-padding"
         id="modal_imprimir_cotizacion"
-        style={{ width: '650px' }}
+        style={{
+          width: "750px",
+          height: "500px",
+          maxHeight: "90%"
+        }}
       >
-        <div className="modal-content div_reporte" style={{ width: '650px' }}>
-          {quoteData}
-        </div>
+        <div className="modal-content no-padding">
+          <div
+            className="card sticky-action"
+            style={{
+              height: "100%",
+              width: "100%",
+              height: "500px",
+              margin: "0"
+            }}
+          >
+            <div
+              className="card-content"
+              style={{
+                height: "445px",
+                overflowY: "scroll",
+                overflowX: "hidden"
+              }}
+            >
+              <div className="div_reporte">{quoteData}</div>
+            </div>
+            <div
+              className="card-action"
+              style={{ marginBottom: "0", height: "50px" }}
+            >
+              <a
+                href="#!"
+                className="btn-flat left"
+                onClick={this.onCancelPrint}
+              >
+                Cerrar
+              </a>
 
-        <div className="modal-footer">
-          <a href="#!" className="btn-flat left" onClick={this.onCancelPrint}>
-            Cerrar
-          </a>
+              <a href="#!" className="activator btn-flat">
+                Editar informacion
+              </a>
 
-          <a href="#!" className="btn" onClick={this.onPrintClick}>
-            Imprimir
-          </a>
+              <a href="#!" className="btn" onClick={this.onPrintClick}>
+                Imprimir
+              </a>
+            </div>
+            <div className="card-reveal">
+              <span className="card-title grey-text text-darken-4">
+                Editar informacion<i className="material-icons right">close</i>
+              </span>
+
+              <span className="d-block mt-1">Informacion de la empresa</span>
+              <div className="row">
+                <SelectFiles
+                  id="reporte_imagenes"
+                  label="Cambiar icono"
+                  multiple={false}
+                  files={this.state.files}
+                  onchange={this.onChangeFiles}
+                  onDeleteFileClick={this.onDeleteFile}
+                />
+              </div>
+
+              <div className="row">
+                <TextInputField
+                  id="empresa_nombre"
+                  label="Nombre de empresa"
+                  onchange={this.onChangeTextInput}
+                  value={this.state.empresa_nombre}
+                />
+              </div>
+
+              <div className="row">
+                <TextInputField
+                  id="empresa_de"
+                  label="De"
+                  onchange={this.onChangeTextInput}
+                  value={this.state.empresa_de}
+                />
+              </div>
+
+              <div className="row">
+                <TextInputField
+                  id="empresa_ubicacion"
+                  label="Ubicacion"
+                  onchange={this.onChangeTextInput}
+                  value={this.state.empresa_ubicacion}
+                />
+              </div>
+
+              <div className="row">
+                <TextInputField
+                  id="empresa_telefono"
+                  label="Telefono"
+                  onchange={this.onChangeTextInput}
+                  value={this.state.empresa_telefono}
+                />
+              </div>
+
+              <div className="row">
+                <TextInputField
+                  id="empresa_email"
+                  type="email"
+                  label="Email"
+                  onchange={this.onChangeTextInput}
+                  value={this.state.empresa_email}
+                />
+              </div>
+
+              <div className="row">
+                <TextInputField
+                  id="empresa_rtn"
+                  label="RTN"
+                  onchange={this.onChangeTextInput}
+                  value={this.state.empresa_rtn}
+                />
+              </div>
+
+              <span className="d-block mt-1">Informacion del cliente</span>
+              <div className="row">
+                <TextInputField
+                  id="cliente_nombre"
+                  label="Nombre del cliente"
+                  onchange={this.onChangeTextInput}
+                  value={this.state.cliente_nombre}
+                />
+              </div>
+
+              <div className="row">
+                <TextInputField
+                  id="cliente_rtn"
+                  label="RTN del cliente"
+                  onchange={this.onChangeTextInput}
+                  value={this.state.cliente_rtn}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
