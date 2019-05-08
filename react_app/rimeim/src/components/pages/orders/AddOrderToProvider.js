@@ -26,6 +26,7 @@ class AddOrderToProvider extends Component {
     cantidad: '',
     fecha_entrega: '',
     codigo: '',
+    producto_seleccionado: {},
     productos: [],
     distribucion: [],
     productos_seleccionados: [],
@@ -33,6 +34,7 @@ class AddOrderToProvider extends Component {
     needs_config_modals: true,
     editMode: false,
     searching: false,
+    showDistribution: false,
     typing: false,
     typingTimeout: 0,
     errors: {}
@@ -41,6 +43,20 @@ class AddOrderToProvider extends Component {
   componentDidMount() {
     this.props.getProviders();
     this.props.getLocals();
+
+    const { locals } = this.props.locals;
+
+    const { distribucion } = this.state;
+
+    locals.map((local, i) => {
+      distribucion.push({
+        id: local.id,
+        nombre: local.nombre,
+        id_producto: '',
+        cantidad: ''
+      });
+    });
+
     if (this.state.needs_config_modals) {
       configModals();
       this.setState({
@@ -103,14 +119,17 @@ class AddOrderToProvider extends Component {
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
-  onChangeDistributionText = (e, dis) => {
+  onChangeDistributionText = e => {
     const { distribucion } = this.state;
 
-    const index = distribucion.findIndex(d => d.id === dis.id);
+    const { id, value } = e.target;
 
-    this.setState({
-      [e.target.name[index]]: e.target.value[index]
-    });
+    const targetIndex = distribucion.findIndex(dist => dist.id === id);
+
+    if (targetIndex > -1) {
+      distribucion[targetIndex].cantidad = value;
+      this.setState({ distribucion });
+    }
   };
 
   //Metodo para seleccionar producto con checkbox
@@ -150,6 +169,45 @@ class AddOrderToProvider extends Component {
     });
   };
 
+  //Metodos para distribucion
+
+  onShowDistribution = () =>
+    this.setState({ showDistribution: !this.state.showDistribution });
+
+  onAddProductDistributionClick = product => {
+    const { distribucion } = this.state;
+
+    distribucion.forEach(dis => (dis.id_producto = product.id_producto));
+
+    this.setState({
+      distribucion,
+      producto_seleccionado: product,
+      showDistribution: !this.state.showDistribution
+    });
+  };
+
+  onAddProductDistribution = () => {
+    const { productos, producto_seleccionado, distribucion } = this.state;
+
+    const productIndex = productos.findIndex(
+      prod => prod.id_producto === producto_seleccionado.id_producto
+    );
+
+    console.log(productIndex);
+
+    distribucion.forEach(dist =>
+      productos[productIndex].distribucion.push(dist)
+    );
+
+    this.setState({
+      productos
+    });
+  };
+
+  onEditProductDistribution = () => {};
+
+  onEditProductDistributionClick = () => {};
+
   //Metodo para que cuando demos click a agregar productos, el state este limpio
   onAddProductClick = e => {
     e.preventDefault();
@@ -178,7 +236,8 @@ class AddOrderToProvider extends Component {
         id_producto: product.id,
         cantidad,
         costo: product.precio,
-        nombre: product.nombre
+        nombre: product.nombre,
+        distribucion: []
       };
 
       productos.push(productData);
@@ -237,10 +296,6 @@ class AddOrderToProvider extends Component {
     });
   };
 
-  //Adding distribution
-
-  onAddDistribution = () => {};
-
   onSubmit = e => {
     e.preventDefault();
 
@@ -271,10 +326,7 @@ class AddOrderToProvider extends Component {
     } = this.state;
 
     const { providers, loading } = this.props.providers;
-
     const { products } = this.props;
-
-    const { locals } = this.props.locals;
 
     const providerOptions = [];
 
@@ -285,16 +337,8 @@ class AddOrderToProvider extends Component {
       });
     });
 
-    locals.map((local, i) => {
-      distribucion.push({
-        nombre: local.nombre,
-        cantidad: ''
-      });
-    });
-
     let providerOrderContent;
     let searchResult;
-    let localContent;
 
     //Contenido del buscador, si esta en modo searching o en loading, mostrara spinner y cuando ya llegue la data, la mostrara o no dependiendo de cual haya sido el resultado
     if (searching || products.loading) {
@@ -388,13 +432,14 @@ class AddOrderToProvider extends Component {
                   <th>Nombre</th>
                   <th>Cantidad</th>
                   <th>Acciones</th>
+                  <th>Distribucion</th>
                 </tr>
               </thead>
-              <tbody>
-                {productos.map((p, i) =>
-                  p.eliminado ? (
-                    ''
-                  ) : (
+              {productos.map((p, i) =>
+                p.eliminado ? (
+                  ''
+                ) : (
+                  <tbody>
                     <tr key={uuid()}>
                       <td>{p.id_producto}</td>
                       <td>{p.nombre}</td>
@@ -414,16 +459,59 @@ class AddOrderToProvider extends Component {
                           create
                         </i>
                       </td>
+                      <td>
+                        {p.distribucion.length <= 0 ? (
+                          <button
+                            className='modal-trigger btn-floating'
+                            data-target={modal_distribucion_id}
+                            onClick={this.onAddProductDistributionClick.bind(
+                              this,
+                              p
+                            )}
+                          >
+                            <i className='material-icons'>add</i>
+                          </button>
+                        ) : (
+                          <i
+                            className='material-icons cursor-pointer'
+                            onClick={this.onShowDistribution}
+                          >
+                            assignment
+                          </i>
+                        )}
+                      </td>
                     </tr>
-                  )
-                )}
-              </tbody>
+                    {p.distribucion.length > 0 &&
+                    this.state.showDistribution ? (
+                      <div className='card'>
+                        <div className='card-title'>Distribucion</div>
+                        <div className='card-content'>
+                          {p.distribucion.map(dist => (
+                            <React.Fragment>
+                              <span className='d-block'>
+                                {' '}
+                                Para {dist.nombre}{' '}
+                              </span>
+                              <span className='d-block'>
+                                {' '}
+                                Cantidad: {dist.cantidad}
+                              </span>
+                            </React.Fragment>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                  </tbody>
+                )
+              )}
             </table>
           ) : (
             ''
           )}
 
-          <div className='d-block center'>
+          {/* <div className='d-block center'>
             <h5>Agregar Distribucion</h5>
             <button
               className='modal-trigger btn-floating'
@@ -432,7 +520,7 @@ class AddOrderToProvider extends Component {
               <i className='material-icons'>add</i>
             </button>
           </div>
-
+          */}
           <div className='d-block center mt-1'>
             <button className='btn' type='submit'>
               Guardar{' '}
@@ -499,28 +587,27 @@ class AddOrderToProvider extends Component {
         </div>
 
         {/* AGREGAR DISTRIBUCION MODAL */}
+
+        {this.props.locals.loading && <Spinner fullWidth />}
         <div className='modal' id={modal_distribucion_id}>
           <div className='modal-content'>
             <h5>Agregar Distribucion de Productos</h5>
 
             {distribucion.map((dis, i) => (
-              <React.Fragment>
-                <div className='row'>
-                  <TextInputField
-                    id={'cantidad'}
-                    label={`Para ${dis.nombre}`}
-                    onchange={this.onChangeDistributionText.bind(this, dis)}
-                    value={dis.cantidad}
-                  />
-                </div>
-              </React.Fragment>
+              <div className='row' id={uuid()}>
+                <TextInputField
+                  id={dis.id}
+                  label={`Para ${dis.nombre}`}
+                  onchange={this.onChangeDistributionText}
+                  value={dis.cantidad}
+                />
+              </div>
             ))}
           </div>
           <div className='modal-footer'>
             <a
               href='#!'
               className='modal-close waves-effect waves-green btn text-white'
-              onClick={this.onCloseProviderModal}
             >
               Cerrar
             </a>
@@ -528,7 +615,9 @@ class AddOrderToProvider extends Component {
               href='#!'
               className='modal-close waves-effect waves-blue btn left text-white'
               onClick={
-                this.state.editMode ? this.onEditProduct : this.onAddProduct
+                this.state.editMode
+                  ? this.onEditProductDistribution
+                  : this.onAddProductDistribution
               }
             >
               Guardar
