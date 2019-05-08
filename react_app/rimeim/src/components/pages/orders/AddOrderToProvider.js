@@ -15,16 +15,19 @@ import TextInputField from '../../common/TextInputField';
 import { getProviders } from '../../../actions/providerActions';
 import { createOrder } from '../../../actions/orderActions';
 import { searchProduct } from '../../../actions/productActions';
+import { getLocals } from '../../../actions/LocalActions';
 
-class EditOrderToProvider extends Component {
+class AddOrderToProvider extends Component {
   state = {
     modal_id: 'modal_agregar_productos_proveedor',
+    modal_distribucion_id: 'modal_agregar_distribucion_proveedor',
     field: '',
     id_proveedor: '',
     cantidad: '',
     fecha_entrega: '',
     codigo: '',
     productos: [],
+    distribucion: [],
     productos_seleccionados: [],
     needs_config_selects: false,
     needs_config_modals: true,
@@ -37,6 +40,7 @@ class EditOrderToProvider extends Component {
 
   componentDidMount() {
     this.props.getProviders();
+    this.props.getLocals();
     if (this.state.needs_config_modals) {
       configModals();
       this.setState({
@@ -98,6 +102,16 @@ class EditOrderToProvider extends Component {
   };
 
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+
+  onChangeDistributionText = (e, dis) => {
+    const { distribucion } = this.state;
+
+    const index = distribucion.findIndex(d => d.id === dis.id);
+
+    this.setState({
+      [e.target.name[index]]: e.target.value[index]
+    });
+  };
 
   //Metodo para seleccionar producto con checkbox
   onSelectProduct = producto => {
@@ -223,6 +237,10 @@ class EditOrderToProvider extends Component {
     });
   };
 
+  //Adding distribution
+
+  onAddDistribution = () => {};
+
   onSubmit = e => {
     e.preventDefault();
 
@@ -247,12 +265,16 @@ class EditOrderToProvider extends Component {
       field,
       codigo,
       fecha_entrega,
-      modal_id
+      distribucion,
+      modal_id,
+      modal_distribucion_id
     } = this.state;
 
     const { providers, loading } = this.props.providers;
 
     const { products } = this.props;
+
+    const { locals } = this.props.locals;
 
     const providerOptions = [];
 
@@ -263,9 +285,16 @@ class EditOrderToProvider extends Component {
       });
     });
 
-    let providerOrderContent;
+    locals.map((local, i) => {
+      distribucion.push({
+        nombre: local.nombre,
+        cantidad: ''
+      });
+    });
 
+    let providerOrderContent;
     let searchResult;
+    let localContent;
 
     //Contenido del buscador, si esta en modo searching o en loading, mostrara spinner y cuando ya llegue la data, la mostrara o no dependiendo de cual haya sido el resultado
     if (searching || products.loading) {
@@ -339,16 +368,16 @@ class EditOrderToProvider extends Component {
               onchange={this.onChangeTextInput}
               value={fecha_entrega}
             />
-            <div className='d-block center'>
-              <h5>Agregar Productos</h5>
-              <button
-                className='modal-trigger btn-floating'
-                data-target={modal_id}
-                onClick={this.onAddProductClick}
-              >
-                <i className='material-icons'>add</i>
-              </button>
-            </div>
+          </div>
+          <div className='d-block center'>
+            <h5>Agregar Productos</h5>
+            <button
+              className='modal-trigger btn-floating'
+              data-target={modal_id}
+              onClick={this.onAddProductClick}
+            >
+              <i className='material-icons'>add</i>
+            </button>
           </div>
 
           {productos.length > 0 ? (
@@ -394,6 +423,16 @@ class EditOrderToProvider extends Component {
             ''
           )}
 
+          <div className='d-block center'>
+            <h5>Agregar Distribucion</h5>
+            <button
+              className='modal-trigger btn-floating'
+              data-target={modal_distribucion_id}
+            >
+              <i className='material-icons'>add</i>
+            </button>
+          </div>
+
           <div className='d-block center mt-1'>
             <button className='btn' type='submit'>
               Guardar{' '}
@@ -406,6 +445,8 @@ class EditOrderToProvider extends Component {
     return (
       <React.Fragment>
         <form onSubmit={this.onSubmit}>{providerOrderContent}</form>
+
+        {/* AGREGAR PRODUCTOS MODAL */}
         <div className='modal' id={modal_id}>
           <div className='modal-content'>
             <h5>Agregar Productos de Proveedor</h5>
@@ -456,6 +497,44 @@ class EditOrderToProvider extends Component {
             </a>
           </div>
         </div>
+
+        {/* AGREGAR DISTRIBUCION MODAL */}
+        <div className='modal' id={modal_distribucion_id}>
+          <div className='modal-content'>
+            <h5>Agregar Distribucion de Productos</h5>
+
+            {distribucion.map((dis, i) => (
+              <React.Fragment>
+                <div className='row'>
+                  <TextInputField
+                    id={'cantidad'}
+                    label={`Para ${dis.nombre}`}
+                    onchange={this.onChangeDistributionText.bind(this, dis)}
+                    value={dis.cantidad}
+                  />
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+          <div className='modal-footer'>
+            <a
+              href='#!'
+              className='modal-close waves-effect waves-green btn text-white'
+              onClick={this.onCloseProviderModal}
+            >
+              Cerrar
+            </a>
+            <a
+              href='#!'
+              className='modal-close waves-effect waves-blue btn left text-white'
+              onClick={
+                this.state.editMode ? this.onEditProduct : this.onAddProduct
+              }
+            >
+              Guardar
+            </a>
+          </div>
+        </div>
       </React.Fragment>
     );
   }
@@ -464,10 +543,11 @@ class EditOrderToProvider extends Component {
 const mapStateToProps = state => ({
   providers: state.provider,
   products: state.product,
+  locals: state.local,
   orders: state.order
 });
 
 export default connect(
   mapStateToProps,
-  { getProviders, searchProduct, createOrder }
-)(withRouter(EditOrderToProvider));
+  { getProviders, searchProduct, createOrder, getLocals }
+)(withRouter(AddOrderToProvider));

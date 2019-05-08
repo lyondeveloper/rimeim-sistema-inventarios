@@ -155,7 +155,7 @@ class NewClient extends Component {
     } = this.state;
 
     const productIndex = productos_especiales.findIndex(
-      p => p.id === producto_seleccionado
+      p => p.id_producto === producto_seleccionado
     );
 
     productos_especiales[productIndex].precio = precio_especial;
@@ -185,7 +185,7 @@ class NewClient extends Component {
     const { productos_especiales } = this.state;
 
     const productIndex = productos_especiales.findIndex(
-      p => p.id.toString() === producto.id
+      p => p.id_producto === producto.id_producto
     );
 
     delete productos_especiales[productIndex].actualizado;
