@@ -27,6 +27,13 @@ class SaleProduct
         return $this->db->resultSet();
     }
 
+    public function get_by_id($id)
+    {
+        $this->db->query('call proc_get_venta_producto_by_id(:p_id);');
+        $this->db->bind(':p_id', $id);
+        return $this->db->single();
+    }
+
     public function add($params)
     {
         $this->db->query('call proc_add_venta_producto(:p_id_venta,:p_id_producto,:p_oferta,:p_precio,:p_cantidad,:p_total);');

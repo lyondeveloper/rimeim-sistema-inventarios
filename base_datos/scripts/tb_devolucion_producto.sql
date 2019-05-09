@@ -52,6 +52,10 @@ begin
 				p_id_devolucion,
 				p_id_venta_producto,
                 p_cantidad);
+
+        if(@new_id > 0) then
+            call proc_delete_venta_producto_by_id(p_id_venta_producto);
+        end if;
     end if;
     select @new_id as 'id';
 end $$

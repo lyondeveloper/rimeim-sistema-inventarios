@@ -1,29 +1,26 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import uuid from "uuid";
 
-import { getModalInstanceById } from '../../../utils/MaterialFunctions';
-import { getNumberFormatted } from '../../../utils/stringUtils';
-import { printQuotation } from '../../../utils/printPdf';
-import { getCurrentDateToInput } from '../../../utils/dateFormat';
-import getFilesFromInput from '../../../utils/getFilesFromInput';
+import { getModalInstanceById } from "../../../utils/MaterialFunctions";
+import { getNumberFormatted } from "../../../utils/stringUtils";
+import { printQuotation } from "../../../utils/printPdf";
+import { getCurrentDateToInput } from "../../../utils/dateFormat";
+import getFilesFromInput from "../../../utils/getFilesFromInput";
 
-import TextInputField from '../../common/TextInputField';
-import SelectFiles from '../../common/SelectFiles';
+import TextInputField from "../../common/TextInputField";
 
 class PrintQuotation extends Component {
   state = {
-    url_logo: 'https://rimeim.com/files/icons/logo_rimeim.png',
-    files: [{ url: 'https://rimeim.com/files/icons/logo_rimeim.png' }],
-    empresa_rtn: '05011982038618',
+    url_logo: "https://rimeim.com/files/icons/logo_rimeim.png",
+    empresa_rtn: "05011982038618",
     empresa_nombre:
-      'Representaciones Industriales, Mantenimiento, Exportaciones, Importaciones, Maquinaria',
-    empresa_ubicacion: '',
-    empresa_de: 'Marco Antonio Martinez Zuniga',
-    empresa_telefono: 'SPS +504 9481-4706 | Tegus +504 9751-2044 Honduras C.A',
-    empresa_email: 'ventasrimeim@gmail.com',
-    cliente_nombre: '',
-    cliente_rtn: ''
+      "Representaciones Industriales, Mantenimiento, Exportaciones, Importaciones, Maquinaria",
+    empresa_ubicacion: "",
+    empresa_telefono: "SPS +504 9481-4706 | Tegus +504 9751-2044 Honduras C.A",
+    empresa_email: "ventasrimeim@gmail.com",
+    cliente_nombre: "",
+    cliente_rtn: ""
   };
 
   componentWillReceiveProps(nextProps) {
@@ -53,14 +50,8 @@ class PrintQuotation extends Component {
     });
   };
 
-  onDeleteFile = () => {
-    const { files, url_logo } = this.state;
-    files[0].url = url_logo;
-    this.setState({ files });
-  };
-
   hideModal = () => {
-    getModalInstanceById('modal_imprimir_cotizacion').close();
+    getModalInstanceById("modal_imprimir_cotizacion").close();
   };
 
   onCancelPrint = () => {
@@ -69,7 +60,7 @@ class PrintQuotation extends Component {
   };
 
   onPrintClick = () => {
-    printQuotation('div_print_cotizacion', 'rimeim_cotizacion', () => {
+    printQuotation("div_print_cotizacion", "rimeim_cotizacion", () => {
       this.onCancelPrint();
     });
   };
@@ -81,9 +72,7 @@ class PrintQuotation extends Component {
     const {
       cliente_nombre,
       cliente_rtn,
-      files,
       empresa_nombre,
-      empresa_de,
       empresa_ubicacion,
       empresa_telefono,
       empresa_email,
@@ -93,8 +82,7 @@ class PrintQuotation extends Component {
 
     clientContent = (
       <div>
-        <span className="d-block">Cotizado a:</span>
-        <span className="d-block">{cliente_nombre}</span>
+        <span className="d-block">Cotizado a: {cliente_nombre}</span>
         <span className="d-block">RTN: {cliente_rtn}</span>
       </div>
     );
@@ -104,7 +92,7 @@ class PrintQuotation extends Component {
           <td>{producto.nombre}</td>
           <td>{producto.cantidad}</td>
           <td>{getNumberFormatted(producto.precio)}</td>
-          <td style={{ textAlign: 'right' }}>
+          <td style={{ textAlign: "right" }}>
             {getNumberFormatted(producto.cantidad * producto.precio)}
           </td>
         </tr>
@@ -113,20 +101,12 @@ class PrintQuotation extends Component {
 
     localContent = (
       <div className="row">
-        <div className="col s12">
-          <div
-            className="cotizacion_header mt-1"
-            style={{
-              background: `url('${files[0].url}') no-repeat left top / cover`
-            }}
-          >
-            <span className="d-block">{empresa_nombre}</span>
-            <span className="d-block">De: {empresa_de}</span>
-            <span className="d-block">{empresa_ubicacion}</span>
-            <span className="d-block">TEL: {empresa_telefono}</span>
-            <span className="d-block">E-mail: {empresa_email}</span>
-            <span className="d-block">RTN: {empresa_rtn}</span>
-          </div>
+        <div className="cotizacion_header mt-1">
+          <span className="d-block">{empresa_nombre}</span>
+          <span className="d-block">{empresa_ubicacion}</span>
+          <span className="d-block">TEL: {empresa_telefono}</span>
+          <span className="d-block">E-mail: {empresa_email}</span>
+          <span className="d-block">RTN: {empresa_rtn}</span>
         </div>
       </div>
     );
@@ -148,7 +128,7 @@ class PrintQuotation extends Component {
         </table>
         <div
           className="w-100"
-          style={{ textAlign: 'right', marginRight: '5px' }}
+          style={{ textAlign: "right", marginRight: "5px" }}
         >
           <span className="d-block">
             Sub total: Lps {getNumberFormatted(values.subtotal)}
@@ -172,33 +152,33 @@ class PrintQuotation extends Component {
         className="modal no-padding"
         id="modal_imprimir_cotizacion"
         style={{
-          width: '750px',
-          height: '500px',
-          maxHeight: '90%'
+          width: "750px",
+          height: "500px",
+          maxHeight: "90%"
         }}
       >
         <div className="modal-content no-padding">
           <div
             className="card sticky-action"
             style={{
-              width: '100%',
-              height: '500px',
-              margin: '0'
+              width: "100%",
+              height: "500px",
+              margin: "0"
             }}
           >
             <div
               className="card-content"
               style={{
-                height: '445px',
-                overflowY: 'scroll',
-                overflowX: 'hidden'
+                height: "445px",
+                overflowY: "scroll",
+                overflowX: "hidden"
               }}
             >
               <div className="div_reporte">{quoteData}</div>
             </div>
             <div
               className="card-action"
-              style={{ marginBottom: '0', height: '50px' }}
+              style={{ marginBottom: "0", height: "50px" }}
             >
               <a
                 href="#!"
@@ -222,16 +202,6 @@ class PrintQuotation extends Component {
               </span>
 
               <span className="d-block mt-1">Informacion de la empresa</span>
-              <div className="row">
-                <SelectFiles
-                  id="reporte_imagenes"
-                  label="Cambiar icono"
-                  multiple={false}
-                  files={this.state.files}
-                  onchange={this.onChangeFiles}
-                  onDeleteFileClick={this.onDeleteFile}
-                />
-              </div>
 
               <div className="row">
                 <TextInputField
@@ -239,15 +209,6 @@ class PrintQuotation extends Component {
                   label="Nombre de empresa"
                   onchange={this.onChangeTextInput}
                   value={this.state.empresa_nombre}
-                />
-              </div>
-
-              <div className="row">
-                <TextInputField
-                  id="empresa_de"
-                  label="De"
-                  onchange={this.onChangeTextInput}
-                  value={this.state.empresa_de}
                 />
               </div>
 

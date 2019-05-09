@@ -4,7 +4,7 @@
     al servidor referentes a VENTAS
 */
 
-import axios from 'axios';
+import axios from "axios";
 import {
   SELL_LOADING,
   SELL_END_LOADING,
@@ -13,12 +13,12 @@ import {
   SELL_FAILED,
   SELL_SUCCESS,
   GET_SELL_REPORT
-} from '../actions/types';
+} from "../actions/types";
 
-import { configUserFromResponse } from './UserActions';
-import { handleError, clearErrors } from './errorActions';
+import { configUserFromResponse } from "./UserActions";
+import { handleError, clearErrors } from "./errorActions";
 
-import { API_URL } from '../utils/stringUtils';
+import { API_URL } from "../utils/stringUtils";
 
 export const getSells = () => dispatch => {
   dispatchSellLoading(dispatch);
@@ -124,6 +124,19 @@ export const deleteQuotation = (id, history, new_url) => dispatch => {
       configUserFromResponse(response, dispatch);
       dispatch(clearErrors());
       history.push(new_url);
+    })
+    .catch(err => handleError(err, dispatch, SELL_END_LOADING));
+};
+
+export const addDevolution = (id_sell, devolutionData, history) => dispatch => {
+  dispatchSellLoading(dispatch);
+  axios
+    .post(`${API_URL}/sales/new_devolution/${id_sell}`, devolutionData)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch(clearErrors());
+      history.push(`/devoluciones/${response.id}`);
     })
     .catch(err => handleError(err, dispatch, SELL_END_LOADING));
 };

@@ -16,17 +16,21 @@ delimiter ;
 
 drop procedure if exists `proc_get_devoluciones`;
 delimiter $$
-create procedure proc_get_devoluciones()
+create procedure proc_get_devoluciones(in p_id_local bigint)
 begin
-	select d.id,
-			d.id_venta,
-            d.id_empleado_creado_por,
-            d.detalle,
-            d.total_devuelto,
-            d.fecha_creado
-    from tb_devolucion d
-    where d.eliminado = false
-    order by d.fecha_creado asc;
+	if(valid_int_id(p_id_local)) then 
+		select d.id,
+				d.id_venta,
+				d.id_empleado_creado_por,
+				d.detalle,
+				d.total_devuelto,
+				d.fecha_creado
+		from tb_devolucion d
+		join tb_venta v on v.id = d.id_venta
+		where d.eliminado = false
+		and v.id_local = p_id_local
+		order by d.fecha_creado asc;
+	end if;
 end $$
 delimiter ;
 
@@ -37,6 +41,12 @@ begin
 	if (valid_int_id(p_id)) then
 		select d.id,
 				d.id_venta,
+				(
+					select v.id_local
+					from tb_venta v 
+					where v.i = d.id_venta
+					limit 1
+				) as 'id_local',
 				d.id_empleado_creado_por,
 				d.detalle,
 				d.total_devuelto,
@@ -104,6 +114,11 @@ create procedure proc_delete_devolucion_by_id(in p_id bigint,
 begin
 	if (valid_int_id(p_id) and 
 		valid_int_id(p_id_empleado_eliminado_por)) then
+		update tb_devolucion_producto 
+		set eliminado = true,
+			fecha_creado = current_timestamp()
+		where id_devolucion = p_id;
+
 		update tb_devolucion
         set eliminado = true,
 			fecha_eliminado = current_timestamp(),

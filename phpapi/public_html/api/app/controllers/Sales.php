@@ -27,6 +27,9 @@ class Sales extends Controller
         $this->localModel = $this->model('Local');
         $this->productModel = $this->model('Product');
         $this->productLocalModel = $this->model('ProductLocal');
+
+        $this->devolution = $this->model('Devolution');
+        $this->devolutionProduct = $this->model('DevolutionProduct');
     }
 
     public function get()
