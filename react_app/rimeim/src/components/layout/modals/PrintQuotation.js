@@ -1,29 +1,29 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import uuid from "uuid";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import uuid from 'uuid';
 
-import { getModalInstanceById } from "../../../utils/MaterialFunctions";
-import { getNumberFormatted } from "../../../utils/stringUtils";
-import { printQuotation } from "../../../utils/printPdf";
-import { getCurrentDateToInput } from "../../../utils/dateFormat";
-import getFilesFromInput from "../../../utils/getFilesFromInput";
+import { getModalInstanceById } from '../../../utils/MaterialFunctions';
+import { getNumberFormatted } from '../../../utils/stringUtils';
+import { printQuotation } from '../../../utils/printPdf';
+import { getCurrentDateToInput } from '../../../utils/dateFormat';
+import getFilesFromInput from '../../../utils/getFilesFromInput';
 
-import TextInputField from "../../common/TextInputField";
-import SelectFiles from "../../common/SelectFiles";
+import TextInputField from '../../common/TextInputField';
+import SelectFiles from '../../common/SelectFiles';
 
 class PrintQuotation extends Component {
   state = {
-    url_logo: "https://rimeim.com/files/icons/logo_rimeim.png",
-    files: [{ url: "https://rimeim.com/files/icons/logo_rimeim.png" }],
-    empresa_rtn: "05011982038618",
+    url_logo: 'https://rimeim.com/files/icons/logo_rimeim.png',
+    files: [{ url: 'https://rimeim.com/files/icons/logo_rimeim.png' }],
+    empresa_rtn: '05011982038618',
     empresa_nombre:
-      "Representaciones Industriales, Mantenimiento, Exportaciones, Importaciones, Maquinaria",
-    empresa_ubicacion: "",
-    empresa_de: "Marco Antonio Martinez Zuniga",
-    empresa_telefono: "SPS +504 9481-4706 | Tegus +504 9751-2044 Honduras C.A",
-    empresa_email: "ventasrimeim@gmail.com",
-    cliente_nombre: "",
-    cliente_rtn: ""
+      'Representaciones Industriales, Mantenimiento, Exportaciones, Importaciones, Maquinaria',
+    empresa_ubicacion: '',
+    empresa_de: 'Marco Antonio Martinez Zuniga',
+    empresa_telefono: 'SPS +504 9481-4706 | Tegus +504 9751-2044 Honduras C.A',
+    empresa_email: 'ventasrimeim@gmail.com',
+    cliente_nombre: '',
+    cliente_rtn: ''
   };
 
   componentWillReceiveProps(nextProps) {
@@ -60,7 +60,7 @@ class PrintQuotation extends Component {
   };
 
   hideModal = () => {
-    getModalInstanceById("modal_imprimir_cotizacion").close();
+    getModalInstanceById('modal_imprimir_cotizacion').close();
   };
 
   onCancelPrint = () => {
@@ -69,7 +69,7 @@ class PrintQuotation extends Component {
   };
 
   onPrintClick = () => {
-    printQuotation("div_print_cotizacion", "rimeim_cotizacion", () => {
+    printQuotation('div_print_cotizacion', 'rimeim_cotizacion', () => {
       this.onCancelPrint();
     });
   };
@@ -104,7 +104,7 @@ class PrintQuotation extends Component {
           <td>{producto.nombre}</td>
           <td>{producto.cantidad}</td>
           <td>{getNumberFormatted(producto.precio)}</td>
-          <td style={{ textAlign: "right" }}>
+          <td style={{ textAlign: 'right' }}>
             {getNumberFormatted(producto.cantidad * producto.precio)}
           </td>
         </tr>
@@ -148,7 +148,7 @@ class PrintQuotation extends Component {
         </table>
         <div
           className="w-100"
-          style={{ textAlign: "right", marginRight: "5px" }}
+          style={{ textAlign: 'right', marginRight: '5px' }}
         >
           <span className="d-block">
             Sub total: Lps {getNumberFormatted(values.subtotal)}
@@ -172,34 +172,33 @@ class PrintQuotation extends Component {
         className="modal no-padding"
         id="modal_imprimir_cotizacion"
         style={{
-          width: "750px",
-          height: "500px",
-          maxHeight: "90%"
+          width: '750px',
+          height: '500px',
+          maxHeight: '90%'
         }}
       >
         <div className="modal-content no-padding">
           <div
             className="card sticky-action"
             style={{
-              height: "100%",
-              width: "100%",
-              height: "500px",
-              margin: "0"
+              width: '100%',
+              height: '500px',
+              margin: '0'
             }}
           >
             <div
               className="card-content"
               style={{
-                height: "445px",
-                overflowY: "scroll",
-                overflowX: "hidden"
+                height: '445px',
+                overflowY: 'scroll',
+                overflowX: 'hidden'
               }}
             >
               <div className="div_reporte">{quoteData}</div>
             </div>
             <div
               className="card-action"
-              style={{ marginBottom: "0", height: "50px" }}
+              style={{ marginBottom: '0', height: '50px' }}
             >
               <a
                 href="#!"

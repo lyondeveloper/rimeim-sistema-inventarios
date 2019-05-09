@@ -188,7 +188,7 @@ drop procedure if exists proc_get_usuario_to_auth;
 delimiter $$ 
 create procedure proc_get_usuario_to_auth(in p_field varchar(200))
 begin
-	set p_field = trim_and_lower(p_field);
+	set p_field = trim(p_field);
 	if (!is_empty(p_field)) then
 		select u.id,
 				u.nombre,
@@ -215,8 +215,8 @@ create procedure proc_add_usuario(in p_nombre varchar(200),
                                     in p_admin boolean,
                                     in p_id_usuario_agregado_por bigint(20))
 begin
-	set p_nombre = trim_and_lower(p_nombre);
-    set p_nombre_usuario = trim_and_lower(p_nombre_usuario);
+	set p_nombre = trim(p_nombre);
+    set p_nombre_usuario = trim(p_nombre_usuario);
     set p_correo = trim_and_lower(p_correo);
     set p_admin = default_bool_value(p_admin, false);
     
@@ -315,8 +315,8 @@ begin
 	if(valid_int_id(p_id_usuario) and
 		p_habilitado is not null and
         p_admin is not null) then
-		set p_nombre = trim_and_lower(p_nombre);
-		set p_nombre_usuario = trim_and_lower(p_nombre_usuario);
+		set p_nombre = trim(p_nombre);
+		set p_nombre_usuario = trim(p_nombre_usuario);
     
 		UPDATE tb_usuario
 		set nombre = p_nombre,

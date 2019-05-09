@@ -14,7 +14,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists `proc_get_producto_imagenes_by_producto`;
 delimiter $$
 create procedure proc_get_producto_imagenes_by_producto(in p_id_producto bigint)
@@ -31,7 +31,7 @@ begin
     end if;
 end $$  
 delimiter ;
-
+*/
 
 drop procedure if exists `proc_get_producto_imagen_principal_byid`;
 delimiter $$
@@ -45,7 +45,8 @@ begin
         join tb_archivo ar on ar.id = p.id_archivo
         where p.id_producto = p_id_producto
         and p.eliminado = false
-        and p.principal = true
+		and ar.eliminado = false
+        order by p.fecha_creado desc
         limit 1;
     end if;
 end $$  

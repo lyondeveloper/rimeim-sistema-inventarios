@@ -207,7 +207,8 @@ class Sales extends Controller
                 $data->metodo_pago = strtolower($data->metodo_pago);
                 if (
                     $data->metodo_pago != "efectivo" &&
-                    $data->metodo_pago != "tarjeta"
+                    $data->metodo_pago != "tarjeta" &&
+                    $data->metodo_pago != "credito"
                 ) {
                     $errors['metodo_pago_error'] = "Metodo de pago invalido: " . $data->metodo_pago;
                 }

@@ -166,7 +166,7 @@ create procedure proc_add_cliente(in id_local_registrado bigint,
                                     in p_telefono varchar(50),
                                     in p_es_empresa boolean)
 begin
-	set p_nombre = trim_and_lower(p_nombre);
+	set p_nombre = trim(p_nombre);
     set p_codigo = trim(p_codigo);
     set p_rtn = lower(remove_spaces(p_rtn));
     set p_correo = lower(remove_spaces(p_correo));
@@ -244,7 +244,7 @@ create procedure proc_update_cliente_by_id(in p_id bigint,
                                             in p_telefono varchar(50),
                                             in p_es_empresa boolean)
 begin
-	set p_nombre = trim_and_lower(p_nombre);
+	set p_nombre = trim(p_nombre);
     set p_codigo = trim(p_codigo);
     set p_rtn = lower(remove_spaces(p_rtn));
     set p_correo = lower(remove_spaces(p_correo));

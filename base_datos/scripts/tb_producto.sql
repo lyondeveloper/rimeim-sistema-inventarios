@@ -30,105 +30,209 @@ end $$
 delimiter ;
 */
 
-/*
+
 drop procedure if exists `proc_search_producto`;
 delimiter $$
-create procedure proc_search_producto(in p_field varchar(255), in p_id_local bigint)
+create procedure proc_search_producto(in p_field varchar(255), 
+										in p_id_local bigint,
+										in p_id_marca bigint,
+                                        in p_id_tipo_vehiculo bigint,
+                                        in p_inventario_min int(255),
+                                        in p_inventario_max int(255))
 begin
     set p_field = trim(p_field);
-    if (!is_empty(p_field)) then 
-        if (p_id_local > 0) then 
-            select pl.id,
-                    pl.id_producto,
-                    pl.id_local,
-                    pl.existencia
-            from tb_producto_local pl
-            join tb_producto p on p.id = pl.id_producto
-            where p.eliminado = false and
-            pl.eliminado = false and 
-            (
-                p.nombre like concat('%', p_field ,'%') or 
-                p.codigo_barra like concat('%', p_field ,'%')
-            ) and 
-            pl.id_local = p_id_local
-            order by p.nombre asc;   
-
-        else 
-            select p.id,
-                    p.id_tipo_vehiculo,
-                    p.id_marca,
-                    p.nombre,
-                    p.precio,
-                    p.existencia
-            from tb_producto p
-            where p.eliminado = false
-            and (
-                p.nombre like concat('%', p_field ,'%') or 
-                p.codigo_barra like concat('%', p_field ,'%')
-            )
-            order by p.nombre asc;
+    set @sql_query = "";
+	set @p_field = p_field;
+	set @p_id_local = p_id_local;
+	set @p_id_marca = p_id_marca;
+	set @p_id_tipo_vehiculo = p_id_tipo_vehiculo;
+    set @p_inventario_min = p_inventario_min;
+    set @p_inventario_max = p_inventario_max;
+	
+	if (p_id_local > 0) then 
+		set @sql_query = "
+		select pl.id,
+				pl.id_producto,
+				pl.id_local,
+				pl.existencia,
+                p.codigo_barra
+		from tb_producto_local pl
+		join tb_producto p on p.id = pl.id_producto
+		where p.eliminado = false and
+		pl.eliminado = false and 
+		pl.id_local = @p_id_local
+		";
+		
+        if (p_inventario_min > 0) then
+			set @sql_query = concat(@sql_query, " and pl.existencia >= @p_inventario_min ");
         end if;
-    end if;
+        
+        if (p_inventario_max > 0) then
+			set @sql_query = concat(@sql_query, " and pl.existencia <= @p_inventario_max ");
+        end if;
+        
+		if (!is_empty(p_field)) then 
+			set @sql_query = concat(@sql_query, " and (
+			p.nombre like concat('%', @p_field ,'%') or 
+			p.codigo_barra like concat('%', @p_field ,'%') or 
+			p.id = @p_field
+		) ");
+		end if;
+	else 
+		set @sql_query = "
+		select p.id,
+				p.id_tipo_vehiculo,
+				p.id_marca,
+                p.codigo_barra,
+				p.nombre,
+				p.precio,
+				p.existencia
+		from tb_producto p
+		where p.eliminado = false ";
+        
+        if (p_inventario_min > 0) then
+			set @sql_query = concat(@sql_query, " and p.existencia >= @p_inventario_min ");
+        end if;
+        
+        if (p_inventario_max > 0) then
+			set @sql_query = concat(@sql_query, " and p.existencia <= @p_inventario_max ");
+        end if;
+		
+		if (!is_empty(p_field)) then 
+			set @sql_query = concat(@sql_query, " and (
+			p.nombre like concat('%', @p_field ,'%') or 
+			p.codigo_barra like concat('%', @p_field ,'%') or 
+			p.id = @p_field
+		) ");
+		end if;
+	end if;
+	
+	if (valid_int_id(p_id_marca)) then
+		set @sql_query = concat(@sql_query, " and p.id_marca = @p_id_marca ");
+	end if;
+	
+	if (valid_int_id(p_id_tipo_vehiculo)) then 
+		set @sql_query = concat(@sql_query, " and p.id_tipo_vehiculo = @p_id_tipo_vehiculo ");
+	end if;
+	set @sql_query = concat(@sql_query, " order by p.nombre asc;");  
+	
+	PREPARE sql_statement FROM @sql_query;
+	EXECUTE sql_statement;
 end $$
 delimiter ;
-*/
+
+
+
 
 drop procedure if exists `proc_search_producto_by_field_and_provider`;
 delimiter $$
 create procedure proc_search_producto_by_field_and_provider(in p_field varchar(255), 
                                                             in p_id_local bigint,
-                                                            in p_id_proveedor bigint)
+                                                            in p_id_proveedor bigint,
+                                                            in p_id_marca bigint,
+															in p_id_tipo_vehiculo bigint,
+                                                            in p_inventario_min int(255),
+															in p_inventario_max int(255))
 begin
     set p_field = trim(p_field);
-    if (!is_empty(p_field)) then 
-        if (p_id_local > 0) then 
-            select distinct pl.id,
-                    pl.id_producto,
-                    pl.id_local,
-                    pl.existencia,
-                    (
-                      	select pp.precio
-                        from tb_proveedor_producto pp 
-                        where pp.id_producto = pl.id_producto
-                        and pp.eliminado = false
-                    ) as 'precio'
-            from tb_producto_local pl
-            join tb_producto p on p.id = pl.id_producto
-            where p.eliminado = false and
-            pl.eliminado = false and 
-            (
-                p.nombre like concat('%', p_field ,'%') or 
-                p.codigo_barra like concat('%', p_field ,'%') or 
-                p.id = p_field
+    
+    set @sql_query = "";
+	set @p_field = p_field;
+	set @p_id_local = p_id_local;
+	set @p_id_proveedor = p_id_proveedor;
+	set @p_id_marca = p_id_marca;
+	set @p_id_tipo_vehiculo = p_id_tipo_vehiculo;
+    set @p_inventario_min = p_inventario_min;
+    set @p_inventario_max = p_inventario_max;
 
-            ) and 
-            pl.id_local = 1
-            order by p.nombre asc; 
-
-        else 
-            select distinct p.id,
-                    p.id_tipo_vehiculo,
-                    p.id_marca,
-                    p.nombre,
-                    (
-                      	select pp.precio
-                        from tb_proveedor_producto pp 
-                        where pp.id_producto = p.id_producto
-                        and pp.eliminado = false
-                    ) as 'precio',
-                    p.existencia
-            from tb_producto p
-            where p.eliminado = false
-            and (
-                p.nombre like concat('%', p_field ,'%') or 
-                p.codigo_barra like concat('%', p_field ,'%') or 
-                p.id = p_field
-            )
-            order by p.nombre asc;
+	if (p_id_local > 0) then 
+		set @sql_query = "
+		select distinct pl.id,
+				pl.id_producto,
+				pl.id_local,
+				pl.existencia,
+                p.codigo_barra,
+				(
+					select pp.precio
+					from tb_proveedor_producto pp 
+					where pp.id_producto = pl.id_producto
+					and pp.id = @p_id_proveedor
+					and pp.eliminado = false
+				) as 'precio'
+		from tb_producto_local pl
+		join tb_producto p on p.id = pl.id_producto
+		where p.eliminado = false and
+		pl.eliminado = false and 
+        pl.id_local = @p_id_local 
+		";
+        
+        if (p_inventario_min > 0) then
+			set @sql_query = concat(@sql_query, " and pl.existencia >= @p_inventario_min ");
         end if;
-    end if;
+        
+        if (p_inventario_max > 0) then
+			set @sql_query = concat(@sql_query, " and pl.existencia <= @p_inventario_max ");
+        end if;
+        
+        if (!is_empty(p_field)) then 
+			set @sql_query = concat(@sql_query, " and (
+			p.nombre like concat('%', @p_field ,'%') or 
+			p.codigo_barra like concat('%', @p_field ,'%') or 
+			p.id = @p_field
+		) ");
+        end if;
+	else 
+		set @sql_query = "
+		select distinct p.id,
+				p.id_tipo_vehiculo,
+				p.id_marca,
+				p.nombre,
+                p.codigo_barra,
+				(
+					select pp.precio
+					from tb_proveedor_producto pp 
+					where pp.id_producto = p.id
+					and pp.id = @p_id_proveedor
+					and pp.eliminado = false
+				) as 'precio',
+				p.existencia
+		from tb_producto p
+		where p.eliminado = false";
+        
+        if (p_inventario_min > 0) then
+			set @sql_query = concat(@sql_query, " and p.existencia >= @p_inventario_min ");
+        end if;
+        
+        if (p_inventario_max > 0) then
+			set @sql_query = concat(@sql_query, " and p.existencia <= @p_inventario_max ");
+        end if;
+        
+        if (!is_empty(p_field)) then 
+			set @sql_query = concat(@sql_query, " and (
+			p.nombre like concat('%', @p_field ,'%') or 
+			p.codigo_barra like concat('%', @p_field ,'%') or 
+			p.id = @p_field
+		) ");
+        end if;
+	end if;
+	
+	if (valid_int_id(p_id_marca)) then
+		set @sql_query = concat(@sql_query, " and p.id_marca = @p_id_marca ");
+	end if;
+	
+	if (valid_int_id(p_id_tipo_vehiculo)) then 
+		set @sql_query = concat(@sql_query, " and p.id_tipo_vehiculo = @p_id_tipo_vehiculo ");
+	end if;
+	
+	if (!valid_int_id(p_id_local)) then
+		set @sql_query = concat(@sql_query, " order by p.nombre asc;");  
+	end if;
+	
+	PREPARE sql_statement FROM @sql_query;
+	EXECUTE sql_statement;
 end $$
 delimiter ;
+
 
 /*
 drop procedure if exists `proc_get_producto_by_id`;
@@ -405,7 +509,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists proc_remove_producto_inventario;
 delimiter $$
 create procedure proc_remove_producto_inventario(in p_id bigint,
@@ -432,3 +536,4 @@ begin
 	end if;
 end $$
 delimiter ;
+*/

@@ -18,20 +18,28 @@ class Product
         return $this->convert_product_bool_values($this->db->resultSet());
     }
 
-    public function search($field, $id_local)
+    public function search($params)
     {
-        $this->db->query('call proc_search_producto(:p_field, :p_id_local);');
-        $this->db->bind(':p_field', $field);
-        $this->db->bind(':p_id_local', $id_local);
+        $this->db->query('call proc_search_producto(:p_field, :p_id_local, :p_id_marca, :p_id_tipo_vehiculo, :p_inventario_min, :p_inventario_max);');
+        $this->db->bind(':p_field', $params->field);
+        $this->db->bind(':p_id_local', $params->id_local);
+        $this->db->bind(':p_id_marca', $params->id_marca);
+        $this->db->bind(':p_id_tipo_vehiculo', $params->id_tipo_vehiculo);
+        $this->db->bind(':p_inventario_min', $params->inventario_min);
+        $this->db->bind(':p_inventario_max', $params->inventario_max);
         return $this->convert_product_bool_values($this->db->resultSet());
     }
 
-    public function search_with_provider($field, $id_local, $id_proveedor)
+    public function search_with_provider($params)
     {
-        $this->db->query('call proc_search_producto_by_field_and_provider(:p_field, :p_id_local, :p_id_proveedor);');
-        $this->db->bind(':p_field', $field);
-        $this->db->bind(':p_id_local', $id_local);
-        $this->db->bind(':p_id_proveedor', $id_proveedor);
+        $this->db->query('call proc_search_producto_by_field_and_provider(:p_field, :p_id_local, :p_id_proveedor, :p_id_marca, :p_id_tipo_vehiculo, :p_inventario_min, :p_inventario_max);');
+        $this->db->bind(':p_field', $params->field);
+        $this->db->bind(':p_id_local', $params->id_local);
+        $this->db->bind(':p_id_proveedor', $params->id_proveedor);
+        $this->db->bind(':p_id_marca', $params->id_marca);
+        $this->db->bind(':p_id_tipo_vehiculo', $params->id_tipo_vehiculo);
+        $this->db->bind(':p_inventario_min', $params->inventario_min);
+        $this->db->bind(':p_inventario_max', $params->inventario_max);
         return $this->convert_product_bool_values($this->db->resultSet());
     }
 

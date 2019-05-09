@@ -195,7 +195,7 @@ create procedure proc_add_proveedor(in p_id_empleado_creado_por bigint,
                                     in p_telefono varchar(100),
                                     in p_correo varchar(100))
 begin
-    set p_nombre = trim_and_lower(p_nombre);
+    set p_nombre = trim(p_nombre);
     set p_rtn = remove_spaces(p_rtn);
     set p_telefono = trim(p_telefono);
     set p_correo = remove_spaces(lower(p_correo));
@@ -241,7 +241,7 @@ create procedure proc_update_proveedor_by_id(in p_id bigint,
                                                 in p_telefono varchar(100),
                                                 in p_correo varchar(100))
 begin
-    set p_nombre = trim_and_lower(p_nombre);
+    set p_nombre = trim(p_nombre);
     set p_rtn = remove_spaces(p_rtn);
     set p_telefono = trim(p_telefono);
     set p_correo = remove_spaces(lower(p_correo));

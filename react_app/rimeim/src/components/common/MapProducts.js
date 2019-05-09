@@ -1,8 +1,10 @@
-import React from "react";
-import Spinner from "./Spinner";
-import PropTypes from "prop-types";
-import ProductCard from "./ProductCard";
-import EmptyIcon from "./EmptyIcon";
+import React from 'react';
+import Spinner from './Spinner';
+import PropTypes from 'prop-types';
+import ProductCard from './ProductCard';
+import EmptyIcon from './EmptyIcon';
+
+import uuid from 'uuid';
 
 const MapProducts = props => {
   const { loading, products, admin } = props;
@@ -12,8 +14,8 @@ const MapProducts = props => {
     productsContent = <Spinner fullWidth />;
   } else if (products.length > 0) {
     productsContent = products.map(product => (
-      <div className="col s12 m6 l4" key={`prod${product.id}`}>
-        <ProductCard product={product} key={product.id} admin={admin} />
+      <div className="col s12 m6 l4" key={uuid()}>
+        <ProductCard product={product} key={uuid()} admin={admin} />
       </div>
     ));
   } else {

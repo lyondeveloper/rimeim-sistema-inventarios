@@ -83,7 +83,7 @@ create procedure proc_update_marca_by_id(in p_id bigint,
                                             in p_id_archivo bigint)
 begin
     if (valid_int_id(p_id)) then
-        set p_nombre = trim_and_lower(p_nombre);
+        set p_nombre = trim(p_nombre);
         set p_descripcion = trim(p_descripcion);
 
         update tb_marca

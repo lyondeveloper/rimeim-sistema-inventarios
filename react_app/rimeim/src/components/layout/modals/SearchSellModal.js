@@ -1,24 +1,30 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-import TextInputField from "../../common/TextInputField";
-import SelectInputField from "../../common/SelectInputField";
-import CheckInputField from "../../common/CheckInputField";
+import TextInputField from '../../common/TextInputField';
+import SelectInputField from '../../common/SelectInputField';
+import CheckInputField from '../../common/CheckInputField';
 
 class SearchSellModal extends Component {
   state = {
-    field: "",
-    cliente: "0",
-    productos: "",
-    metodo_pago: "0",
+    field: '',
+    cliente: '0',
+    productos: '',
+    fecha_inicio: '',
+    fecha_fin: '',
+    metodo_pago: '0',
     metodos_pago: [
       {
-        value: "1",
-        label: "Efectivo"
+        value: '1',
+        label: 'Efectivo'
       },
       {
-        value: "2",
-        label: "Tarjeta"
+        value: '2',
+        label: 'Tarjeta'
+      },
+      {
+        value: '3',
+        label: 'Credito'
       }
     ],
     con_factura: false
@@ -49,9 +55,9 @@ class SearchSellModal extends Component {
     }
     this.props.onSearch({
       field,
-      id_cliente: cliente !== "0" ? cliente : null,
+      id_cliente: cliente !== '0' ? cliente : null,
       con_factura,
-      productos: productos.split(","),
+      productos: productos.split(','),
       metodo_pago: metodo_pago_str
     });
   };
@@ -135,7 +141,7 @@ class SearchSellModal extends Component {
             href="#!"
             className="btn modal-close"
             onClick={this.onGetAllClick}
-            style={{ marginRight: "20px" }}
+            style={{ marginRight: '20px' }}
           >
             Obtener todo
           </a>

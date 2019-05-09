@@ -55,22 +55,28 @@ class Products extends Controller
         if (!isset($json_data->field)) {
             $this->response(null, ERROR_NOTFOUND);
         }
-
-        if (!empty(trim($json_data->field)) && $id_local > 0) {
-            if (
-                isset($json_data->id_proveedor) &&
-                $json_data->id_proveedor > 0
-            ) {
-                $products = $this->productModel->search_with_provider($json_data->field, $id_local, $json_data->id_proveedor);
-            } else {
-                $products = $this->productModel->search($json_data->field, $id_local);
-            }
-        } elseif ($id_local > 0) {
-            $products = $this->productLocalModel->get_by_local($id_local);
-        } elseif ($this->is_current_user_admin()) {
-            $products = $this->productModel->search($json_data->field, null);
+        $json_data = json_set_null_params_if_not_exists($json_data, ['id_local', 'id_marca', 'id_tipo_vehiculo', 'id_proveedor', 'inventario_min', 'inventario_max']);
+        if (is_null($json_data->id_local) && !$this->is_current_user_admin()) {
+            $json_data->id_local = $id_local;
         }
-        $products = $this->parse_mutiple_products($products, $id_local);
+        if (
+            $json_data->id_local > 0 &&
+            $json_data->id_local != $id_local &&
+            !$this->is_current_user_admin()
+        ) {
+            $this->response([]);
+        }
+
+        if (
+            isset($json_data->id_proveedor) &&
+            $json_data->id_proveedor > 0
+        ) {
+            $products = $this->productModel->search_with_provider($json_data);
+        } else {
+            $products = $this->productModel->search($json_data);
+        }
+
+        $products = $this->parse_mutiple_products($products, $json_data->id_local);
         $this->response($products);
     }
 

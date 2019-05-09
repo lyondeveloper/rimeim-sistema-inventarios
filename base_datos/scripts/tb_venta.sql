@@ -115,6 +115,7 @@ begin
     order by v.fecha_creado desc;
 end $$
 delimiter ;
+*/
 
 drop procedure if exists proc_get_cotizaciones;
 delimiter $$
@@ -159,9 +160,9 @@ begin
 
 end $$
 delimiter ;
-*/
 
-/*
+
+
 drop procedure if exists proc_get_ventas_reportes;
 delimiter $$
 create procedure proc_get_ventas_reportes(in p_id_local bigint,
@@ -196,7 +197,7 @@ begin
     EXECUTE sql_statement;
 end $$
 delimiter ;
-*/
+
 
 drop procedure if exists proc_get_ventas_reportes_totales;
 delimiter $$
@@ -240,7 +241,7 @@ begin
 end $$
 delimiter ;
 
-/*
+
 drop procedure if exists proc_get_cotizacion_by_id;
 delimiter $$
 create procedure proc_get_cotizacion_by_id(in p_id bigint)
@@ -312,6 +313,7 @@ begin
 end $$
 delimiter ;
 
+/*
 drop procedure if exists proc_add_venta;
 delimiter $$
 create procedure proc_add_venta(in p_id_local bigint,
@@ -402,6 +404,7 @@ begin
 
 end $$
 delimiter ;
+*/
 
 drop procedure if exists proc_delete_venta_by_id;
 delimiter $$
@@ -410,7 +413,11 @@ create procedure proc_delete_venta_by_id(in p_id bigint,
 begin
     if (valid_int_id(p_id) and 
         valid_int_id(p_id_empleado_eliminado_por)) then
-
+		update tb_venta_producto 
+        set eliminado = true,
+			fecha_eliminado = current_timestamp()
+		where id_venta = p_id;
+        
         update tb_venta 
         set id_empleado_eliminado_por = p_id_empleado_eliminado_por,
             eliminado = true,
@@ -428,7 +435,11 @@ create procedure proc_delete_cotizacion_by_id(in p_id bigint,
 begin
     if (valid_int_id(p_id) and 
         valid_int_id(p_id_empleado_eliminado_por)) then
-
+		update tb_venta_producto 
+        set eliminado = true,
+			fecha_eliminado = current_timestamp()
+		where id_venta = p_id;
+        
         update tb_venta 
         set id_empleado_eliminado_por = p_id_empleado_eliminado_por,
             eliminado = true,
@@ -439,4 +450,3 @@ begin
 end $$
 delimiter ; 
 
-*/

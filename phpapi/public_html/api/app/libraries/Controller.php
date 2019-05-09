@@ -147,7 +147,7 @@ class Controller
 
         $token = $this->get_token_from_header();
         if (is_null($token)) {
-            $this->response(null, ERROR_FORBIDDEN);
+            $this->response(['error' => "InvalidSession"], ERROR_FORBIDDEN);
         }
         $token = $this->get_decoded_token($token);
 
@@ -309,9 +309,9 @@ class Controller
         }
 
         $employe = $this->employeModel->get_by_user_and_local(
-                $this->get_current_user_id(),
-                $id_local
-            );
+            $this->get_current_user_id(),
+            $id_local
+        );
         if (
             !is_null($employe) &&
             $employe->habilitado == true

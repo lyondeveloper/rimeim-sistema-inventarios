@@ -1,11 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import uuid from "uuid";
+import React from 'react';
+import PropTypes from 'prop-types';
+import uuid from 'uuid';
+import { Link } from 'react-router-dom';
 
-import Spinner from "./Spinner";
-import EmptyIcon from "./EmptyIcon";
-import { getNumberFormatted } from "../../utils/stringUtils";
-import isEmpty from "../../actions/isEmpty";
+import Spinner from './Spinner';
+import EmptyIcon from './EmptyIcon';
+import { getNumberFormatted } from '../../utils/stringUtils';
+import isEmpty from '../../actions/isEmpty';
 
 const ShowSale = props => {
   const { loading, sale, es_cotizacion, onDelete } = props;
@@ -109,7 +110,7 @@ const ShowSale = props => {
             <div className="d-block">
               <span className="bold">Metodo de pago: </span>
               <span className="ml-1">
-                {metodo_pago} - {con_factura ? "C/F" : "S/F"}
+                {metodo_pago} - {con_factura ? 'C/F' : 'S/F'}
               </span>
             </div>
           )}
@@ -128,7 +129,12 @@ const ShowSale = props => {
               Eliminar cotizacion
             </button>
           ) : (
-            <button className="btn red darken-3">Generar devolucion</button>
+            <Link
+              to={`/nueva_devolucion/${sale.id}`}
+              className="btn red darken-3 text-white"
+            >
+              Generar devolucion
+            </Link>
           )}
         </div>
       </div>

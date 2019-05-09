@@ -55,7 +55,7 @@ create procedure proc_add_tipo_vehiculo(in p_nombre varchar(200),
                                         in p_descripcion text,
 										in p_id_archivo bigint)
 begin
-    set p_nombre = trim_and_lower(p_nombre);
+    set p_nombre = trim(p_nombre);
     set p_descripcion = trim(p_descripcion);
     set @new_id = null;
 
@@ -87,7 +87,7 @@ create procedure proc_update_tipo_vehiculo_by_id(in p_id bigint,
                                                     in p_descripcion text,
                                                     in p_id_archivo bigint)
 begin
-    set p_nombre = trim_and_lower(p_nombre);
+    set p_nombre = trim(p_nombre);
     set p_descripcion = trim(p_descripcion);
 
     if (valid_int_id(p_id) and 

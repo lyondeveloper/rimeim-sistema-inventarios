@@ -1,19 +1,19 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-import NavbarAdmin from "../../../layout/NewNavbarAdmin";
+import NavbarAdmin from '../../../layout/NewNavbarAdmin';
 
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from "../../../../utils/MaterialFunctions";
+} from '../../../../utils/MaterialFunctions';
 
-import { getProducts } from "../../../../actions/productActions";
+import { getProducts } from '../../../../actions/productActions';
 
-import MapProducts from "../../../common/MapProducts";
-import SearchProductsModal from "../../../layout/modals/SearchProductModel";
+import MapProducts from '../../../common/MapProducts';
+import SearchProductsModal from '../../../layout/modals/SearchProductModel';
 
 class AdminProducts extends Component {
   componentWillMount() {
@@ -58,7 +58,7 @@ class AdminProducts extends Component {
           </div>
         </main>
 
-        <SearchProductsModal />
+        <SearchProductsModal is_admin={true} />
       </React.Fragment>
     );
   }

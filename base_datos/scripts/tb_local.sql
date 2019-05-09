@@ -115,8 +115,8 @@ create procedure proc_add_local(in p_id_usuario_creado_por bigint,
 								in p_latitud double,
 								in p_longitud double)
 begin
-	set p_nombre = trim_and_lower(p_nombre);
-    set p_codigo = trim_and_lower(p_codigo);
+	set p_nombre = trim(p_nombre);
+    set p_codigo = trim(p_codigo);
     set p_descripcion = trim(p_descripcion);
     set p_descripcion_ubicacion = trim(p_descripcion_ubicacion);
     set p_color_hex = remove_spaces(p_color_hex);
@@ -177,8 +177,8 @@ create procedure proc_update_local_by_id(in p_id bigint,
 begin
     
     if (valid_int_id(p_id)) then
-		set p_nombre = trim_and_lower(p_nombre);
-		set p_codigo = trim_and_lower(p_codigo);
+		set p_nombre = trim(p_nombre);
+		set p_codigo = trim(p_codigo);
 		set p_descripcion = trim(p_descripcion);
 		set p_descripcion_ubicacion = trim(p_descripcion_ubicacion);
 		set p_color_hex = remove_spaces(p_color_hex);
