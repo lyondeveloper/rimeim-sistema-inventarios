@@ -35,7 +35,7 @@ class Provider extends Component {
   render() {
     const {
       loading,
-      provider: { id, nombre, rtn, correo, telefono, codigo, imagen }
+      provider: { id, nombre, rtn, correo, telefono, imagen }
     } = this.props.providers;
 
     let providerContent;
@@ -71,11 +71,6 @@ class Provider extends Component {
                     <tr>
                       <td>RTN</td>
                       <td>{rtn}</td>
-                    </tr>
-
-                    <tr>
-                      <td>Codigo</td>
-                      <td>{codigo}</td>
                     </tr>
 
                     <tr>

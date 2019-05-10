@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import uuid from 'uuid';
 
-import { EDIT_PROVIDER } from '../../layout/NavTypes';
-import Navbar from '../../layout/Navbar';
-
-import LogoRimeim from '../../../public/img/logo_rimeim.png';
+import NewNavbar from '../../layout/NewNavbar';
 
 import {
   configMaterialComponents,
@@ -14,7 +11,7 @@ import {
 
 import { connect } from 'react-redux';
 
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
 import TextInputField from '../../common/TextInputField';
 import SelectInputField from '../../common/SelectInputField';
@@ -22,7 +19,7 @@ import SelectFiles from '../../common/SelectFiles';
 import Spinner from '../../common/Spinner';
 import isEmpty from '../../../actions/isEmpty';
 
-import { getProducts } from '../../../actions/productActions';
+import { searchProduct } from '../../../actions/productActions';
 import { editProvider, getProvider } from '../../../actions/providerActions';
 
 class EditProvider extends Component {
@@ -30,16 +27,19 @@ class EditProvider extends Component {
     nombre: '',
     rtn: '',
     correo: '',
-    contacto: '',
     telefono: '',
     imagen: null,
-    producto_seleccionado: '0',
-    id_nuevo_producto: '',
-    precio_especial: '0',
-    nuevo_producto_nombre: '',
+    field: '',
+    precio: '',
+    producto_seleccionado: {},
+    productos_seleccionados: [],
     productos: [],
-    needs_config_selects: false,
     editMode: false,
+    typing: false,
+    typingTimeout: 0,
+    searching: false,
+    needs_config_selects: false,
+    needs_config_modals: true,
     errors: {}
   };
 
@@ -51,7 +51,6 @@ class EditProvider extends Component {
     configMaterialComponents();
     const { id } = this.props.match.params;
     if (id) this.props.getProvider(id);
-    this.props.getProducts();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -74,7 +73,6 @@ class EditProvider extends Component {
       provider.nombre = !isEmpty(provider.nombre) ? provider.nombre : '';
       provider.rtn = !isEmpty(provider.rtn) ? provider.rtn : '';
       provider.correo = !isEmpty(provider.correo) ? provider.correo : '';
-      provider.contacto = !isEmpty(provider.contacto) ? provider.contacto : '';
       provider.telefono = !isEmpty(provider.telefono) ? provider.telefono : '';
       provider.productos = !isEmpty(provider.productos)
         ? provider.productos
@@ -84,7 +82,6 @@ class EditProvider extends Component {
         nombre: provider.nombre,
         rtn: provider.rtn,
         correo: provider.correo,
-        contacto: provider.contacto,
         telefono: provider.telefono,
         imagen: provider.imagen,
         productos: provider.productos
@@ -100,85 +97,141 @@ class EditProvider extends Component {
     }
   }
 
+  //Metodo para seleccionar producto con checkbox
+  onSelectProduct = producto => {
+    const { productos_seleccionados } = this.state;
+
+    //Chequeamos en que array estamos, si en los props o en el normal
+    const productIndex = productos_seleccionados.findIndex(
+      p => p.id === producto.id
+    );
+
+    if (productIndex >= 0) {
+      if (producto.seleccionado) producto.seleccionado = false;
+      else producto.seleccionado = true;
+    } else {
+      producto.seleccionado = true;
+
+      productos_seleccionados.push(producto);
+    }
+
+    document.getElementById(`${producto.id}`).checked = producto.seleccionado;
+
+    this.setState({ productos_seleccionados });
+  };
+
+  //Metodo para escribir un producto y despues de un retraso, empiece a buscar el producto
+  onChangeSearchProductInput = e => {
+    if (this.state.typingTimeout) {
+      this.setState({ searching: true });
+      clearTimeout(this.state.typingTimeout);
+    }
+
+    this.setState({
+      field: e.target.value,
+      typing: false,
+      typingTimeout: setTimeout(() => {
+        this.props.searchProduct({ field: this.state.field });
+      }, 500)
+    });
+  };
+
+  onCloseProviderModal = () => {
+    this.setState({
+      typing: false,
+      typingTimeout: 0,
+      searching: false,
+      field: '',
+      cantidad: '',
+      productos: [],
+      id_local: ''
+    });
+  };
+
+  //Metodo para que cuando demos click a agregar productos, el state este limpio
+  onAddProductClick = e => {
+    e.preventDefault();
+
+    this.setState({
+      producto_seleccionado: {},
+      field: '',
+      cantidad: '',
+      editMode: false,
+      typing: false,
+      typingTimeout: 0
+    });
+  };
+
+  //Metodo para agregar productos a nuestro array
   onAddProduct = e => {
     e.preventDefault();
-    const { products } = this.props.products;
 
-    const { productos, precio_especial, id_nuevo_producto } = this.state;
+    const { productos, precio, productos_seleccionados } = this.state;
 
-    const productIndex = products.findIndex(p => p.id === id_nuevo_producto);
+    const selecteds = productos_seleccionados.filter(
+      p => p.seleccionado === true
+    );
 
-    const productData = {
-      id_producto: products[productIndex].id,
-      producto_nombre: products[productIndex].nombre,
-      producto_precio: products[productIndex].precio,
-      precio_especial
-    };
+    selecteds.forEach(product => {
+      const productData = {
+        id_producto: product.id,
+        precio_especial: precio,
+        producto_nombre: product.nombre
+      };
 
-    productos.push(productData);
+      productos.push(productData);
+    });
 
     this.setState({
-      nuevo_producto_nombre: '',
-      producto_seleccionado: id_nuevo_producto,
-      precio_especial: '0',
-      needs_config_selects: false
+      productos_seleccionados: [],
+      cantidad: ''
     });
   };
 
-  onAddProductClick = () => {
-    this.setState({
-      nuevo_producto_nombre: '',
-      producto_seleccionado: '',
-      id_nuevo_producto: '',
-      precio_especial: '0',
-      editMode: false
-    });
-  };
-
+  //Metodo para que cuando le demos click a editar un producto, se coloquen en los TextInputField la data
   onEditProductClick = producto => {
-    const { precio_especial, id_producto } = producto;
-
     this.setState({
-      id_nuevo_producto: id_producto,
-      producto_seleccionado: id_producto,
-      precio_especial,
+      producto_seleccionado: producto,
+      precio: producto.precio_especial,
+      productPosition: producto.id_producto,
       editMode: true
     });
   };
 
+  //Metodo para editar productos en nuestro array
   onEditProduct = () => {
-    const { productos, producto_seleccionado, precio_especial } = this.state;
+    const { productos, precio, producto_seleccionado } = this.state;
 
+    //Definiendo la posicion del objeto que editaremos
     const productIndex = productos.findIndex(
-      p => p.id_producto === producto_seleccionado
+      p => p.id_producto === producto_seleccionado.id_producto
     );
 
-    productos[productIndex].precio_especial = precio_especial;
+    //Actualizando sus valores
+    productos[productIndex].precio_especial = precio;
     productos[productIndex].actualizado = true;
 
     this.setState({
-      id_nuevo_producto: '',
-      producto_seleccionado: '',
-      precio_especial: '0',
+      producto_seleccionado: {},
+      precio: '',
       editMode: false
     });
   };
 
+  //Metodo para eliminar productos del array
   onDeleteProduct = producto => {
     const { productos } = this.state;
 
+    //Definimos posicion del producto a eliminar
     const productIndex = productos.findIndex(
       p => p.id_producto === producto.id_producto
     );
 
-    delete productos[productIndex].actualizado;
-
     productos[productIndex].eliminado = true;
 
     this.setState({
-      id_nuevo_producto: '',
-      producto_seleccionado: '',
-      precio_especial: '0'
+      id_producto: '',
+      cantidad: ''
     });
   };
 
@@ -216,20 +269,11 @@ class EditProvider extends Component {
 
     const { id } = this.props.match.params;
 
-    const {
-      nombre,
-      rtn,
-      correo,
-      contacto,
-      telefono,
-      imagen,
-      productos
-    } = this.state;
+    const { nombre, rtn, correo, telefono, imagen, productos } = this.state;
 
     const providerData = {
       nombre,
       rtn,
-      contacto,
       correo,
       telefono,
       imagen: provider.imagen,
@@ -253,29 +297,65 @@ class EditProvider extends Component {
       nombre,
       rtn,
       correo,
-      contacto,
       telefono,
+      field,
+      searching,
       id_nuevo_producto,
       productos,
       imagen,
-      precio_especial,
+      precio,
       errors: { nombre_error }
     } = this.state;
 
     const productsOptions = [];
 
-    const { products } = this.props.products;
+    const { products } = this.props;
 
     const { loading } = this.props.providers;
 
-    products.forEach(product => {
-      productsOptions.push({
-        value: product.id,
-        label: product.nombre
-      });
-    });
-
     let providerContent;
+    let searchResult;
+
+    //Contenido del buscador, si esta en modo searching o en loading, mostrara spinner y cuando ya llegue la data, la mostrara o no dependiendo de cual haya sido el resultado
+    if (searching || loading) {
+      searchResult = <Spinner fullWidth />;
+    } else {
+      if (products.products.length > 0) {
+        searchResult = (
+          <div className='row'>
+            <div className='col s12'>
+              {products.products.map((producto, i) => {
+                return (
+                  <div
+                    className='d-block cursor-pointer bordered p-1'
+                    key={uuid()}
+                  >
+                    <label
+                      onClick={() => {
+                        this.onSelectProduct(producto);
+                      }}
+                    >
+                      <input
+                        type='checkbox'
+                        className='filled-in'
+                        id={`${producto.id}`}
+                        defaultChecked={producto.seleccionado}
+                        readOnly={true}
+                      />
+                      {/* NO QUITAR */}
+                      <span />
+                    </label>
+                    {producto.id} - {producto.nombre}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      } else {
+        searchResult = '';
+      }
+    }
 
     if (loading) providerContent = <Spinner fullWidth />;
     else {
@@ -323,15 +403,6 @@ class EditProvider extends Component {
                       active_label={correo ? true : false}
                     />
                   </div>
-                  <div className='row'>
-                    <TextInputField
-                      id='contacto'
-                      label='Contacto'
-                      onchange={this.onChangeTextInput}
-                      value={contacto}
-                      active_label={contacto ? true : false}
-                    />
-                  </div>
 
                   <div className='row'>
                     <TextInputField
@@ -344,7 +415,7 @@ class EditProvider extends Component {
                   </div>
 
                   <div className='col s12 center mb-1'>
-                    <h5>Productos</h5>
+                    <h5>Agregar Productos</h5>
                     <button
                       className='btn-floating modal-trigger'
                       data-tooltip='Agregar'
@@ -362,7 +433,6 @@ class EditProvider extends Component {
                           <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Precio Original</th>
                             <th>Precio Especial</th>
                             <th>Acciones</th>
                           </tr>
@@ -375,7 +445,6 @@ class EditProvider extends Component {
                               <tr key={uuid()}>
                                 <td>{producto.id_producto}</td>
                                 <td>{producto.producto_nombre}</td>
-                                <td>{producto.producto_precio}</td>
                                 <td>{producto.precio_especial}</td>
                                 <td>
                                   <i
@@ -422,39 +491,71 @@ class EditProvider extends Component {
 
     return (
       <React.Fragment>
-        <Navbar navtype={EDIT_PROVIDER} />
+        <NewNavbar active_nav='PROVEEDOR'>
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
+              Editar Proveedor
+            </a>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
+            </a>
+
+            <ul className='right'>
+              <li>
+                <Link
+                  to='/proveedores'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Ver Todos'
+                >
+                  <i className='material-icons'>people</i>
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to='/buscar_proveedor'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Buscar'
+                >
+                  <i className='material-icons'>search</i>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </NewNavbar>
 
         <main>
           {providerContent}
           <div className='modal' id='modal_agregar_productos'>
             <div className='modal-content'>
-              {this.props.products.loading && <Spinner fullWidth />}
-
               {this.state.editMode ? (
-                <TextInputField
-                  id='precio_especial'
-                  label='Precio Especial'
-                  onchange={this.onChangeTextInput}
-                  value={precio_especial}
-                  active_label={this.state.editMode ? true : false}
-                />
-              ) : (
-                <div>
-                  <SelectInputField
-                    id='id_nuevo_producto'
-                    label='Producto'
-                    value={id_nuevo_producto}
-                    onchange={this.onChangeTextInput}
-                    options={productsOptions}
-                  />
+                <div className='row'>
                   <TextInputField
-                    id='precio_especial'
-                    label='Precio Especial'
+                    id='precio'
+                    label='Precio'
                     onchange={this.onChangeTextInput}
-                    value={precio_especial}
-                    active_label={this.state.editMode ? true : false}
+                    value={precio}
+                    active_label={true}
                   />
                 </div>
+              ) : (
+                <React.Fragment>
+                  <TextInputField
+                    id='field'
+                    label='Parametro de Busqueda (ID o Nombre de Producto)'
+                    value={field}
+                    onchange={this.onChangeSearchProductInput}
+                  />
+                  {searchResult}
+                  <TextInputField
+                    id='precio'
+                    label='Precio'
+                    onchange={this.onChangeTextInput}
+                    value={precio}
+                  />
+                </React.Fragment>
               )}
 
               <div className='modal-footer'>
@@ -490,5 +591,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getProducts, editProvider, getProvider }
+  { searchProduct, editProvider, getProvider }
 )(withRouter(EditProvider));

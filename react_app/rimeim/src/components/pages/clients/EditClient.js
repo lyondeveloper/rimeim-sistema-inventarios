@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import uuid from 'uuid';
+
 import { editClient, getClient } from '../../../actions/clientActions';
+import { searchProduct } from '../../../actions/productActions';
 
-import { getProducts } from '../../../actions/productActions';
+import NewNavbar from '../../layout/NewNavbar';
 
-import { EDIT_CLIENT } from '../../layout/NavTypes';
-import Navbar from '../../layout/Navbar';
-
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
 import isEmpty from '../../../actions/isEmpty';
 
@@ -22,24 +21,27 @@ import Spinner from '../../common/Spinner';
 import SelectFiles from '../../common/SelectFiles';
 import TextInputField from '../../common/TextInputField';
 import CheckInputField from '../../common/CheckInputField';
-import SelectInputField from '../../common/SelectInputField';
 
 class EditClient extends Component {
   state = {
     nombre: '',
     rtn: '',
     correo: '',
-    contacto: '',
     telefono: '',
     codigo: '',
     es_empresa: false,
     imagen: null,
-    id_producto: '',
+    field: '',
     precio: '',
-    producto_seleccionado: '',
-    productos_especiales: [],
+    producto_seleccionado: {},
+    productos_seleccionados: [],
+    productos: [],
     editMode: false,
+    typing: false,
+    typingTimeout: 0,
+    searching: false,
     needs_config_selects: false,
+    needs_config_modals: true,
     errors: {}
   };
 
@@ -51,7 +53,6 @@ class EditClient extends Component {
     configMaterialComponents();
     const { id } = this.props.match.params;
     if (id) this.props.getClient(id);
-    this.props.getProducts();
   }
 
   componentDidUpdate() {
@@ -74,10 +75,11 @@ class EditClient extends Component {
 
     const { products } = nextProps.products;
 
-    if (products && this.state.productos_especiales.length === 0) {
+    if (products) {
       products.forEach(product => (product.disabled = false));
       this.setState({
-        needs_config_selects: true
+        needs_config_selects: true,
+        searching: false
       });
     }
 
@@ -85,7 +87,6 @@ class EditClient extends Component {
       client.nombre = !isEmpty(client.nombre) ? client.nombre : '';
       client.rtn = !isEmpty(client.rtn) ? client.rtn : '';
       client.correo = !isEmpty(client.correo) ? client.correo : '';
-      client.contacto = !isEmpty(client.contacto) ? client.contacto : '';
       client.telefono = !isEmpty(client.telefono) ? client.telefono : '';
       client.codigo = !isEmpty(client.codigo) ? client.codigo : '';
       client.es_empresa = !isEmpty(client.es_empresa) ? client.es_empresa : '';
@@ -98,12 +99,11 @@ class EditClient extends Component {
         nombre: client.nombre,
         rtn: client.rtn,
         correo: client.correo,
-        contacto: client.contacto,
         telefono: client.telefono,
         codigo: client.codigo,
         es_empresa: client.es_empresa,
         imagen: client.imagen,
-        productos_especiales: client.precios_productos
+        productos: client.precios_productos
       });
     }
   }
@@ -116,89 +116,144 @@ class EditClient extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onAddSpecialProductPriceClick = e => {
-    e.preventDefault();
+  //Metodo para escribir un producto y despues de un retraso, empiece a buscar el producto
+  onChangeSearchProductInput = e => {
+    if (this.state.typingTimeout) {
+      this.setState({ searching: true });
+      clearTimeout(this.state.typingTimeout);
+    }
 
     this.setState({
-      id_producto: '',
-      precio: '',
-      producto_seleccionado: ''
+      field: e.target.value,
+      typing: false,
+      typingTimeout: setTimeout(() => {
+        this.props.searchProduct({ field: this.state.field });
+      }, 500)
     });
   };
 
-  onAddSpecialProductPrice = e => {
-    e.preventDefault();
+  //Metodo para seleccionar producto con checkbox
+  onSelectProduct = producto => {
+    const { productos_seleccionados } = this.state;
 
-    const { products } = this.props.products;
-
-    const { productos_especiales, id_producto, precio_especial } = this.state;
-
-    const productIndex = products.findIndex(p => p.id === id_producto);
-
-    const productData = {
-      id_producto,
-      producto_nombre: products[productIndex].nombre,
-      precio: precio_especial
-    };
-
-    productos_especiales.push(productData);
-
-    this.setState({
-      id_producto: '',
-      nuevo_producto_nombre: '',
-      precio_especial: '',
-      producto_seleccionado: ''
-    });
-  };
-
-  onEditSpecialProductPrice = () => {
-    const {
-      precio_especial,
-      productos_especiales,
-      producto_seleccionado
-    } = this.state;
-
-    const productIndex = productos_especiales.findIndex(
-      p => p.id === producto_seleccionado
+    //Chequeamos en que array estamos, si en los props o en el normal
+    const productIndex = productos_seleccionados.findIndex(
+      p => p.id === producto.id
     );
 
-    productos_especiales[productIndex].precio = precio_especial;
-    productos_especiales[productIndex].actualizado = true;
+    if (productIndex >= 0) {
+      if (producto.seleccionado) producto.seleccionado = false;
+      else producto.seleccionado = true;
+    } else {
+      producto.seleccionado = true;
 
+      productos_seleccionados.push(producto);
+    }
+
+    document.getElementById(`${producto.id}`).checked = producto.seleccionado;
+
+    this.setState({ productos_seleccionados });
+  };
+
+  onCloseProviderModal = () => {
     this.setState({
-      id_producto: '',
-      precio_especial: '',
-      producto_seleccionado: '',
-      nuevo_producto_nombre: '',
-      editMode: false
+      typing: false,
+      typingTimeout: 0,
+      searching: false,
+      field: '',
+      cantidad: '',
+      productos: [],
+      id_local: ''
     });
   };
 
-  onEditSpecialProductPriceClick = producto => {
-    const { precio, id } = producto;
+  //Metodo para que cuando demos click a agregar productos, el state este limpio
+  onAddProductClick = e => {
+    e.preventDefault();
 
     this.setState({
-      id_producto: id,
-      precio_especial: precio,
-      producto_seleccionado: id,
+      producto_seleccionado: {},
+      field: '',
+      cantidad: '',
+      editMode: false,
+      typing: false,
+      typingTimeout: 0
+    });
+  };
+
+  //Metodo para agregar productos a nuestro array
+  onAddProduct = e => {
+    e.preventDefault();
+
+    const { productos, precio, productos_seleccionados } = this.state;
+
+    const selecteds = productos_seleccionados.filter(
+      p => p.seleccionado === true
+    );
+
+    selecteds.forEach(product => {
+      const productData = {
+        id_producto: product.id,
+        precio,
+        nombre: product.nombre
+      };
+
+      productos.push(productData);
+    });
+
+    this.setState({
+      productos_seleccionados: [],
+      cantidad: ''
+    });
+  };
+
+  //Metodo para que cuando le demos click a editar un producto, se coloquen en los TextInputField la data
+  onEditProductClick = producto => {
+    this.setState({
+      producto_seleccionado: producto,
+      precio: producto.precio,
+      productPosition: producto.id,
       editMode: true
     });
   };
 
-  onDeleteSpecialProductPrice = producto => {
-    const { productos_especiales } = this.state;
+  //Metodo para editar productos en nuestro array
+  onEditProduct = () => {
+    const { productos, precio, producto_seleccionado } = this.state;
 
-    const productIndex = productos_especiales.findIndex(
-      p => p.id.toString() === producto.id
+    //Definiendo la posicion del objeto que editaremos
+    const productIndex = productos.findIndex(
+      p => p.id_producto === producto_seleccionado.id_producto
     );
 
-    delete productos_especiales[productIndex].actualizado;
+    console.log(productos[productIndex]);
 
-    productos_especiales[productIndex].eliminado = true;
+    //Actualizando sus valores
+    productos[productIndex].precio = precio;
+    productos[productIndex].actualizado = true;
+
+    this.setState({
+      producto_seleccionado: {},
+      productos,
+      precio: '',
+      editMode: false
+    });
+  };
+
+  //Metodo para eliminar productos del array
+  onDeleteProduct = producto => {
+    const { productos } = this.state;
+
+    //Definimos posicion del producto a eliminar
+    const productIndex = productos.findIndex(
+      p => p.id_producto === producto.id_producto
+    );
+
+    productos[productIndex].eliminado = true;
 
     this.setState({
       id_producto: '',
-      precio_especial: ''
+      cantidad: ''
     });
   };
 
@@ -240,24 +295,22 @@ class EditClient extends Component {
       nombre,
       rtn,
       correo,
-      contacto,
       telefono,
       codigo,
       imagen,
       es_empresa,
-      productos_especiales
+      productos
     } = this.state;
 
     const clientData = {
       nombre,
       rtn,
       correo,
-      contacto,
       telefono,
       codigo,
       es_empresa,
       imagen: client.imagen,
-      precios_productos: productos_especiales
+      precios_productos: productos
     };
 
     if (imagen !== null && imagen !== client.imagen) {
@@ -280,16 +333,18 @@ class EditClient extends Component {
       nombre,
       rtn,
       correo,
-      contacto,
       telefono,
       codigo,
-      imagen,
       es_empresa,
-      id_producto,
-      precio_especial,
-      productos_especiales,
+      imagen,
+      searching,
+      field,
+      precio,
+      productos,
       errors: { nombre_error }
     } = this.state;
+
+    let searchResult = null;
 
     const { loading } = this.props.clients;
 
@@ -297,14 +352,46 @@ class EditClient extends Component {
 
     const { id } = this.props.match.params;
 
-    const productsOptions = [];
-
-    products.forEach(product => {
-      productsOptions.push({
-        value: product.id,
-        label: product.nombre
-      });
-    });
+    //Contenido del buscador, si esta en modo searching o en loading, mostrara spinner y cuando ya llegue la data, la mostrara o no dependiendo de cual haya sido el resultado
+    if (searching || this.props.products.loading) {
+      searchResult = <Spinner fullWidth />;
+    } else {
+      if (products.length > 0) {
+        searchResult = (
+          <div className='row'>
+            <div className='col s12'>
+              {products.map((producto, i) => {
+                return (
+                  <div
+                    className='d-block cursor-pointer bordered p-1'
+                    key={uuid()}
+                  >
+                    <label
+                      onClick={() => {
+                        this.onSelectProduct(producto);
+                      }}
+                    >
+                      <input
+                        type='checkbox'
+                        className='filled-in'
+                        id={`${producto.id}`}
+                        defaultChecked={producto.seleccionado}
+                        readOnly={true}
+                      />
+                      {/* NO QUITAR */}
+                      <span />
+                    </label>
+                    {producto.id} - {producto.nombre}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      } else {
+        searchResult = '';
+      }
+    }
 
     let newClientContent;
 
@@ -357,15 +444,6 @@ class EditClient extends Component {
                   </div>
                   <div className='row'>
                     <TextInputField
-                      id='contacto'
-                      label='Contacto'
-                      onchange={this.onChangeTextInput}
-                      value={contacto}
-                      active_label={contacto ? true : false}
-                    />
-                  </div>
-                  <div className='row'>
-                    <TextInputField
                       id='telefono'
                       label='Telefono'
                       onchange={this.onChangeTextInput}
@@ -403,20 +481,20 @@ class EditClient extends Component {
                     </div>
 
                     <div className='row'>
-                      {productos_especiales.length > 0 ? (
+                      {productos.length > 0 ? (
                         <table className='striped table-bordered mt-1'>
                           <thead>
                             <tr>
                               <th>ID Producto</th>
                               <th>Nombre</th>
-                              <th>Precio</th>
+                              <th>Precio Especial</th>
                               <th>Acciones</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {productos_especiales.map((producto, i) =>
+                            {productos.map((producto, i) =>
                               producto.eliminado ? (
-                                ''
+                                undefined
                               ) : (
                                 <tr key={uuid()}>
                                   <td>{producto.id_producto}</td>
@@ -424,7 +502,7 @@ class EditClient extends Component {
                                   <td>{producto.precio}</td>
                                   <td>
                                     <i
-                                      onClick={this.onDeleteSpecialProductPrice.bind(
+                                      onClick={this.onDeleteProduct.bind(
                                         this,
                                         producto
                                       )}
@@ -433,7 +511,7 @@ class EditClient extends Component {
                                       delete_sweep
                                     </i>
                                     <i
-                                      onClick={this.onEditSpecialProductPriceClick.bind(
+                                      onClick={this.onEditProductClick.bind(
                                         this,
                                         producto
                                       )}
@@ -468,45 +546,71 @@ class EditClient extends Component {
 
     return (
       <React.Fragment>
-        <Navbar navtype={EDIT_CLIENT} />
+        <NewNavbar active_nav='CLIENTES'>
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
+              Editar Cliente
+            </a>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
+            </a>
+
+            <ul className='right'>
+              <li>
+                <Link
+                  to='/clientes'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Ver Todos'
+                >
+                  <i className='material-icons'>people</i>
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to='/buscar_cliente'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Buscar'
+                >
+                  <i className='material-icons'>search</i>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </NewNavbar>
         <main>{newClientContent}</main>
 
         <div className='modal' id='modal_editMode_producto'>
-          {this.props.products.loading && <Spinner fullWidth />}
-
           <div className='modal-content center'>
             <h5>Precio Especial a Producto</h5>
             {this.state.editMode ? (
               <div className='row'>
                 <TextInputField
-                  id='precio_especial'
-                  label='Precio Especial'
+                  id='precio'
+                  label='Precio'
                   onchange={this.onChangeTextInput}
-                  value={precio_especial}
-                  active_label={this.state.editMode ? true : false}
+                  value={precio}
+                  active_label={true}
                 />
               </div>
             ) : (
-              <div>
-                <div className='row'>
-                  <SelectInputField
-                    id='id_producto'
-                    label='Producto'
-                    onchange={this.onChangeTextInput}
-                    value={id_producto}
-                    options={productsOptions}
-                  />
-                </div>
-                <div className='row'>
-                  <TextInputField
-                    id='precio_especial'
-                    label='Precio Especial'
-                    onchange={this.onChangeTextInput}
-                    value={precio_especial}
-                    active_label={this.state.editMode ? true : false}
-                  />
-                </div>
-              </div>
+              <React.Fragment>
+                <TextInputField
+                  id='field'
+                  label='Parametro de Busqueda (ID o Nombre de Producto)'
+                  value={field}
+                  onchange={this.onChangeSearchProductInput}
+                />
+                {searchResult}
+                <TextInputField
+                  id='precio'
+                  label='Precio'
+                  onchange={this.onChangeTextInput}
+                  value={precio}
+                />
+              </React.Fragment>
             )}
           </div>
           <div className='modal-footer'>
@@ -520,9 +624,7 @@ class EditClient extends Component {
               href='#!'
               className='modal-close waves-effect waves-green btn text-white mb-1'
               onClick={
-                this.state.editMode
-                  ? this.onEditSpecialProductPrice
-                  : this.onAddSpecialProductPrice
+                this.state.editMode ? this.onEditProduct : this.onAddProduct
               }
             >
               Guardar
@@ -542,5 +644,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { editClient, getClient, getProducts }
+  { editClient, getClient, searchProduct }
 )(withRouter(EditClient));

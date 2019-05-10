@@ -35,6 +35,7 @@ import ShowDevolution from "./components/pages/devolutions/ShowDevolution";
 // Orders
 import Orders from "./components/pages/orders/Orders";
 import Order from "./components/pages/orders/Order";
+import SearchOrder from "./components/pages/orders/SearchOrder";
 import NewOrder from "./components/pages/orders/NewOrder";
 import EditOrderToProvider from "./components/pages/orders/EditOrderToProvider";
 import EditOrderToLocal from "./components/pages/orders/EditOrderToLocal";
@@ -174,13 +175,6 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path="/devoluciones/:id"
-                component={ShowDevolution}
-              />
-            </Switch>
-            <Switch>
-              <PrivateRoute
-                exact
                 path="/nueva_devolucion/:id"
                 component={NewDevolution}
               />
@@ -195,6 +189,13 @@ class App extends Component {
             </Switch>
             <Switch>
               <PrivateRoute exact path="/nuevo_pedido" component={NewOrder} />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/buscar_pedido"
+                component={SearchOrder}
+              />
             </Switch>
             <Switch>
               <PrivateRoute
@@ -291,6 +292,14 @@ class App extends Component {
               />
             </Switch>
 
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/buscar_cliente"
+                component={SearchClient}
+              />
+            </Switch>
+
             {/* Providers */}
             <Switch>
               <PrivateRoute
@@ -314,6 +323,14 @@ class App extends Component {
                 exact
                 path="/proveedores/:id"
                 component={Provider}
+              />
+            </Switch>
+
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/buscar_proveedor/"
+                component={SearchProvider}
               />
             </Switch>
 

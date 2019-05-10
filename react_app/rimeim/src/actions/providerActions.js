@@ -82,7 +82,7 @@ export const getProviders = () => dispatch => {
 export const searchProvider = data => dispatch => {
   dispatch(providerLoading());
   axios
-    .get(`${API_URL}/providers/search/${data}`)
+    .post(`${API_URL}/providers/search/${data}`)
     .then(res => {
       const response = res.data;
 

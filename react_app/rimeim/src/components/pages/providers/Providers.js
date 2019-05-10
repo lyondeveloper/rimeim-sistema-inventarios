@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
-import { PROVIDERS } from '../../layout/NavTypes';
-import Navbar from '../../layout/Navbar';
+import NewNavbar from '../../layout/NewNavbar';
 
 import {
   configMaterialComponents,
@@ -51,7 +50,28 @@ class Providers extends Component {
 
     return (
       <React.Fragment>
-        <Navbar navtype={PROVIDERS} />
+        <NewNavbar active_nav='PROVEEDOR'>
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
+              Proveedores
+            </a>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
+            </a>
+            <ul className='right'>
+              <li>
+                <Link
+                  to='/buscar_proveedor'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Buscar'
+                >
+                  <i className='material-icons'>search</i>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </NewNavbar>
         <main>
           <div className='row'>{providersContent}</div>
         </main>
