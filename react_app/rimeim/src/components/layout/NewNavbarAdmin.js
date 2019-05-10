@@ -65,7 +65,10 @@ class NavbarAdmin extends Component {
                       <Link to="/admin/nuevo_producto">Nuevo producto</Link>
                     </li>
                     <li>
-                      <Link to="/admin/importar_excel">Importar excel</Link>
+                      <Link to="/admin/importar_excel">Importar Excel</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin/exportar_productos">Exportar Excel</Link>
                     </li>
                   </ul>
                 </div>

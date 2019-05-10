@@ -49,6 +49,39 @@ class Products extends Controller
         $this->response($products);
     }
 
+    public function export()
+    {
+        $this->useGetRequest();
+        $this->private_route(CTR_ADMIN);
+        $products = $this->productModel->get_to_export();
+        $locales = [];
+
+        foreach ($products as &$product) {
+            $product->distribucion = $this->productLocalModel->get_by_id_product($product->id);
+
+            foreach ($product->distribucion as &$distribucion) {
+                if (!isset($locales[$distribucion->id_local])) {
+                    $locales[$distribucion->id_local] = $this->localModel->get_by_id($distribucion->id_local);
+                }
+                $distribucion->local = $locales[$distribucion->id_local]->codigo;
+
+                $ubicacion = $this->productLocalUbicationModal->get($distribucion->id);
+                if (count($ubicacion) > 0) {
+                    $distribucion->ubicacion = $ubicacion[0]->ubicacion;
+                }
+                $distribucion->cantidad_minima_local = $distribucion->cantidad_minima;
+                $distribucion->cantidad = $distribucion->existencia;
+                unset($distribucion->existencia);
+                unset($distribucion->cantidad_minima);
+                unset($distribucion->id_local);
+                unset($distribucion->fecha_creado);
+                unset($distribucion->id);
+            }
+            unset($product->id);
+        }
+        $this->response($products);
+    }
+
     public function search()
     {
         $this->usePostRequest();

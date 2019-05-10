@@ -18,6 +18,12 @@ class Product
         return $this->convert_product_bool_values($this->db->resultSet());
     }
 
+    public function get_to_export()
+    {
+        $this->db->query('call proc_get_productos_to_export();');
+        return $this->db->resultSet();
+    }
+
     public function search($params)
     {
         $this->db->query('call proc_search_producto(:p_field, :p_id_local, :p_id_marca, :p_id_tipo_vehiculo, :p_inventario_min, :p_inventario_max);');

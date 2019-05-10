@@ -11,8 +11,7 @@ import {
 } from "../../../../utils/MaterialFunctions";
 
 import { addMultiple } from "../../../../actions/productActions";
-
-import getJsonFromExcel from "../../../../utils/getJsonFromExcel";
+import { getJsonFromExcel } from "../../../../utils/jsonExcel";
 
 import Spinner from "../../../common/Spinner";
 import TextInputField from "../../../common/TextInputField";

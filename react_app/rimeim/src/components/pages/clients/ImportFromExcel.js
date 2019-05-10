@@ -11,7 +11,7 @@ import {
 } from "../../../utils/MaterialFunctions";
 import { addMultipleClients } from "../../../actions/clientActions";
 import isEmpty from "../../../actions/isEmpty";
-import getJsonFromExcel from "../../../utils/getJsonFromExcel";
+import { getJsonFromExcel } from "../../../utils/jsonExcel";
 
 import Spinner from "../../common/Spinner";
 import InputFile from "../../common/InputFile";

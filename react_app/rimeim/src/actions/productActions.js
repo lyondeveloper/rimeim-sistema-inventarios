@@ -1,24 +1,40 @@
 // Este archivo almacena todas las funciones necesarias
 // para poder enviar consultas a PRODUCTS
-import axios from 'axios';
+import axios from "axios";
 
-import { clearErrors, handleError } from './errorActions';
+import { clearErrors, handleError } from "./errorActions";
 
-import { configUserFromResponse } from './UserActions';
+import { configUserFromResponse } from "./UserActions";
 
 import {
   GET_PRODUCT,
   GET_PRODUCTS,
   PRODUCT_LOADING,
   PRODUCT_END_LOADING
-} from './types';
+} from "./types";
 
-import { API_URL } from '../utils/stringUtils';
+import { API_URL } from "../utils/stringUtils";
 
 export const getProducts = () => dispatch => {
   dispatch(productLoadingObject());
   axios
     .get(`${API_URL}/products/get`)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_PRODUCTS,
+        payload: response.data
+      });
+      dispatch(clearErrors());
+    })
+    .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
+};
+
+export const getProductsToExport = () => dispatch => {
+  dispatch(productLoadingObject());
+  axios
+    .get(`${API_URL}/products/export`)
     .then(res => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
@@ -88,7 +104,7 @@ export const addNewProduct = (newProductData, history, new_url) => dispatch => {
   dispatch(productLoadingObject());
   axios
     .post(`${API_URL}/products/add`, newProductData, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      headers: { "X-Requested-With": "XMLHttpRequest" }
     })
     .then(res => {
       dispatch(clearErrors());
@@ -122,7 +138,7 @@ export const updateProductById = (id, newData) => dispatch => {
   dispatch(productLoadingObject());
   axios
     .post(`${API_URL}/products/update/${id}`, newData, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      headers: { "X-Requested-With": "XMLHttpRequest" }
     })
     .then(res => {
       dispatch(clearErrors());

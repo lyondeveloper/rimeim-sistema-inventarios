@@ -92,6 +92,7 @@ import AdminAddProductsExcel from "./components/pages/admin_area/products/NewPro
 import AdminNewProduct from "./components/pages/admin_area/products/NewProduct";
 import AdminProduct from "./components/pages/admin_area/products/Product";
 import AdminEditProduct from "./components/pages/admin_area/products/EditProduct";
+import AdminExportProductsToExcel from "./components/pages/admin_area/products/ExportProducts";
 
 import AdminSellsReport from "./components/pages/admin_area/reports/SellReports";
 
@@ -448,6 +449,15 @@ class App extends Component {
                 isAdminRoute={true}
               />
             </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/admin/exportar_productos"
+                component={AdminExportProductsToExcel}
+                isAdminRoute={true}
+              />
+            </Switch>
+
             <Switch>
               <PrivateRoute
                 exact
