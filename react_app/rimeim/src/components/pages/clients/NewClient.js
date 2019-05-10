@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import uuid from 'uuid';
+
 import { createClient, getClient } from '../../../actions/clientActions';
+import { searchProduct } from '../../../actions/productActions';
 
-import { getProducts } from '../../../actions/productActions';
+import NewNavbar from '../../layout/NewNavbar';
 
-import { NEW_CLIENT } from '../../layout/NavTypes';
-import Navbar from '../../layout/Navbar';
-
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
 import {
   configMaterialComponents,
@@ -19,7 +18,6 @@ import {
 import Spinner from '../../common/Spinner';
 import TextInputField from '../../common/TextInputField';
 import CheckInputField from '../../common/CheckInputField';
-import SelectInputField from '../../common/SelectInputField';
 import SelectFiles from '../../common/SelectFiles';
 
 class NewClient extends Component {
@@ -27,18 +25,21 @@ class NewClient extends Component {
     nombre: '',
     rtn: '',
     correo: '',
-    contacto: '',
     telefono: '',
     codigo: '',
     imagen: null,
     es_empresa: false,
-    id_producto: '',
-    producto_seleccionado: '',
-    precio_especial: '',
-    nuevo_producto_nombre: '',
+    field: '',
+    precio: '',
+    producto_seleccionado: {},
+    productos_seleccionados: [],
+    productos: [],
     editMode: false,
-    productos_especiales: [],
+    typing: false,
+    typingTimeout: 0,
+    searching: false,
     needs_config_selects: false,
+    needs_config_modals: true,
     errors: {}
   };
 
@@ -48,7 +49,6 @@ class NewClient extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-    this.props.getProducts();
   }
 
   componentDidUpdate() {
@@ -69,10 +69,11 @@ class NewClient extends Component {
 
     const { products } = nextProps.products;
 
-    if (products && this.state.productos_especiales.length === 0) {
+    if (products) {
       products.forEach(product => (product.disabled = false));
       this.setState({
-        needs_config_selects: true
+        needs_config_selects: true,
+        searching: false
       });
     }
   }
@@ -104,6 +105,22 @@ class NewClient extends Component {
     document.getElementById('imagen').value = null;
   };
 
+  //Metodo para escribir un producto y despues de un retraso, empiece a buscar el producto
+  onChangeSearchProductInput = e => {
+    if (this.state.typingTimeout) {
+      this.setState({ searching: true });
+      clearTimeout(this.state.typingTimeout);
+    }
+
+    this.setState({
+      field: e.target.value,
+      typing: false,
+      typingTimeout: setTimeout(() => {
+        this.props.searchProduct({ field: this.state.field });
+      }, 500)
+    });
+  };
+
   onChangeTextInput = e => {
     if (e.target.name === 'es_empresa') {
       const value = this.state.es_empresa ? false : true;
@@ -112,89 +129,124 @@ class NewClient extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onAddSpecialProductPriceClick = e => {
-    e.preventDefault();
+  //Metodo para seleccionar producto con checkbox
+  onSelectProduct = producto => {
+    const { productos_seleccionados } = this.state;
 
-    this.setState({
-      id_producto: '',
-      precio_especial: '',
-      producto_seleccionado: ''
-    });
-  };
-
-  onAddSpecialProductPrice = e => {
-    e.preventDefault();
-
-    const { products } = this.props.products;
-
-    const { productos_especiales, id_producto, precio_especial } = this.state;
-
-    const productIndex = products.findIndex(p => p.id === id_producto);
-
-    const productData = {
-      id_producto,
-      producto_nombre: products[productIndex].nombre,
-      precio: precio_especial
-    };
-
-    productos_especiales.push(productData);
-
-    this.setState({
-      id_producto: '',
-      nuevo_producto_nombre: '',
-      precio_especial: '',
-      producto_seleccionado: ''
-    });
-  };
-
-  onEditSpecialProductPrice = () => {
-    const {
-      precio_especial,
-      productos_especiales,
-      producto_seleccionado
-    } = this.state;
-
-    const productIndex = productos_especiales.findIndex(
-      p => p.id_producto === producto_seleccionado
+    //Chequeamos en que array estamos, si en los props o en el normal
+    const productIndex = productos_seleccionados.findIndex(
+      p => p.id === producto.id
     );
 
-    productos_especiales[productIndex].precio = precio_especial;
-    productos_especiales[productIndex].actualizado = true;
+    if (productIndex >= 0) {
+      if (producto.seleccionado) producto.seleccionado = false;
+      else producto.seleccionado = true;
+    } else {
+      producto.seleccionado = true;
 
+      productos_seleccionados.push(producto);
+    }
+
+    document.getElementById(`${producto.id}`).checked = producto.seleccionado;
+
+    this.setState({ productos_seleccionados });
+  };
+
+  onCloseModal = () => {
     this.setState({
-      id_producto: '',
-      precio_especial: '',
-      producto_seleccionado: '',
-      nuevo_producto_nombre: '',
-      editMode: false
+      typing: false,
+      typingTimeout: 0,
+      searching: false,
+      field: '',
+      precio: '',
+      productos: []
     });
   };
 
-  onEditSpecialProductPriceClick = producto => {
-    const { precio, id } = producto;
+  //Metodo para que cuando demos click a agregar productos, el state este limpio
+  onAddProductClick = e => {
+    e.preventDefault();
 
     this.setState({
-      id_producto: id,
-      precio_especial: precio,
-      producto_seleccionado: id,
+      producto_seleccionado: {},
+      typing: false,
+      typingTimeout: 0,
+      searching: false,
+      field: '',
+      precio: ''
+    });
+  };
+
+  //Metodo para agregar productos a nuestro array
+  onAddProduct = e => {
+    e.preventDefault();
+
+    const { productos, precio, productos_seleccionados } = this.state;
+
+    const selecteds = productos_seleccionados.filter(
+      p => p.seleccionado === true
+    );
+
+    selecteds.forEach(product => {
+      const productData = {
+        id_producto: product.id,
+        precio,
+        nombre: product.nombre
+      };
+
+      productos.push(productData);
+    });
+
+    this.setState({
+      productos_seleccionados: [],
+      cantidad: ''
+    });
+  };
+
+  //Metodo para que cuando le demos click a editar un producto, se coloquen en los TextInputField la data
+  onEditProductClick = producto => {
+    this.setState({
+      producto_seleccionado: producto,
+      precio: producto.precio,
+      productPosition: producto.id,
       editMode: true
     });
   };
 
-  onDeleteSpecialProductPrice = producto => {
-    const { productos_especiales } = this.state;
+  //Metodo para editar productos en nuestro array
+  onEditProduct = () => {
+    const { productos, producto_seleccionado, precio } = this.state;
 
-    const productIndex = productos_especiales.findIndex(
+    //Definiendo la posicion del objeto que editaremos
+    const productIndex = productos.findIndex(
+      p => p.id_producto === producto_seleccionado.id_producto
+    );
+
+    //Actualizando sus valores
+    productos[productIndex].precio = precio;
+    productos[productIndex].actualizado = true;
+
+    this.setState({
+      producto_seleccionado: {},
+      precio: '',
+      editMode: false
+    });
+  };
+
+  //Metodo para eliminar productos del array
+  onDeleteProduct = producto => {
+    const { productos } = this.state;
+
+    //Definimos posicion del producto a eliminar
+    const productIndex = productos.findIndex(
       p => p.id_producto === producto.id_producto
     );
 
-    delete productos_especiales[productIndex].actualizado;
-
-    productos_especiales[productIndex].eliminado = true;
+    productos[productIndex].eliminado = true;
 
     this.setState({
       id_producto: '',
-      precio_especial: ''
+      cantidad: ''
     });
   };
 
@@ -205,23 +257,21 @@ class NewClient extends Component {
       nombre,
       rtn,
       correo,
-      contacto,
       telefono,
       codigo,
       imagen,
       es_empresa,
-      productos_especiales
+      productos
     } = this.state;
 
     const clientData = {
       nombre,
       rtn,
       correo,
-      contacto,
       telefono,
       codigo,
       es_empresa,
-      precios_productos: productos_especiales
+      precios_productos: productos
     };
 
     if (imagen !== null) {
@@ -239,31 +289,98 @@ class NewClient extends Component {
       nombre,
       rtn,
       correo,
-      contacto,
       telefono,
       codigo,
       es_empresa,
-      id_producto,
       imagen,
-      precio_especial,
-      productos_especiales,
+      searching,
+      field,
+      precio,
+      productos,
       errors: { nombre_error }
     } = this.state;
 
-    const { products } = this.props.products;
+    let searchResult = null;
 
-    const productsOptions = [];
+    const { products, loading } = this.props.products;
 
-    products.forEach(product => {
-      productsOptions.push({
-        value: product.id,
-        label: product.nombre
-      });
-    });
+    //Contenido del buscador, si esta en modo searching o en loading, mostrara spinner y cuando ya llegue la data, la mostrara o no dependiendo de cual haya sido el resultado
+    if (searching || loading) {
+      searchResult = <Spinner fullWidth />;
+    } else {
+      if (products.length > 0) {
+        searchResult = (
+          <div className='row'>
+            <div className='col s12'>
+              {products.map((producto, i) => {
+                return (
+                  <div
+                    className='d-block cursor-pointer bordered p-1'
+                    key={uuid()}
+                  >
+                    <label
+                      onClick={() => {
+                        this.onSelectProduct(producto);
+                      }}
+                    >
+                      <input
+                        type='checkbox'
+                        className='filled-in'
+                        id={`${producto.id}`}
+                        defaultChecked={producto.seleccionado}
+                        readOnly={true}
+                      />
+                      {/* NO QUITAR */}
+                      <span />
+                    </label>
+                    {producto.id} - {producto.nombre}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      } else {
+        searchResult = '';
+      }
+    }
 
     return (
       <React.Fragment>
-        <Navbar navtype={NEW_CLIENT} />
+        <NewNavbar active_nav='CLIENTES'>
+          <div className='nav-wrapper'>
+            <a href='#!' className='brand-logo'>
+              Nuevo Cliente
+            </a>
+            <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
+              <i className='material-icons'>menu</i>
+            </a>
+
+            <ul className='right'>
+              <li>
+                <Link
+                  to='/clientes'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Ver Todos'
+                >
+                  <i className='material-icons'>people</i>
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to='/buscar_cliente'
+                  className='tooltipped'
+                  data-position='left'
+                  data-tooltip='Buscar'
+                >
+                  <i className='material-icons'>search</i>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </NewNavbar>
         <main>
           <div className='row'>
             <div className='col s12'>
@@ -309,14 +426,6 @@ class NewClient extends Component {
                         </div>
                         <div className='row'>
                           <TextInputField
-                            id='contacto'
-                            label='Contacto'
-                            onchange={this.onChangeTextInput}
-                            value={contacto}
-                          />
-                        </div>
-                        <div className='row'>
-                          <TextInputField
                             id='telefono'
                             label='Telefono'
                             onchange={this.onChangeTextInput}
@@ -345,99 +454,35 @@ class NewClient extends Component {
                             <button
                               className='modal-trigger btn-floating'
                               data-target='modal_agregar_precio_producto'
-                              onClick={this.onAddSpecialProductPriceClick}
+                              onClick={this.onAddProductClick}
                             >
                               <i className='material-icons'>add</i>
                             </button>
                           </div>
 
-                          <div
-                            className='modal'
-                            id='modal_agregar_precio_producto'
-                          >
-                            {this.props.products.loading && (
-                              <Spinner fullWidth />
-                            )}
-                            <div>
-                              <div className='modal-content center'>
-                                <h5>Precio Especial a Producto</h5>
-                                {this.state.editMode ? (
-                                  <div className='row'>
-                                    <TextInputField
-                                      id='precio_especial'
-                                      label='Precio Especial'
-                                      onchange={this.onChangeTextInput}
-                                      value={precio_especial}
-                                      active_label={true}
-                                    />
-                                  </div>
-                                ) : (
-                                  <div>
-                                    <div className='row'>
-                                      <SelectInputField
-                                        id='id_producto'
-                                        label='Producto'
-                                        onchange={this.onChangeTextInput}
-                                        value={id_producto}
-                                        options={productsOptions}
-                                      />
-                                    </div>
-                                    <div className='row'>
-                                      <TextInputField
-                                        id='precio_especial'
-                                        label='Precio Especial'
-                                        onchange={this.onChangeTextInput}
-                                        value={precio_especial}
-                                      />
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                              <div className='modal-footer'>
-                                <a
-                                  href='#!'
-                                  className='modal-close waves-effect waves-green btn left text-white'
-                                >
-                                  Cerrar
-                                </a>
-                                <a
-                                  href='#!'
-                                  className='modal-close waves-effect waves-green btn text-white mb-1'
-                                  onClick={
-                                    this.state.editMode
-                                      ? this.onEditSpecialProductPrice
-                                      : this.onAddSpecialProductPrice
-                                  }
-                                >
-                                  Guardar
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-
                           <div className='row'>
-                            {productos_especiales.length > 0 ? (
+                            {productos.length > 0 ? (
                               <table className='striped table-bordered mt-1'>
                                 <thead>
                                   <tr>
                                     <th>ID Producto</th>
                                     <th>Nombre</th>
-                                    <th>Precio</th>
+                                    <th>Precio Especial</th>
                                     <th>Acciones</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {productos_especiales.map((producto, i) =>
+                                  {productos.map((producto, i) =>
                                     producto.eliminado ? (
                                       ''
                                     ) : (
                                       <tr key={uuid()}>
                                         <td>{producto.id_producto}</td>
-                                        <td>{producto.producto_nombre}</td>
+                                        <td>{producto.nombre}</td>
                                         <td>{producto.precio}</td>
                                         <td>
                                           <i
-                                            onClick={this.onDeleteSpecialProductPrice.bind(
+                                            onClick={this.onDeleteProduct.bind(
                                               this,
                                               producto
                                             )}
@@ -446,7 +491,7 @@ class NewClient extends Component {
                                             delete_sweep
                                           </i>
                                           <i
-                                            onClick={this.onEditSpecialProductPriceClick.bind(
+                                            onClick={this.onEditProductClick.bind(
                                               this,
                                               producto
                                             )}
@@ -472,6 +517,61 @@ class NewClient extends Component {
                           </button>
                         </div>
                       </form>
+                      {/* Modal */}
+                      <div className='modal' id='modal_agregar_precio_producto'>
+                        <div>
+                          <div className='modal-content center'>
+                            <h5>Precio Especial a Producto</h5>
+                            {this.state.editMode ? (
+                              <div className='row'>
+                                <TextInputField
+                                  id='precio'
+                                  label='Precio'
+                                  onchange={this.onChangeTextInput}
+                                  value={precio}
+                                  active_label={true}
+                                />
+                              </div>
+                            ) : (
+                              <React.Fragment>
+                                <TextInputField
+                                  id='field'
+                                  label='Parametro de Busqueda (ID o Nombre de Producto)'
+                                  value={field}
+                                  onchange={this.onChangeSearchProductInput}
+                                />
+                                {searchResult}
+                                <TextInputField
+                                  id='precio'
+                                  label='Precio'
+                                  onchange={this.onChangeTextInput}
+                                  value={precio}
+                                />
+                              </React.Fragment>
+                            )}
+                          </div>
+                          <div className='modal-footer'>
+                            <a
+                              href='#!'
+                              className='modal-close waves-effect waves-green btn left text-white'
+                              onClick={this.onCloseModal}
+                            >
+                              Cerrar
+                            </a>
+                            <a
+                              href='#!'
+                              className='modal-close waves-effect waves-green btn text-white mb-1'
+                              onClick={
+                                this.state.editMode
+                                  ? this.onEditProduct
+                                  : this.onAddProduct
+                              }
+                            >
+                              Guardar
+                            </a>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -492,5 +592,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { createClient, getClient, getProducts }
+  { createClient, getClient, searchProduct }
 )(withRouter(NewClient));

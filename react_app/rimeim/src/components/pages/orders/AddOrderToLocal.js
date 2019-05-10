@@ -49,7 +49,6 @@ class AddOrderToLocal extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
-      console.log(nextProps);
       this.setState({
         errors: nextProps.errors
       });

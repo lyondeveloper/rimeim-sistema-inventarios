@@ -48,7 +48,7 @@ class Clients extends Component {
         <NewNavBar active_nav='CLIENTES'>
           <div className='nav-wrapper'>
             <a href='#!' className='brand-logo'>
-              Cliente
+              Clientes
             </a>
             <a href='#!' className='sidenav-trigger' data-target='nav_sidenav'>
               <i className='material-icons'>menu</i>

@@ -43,7 +43,7 @@ export const getDevolutionById = id => dispatch => {
     .catch(err => handleError(err, dispatch, DEVOLUTION_END_LOADING));
 };
 
-export const deleteDevolution = (id, history, new_url) => {
+export const deleteDevolution = (id, history, new_url) => dispatch => {
   dispatchLoadingDevolution(dispatch);
   axios
     .delete(`${API_URL}/devolutions/delete/${id}`)
