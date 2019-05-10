@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 const InputFile = props => {
   const { id, input_size, label, onchange, required, disabled, accept } = props;
@@ -12,8 +12,8 @@ const InputFile = props => {
             type="file"
             id={id}
             onChange={onchange}
-            required={required ? 'required' : ''}
-            disabled={disabled ? 'disabled' : ''}
+            required={required ? "required" : ""}
+            disabled={disabled ? "disabled" : ""}
             accept={accept}
           />
         </div>
@@ -36,7 +36,8 @@ InputFile.propTypes = {
 };
 
 InputFile.defaultProps = {
-  input_size: 's12',
+  input_size: "s12",
+  accept: "",
   required: false,
   disabled: false
 };

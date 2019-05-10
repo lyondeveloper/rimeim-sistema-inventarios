@@ -1,16 +1,16 @@
-import axios from 'axios';
+import axios from "axios";
 
 import {
   CLIENT_LOADING,
   GET_CLIENT,
   GET_CLIENTS,
   CLIENT_LOADING_END
-} from './types';
+} from "./types";
 
-import { clearErrors, handleError } from './errorActions';
+import { clearErrors, handleError } from "./errorActions";
 
-import { configUserFromResponse } from './UserActions';
-import { API_URL } from '../utils/stringUtils';
+import { configUserFromResponse } from "./UserActions";
+import { API_URL } from "../utils/stringUtils";
 
 export const createClient = (data, history, newUrl) => dispatch => {
   dispatch(clearErrors());
@@ -22,6 +22,18 @@ export const createClient = (data, history, newUrl) => dispatch => {
       history.push(newUrl);
     })
     .catch(err => handleError(err, dispatch));
+};
+
+export const addMultipleClients = data => dispatch => {
+  dispatch(clientLoading());
+  axios
+    .post(`${API_URL}/clients/add_multiple`, data)
+    .then(res => {
+      configUserFromResponse(res.data, dispatch);
+      dispatch(clearErrors());
+      dispatch(clientLoadingEnd());
+    })
+    .catch(err => handleError(err, dispatch, CLIENT_LOADING_END));
 };
 
 export const getClients = () => dispatch => {

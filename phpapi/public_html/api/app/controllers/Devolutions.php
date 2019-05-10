@@ -174,7 +174,10 @@ class Devolutions extends Controller
             $devolution->productos = $this->devolutionProduct->get($devolution->id);
             foreach ($devolution->productos as &$devolucion_producto) {
                 $venta_producto = $this->saleProductModal->get_by_id($devolucion_producto->id_venta_producto);
+                $cached_producto = $this->get_producto_by_id($venta_producto->id_producto);
                 $devolucion_producto->precio = $venta_producto->precio;
+                $devolucion_producto->codigo_barra = $cached_producto->codigo_barra;
+                $devolucion_producto->nombre = $cached_producto->nombre;
                 unset($venta_producto);
             }
         }
@@ -211,13 +214,19 @@ class Devolutions extends Controller
     {
         $productos = $this->saleProductModal->get_by_sale($id);
         foreach ($productos as &$producto) {
-            if (!isset($this->productsArray[$producto->id_producto])) {
-                $this->productsArray[$producto->id_producto] = $this->productModel->get_minified_by_id_for_sell_details($producto->id_producto);
-            }
-            $producto->codigo_barra = $this->productsArray[$producto->id_producto]->codigo_barra;
-            $producto->nombre = $this->productsArray[$producto->id_producto]->nombre;
+            $cached_producto = $this->get_producto_by_id($producto->id_producto);
+            $producto->codigo_barra = $cached_producto->codigo_barra;
+            $producto->nombre = $cached_producto->nombre;
         }
         return $productos;
+    }
+
+    private function get_producto_by_id($id)
+    {
+        if (!isset($this->productsArray[$id])) {
+            $this->productsArray[$id] = $this->productModel->get_minified_by_id_for_sell_details($id);
+        }
+        return $this->productsArray[$id];
     }
 
     private function get_client_by_id($id)

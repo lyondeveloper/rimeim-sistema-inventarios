@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import uuid from 'uuid';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import uuid from "uuid";
+import PropTypes from "prop-types";
 
-import NewNavbar from '../../layout/NewNavbar';
-import '../../../public/css/devoluciones.css';
+import NewNavbar from "../../layout/NewNavbar";
+import "../../../public/css/devoluciones.css";
 
 import {
   configMaterialComponents,
   removeMaterialComponents,
   configSelectInputFields
-} from '../../../utils/MaterialFunctions';
-import isEmpty from '../../../actions/isEmpty';
-import { getSellById, addDevolution } from '../../../actions/sellActions';
+} from "../../../utils/MaterialFunctions";
+import isEmpty from "../../../actions/isEmpty";
+import { getSellById, addDevolution } from "../../../actions/sellActions";
 
-import { getNumberFormatted } from '../../../utils/stringUtils';
+import { getNumberFormatted } from "../../../utils/stringUtils";
 
-import Spinner from '../../common/Spinner';
-import EmptyIcon from '../../common/EmptyIcon';
+import Spinner from "../../common/Spinner";
+import EmptyIcon from "../../common/EmptyIcon";
 
 class NewDevolution extends Component {
   state = {
@@ -138,9 +138,12 @@ class NewDevolution extends Component {
   onFinallyClick = () => {
     if (this.state.productos_devueltos.length > 0) {
       let total_devuelto = this.getTotalDevuelto();
+      let impuesto_devuelto = total_devuelto * 0.15;
       const devolutionData = {
         id_local: this.props.sell.sell.id_local,
-        total_devuelto: total_devuelto + total_devuelto * 0.15,
+        sub_total_devuelto: total_devuelto,
+        impuesto_devuelto: impuesto_devuelto,
+        total_devuelto: total_devuelto + impuesto_devuelto,
         productos: this.state.productos_devueltos
       };
       this.props.addDevolution(
@@ -183,7 +186,7 @@ class NewDevolution extends Component {
             type="text"
             id={`input${prod.id}`}
             className="special-input browser-default"
-            style={{ maxWidth: '70px' }}
+            style={{ maxWidth: "70px" }}
             defaultValue={this.getProductoDevueltoCantidad(prod.id)}
             onKeyUp={this.onKeyInputUp.bind(this, prod)}
           />

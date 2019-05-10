@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
-import { Link } from 'react-router-dom';
+import React from "react";
+import PropTypes from "prop-types";
+import uuid from "uuid";
+import { Link } from "react-router-dom";
 
-import Spinner from './Spinner';
-import EmptyIcon from './EmptyIcon';
-import { getNumberFormatted } from '../../utils/stringUtils';
-import isEmpty from '../../actions/isEmpty';
+import Spinner from "./Spinner";
+import EmptyIcon from "./EmptyIcon";
+import { getNumberFormatted } from "../../utils/stringUtils";
+import isEmpty from "../../actions/isEmpty";
 
 const ShowSale = props => {
   const { loading, sale, es_cotizacion, onDelete } = props;
@@ -110,7 +110,7 @@ const ShowSale = props => {
             <div className="d-block">
               <span className="bold">Metodo de pago: </span>
               <span className="ml-1">
-                {metodo_pago} - {con_factura ? 'C/F' : 'S/F'}
+                {metodo_pago} - {con_factura ? "C/F" : "S/F"}
               </span>
             </div>
           )}
@@ -118,16 +118,25 @@ const ShowSale = props => {
 
         <div className="card-footer p-1">
           {es_cotizacion ? (
-            <button
-              className="btn red darken-3"
-              onClick={() => {
-                if (onDelete) {
-                  onDelete();
-                }
-              }}
-            >
-              Eliminar cotizacion
-            </button>
+            <React.Fragment>
+              <button
+                className="btn red darken-3"
+                onClick={() => {
+                  if (onDelete) {
+                    onDelete();
+                  }
+                }}
+              >
+                Eliminar cotizacion
+              </button>
+
+              <Link
+                to={`/nueva_venta/${sale.id}`}
+                className="btn ml-1 text-white"
+              >
+                Facturar
+              </Link>
+            </React.Fragment>
           ) : (
             <Link
               to={`/nueva_devolucion/${sale.id}`}

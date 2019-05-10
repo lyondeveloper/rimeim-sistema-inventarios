@@ -1,15 +1,15 @@
-import axios from 'axios';
+import axios from "axios";
 import {
   DEVOLUTION_END_LOADING,
   DEVOLUTION_LOADING,
   GET_DEVOLUTION,
   GET_DEVOLUTIONS
-} from './types';
+} from "./types";
 
-import { clearErrors, handleError } from './errorActions';
+import { clearErrors, handleError } from "./errorActions";
 
-import { configUserFromResponse } from './UserActions';
-import { API_URL } from '../utils/stringUtils';
+import { configUserFromResponse } from "./UserActions";
+import { API_URL } from "../utils/stringUtils";
 
 export const getDevolutions = () => dispatch => {
   dispatchLoadingDevolution(dispatch);
@@ -43,7 +43,7 @@ export const getDevolutionById = id => dispatch => {
     .catch(err => handleError(err, dispatch, DEVOLUTION_END_LOADING));
 };
 
-export const deleteDevolution = (id, history, new_url) => {
+export const deleteDevolution = (id, history, new_url) => dispatch => {
   dispatchLoadingDevolution(dispatch);
   axios
     .delete(`${API_URL}/devolutions/delete/${id}`)

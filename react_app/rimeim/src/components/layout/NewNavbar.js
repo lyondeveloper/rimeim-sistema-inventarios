@@ -157,6 +157,9 @@ class NewNavbar extends Component {
                     <li>
                       <Link to="/clientes">Ver todos</Link>
                     </li>
+                    <li>
+                      <Link to="/nuevos_clientes">Importar Excel</Link>
+                    </li>
                   </ul>
                 </div>
               </li>
