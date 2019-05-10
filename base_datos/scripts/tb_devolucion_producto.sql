@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_get_next_devolucion_producto_id;
 delimiter $$
 create function func_get_next_devolucion_producto_id()
@@ -12,9 +12,8 @@ begin
     return @new_id;
 end $$
 delimiter ;
+*/
 
-
--- LOS METODOS GET AUN ESTAN EN CONSTRUCCION 
 drop procedure if exists proc_get_devolucion_producto_by_iddev;
 delimiter $$
 create procedure proc_get_devolucion_producto_by_iddev(in p_id_devolucion bigint)
@@ -54,7 +53,11 @@ begin
                 p_cantidad);
 
         if(@new_id > 0) then
-            call proc_delete_venta_producto_by_id(p_id_venta_producto);
+            update tb_venta_producto
+            set cantidad = cantidad - p_cantidad,
+				total = (cantidad) * precio
+			where id = p_id_venta_producto
+            and eliminado = false;
         end if;
     end if;
     select @new_id as 'id';

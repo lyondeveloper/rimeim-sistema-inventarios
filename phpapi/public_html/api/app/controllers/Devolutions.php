@@ -13,11 +13,14 @@ class Devolutions extends Controller
 {
 
     private $employesArray = [];
+    private $clientsArray = [];
+    private $productsArray = [];
 
     public function __construct()
     {
         $this->initController(CTR_EMPLEADO);
         $this->saleModel = $this->model('Sale');
+        $this->client = $this->model('Client');
         $this->saleProductModal = $this->model('SaleProduct');
         $this->productModel = $this->model('Product');
         $this->productLocalModel = $this->model('ProductLocal');
@@ -61,8 +64,16 @@ class Devolutions extends Controller
         if ($data->id_local != $id_local) {
             $this->response(null, ERROR_FORBIDDEN);
         }
+
         $newId = $this->devolution->add($data);
         $this->checkNewId($newId);
+
+        $this->saleModel->decrease_values(
+            $id_venta,
+            $data->sub_total_devuelto,
+            $data->impuesto_devuelto,
+            $data->total_devuelto
+        );
 
         foreach ($data->productos as &$producto) {
             $producto->id_venta_producto = $producto->id;
@@ -86,7 +97,7 @@ class Devolutions extends Controller
         ) {
             $this->response(null, ERROR_NOTFOUND);
         }
-        $this->devolution->delete_by_id($id);
+        $this->devolution->delete_by_id($id, $this->get_current_employe_id());
         $this->response();
     }
 
@@ -98,6 +109,18 @@ class Devolutions extends Controller
             !($data->total_devuelto > 0)
         ) {
             $errors['total_devuelto_error'] = "Campo invalido";
+        }
+        if (
+            !isset($data->impuesto_devuelto) ||
+            !($data->impuesto_devuelto > 0)
+        ) {
+            $errors['impuesto_devuelto_error'] = "Campo invalido";
+        }
+        if (
+            !isset($data->sub_total_devuelto) ||
+            !($data->sub_total_devuelto > 0)
+        ) {
+            $errors['sub_total_devuelto_error'] = "Campo invalido";
         }
         if (
             !isset($data->productos) ||
@@ -145,6 +168,8 @@ class Devolutions extends Controller
 
     private function parse_single_devolution($devolution, $is_unique = false)
     {
+        $sale = $this->get_sale_by_id($devolution->id_venta, $is_unique);
+
         if ($is_unique) {
             $devolution->productos = $this->devolutionProduct->get($devolution->id);
             foreach ($devolution->productos as &$devolucion_producto) {
@@ -154,12 +179,60 @@ class Devolutions extends Controller
             }
         }
         if (isset($devolution->id_empleado_creado_por)) {
-            if (!isset($this->employesArray[$devolution->id_empleado_creado_por])) {
-                $this->employesArray[$devolution->id_empleado_creado_por] = $this->userModel->get_minified_user_by_id_empleado($devolution->id_empleado_creado_por);
-            }
-            $devolution->usuario_creador = $this->employesArray[$devolution->id_empleado_creado_por];
+            $devolution->usuario_creador = $this->get_employe_by_id($devolution->id_empleado_creado_por);
             unset($devolution->id_empleado_creado_por);
         }
+        $devolution->venta = $sale;
         return $devolution;
+    }
+
+    private function get_sale_by_id($id, $extended = false)
+    {
+        $sale = $this->saleModel->get_by_id($id);
+        if (
+            isset($sale->id_cliente) &&
+            $sale->id_cliente > 0
+        ) {
+            $sale->cliente = $this->get_client_by_id($sale->id_cliente);
+        }
+        if (
+            isset($sale->id_empleado_creado_por) &&
+            $sale->id_empleado_creado_por > 0
+        ) {
+            $sale->usuario_creador = $this->get_employe_by_id($sale->id_empleado_creado_por);
+        }
+        if ($extended) {
+            $sale->productos = $this->get_parsed_products_by_sell_id($id);
+        }
+        return $sale;
+    }
+
+    private function get_parsed_products_by_sell_id($id)
+    {
+        $productos = $this->saleProductModal->get_by_sale($id);
+        foreach ($productos as &$producto) {
+            if (!isset($this->productsArray[$producto->id_producto])) {
+                $this->productsArray[$producto->id_producto] = $this->productModel->get_minified_by_id_for_sell_details($producto->id_producto);
+            }
+            $producto->codigo_barra = $this->productsArray[$producto->id_producto]->codigo_barra;
+            $producto->nombre = $this->productsArray[$producto->id_producto]->nombre;
+        }
+        return $productos;
+    }
+
+    private function get_client_by_id($id)
+    {
+        if (!isset($this->clientsArray[$id])) {
+            $this->clientsArray[$id] = $this->client->get_by_id($id);
+        }
+        return $this->clientsArray[$id];
+    }
+
+    private function get_employe_by_id($id)
+    {
+        if (!isset($this->employesArray[$id])) {
+            $this->employesArray[$id] = $this->userModel->get_minified_user_by_id_empleado($id);
+        }
+        return $this->employesArray[$id];
     }
 }

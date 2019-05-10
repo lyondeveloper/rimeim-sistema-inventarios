@@ -46,10 +46,11 @@ class Devolution
         return $this->db->success();
     }
 
-    public function delete_by_id($id)
+    public function delete_by_id($id, $id_empleado)
     {
-        $this->db->query('call proc_delete_devolucion_by_id(:p_id);');
+        $this->db->query('call proc_delete_devolucion_by_id(:p_id, :p_id_empleado);');
         $this->db->bind(':p_id', $id);
+        $this->db->bind(':p_id_empleado', $id_empleado);
         return $this->db->success();
     }
 }

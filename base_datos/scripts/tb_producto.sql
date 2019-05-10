@@ -30,7 +30,7 @@ end $$
 delimiter ;
 */
 
-
+/*
 drop procedure if exists `proc_search_producto`;
 delimiter $$
 create procedure proc_search_producto(in p_field varchar(255), 
@@ -232,7 +232,7 @@ begin
 	EXECUTE sql_statement;
 end $$
 delimiter ;
-
+*/
 
 /*
 drop procedure if exists `proc_get_producto_by_id`;

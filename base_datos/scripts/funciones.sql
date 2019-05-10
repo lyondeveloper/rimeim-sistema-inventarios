@@ -1,4 +1,4 @@
-
+/*
 
 
 drop function if exists is_empty;
@@ -94,6 +94,19 @@ begin
 end $$
 delimiter ;
 
+*/
 
-
+drop function if exists str_to_double;
+delimiter $$
+create function str_to_double(p_value varchar(255))
+returns double
+begin
+	set @response = 0;
+	set p_value = trim(p_value);
+    if(!is_empty(p_value)) then
+		set @response = CAST(p_value as DECIMAL(9,2));
+    end if;
+    return @response;
+end $$
+delimiter ;
 

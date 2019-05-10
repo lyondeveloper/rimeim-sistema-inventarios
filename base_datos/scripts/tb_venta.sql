@@ -117,6 +117,7 @@ end $$
 delimiter ;
 */
 
+/*
 drop procedure if exists proc_get_cotizaciones;
 delimiter $$
 create procedure proc_get_cotizaciones()
@@ -312,6 +313,7 @@ begin
 
 end $$
 delimiter ;
+*/
 
 /*
 drop procedure if exists proc_add_venta;
@@ -406,6 +408,30 @@ end $$
 delimiter ;
 */
 
+drop procedure if exists proc_update_venta_values_decrease_by_id;
+delimiter $$
+create procedure proc_update_venta_values_decrease_by_id( in p_id bigint,
+                                            in p_sub_total double,
+                                            in p_impuesto double,
+                                            in p_total double)
+begin
+    if (p_sub_total >= 0 and 
+        p_impuesto >= 0 and 
+		p_total >= 0 and
+        valid_int_id(p_id)) then
+
+        update tb_venta
+        set sub_total = sub_total - p_sub_total,
+            impuesto = impuesto - p_impuesto,
+            total = total - p_total
+        where id = p_id
+        and eliminado = false;
+    end if;
+
+end $$
+delimiter ;
+
+/*
 drop procedure if exists proc_delete_venta_by_id;
 delimiter $$
 create procedure proc_delete_venta_by_id(in p_id bigint,
@@ -449,4 +475,5 @@ begin
     end if;
 end $$
 delimiter ; 
+*/
 

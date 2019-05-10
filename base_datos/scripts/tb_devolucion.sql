@@ -1,4 +1,4 @@
-
+/*
 drop function if exists func_get_next_devolucion_id;
 delimiter $$
 create function func_get_next_devolucion_id()
@@ -12,7 +12,7 @@ begin
     return @new_id;
 end $$
 delimiter ;
-
+*/
 
 drop procedure if exists `proc_get_devoluciones`;
 delimiter $$
@@ -29,10 +29,11 @@ begin
 		join tb_venta v on v.id = d.id_venta
 		where d.eliminado = false
 		and v.id_local = p_id_local
-		order by d.fecha_creado asc;
+		order by d.fecha_creado desc;
 	end if;
 end $$
 delimiter ;
+
 
 drop procedure if exists `proc_get_devolucion_by_id`;
 delimiter $$
@@ -44,7 +45,7 @@ begin
 				(
 					select v.id_local
 					from tb_venta v 
-					where v.i = d.id_venta
+					where v.id = d.id_venta
 					limit 1
 				) as 'id_local',
 				d.id_empleado_creado_por,
@@ -58,6 +59,8 @@ begin
 end $$
 delimiter ;
 
+
+/*
 drop procedure if exists `proc_add_devolucion`;
 delimiter $$
 create procedure proc_add_devolucion(in p_id_empleado_creado_por bigint,
@@ -69,11 +72,11 @@ begin
     
 	if (valid_int_id(p_id_empleado_creado_por) and
 		valid_int_id(p_id_venta) and 
-        p_total_devuelto != null) then
-		
+        p_total_devuelto >= 0) then
+        
         set @new_id = func_get_next_devolucion_id();
         
-        INSERT tb_devolucion
+        INSERT into tb_devolucion
 			(`id`,
 			`id_venta`,
 			`id_empleado_creado_por`,
@@ -83,15 +86,16 @@ begin
 			(@new_id,
 			 p_id_venta,
 			 p_id_empleado_creado_por,
-			p_detalle,
-			p_total_devuelto);
-
+			 p_detalle,
+			 p_total_devuelto);
     end if;
     
     select @new_id as 'id';
 end $$
 delimiter ;
+*/
 
+/*
 drop procedure if exists `proc_update_devolucion_by_id`;
 delimiter $$
 create procedure proc_update_devolucion_by_id(in p_id bigint,
@@ -129,7 +133,7 @@ end $$
 delimiter ;
 
 
-
+*/
 
 
 

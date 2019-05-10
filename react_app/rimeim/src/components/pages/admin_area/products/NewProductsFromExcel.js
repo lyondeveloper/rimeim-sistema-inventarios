@@ -9,6 +9,8 @@ import {
   removeMaterialComponents
 } from '../../../../utils/MaterialFunctions';
 
+import { addMultiple } from '../../../../actions/productActions';
+
 import getJsonFromExcel from '../../../../utils/getJsonFromExcel';
 
 import Spinner from '../../../common/Spinner';
@@ -169,7 +171,9 @@ class NewProductsFromExcel extends Component {
     });
   };
 
-  onSaveProducts = () => {};
+  onSaveProducts = () => {
+    this.props.addMultiple({ productos: this.state.productos });
+  };
 
   render() {
     const {
@@ -248,7 +252,9 @@ class NewProductsFromExcel extends Component {
                     </div>
                   </div>
 
-                  {loading_json && <Spinner fullWidth />}
+                  {(loading_json || this.props.product.loading) && (
+                    <Spinner fullWidth />
+                  )}
                   {productsCards}
                 </div>
               </div>
@@ -262,7 +268,8 @@ class NewProductsFromExcel extends Component {
 
 NewProductsFromExcel.propTypes = {
   errors: PropTypes.object.isRequired,
-  product: PropTypes.object.isRequired
+  product: PropTypes.object.isRequired,
+  addMultiple: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -270,4 +277,7 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps)(NewProductsFromExcel);
+export default connect(
+  mapStateToProps,
+  { addMultiple }
+)(NewProductsFromExcel);

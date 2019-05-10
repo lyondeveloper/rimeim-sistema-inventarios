@@ -103,6 +103,21 @@ export const addNewProduct = (newProductData, history, new_url) => dispatch => {
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };
 
+export const addMultiple = productsData => dispatch => {
+  dispatch(productLoadingObject());
+  axios
+    .post(`${API_URL}/products/add_multiple`, productsData)
+    .then(res => {
+      dispatch(clearErrors());
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: PRODUCT_END_LOADING
+      });
+    })
+    .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
+};
+
 export const updateProductById = (id, newData) => dispatch => {
   dispatch(productLoadingObject());
   axios

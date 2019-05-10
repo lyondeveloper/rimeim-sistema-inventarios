@@ -10,6 +10,9 @@
 
 class Products extends Controller
 {
+    private $arrProductos = [];
+    private $arrProductoLocal = [];
+    private $arrLocales = [];
 
     public function __construct()
     {
@@ -249,6 +252,149 @@ class Products extends Controller
         }
     } // END OF ADD
 
+    public function add_multiple()
+    {
+        $this->usePostRequest();
+        $data = getJsonData();
+        if (
+            !isset($data->productos) ||
+            !is_array($data->productos) ||
+            count($data->productos) == 0
+        ) {
+            $this->response(['error' => "Productos invalidos"], ERROR_NOTFOUND);
+        }
+        foreach ($data->productos as $producto) {
+            $this->add_product_from_excel($producto);
+        }
+        $this->response();
+    }
+
+    private function add_product_from_excel($product)
+    {
+        if (
+            isset($product->codigo) &&
+            !empty($product->codigo) &&
+            isset($product->descripcion) &&
+            !empty($product->descripcion) &&
+            isset($product->precio) &&
+            $product->precio >= 0 &&
+            isset($product->cantidad) &&
+            $product->cantidad >= 0
+        ) {
+
+            $product = json_set_null_params_if_not_exists($product, ['id_tipo_vehiculo', 'id_marca', 'descripcion', 'cantidad_minima']);
+            $product->codigo_barra = $product->codigo;
+            $product->nombre = $product->descripcion;
+            $product->descripcion = null;
+            $product->existencia = $product->cantidad;
+
+            if (
+                !isset($product->cantidad_minima) ||
+                is_null($product->cantidad_minima) ||
+                !($product->cantidad_minima >= 0)
+            ) {
+                $product->cantidad_minima = 0;
+            }
+            if (
+                !isset($product->raro) ||
+                !is_bool($product->raro)
+            ) {
+                $product->raro = false;
+            }
+
+            $producto_existente = $this->get_producto_by_codigo_barra($product->codigo);
+            $id_producto = 0;
+            if (is_null($producto_existente)) {
+                $id_producto = $this->productModel->add($product);
+                if ($id_producto > 0) {
+                    $this->arrProductos[$product->codigo] = $this->productModel->get_by_codigo_barra($product->codigo);
+                }
+            } else {
+                $id_producto = $producto_existente->id;
+                $this->productModel->add_inventario($id_producto, $product->cantidad);
+            }
+            if (
+                isset($product->distribucion) &&
+                is_array($product->distribucion)
+            ) {
+                $this->add_product_distributions_from_excel($id_producto, $product->distribucion);
+            }
+        }
+    }
+
+    private function add_product_distributions_from_excel($id_producto, $distribucion)
+    {
+        if ($id_producto == 0) {
+            return;
+        }
+        foreach ($distribucion as $local) {
+            if (
+                isset($local->local) &&
+                !empty($local->local) &&
+                isset($local->cantidad) &&
+                $local->cantidad >= 0 &&
+                isset($local->ubicacion) &&
+                !empty($local->ubicacion)
+            ) {
+                $local->codigo = $local->local;
+                if (
+                    !isset($local->cantidad_minima_local) ||
+                    !($local->cantidad_minima_local > 0)
+                ) {
+                    $local->cantidad_minima = 0;
+                } else {
+                    $local->cantidad_minima = $local->cantidad_minima_local;
+                }
+                $local->existencia = $local->cantidad;
+
+                $db_local = $this->get_local_by_codigo($local->codigo);
+                $local->id = isset($db_local->id) ? $db_local->id : 0;
+                $this->add_product_distribution_from_excel($id_producto, $local);
+            }
+        }
+    }
+
+    private function add_product_distribution_from_excel($id_producto, $local)
+    {
+        if (
+            isset($local->id) &&
+            $local->id > 0
+        ) {
+            $producto_local = $this->get_product_local_by_idp_idl($id_producto, $local->id);
+            $id_producto_local = 0;
+            if (is_null($producto_local)) {
+                $local->id_local = $local->id;
+                $local->id_producto = $id_producto;
+                $id_producto_local = $this->productLocalModel->add($local);
+                if ($id_producto_local > 0) {
+                    $this->set_product_local_by_idp_idl($id_producto, $local->id);
+                }
+            } else {
+                $id_producto_local = $producto_local->id;
+                $this->productLocalModel->add_inventario($id_producto, $local->id, $local->existencia);
+            }
+            $this->update_product_local_ubication($id_producto_local, $local->ubicacion);
+        }
+    }
+
+    private function update_product_local_ubication($id_producto_local, $ubicacion)
+    {
+        if ($id_producto_local == 0) {
+            return;
+        }
+        $ubicaciones = $this->productLocalUbicationModal->get($id_producto_local);
+        if (count($ubicaciones) > 0) {
+            $ubicacion_producto = $ubicaciones[0];
+            $this->productLocalUbicationModal->update(
+                $ubicacion_producto->id,
+                $ubicacion
+            );
+        } else {
+            $this->productLocalUbicationModal->add($id_producto_local, $ubicacion);
+        }
+    }
+
+    // 
     public function update($id)
     {
         $this->usePostRequest();
@@ -631,5 +777,34 @@ class Products extends Controller
             $product = $this->parse_product_to_send($product);
         }
         return $products;
+    }
+
+    private function get_producto_by_codigo_barra($codigo)
+    {
+        if (!isset($this->arrProductos[$codigo])) {
+            $this->arrProductos[$codigo] =  $this->productModel->get_by_codigo_barra($codigo);
+        }
+        return $this->arrProductos[$codigo];
+    }
+
+    private function get_local_by_codigo($codigo)
+    {
+        if (!isset($this->arrLocales[$codigo])) {
+            $this->arrLocales[$codigo] = $this->localModel->get_by_codigo($codigo);
+        }
+        return $this->arrLocales[$codigo];
+    }
+
+    private function get_product_local_by_idp_idl($id_producto, $id_local)
+    {
+        if (!isset($this->arrProductoLocal["{$id_producto}{$id_local}"])) {
+            $this->arrProductoLocal["{$id_producto}{$id_local}"] = $this->productLocalModel->get_by_product_and_local($id_producto, $id_local);
+        }
+        return $this->arrProductoLocal["{$id_producto}{$id_local}"];
+    }
+
+    private function set_product_local_by_idp_idl($id_producto, $id_local)
+    {
+        $this->arrProductoLocal["{$id_producto}{$id_local}"] = $this->productLocalModel->get_by_product_and_local($id_producto, $id_local);
     }
 }

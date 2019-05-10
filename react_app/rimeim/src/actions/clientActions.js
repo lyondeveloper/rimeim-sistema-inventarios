@@ -5,7 +5,7 @@ import {
   GET_CLIENT,
   GET_CLIENTS,
   CLIENT_LOADING_END
-} from '../actions/types';
+} from './types';
 
 import { clearErrors, handleError } from './errorActions';
 

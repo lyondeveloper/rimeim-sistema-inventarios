@@ -103,6 +103,30 @@ end $$
 delimiter ;
 */
 
+drop procedure if exists proc_get_local_by_codigo;
+delimiter $$
+create procedure proc_get_local_by_codigo(in p_codigo varchar(100))
+begin
+	set p_codigo = trim(p_codigo);
+    if(!is_empty(p_codigo)) then
+		select l.id,
+				l.id_usuario_creado_por,
+				l.nombre,
+				l.codigo,
+				l.descripcion,
+				l.descripcion_ubicacion,
+				l.color_hex,
+				l.es_bodega,
+				l.latitud,
+				l.longitud,
+				l.fecha_creado
+		from tb_local l
+		where l.eliminado = false
+		and l.codigo = p_codigo;
+    end if;
+end $$
+delimiter ;
+
 drop procedure if exists proc_add_local;
 delimiter $$
 create procedure proc_add_local(in p_id_usuario_creado_por bigint,

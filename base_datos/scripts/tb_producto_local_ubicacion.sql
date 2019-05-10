@@ -31,7 +31,7 @@ end $$
 delimiter ;
 
 
-/*
+
 drop procedure if exists `proc_add_producto_local_ubicacion`;
 delimiter $$
 create procedure proc_add_producto_local_ubicacion(in p_id_producto_local bigint,
@@ -42,6 +42,7 @@ begin
 
     if (valid_int_id(p_id_producto_local)) then
         set @new_id = func_get_next_producto_local_ubicacion_id();
+        
         insert into tb_producto_local_ubicacion(
             `id`,
             `id_producto_local`,
@@ -86,4 +87,4 @@ begin
     end if;
 end $$
 delimiter ;
-*/
+

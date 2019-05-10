@@ -62,6 +62,12 @@ export const ORDER_LOADING_END = 'ORDER_LOADING_END';
 export const GET_ORDER = 'GET_ORDER';
 export const GET_ORDERS = 'GET_ORDERS';
 
+// Devolutions
+export const DEVOLUTION_LOADING = 'DEVOLUTION_LOADING';
+export const DEVOLUTION_END_LOADING = 'DEVOLUTION_END_LOADING';
+export const GET_DEVOLUTIONS = 'GET_DEVOLUTIONS';
+export const GET_DEVOLUTION = 'GET_DEVOLUTION';
+
 // Error
 export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';

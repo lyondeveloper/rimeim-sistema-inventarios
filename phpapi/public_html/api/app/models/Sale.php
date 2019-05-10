@@ -124,6 +124,16 @@ class Sale
         return $this->db->success();
     }
 
+    public function decrease_values($id, $sub_total, $impuesto, $total)
+    {
+        $this->db->query('call proc_update_venta_values_decrease_by_id(:p_id, :p_sub_total, :p_impuesto, :p_total);');
+        $this->db->bind(':p_id', $id);
+        $this->db->bind(':p_sub_total', $sub_total);
+        $this->db->bind(':p_impuesto', $impuesto);
+        $this->db->bind(':p_total', $total);
+        return $this->db->success();
+    }
+
     public function delete($id, $id_empleado)
     {
         $this->db->query('call proc_delete_venta_by_id(:p_id, :p_id_empleado);');
