@@ -175,6 +175,13 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
+                path="/devoluciones/:id"
+                component={ShowDevolution}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
                 path="/nueva_devolucion/:id"
                 component={NewDevolution}
               />
@@ -292,14 +299,6 @@ class App extends Component {
               />
             </Switch>
 
-            <Switch>
-              <PrivateRoute
-                exact
-                path="/buscar_cliente"
-                component={SearchClient}
-              />
-            </Switch>
-
             {/* Providers */}
             <Switch>
               <PrivateRoute
@@ -323,14 +322,6 @@ class App extends Component {
                 exact
                 path="/proveedores/:id"
                 component={Provider}
-              />
-            </Switch>
-
-            <Switch>
-              <PrivateRoute
-                exact
-                path="/buscar_proveedor/"
-                component={SearchProvider}
               />
             </Switch>
 

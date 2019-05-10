@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import uuid from 'uuid';
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import uuid from "uuid";
+import { Link } from "react-router-dom";
 
-import OrderCard from '../../common/OrderCard';
-import Spinner from '../../common/Spinner';
-import NewNavbar from '../../layout/NewNavbar';
+import OrderCard from "../../common/OrderCard";
+import Spinner from "../../common/Spinner";
+import NewNavbar from "../../layout/NewNavbar";
 
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from '../../../utils/MaterialFunctions';
+} from "../../../utils/MaterialFunctions";
 
-import { getOrders } from '../../../actions/orderActions';
+import { getOrders } from "../../../actions/orderActions";
 
 class Orders extends Component {
   componentWillMount() {
@@ -25,7 +26,7 @@ class Orders extends Component {
   }
 
   render() {
-    const { orders, loading } = this.props.orders;
+    const { orders, loading } = this.props.order;
 
     let ordersContent;
 
@@ -33,8 +34,8 @@ class Orders extends Component {
       ordersContent = <Spinner fullWidth />;
     } else {
       ordersContent = (
-        <div className='row'>
-          <div className='col s12'>
+        <div className="row">
+          <div className="col s12">
             {orders.map((order, i) => {
               return <OrderCard order={order} key={uuid()} />;
             })}
@@ -45,28 +46,28 @@ class Orders extends Component {
 
     return (
       <React.Fragment>
-        <NewNavbar navtype={ORDERS}>
-          <NewNavbar active_nav='PEDIDOS'>
-            <div className='nav-wrapper'>
-              <a href='#!' className='brand-logo'>
+        <NewNavbar navtype="PEDIDOS">
+          <NewNavbar active_nav="PEDIDOS">
+            <div className="nav-wrapper">
+              <a href="#!" className="brand-logo">
                 Pedido: #{this.props.match.params.id}
               </a>
               <a
-                href='#!'
-                className='sidenav-trigger'
-                data-target='nav_sidenav'
+                href="#!"
+                className="sidenav-trigger"
+                data-target="nav_sidenav"
               >
-                <i className='material-icons'>menu</i>
+                <i className="material-icons">menu</i>
               </a>
-              <ul className='right'>
+              <ul className="right">
                 <li>
                   <Link
-                    to='/buscar_pedido'
-                    className='tooltipped'
-                    data-position='left'
-                    data-tooltip='Buscar'
+                    to="/buscar_pedido"
+                    className="tooltipped"
+                    data-position="left"
+                    data-tooltip="Buscar"
                   >
-                    <i className='material-icons'>search</i>
+                    <i className="material-icons">search</i>
                   </Link>
                 </li>
               </ul>
@@ -81,7 +82,7 @@ class Orders extends Component {
 }
 
 const mapStateToProps = state => ({
-  orders: state.order
+  order: state.order
 });
 
 export default connect(
