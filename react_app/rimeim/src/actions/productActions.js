@@ -165,6 +165,33 @@ export const deleteProductById = (id, history, new_url) => dispatch => {
     .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
 };
 
+// Reports
+export const getProductsReport = jsonData => dispatch => {
+  dispatch(productLoadingObject());
+  axios
+    .post(`${API_URL}/reports/get_products`, jsonData)
+    .then(res => {
+      const response = res.data;
+      configUserFromResponse(response, dispatch);
+      dispatch({
+        type: GET_PRODUCT,
+        payload: response.data
+      });
+    })
+    .catch(err => handleError(err, dispatch, PRODUCT_END_LOADING));
+};
+
+export const cleanProductsReducer = () => dispatch => {
+  dispatch({
+    type: GET_PRODUCTS,
+    payload: []
+  });
+  dispatch({
+    type: GET_PRODUCT,
+    payload: {}
+  });
+};
+
 // Helper objects
 export const productLoadingObject = () => {
   return {

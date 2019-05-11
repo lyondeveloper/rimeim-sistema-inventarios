@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
-import logo_rimeim from '../../public/img/logo_rimeim.png';
+import logo_rimeim from "../../public/img/logo_rimeim.png";
 
 // Functions
-import { logoutUser, setCurrentLocal } from '../../actions/UserActions';
-import isEmpty from '../../actions/isEmpty';
+import { logoutUser, setCurrentLocal } from "../../actions/UserActions";
+import isEmpty from "../../actions/isEmpty";
 
 class NavbarAdmin extends Component {
   render() {
@@ -63,7 +63,7 @@ class NavbarAdmin extends Component {
                 </Link>
               </li>
 
-              <li className={`bold ${active_nav === 'PRODUCTOS' && 'active'}`}>
+              <li className={`bold ${active_nav === "PRODUCTOS" && "active"}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">directions_car</i>
                   Productos
@@ -86,7 +86,7 @@ class NavbarAdmin extends Component {
                 </div>
               </li>
 
-              <li className={`bold ${active_nav === 'REPORTES' && 'active'}`}>
+              <li className={`bold ${active_nav === "REPORTES" && "active"}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">trending_up</i>
                   Reportes
@@ -97,13 +97,13 @@ class NavbarAdmin extends Component {
                       <Link to="/admin/reportes/ventas">Ventas</Link>
                     </li>
                     <li>
-                      <a href="#!">Inventario</a>
+                      <Link to="/admin/reportes/productos">Productos</Link>
                     </li>
                   </ul>
                 </div>
               </li>
               <div className="divider" />
-              <li className={`bold ${active_nav === 'CUENTA' && 'active'}`}>
+              <li className={`bold ${active_nav === "CUENTA" && "active"}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   {has_notifications ? (
                     <i className="material-icons notifications-active-color">
@@ -120,7 +120,7 @@ class NavbarAdmin extends Component {
                       <Link to="/admin/notificaciones">
                         <i
                           className={`material-icons ${has_notifications &&
-                            'notifications-active-color'}`}
+                            "notifications-active-color"}`}
                         >
                           notifications
                         </i>
