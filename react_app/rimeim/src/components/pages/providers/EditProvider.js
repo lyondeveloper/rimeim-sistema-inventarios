@@ -300,14 +300,11 @@ class EditProvider extends Component {
       telefono,
       field,
       searching,
-      id_nuevo_producto,
       productos,
       imagen,
       precio,
-      errors: { nombre_error }
+      errors: { nombre_error, correo_error }
     } = this.state;
-
-    const productsOptions = [];
 
     const { products } = this.props;
 
@@ -364,124 +361,119 @@ class EditProvider extends Component {
           <div className='col s12'>
             <div className='card'>
               <div className='card-content'>
-                <form className='' onSubmit={this.onSubmit}>
-                  <div className='row'>
-                    <SelectFiles
-                      id='imagen'
-                      files={[imagen]}
-                      label='Seleccionar Imagen'
-                      onchange={this.onChangeFiles}
-                      onDeleteFileClick={this.onDeleteFile}
-                    />
-                  </div>
-                  <div className='row'>
-                    <TextInputField
-                      id='nombre'
-                      label='Nombre'
-                      onchange={this.onChangeTextInput}
-                      value={nombre}
-                      active_label={nombre ? true : false}
-                      error={nombre_error}
-                    />
-                  </div>
-                  <div className='row'>
-                    <TextInputField
-                      id='rtn'
-                      label='RTN'
-                      onchange={this.onChangeTextInput}
-                      value={rtn}
-                      active_label={rtn ? true : false}
-                    />
-                  </div>
-                  <div className='row'>
-                    <TextInputField
-                      id='correo'
-                      type='email'
-                      label='Correo'
-                      onchange={this.onChangeTextInput}
-                      value={correo}
-                      active_label={correo ? true : false}
-                    />
-                  </div>
+                <div className='row'>
+                  <SelectFiles
+                    id='imagen'
+                    files={[imagen]}
+                    label='Seleccionar Imagen'
+                    onchange={this.onChangeFiles}
+                    onDeleteFileClick={this.onDeleteFile}
+                  />
+                </div>
+                <div className='row'>
+                  <TextInputField
+                    id='nombre'
+                    label='Nombre'
+                    onchange={this.onChangeTextInput}
+                    value={nombre}
+                    active_label={nombre ? true : false}
+                    error={nombre_error}
+                  />
+                </div>
+                <div className='row'>
+                  <TextInputField
+                    id='rtn'
+                    label='RTN'
+                    onchange={this.onChangeTextInput}
+                    value={rtn}
+                    active_label={rtn ? true : false}
+                  />
+                </div>
+                <div className='row'>
+                  <TextInputField
+                    id='correo'
+                    type='email'
+                    label='Correo'
+                    onchange={this.onChangeTextInput}
+                    value={correo}
+                    error={correo_error}
+                    active_label={correo ? true : false}
+                  />
+                </div>
 
-                  <div className='row'>
-                    <TextInputField
-                      id='telefono'
-                      label='Telefono'
-                      onchange={this.onChangeTextInput}
-                      value={telefono}
-                      active_label={telefono ? true : false}
-                    />
-                  </div>
+                <div className='row'>
+                  <TextInputField
+                    id='telefono'
+                    label='Telefono'
+                    onchange={this.onChangeTextInput}
+                    value={telefono}
+                    active_label={telefono ? true : false}
+                  />
+                </div>
 
-                  <div className='col s12 center mb-1'>
-                    <h5>Agregar Productos</h5>
-                    <button
-                      className='btn-floating modal-trigger'
-                      data-tooltip='Agregar'
-                      data-target='modal_agregar_productos'
-                      onClick={this.onAddProductClick}
-                    >
-                      <i className='material-icons'>add</i>
-                    </button>
-                  </div>
+                <div className='col s12 center mb-1'>
+                  <h5>Agregar Productos</h5>
+                  <button
+                    className='btn-floating modal-trigger'
+                    data-tooltip='Agregar'
+                    data-target='modal_agregar_productos'
+                    onClick={this.onAddProductClick}
+                  >
+                    <i className='material-icons'>add</i>
+                  </button>
+                </div>
 
-                  <div className='row center'>
-                    {productos.length > 0 ? (
-                      <table className='striped table-bordered'>
-                        <thead>
-                          <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Precio Especial</th>
-                            <th>Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {productos.map((producto, i) =>
-                            producto.eliminado ? (
-                              ''
-                            ) : (
-                              <tr key={uuid()}>
-                                <td>{producto.id_producto}</td>
-                                <td>{producto.producto_nombre}</td>
-                                <td>{producto.precio_especial}</td>
-                                <td>
-                                  <i
-                                    className='material-icons cursor-pointer center'
-                                    onClick={this.onDeleteProduct.bind(
-                                      this,
-                                      producto
-                                    )}
-                                  >
-                                    delete_sweep
-                                  </i>
+                <div className='row center'>
+                  {productos.length > 0 ? (
+                    <table className='striped table-bordered'>
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Nombre</th>
+                          <th>Precio Especial</th>
+                          <th>Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {productos.map((producto, i) =>
+                          producto.eliminado ? (
+                            ''
+                          ) : (
+                            <tr key={uuid()}>
+                              <td>{producto.id_producto}</td>
+                              <td>{producto.producto_nombre}</td>
+                              <td>{producto.precio_especial}</td>
+                              <td>
+                                <i
+                                  className='material-icons cursor-pointer center'
+                                  onClick={this.onDeleteProduct.bind(
+                                    this,
+                                    producto
+                                  )}
+                                >
+                                  delete_sweep
+                                </i>
 
-                                  <i
-                                    className='material-icons cursor-pointer modal-trigger center'
-                                    data-target='modal_agregar_productos'
-                                    onClick={this.onEditProductClick.bind(
-                                      this,
-                                      producto
-                                    )}
-                                  >
-                                    create
-                                  </i>
-                                </td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
-                    ) : (
-                      ''
-                    )}
-                  </div>
-
-                  <div className='center mt-1'>
-                    <button className='btn'>Guardar</button>
-                  </div>
-                </form>
+                                <i
+                                  className='material-icons cursor-pointer modal-trigger center'
+                                  data-target='modal_agregar_productos'
+                                  onClick={this.onEditProductClick.bind(
+                                    this,
+                                    producto
+                                  )}
+                                >
+                                  create
+                                </i>
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  ) : (
+                    ''
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -502,25 +494,15 @@ class EditProvider extends Component {
 
             <ul className='right'>
               <li>
-                <Link
-                  to='/proveedores'
-                  className='tooltipped'
+                <a
+                  href='#!'
+                  class='tooltipped'
                   data-position='left'
-                  data-tooltip='Ver Todos'
+                  data-tooltip='Guardar'
+                  onClick={this.onSubmit}
                 >
-                  <i className='material-icons'>people</i>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to='/buscar_proveedor'
-                  className='tooltipped'
-                  data-position='left'
-                  data-tooltip='Buscar'
-                >
-                  <i className='material-icons'>search</i>
-                </Link>
+                  <i class='material-icons cursor-pointer'>save</i>
+                </a>
               </li>
             </ul>
           </div>

@@ -9,6 +9,11 @@ const SearchOrderModel = props => {
     onsearch,
     values: { codigo, proveedor, local, fecha_inicio, fecha_fin }
   } = props;
+
+  const onGetAllClick = () => {
+    props.onGetAll();
+  };
+
   return (
     <div className='modal' id='modal_buscar_pedido'>
       <div className='modal-content'>
@@ -65,6 +70,14 @@ const SearchOrderModel = props => {
           className='modal-close waves-effect waves-green btn-flat left'
         >
           Cerrar
+        </a>
+        <a
+          href='#!'
+          className='btn modal-close'
+          onClick={onGetAllClick}
+          style={{ marginRight: '20px' }}
+        >
+          Obtener todo
         </a>
         <a
           href='#!'

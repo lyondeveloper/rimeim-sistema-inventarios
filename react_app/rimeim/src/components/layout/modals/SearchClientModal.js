@@ -9,6 +9,11 @@ const SearchClientModal = props => {
     onsearch,
     values: { field }
   } = props;
+
+  const onGetAllClick = () => {
+    props.onGetAll();
+  };
+
   return (
     <div className='modal' id='modal_buscar_cliente'>
       <div className='modal-content'>
@@ -28,6 +33,14 @@ const SearchClientModal = props => {
           className='modal-close waves-effect waves-green btn-flat left'
         >
           Cerrar
+        </a>
+        <a
+          href='#!'
+          className='btn modal-close'
+          onClick={onGetAllClick}
+          style={{ marginRight: '20px' }}
+        >
+          Obtener todo
         </a>
         <a
           href='#!'

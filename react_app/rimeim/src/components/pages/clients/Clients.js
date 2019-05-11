@@ -10,13 +10,19 @@ import {
 } from '../../../utils/MaterialFunctions';
 
 import { connect } from 'react-redux';
-import { getClients } from '../../../actions/clientActions';
+import { getClients, searchClient } from '../../../actions/clientActions';
 
 import ClientCard from '../../common/ClientCard';
+import SearchClientModal from '../../layout/modals/SearchClientModal';
 
 import Spinner from '../../common/Spinner';
 
 class Clients extends Component {
+  state = {
+    field: '',
+    searching: false
+  };
+
   componentWillMount() {
     removeMaterialComponents();
   }
@@ -26,10 +32,42 @@ class Clients extends Component {
     this.props.getClients();
   }
 
+  onSearch = e => {
+    e.preventDefault();
+    this.setState({
+      searching: true
+    });
+    this.props.searchClient({ field: this.state.field });
+  };
+
+  onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+
+  getAll = () => {
+    this.props.getClients();
+  };
+
   render() {
     const { clients, loading } = this.props.clients;
 
+    const { searching, field } = this.state;
+
     let clientsContent;
+
+    let searchContent;
+
+    if (loading) {
+      searchContent = <Spinner fullWidth />;
+    } else {
+      if (clients.length <= 0 && !loading)
+        searchContent = <h1>No hay clientes</h1>;
+      else {
+        searchContent = clients.map((client, index) => (
+          <div className='col s12 m6 l4'>
+            <ClientCard client={client} key={client.id} />
+          </div>
+        ));
+      }
+    }
 
     if (clients.length < 0 || loading) {
       clientsContent = <Spinner fullWidth />;
@@ -37,7 +75,7 @@ class Clients extends Component {
       clientsContent = clients.map((client, index) => {
         return (
           <div className='col s12 m6 l4' key={uuid()}>
-            <ClientCard client={client} key={uuid()} />
+            <ClientCard client={client} key={client.id} />
           </div>
         );
       });
@@ -56,20 +94,28 @@ class Clients extends Component {
 
             <ul className='right'>
               <li>
-                <Link
-                  to='/buscar_cliente'
-                  className='tooltipped'
+                <a
+                  href='#modal_buscar_cliente'
+                  className='tooltipped modal-trigger'
                   data-position='left'
                   data-tooltip='Buscar'
                 >
-                  <i className='material-icons'>search</i>
-                </Link>
+                  <i className='material-icons cursor-pointer'>search</i>
+                </a>
               </li>
             </ul>
           </div>
         </NewNavBar>
         <main>
-          <div className='row'>{clientsContent}</div>
+          <SearchClientModal
+            onsearch={this.onSearch}
+            onchange={this.onChangeTextInput}
+            onGetAll={this.getAll}
+            values={{ field }}
+          />
+          <div className='row'>
+            {searching ? searchContent : clientsContent}
+          </div>
         </main>
       </React.Fragment>
     );
@@ -82,5 +128,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getClients }
+  { getClients, searchClient }
 )(Clients);

@@ -116,9 +116,6 @@ class NewNavbar extends Component {
                     <li>
                       <Link to='/pedidos'>Pedidos</Link>
                     </li>
-                    <li>
-                      <Link to='/buscar_pedido'>Buscar</Link>
-                    </li>
                   </ul>
                 </div>
               </li>
@@ -157,10 +154,6 @@ class NewNavbar extends Component {
                     <li>
                       <Link to='/clientes'>Ver todos</Link>
                     </li>
-
-                    <li>
-                      <Link to='/buscar_cliente'>Buscar</Link>
-                    </li>
                   </ul>
                 </div>
               </li>
@@ -176,9 +169,6 @@ class NewNavbar extends Component {
                     </li>
                     <li>
                       <Link to='/proveedores'>Ver todos</Link>
-                    </li>
-                    <li>
-                      <Link to='/buscar_proveedor'>Buscar</Link>
                     </li>
                   </ul>
                 </div>

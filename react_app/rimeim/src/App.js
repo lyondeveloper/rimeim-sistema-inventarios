@@ -34,7 +34,6 @@ import NewDevolution from './components/pages/devolutions/NewDevolution';
 // Orders
 import Orders from './components/pages/orders/Orders';
 import Order from './components/pages/orders/Order';
-import SearchOrder from './components/pages/orders/SearchOrder';
 import NewOrder from './components/pages/orders/NewOrder';
 import EditOrderToProvider from './components/pages/orders/EditOrderToProvider';
 import EditOrderToLocal from './components/pages/orders/EditOrderToLocal';
@@ -57,14 +56,12 @@ import Clients from './components/pages/clients/Clients';
 import Client from './components/pages/clients/Client';
 import NewClient from './components/pages/clients/NewClient';
 import EditClient from './components/pages/clients/EditClient';
-import SearchClient from './components/pages/clients/SearchClient';
 
 // Providers
 import NewProvider from './components/pages/providers/NewProvider';
 import EditProvider from './components/pages/providers/EditProvider';
 import Providers from './components/pages/providers/Providers';
 import Provider from './components/pages/providers/Provider';
-import SearchProvider from './components/pages/providers/SearchProvider';
 
 // Account
 import ConfigurationView from './components/pages/account/ConfigurationView';
@@ -190,13 +187,6 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
-                path='/buscar_pedido'
-                component={SearchOrder}
-              />
-            </Switch>
-            <Switch>
-              <PrivateRoute
-                exact
                 path='/editar_pedido/proveedor/:id'
                 component={EditOrderToProvider}
               />
@@ -282,14 +272,6 @@ class App extends Component {
               />
             </Switch>
 
-            <Switch>
-              <PrivateRoute
-                exact
-                path='/buscar_cliente'
-                component={SearchClient}
-              />
-            </Switch>
-
             {/* Providers */}
             <Switch>
               <PrivateRoute
@@ -313,14 +295,6 @@ class App extends Component {
                 exact
                 path='/proveedores/:id'
                 component={Provider}
-              />
-            </Switch>
-
-            <Switch>
-              <PrivateRoute
-                exact
-                path='/buscar_proveedor/'
-                component={SearchProvider}
               />
             </Switch>
 

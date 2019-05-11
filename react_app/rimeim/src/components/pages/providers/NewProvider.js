@@ -280,7 +280,7 @@ class NewProvider extends Component {
       productos,
       precio,
       searching,
-      errors: { nombre_error }
+      errors: { nombre_error, correo_error }
     } = this.state;
 
     const { products, loading } = this.props.products;
@@ -341,25 +341,15 @@ class NewProvider extends Component {
 
             <ul className='right'>
               <li>
-                <Link
-                  to='/proveedores'
+                <a
+                  href='#!'
                   className='tooltipped'
                   data-position='left'
-                  data-tooltip='Ver Todos'
+                  data-tooltip='Guardar'
+                  onClick={this.onSubmit}
                 >
-                  <i className='material-icons'>people</i>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to='/buscar_proveedor'
-                  className='tooltipped'
-                  data-position='left'
-                  data-tooltip='Buscar'
-                >
-                  <i className='material-icons'>search</i>
-                </Link>
+                  <i class='material-icons cursor-pointer'>save</i>
+                </a>
               </li>
             </ul>
           </div>
@@ -369,173 +359,169 @@ class NewProvider extends Component {
             <div className='col s12'>
               <div className='card'>
                 <div className='card-content'>
-                  <form className='' onSubmit={this.onSubmit}>
-                    <div className='row'>
-                      <SelectFiles
-                        id='imagen'
-                        files={[imagen]}
-                        label='Seleccionar Imagen'
-                        onchange={this.onChangeFiles}
-                        onDeleteFileClick={this.onDeleteFile}
-                      />
-                    </div>
-                    <div className='row'>
-                      <TextInputField
-                        id='nombre'
-                        label='Nombre'
-                        onchange={this.onChangeTextInput}
-                        value={nombre}
-                        error={nombre_error}
-                      />
-                    </div>
-                    <div className='row'>
-                      <TextInputField
-                        id='rtn'
-                        label='RTN'
-                        onchange={this.onChangeTextInput}
-                        value={rtn}
-                      />
-                    </div>
+                  <div className='row'>
+                    <SelectFiles
+                      id='imagen'
+                      files={[imagen]}
+                      label='Seleccionar Imagen'
+                      onchange={this.onChangeFiles}
+                      onDeleteFileClick={this.onDeleteFile}
+                    />
+                  </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='nombre'
+                      label='Nombre'
+                      onchange={this.onChangeTextInput}
+                      value={nombre}
+                      error={nombre_error}
+                    />
+                  </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='rtn'
+                      label='RTN'
+                      onchange={this.onChangeTextInput}
+                      value={rtn}
+                    />
+                  </div>
 
-                    <div className='row'>
-                      <TextInputField
-                        id='correo'
-                        type='email'
-                        label='Correo'
-                        onchange={this.onChangeTextInput}
-                        value={correo}
-                      />
-                    </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='correo'
+                      type='email'
+                      label='Correo'
+                      onchange={this.onChangeTextInput}
+                      value={correo}
+                      error={correo_error}
+                    />
+                  </div>
 
-                    <div className='row'>
-                      <TextInputField
-                        id='telefono'
-                        label='Telefono'
-                        onchange={this.onChangeTextInput}
-                        value={telefono}
-                      />
-                    </div>
+                  <div className='row'>
+                    <TextInputField
+                      id='telefono'
+                      label='Telefono'
+                      onchange={this.onChangeTextInput}
+                      value={telefono}
+                    />
+                  </div>
 
-                    <div className='col s12 center mb-1'>
+                  <div className='col s12 center mb-1'>
+                    <h5>Agregar Productos</h5>
+                    <button
+                      className='btn-floating modal-trigger'
+                      data-tooltip='Agregar'
+                      data-target='modal_agregar_productos'
+                      onClick={this.onAddProductClick}
+                    >
+                      <i className='material-icons'>add</i>
+                    </button>
+                  </div>
+
+                  <div className='row center'>
+                    {productos.length > 0 ? (
+                      <table className='striped table-bordered'>
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio Especial</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {productos.map((producto, i) =>
+                            producto.eliminado ? (
+                              ''
+                            ) : (
+                              <tr key={uuid()}>
+                                <td>{producto.id_producto}</td>
+                                <td> {producto.nombre} </td>
+                                <td>{producto.precio}</td>
+                                <td>
+                                  <i
+                                    className='material-icons cursor-pointer center'
+                                    onClick={this.onDeleteProduct.bind(
+                                      this,
+                                      producto
+                                    )}
+                                  >
+                                    delete_sweep
+                                  </i>
+
+                                  <i
+                                    className='material-icons cursor-pointer modal-trigger center'
+                                    data-target='modal_agregar_productos'
+                                    onClick={this.onEditProductClick.bind(
+                                      this,
+                                      producto
+                                    )}
+                                  >
+                                    create
+                                  </i>
+                                </td>
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    ) : (
+                      ''
+                    )}
+                  </div>
+
+                  <div className='modal' id='modal_agregar_productos'>
+                    <div className='modal-content'>
                       <h5>Agregar Productos</h5>
-                      <button
-                        className='btn-floating modal-trigger'
-                        data-tooltip='Agregar'
-                        data-target='modal_agregar_productos'
-                        onClick={this.onAddProductClick}
-                      >
-                        <i className='material-icons'>add</i>
-                      </button>
-                    </div>
-
-                    <div className='row center'>
-                      {productos.length > 0 ? (
-                        <table className='striped table-bordered'>
-                          <thead>
-                            <tr>
-                              <th>ID</th>
-                              <th>Nombre</th>
-                              <th>Precio Especial</th>
-                              <th>Acciones</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {productos.map((producto, i) =>
-                              producto.eliminado ? (
-                                ''
-                              ) : (
-                                <tr key={uuid()}>
-                                  <td>{producto.id_producto}</td>
-                                  <td> {producto.nombre} </td>
-                                  <td>{producto.precio}</td>
-                                  <td>
-                                    <i
-                                      className='material-icons cursor-pointer center'
-                                      onClick={this.onDeleteProduct.bind(
-                                        this,
-                                        producto
-                                      )}
-                                    >
-                                      delete_sweep
-                                    </i>
-
-                                    <i
-                                      className='material-icons cursor-pointer modal-trigger center'
-                                      data-target='modal_agregar_productos'
-                                      onClick={this.onEditProductClick.bind(
-                                        this,
-                                        producto
-                                      )}
-                                    >
-                                      create
-                                    </i>
-                                  </td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
-                      ) : (
-                        ''
-                      )}
-                    </div>
-
-                    <div className='modal' id='modal_agregar_productos'>
-                      <div className='modal-content'>
-                        <h5>Agregar Productos</h5>
-                        {this.state.editMode ? (
-                          <div className='row'>
-                            <TextInputField
-                              id='precio'
-                              label='Precio'
-                              onchange={this.onChangeTextInput}
-                              value={precio}
-                              active_label={true}
-                            />
-                          </div>
-                        ) : (
-                          <React.Fragment>
-                            <TextInputField
-                              id='field'
-                              label='Parametro de Busqueda (ID o Nombre de Producto)'
-                              value={field}
-                              onchange={this.onChangeSearchProductInput}
-                            />
-                            {searchResult}
-                            <TextInputField
-                              id='precio'
-                              label='Precio'
-                              onchange={this.onChangeTextInput}
-                              value={precio}
-                            />
-                          </React.Fragment>
-                        )}
-
-                        <div className='modal-footer'>
-                          <a
-                            href='#!'
-                            className='modal-close waves-effect waves-green btn left text-white'
-                          >
-                            Cerrar
-                          </a>
-                          <a
-                            href='#!'
-                            className='modal-close waves-effect waves-green btn text-white'
-                            onClick={
-                              this.state.editMode
-                                ? this.onEditProduct
-                                : this.onAddProduct
-                            }
-                          >
-                            Guardar
-                          </a>
+                      {this.state.editMode ? (
+                        <div className='row'>
+                          <TextInputField
+                            id='precio'
+                            label='Precio'
+                            onchange={this.onChangeTextInput}
+                            value={precio}
+                            active_label={true}
+                          />
                         </div>
+                      ) : (
+                        <React.Fragment>
+                          <TextInputField
+                            id='field'
+                            label='Parametro de Busqueda (ID o Nombre de Producto)'
+                            value={field}
+                            onchange={this.onChangeSearchProductInput}
+                          />
+                          {searchResult}
+                          <TextInputField
+                            id='precio'
+                            label='Precio'
+                            onchange={this.onChangeTextInput}
+                            value={precio}
+                          />
+                        </React.Fragment>
+                      )}
+
+                      <div className='modal-footer'>
+                        <a
+                          href='#!'
+                          className='modal-close waves-effect waves-green btn left text-white'
+                        >
+                          Cerrar
+                        </a>
+                        <a
+                          href='#!'
+                          className='modal-close waves-effect waves-green btn text-white'
+                          onClick={
+                            this.state.editMode
+                              ? this.onEditProduct
+                              : this.onAddProduct
+                          }
+                        >
+                          Guardar
+                        </a>
                       </div>
                     </div>
-                    <div className='center mt-1'>
-                      <button className='btn'>Guardar</button>
-                    </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>

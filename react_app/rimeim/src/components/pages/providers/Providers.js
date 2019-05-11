@@ -11,6 +11,10 @@ import {
   removeMaterialComponents
 } from '../../../utils/MaterialFunctions';
 
+import SearchProviderModal from '../../layout/modals/SearchProviderModal';
+
+import { searchProvider } from '../../../actions/providerActions';
+
 import ProviderCard from '../../common/ProviderCard';
 
 import { getProviders } from '../../../actions/providerActions';
@@ -18,6 +22,11 @@ import { getProviders } from '../../../actions/providerActions';
 import Spinner from '../../common/Spinner';
 
 class Providers extends Component {
+  state = {
+    field: '',
+    searching: false
+  };
+
   componentWillMount() {
     removeMaterialComponents();
   }
@@ -27,10 +36,41 @@ class Providers extends Component {
     this.props.getProviders();
   }
 
+  onSearch = e => {
+    e.preventDefault();
+    this.setState({
+      searching: true
+    });
+    this.props.searchProvider({ field: this.state.field });
+  };
+
+  onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
+
+  getAll = () => {
+    this.props.getProviders();
+  };
+
   render() {
+    const { field, searching } = this.state;
+
     const { providers, loading } = this.props.providers;
 
     let providersContent;
+    let searchProvider;
+
+    if (loading) {
+      searchProvider = <Spinner fullWidth />;
+    } else {
+      if (providers.length <= 0 && !loading) {
+        searchProvider = <h1>No hay proveedores</h1>;
+      } else {
+        searchProvider = providers.map((provider, i) => (
+          <div className='col s12 m6 l4'>
+            <ProviderCard provider={provider} key={provider.id} />
+          </div>
+        ));
+      }
+    }
 
     if (loading) {
       providersContent = <Spinner fullWidth />;
@@ -60,20 +100,28 @@ class Providers extends Component {
             </a>
             <ul className='right'>
               <li>
-                <Link
-                  to='/buscar_proveedor'
-                  className='tooltipped'
+                <a
+                  href='#modal_buscar_proveedor'
+                  className='tooltipped modal-trigger'
                   data-position='left'
                   data-tooltip='Buscar'
                 >
-                  <i className='material-icons'>search</i>
-                </Link>
+                  <i className='material-icons cursor-pointer'>search</i>
+                </a>
               </li>
             </ul>
           </div>
         </NewNavbar>
         <main>
-          <div className='row'>{providersContent}</div>
+          <SearchProviderModal
+            onsearch={this.onSearch}
+            onchange={this.onChangeTextInput}
+            onGetAll={this.getAll}
+            values={{ field }}
+          />
+          <div className='row'>
+            {searching ? searchProvider : providersContent}
+          </div>
         </main>
       </React.Fragment>
     );
@@ -86,5 +134,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getProviders }
+  { getProviders, searchProvider }
 )(withRouter(Providers));
