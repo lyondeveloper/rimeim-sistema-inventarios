@@ -149,7 +149,7 @@ class Orders extends Component {
 }
 
 const mapStateToProps = state => ({
-  order: state.order
+  orders: state.order
 });
 
 export default connect(
