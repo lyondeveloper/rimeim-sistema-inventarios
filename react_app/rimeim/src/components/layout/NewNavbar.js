@@ -1,23 +1,23 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-import logo_rimeim from "../../public/img/logo_rimeim.png";
+import logo_rimeim from '../../public/img/logo_rimeim.png';
 
-import { logoutUser, setCurrentLocal } from "../../actions/UserActions";
+import { logoutUser, setCurrentLocal } from '../../actions/UserActions';
+import isEmpty from '../../actions/isEmpty';
 
 class NewNavbar extends Component {
   render() {
     const {
       active_nav,
-      has_notifications,
       show_more_option,
-      user: {
-        user: { admin }
-      }
+      user: { user }
     } = this.props;
+    const admin = user.admin;
     let mobile_nav = this.props.mobile_nav ? this.props.mobile_nav : null;
+    const has_notifications = !isEmpty(user.notificaciones);
 
     return (
       <header>
@@ -51,7 +51,7 @@ class NewNavbar extends Component {
           </li>
           <li className="no-padding">
             <ul className="collapsible collapsible-accordion pb-navbar">
-              <li className={`bold ${active_nav === "VENTAS" && "active"}`}>
+              <li className={`bold ${active_nav === 'VENTAS' && 'active'}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">monetization_on</i>
                   Ventas
@@ -71,7 +71,7 @@ class NewNavbar extends Component {
                 </div>
               </li>
               <li
-                className={`bold ${active_nav === "COTIZACIONES" && "active"}`}
+                className={`bold ${active_nav === 'COTIZACIONES' && 'active'}`}
               >
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">library_books</i>
@@ -89,7 +89,7 @@ class NewNavbar extends Component {
                 </div>
               </li>
               <li
-                className={`bold ${active_nav === "DEVOLUCIONES" && "active"}`}
+                className={`bold ${active_nav === 'DEVOLUCIONES' && 'active'}`}
               >
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">money_off</i>
@@ -103,7 +103,7 @@ class NewNavbar extends Component {
                   </ul>
                 </div>
               </li>
-              <li className={`bold ${active_nav === "PEDIDOS" && "active"}`}>
+              <li className={`bold ${active_nav === 'PEDIDOS' && 'active'}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">border_color</i>
                   Pedidos
@@ -119,7 +119,7 @@ class NewNavbar extends Component {
                   </ul>
                 </div>
               </li>
-              <li className={`bold ${active_nav === "PRODUCTOS" && "active"}`}>
+              <li className={`bold ${active_nav === 'PRODUCTOS' && 'active'}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">directions_car</i>
                   Productos
@@ -141,7 +141,7 @@ class NewNavbar extends Component {
                   </ul>
                 </div>
               </li>
-              <li className={`bold ${active_nav === "CLIENTES" && "active"}`}>
+              <li className={`bold ${active_nav === 'CLIENTES' && 'active'}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">group</i>
                   Clientes
@@ -160,7 +160,7 @@ class NewNavbar extends Component {
                   </ul>
                 </div>
               </li>
-              <li className={`bold ${active_nav === "PROVEEDOR" && "active"}`}>
+              <li className={`bold ${active_nav === 'PROVEEDOR' && 'active'}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">perm_contact_calendar</i>
                   Proveedor
@@ -177,10 +177,10 @@ class NewNavbar extends Component {
                 </div>
               </li>
               <div className="divider" />
-              <li className={`bold ${active_nav === "CUENTA" && "active"}`}>
+              <li className={`bold ${active_nav === 'CUENTA' && 'active'}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   {has_notifications ? (
-                    <i className="material-icons notifications-active">
+                    <i className="material-icons notifications-active-color">
                       notifications_active
                     </i>
                   ) : (
@@ -191,15 +191,15 @@ class NewNavbar extends Component {
                 <div className="collapsible-body">
                   <ul>
                     <li>
-                      <a href="#!">
+                      <Link to="/notificaciones">
                         <i
                           className={`material-icons ${has_notifications &&
-                            "notifications-active-color"}`}
+                            'notifications-active-color'}`}
                         >
                           notifications
                         </i>
                         Notificaciones
-                      </a>
+                      </Link>
                     </li>
                     {admin && (
                       <li>

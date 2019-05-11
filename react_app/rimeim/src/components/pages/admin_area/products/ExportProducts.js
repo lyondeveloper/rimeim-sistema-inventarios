@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import NavbarAdmin from "../../../layout/NewNavbarAdmin";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import NavbarAdmin from '../../../layout/NewNavbarAdmin';
 
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from "../../../../utils/MaterialFunctions";
+} from '../../../../utils/MaterialFunctions';
 
-import { getProductsToExport } from "../../../../actions/productActions";
-import { jsonToExcel } from "../../../../utils/jsonExcel";
+import { getProductsToExport } from '../../../../actions/productActions';
+import { jsonToExcel } from '../../../../utils/jsonExcel';
 
-import Spinner from "../../../common/Spinner";
+import Spinner from '../../../common/Spinner';
 
 class ExportProductExcel extends Component {
   componentWillMount() {
@@ -24,14 +24,14 @@ class ExportProductExcel extends Component {
 
   onExportToExcel = () => {
     let headers = {
-      codigo: "codigo",
-      descripcion: "descripcion",
-      cantidad: "cantidad",
-      cantidad_minima: "cantidad_minima",
-      precio: "precio",
-      local: "local",
-      cantidad_minima_local: "cantidad_minima_local",
-      ubicacion: "ubicacion"
+      codigo: 'codigo',
+      descripcion: 'descripcion',
+      cantidad: 'cantidad',
+      cantidad_minima: 'cantidad_minima',
+      precio: 'precio',
+      local: 'local',
+      cantidad_minima_local: 'cantidad_minima_local',
+      ubicacion: 'ubicacion'
     };
     const productosExport = [];
     const { products } = this.props.product;
@@ -44,9 +44,9 @@ class ExportProductExcel extends Component {
             descripcion: prod.descripcion,
             cantidad: dist.cantidad,
             cantidad_minima: prod.cantidad_minima,
-            cantidad_minima_local: dist.cantidad_minima_local,
             precio: prod.precio,
             local: dist.local,
+            cantidad_minima_local: dist.cantidad_minima_local,
             ubicacion: dist.ubicacion
           });
         });
@@ -56,15 +56,15 @@ class ExportProductExcel extends Component {
           descripcion: prod.descripcion,
           cantidad: prod.cantidad,
           cantidad_minima: prod.cantidad_minima,
-          cantidad_minima_local: "",
           precio: prod.precio,
-          local: "",
-          ubicacion: ""
+          local: '',
+          cantidad_minima_local: '',
+          ubicacion: ''
         });
       }
     });
 
-    jsonToExcel(productosExport, headers, "rimeim_productos");
+    jsonToExcel(productosExport, headers, 'rimeim_productos');
   };
 
   render() {
@@ -89,13 +89,14 @@ class ExportProductExcel extends Component {
                 <div className="card-content">
                   <h6>Productos totales: {products.length}</h6>
                   <button
+                    className="btn"
                     onClick={() => {
                       this.props.getProductsToExport();
                     }}
                   >
                     Obtener productos
                   </button>
-                  <button onClick={this.onExportToExcel}>
+                  <button className="btn ml-1" onClick={this.onExportToExcel}>
                     Exportar como Excel
                   </button>
 

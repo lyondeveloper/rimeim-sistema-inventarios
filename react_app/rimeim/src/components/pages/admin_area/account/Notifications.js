@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import {
   configMaterialComponents,
   removeMaterialComponents
-} from '../../../utils/MaterialFunctions';
+} from '../../../../utils/MaterialFunctions';
 
-import Navbar from '../../layout/NewNavbar';
-import ShowNotifications from '../../common/ShowNotifications';
+import Navbar from '../../../layout/NewNavbarAdmin';
+import ShowNotifications from '../../../common/ShowNotifications';
 
 class Notifications extends Component {
   componentWillMount() {

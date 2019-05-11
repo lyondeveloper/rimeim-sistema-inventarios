@@ -1,4 +1,14 @@
 <?php
+
+function get_model($model)
+{
+    // Require model file
+    require_once APP_ROOT . '/models/' . $model . '.php';
+    $modelWords = explode('/', $model);
+    $modelName = array_pop($modelWords);
+    return new $modelName();
+}
+
 function curent_time()
 {
     return strtotime(date('Y-m-d H:i:s'));

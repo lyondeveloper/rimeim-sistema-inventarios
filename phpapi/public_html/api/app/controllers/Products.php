@@ -757,8 +757,17 @@ class Products extends Controller
 
     private function parse_product_to_send($product, $is_singular = false, $id_local = null)
     {
-        $product->marca = $this->brandModel->get_by_id($product->id_marca);
-        $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
+        if ($product->id_marca > 0) {
+            $product->marca = $this->brandModel->get_by_id($product->id_marca);
+        } else {
+            $product->marca = null;
+        }
+
+        if ($product->id_tipo_vehiculo > 0) {
+            $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
+        } else {
+            $product->tipo_vehiculo = null;
+        }
 
         if ($is_singular) {
             $product->imagenes = $this->productImagesModel->get_by_product($product->id);
