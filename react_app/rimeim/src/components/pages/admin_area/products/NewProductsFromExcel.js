@@ -1,30 +1,35 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import NavbarAdmin from '../../../layout/NewNavbarAdmin';
-import uuid from 'uuid';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import NavbarAdmin from "../../../layout/NewNavbarAdmin";
+import uuid from "uuid";
 
 import {
   configMaterialComponents,
-  removeMaterialComponents
-} from '../../../../utils/MaterialFunctions';
+  removeMaterialComponents,
+  getModalInstanceById
+} from "../../../../utils/MaterialFunctions";
 
-import { addMultiple } from '../../../../actions/productActions';
+import { addMultiple } from "../../../../actions/productActions";
+import { getJsonFromExcel } from "../../../../utils/jsonExcel";
 
-import getJsonFromExcel from '../../../../utils/getJsonFromExcel';
-
-import Spinner from '../../../common/Spinner';
-import TextInputField from '../../../common/TextInputField';
+import Spinner from "../../../common/Spinner";
+import TextInputField from "../../../common/TextInputField";
 // import CheckInputField from '../../../common/CheckInputField';
-import ProductFromExcelCard from '../../../common/ProductsImportCard';
-import InputFile from '../../../common/InputFile';
-import isEmpty from '../../../../actions/isEmpty';
+import ProductFromExcelCard from "../../../common/ProductsImportCard";
+import InputFile from "../../../common/InputFile";
+import isEmpty from "../../../../actions/isEmpty";
+import ConfirmationModal from "../../../layout/modals/ConfirmationModal";
 
 class NewProductsFromExcel extends Component {
   state = {
     loading_json: false,
-    cantidad_minima: '0',
-    cantidad_minima_local: '0',
+    cantidad_minima: "0",
+    cantidad_minima_local: "0",
+    message: "",
+    error: false,
+    show_confirmation_modal: false,
+    sending_data: false,
     productos: []
   };
 
@@ -36,13 +41,43 @@ class NewProductsFromExcel extends Component {
     configMaterialComponents();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.product.loading && this.state.sending_data) {
+      if (nextProps.errors && !isEmpty(nextProps.errors)) {
+        this.setState({
+          message:
+            "Algo no ha salido bien en el proceso, verifique el archivo e intente en un momento",
+          error: true,
+          show_confirmation_modal: true,
+          sending_data: false
+        });
+      } else {
+        this.setState({
+          message: "Los productos fueron guardados con exito",
+          error: false,
+          show_confirmation_modal: true,
+          sending_data: false
+        });
+      }
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.state.show_confirmation_modal) {
+      this.setState({
+        show_confirmation_modal: false
+      });
+      getModalInstanceById("modal_confirmar_evento").open();
+    }
+  }
+
   onChangeExcelFile = e => {
     this.setState({
       loading_json: true
     });
     getJsonFromExcel(e.target.files[0], json => {
       const productos = this.getParsedProducts(json);
-      document.getElementById('excel_file').value = null;
+      document.getElementById("excel_file").value = null;
       this.setState({
         productos,
         loading_json: false
@@ -79,7 +114,7 @@ class NewProductsFromExcel extends Component {
           continue;
         }
 
-        let local = prod.local.replace('"', '').trim();
+        let local = prod.local.replace('"', "").trim();
         let ubicacion = prod.ubicacion.trim();
         let cantidad_minima = prod.cantidad_minima ? prod.cantidad_minima : 0;
         let cantidad_minima_local = prod.cantidad_minima_local
@@ -173,6 +208,15 @@ class NewProductsFromExcel extends Component {
 
   onSaveProducts = () => {
     this.props.addMultiple({ productos: this.state.productos });
+    this.setState({ sending_data: true });
+  };
+
+  onAcceptClick = () => {
+    if (!this.state.error) {
+      this.setState({
+        productos: []
+      });
+    }
   };
 
   render() {
@@ -221,7 +265,6 @@ class NewProductsFromExcel extends Component {
                       id="excel_file"
                       label="Seleccione un archivo"
                       onchange={this.onChangeExcelFile}
-                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     />
                   </div>
 
@@ -229,7 +272,7 @@ class NewProductsFromExcel extends Component {
                     <TextInputField
                       id="cantidad_minima"
                       label="Cantidad minima"
-                      input_size={'s12 m4 l4'}
+                      input_size={"s12 m4 l4"}
                       onchange={this.onChangeTextInput}
                       value={cantidad_minima}
                       type="number"
@@ -237,7 +280,7 @@ class NewProductsFromExcel extends Component {
                     <TextInputField
                       id="cantidad_minima_local"
                       label="Cantidad minima para bodegas"
-                      input_size={'s12 m4 l4'}
+                      input_size={"s12 m4 l4"}
                       onchange={this.onChangeTextInput}
                       value={cantidad_minima_local}
                       type="number"
@@ -261,6 +304,12 @@ class NewProductsFromExcel extends Component {
             </div>
           </div>
         </main>
+
+        <ConfirmationModal
+          title="Aviso"
+          message={this.state.message}
+          onAccept={this.onAcceptClick}
+        />
       </React.Fragment>
     );
   }

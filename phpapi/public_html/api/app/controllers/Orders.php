@@ -392,11 +392,12 @@ class Orders extends Controller
                 foreach ($distribucion as $distro) {
                     $this->productLocal->add_inventario($product->id_producto, $distro->id_local, $distro->cantidad);
                 }
+                $this->product->add_inventario($product->id_producto, $product->cantidad);
             } elseif ($order->id_proveedor == null) {
-                $this->productLocal->add_inventario($product->id_producto, $order->id_local, $product->cantidad);
+                if ($this->productLocal->add_inventario($product->id_producto, $order->id_local, $product->cantidad)) {
+                    $this->productLocal->remove_inventario($product->id_producto, $order->id_local_solicitado, $product->cantidad);
+                }
             }
-
-            $this->product->add_inventario($product->id_producto, $product->cantidad);
         }
         $this->order->mark_as_received($id);
         $this->response();

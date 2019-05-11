@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import uuid from 'uuid';
 
 import OrderCard from '../../common/OrderCard';
 import Spinner from '../../common/Spinner';
 import NewNavbar from '../../layout/NewNavbar';
-import SearchOrderModel from '../../layout/modals/SearchOrderModel';
 
 import {
   configMaterialComponents,
@@ -149,7 +148,7 @@ class Orders extends Component {
 }
 
 const mapStateToProps = state => ({
-  orders: state.order
+  order: state.order
 });
 
 export default connect(

@@ -49,6 +49,39 @@ class Products extends Controller
         $this->response($products);
     }
 
+    public function export()
+    {
+        $this->useGetRequest();
+        $this->private_route(CTR_ADMIN);
+        $products = $this->productModel->get_to_export();
+        $locales = [];
+
+        foreach ($products as &$product) {
+            $product->distribucion = $this->productLocalModel->get_by_id_product($product->id);
+
+            foreach ($product->distribucion as &$distribucion) {
+                if (!isset($locales[$distribucion->id_local])) {
+                    $locales[$distribucion->id_local] = $this->localModel->get_by_id($distribucion->id_local);
+                }
+                $distribucion->local = $locales[$distribucion->id_local]->codigo;
+
+                $ubicacion = $this->productLocalUbicationModal->get($distribucion->id);
+                if (count($ubicacion) > 0) {
+                    $distribucion->ubicacion = $ubicacion[0]->ubicacion;
+                }
+                $distribucion->cantidad_minima_local = $distribucion->cantidad_minima;
+                $distribucion->cantidad = $distribucion->existencia;
+                unset($distribucion->existencia);
+                unset($distribucion->cantidad_minima);
+                unset($distribucion->id_local);
+                unset($distribucion->fecha_creado);
+                unset($distribucion->id);
+            }
+            unset($product->id);
+        }
+        $this->response($products);
+    }
+
     public function search()
     {
         $this->usePostRequest();
@@ -724,8 +757,17 @@ class Products extends Controller
 
     private function parse_product_to_send($product, $is_singular = false, $id_local = null)
     {
-        $product->marca = $this->brandModel->get_by_id($product->id_marca);
-        $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
+        if ($product->id_marca > 0) {
+            $product->marca = $this->brandModel->get_by_id($product->id_marca);
+        } else {
+            $product->marca = null;
+        }
+
+        if ($product->id_tipo_vehiculo > 0) {
+            $product->tipo_vehiculo = $this->vehiculeType->get_by_id($product->id_tipo_vehiculo);
+        } else {
+            $product->tipo_vehiculo = null;
+        }
 
         if ($is_singular) {
             $product->imagenes = $this->productImagesModel->get_by_product($product->id);

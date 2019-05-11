@@ -537,3 +537,18 @@ begin
 end $$
 delimiter ;
 */
+
+drop procedure if exists proc_get_productos_to_export;
+delimiter $$
+create procedure proc_get_productos_to_export()
+begin
+    select p.id,
+            p.codigo_barra as 'codigo',
+            p.nombre as 'descripcion',
+            p.precio,
+            p.existencia as 'cantidad',
+            p.cantidad_minima
+    from tb_producto p
+    where p.eliminado = false;
+end $$
+delimiter ;

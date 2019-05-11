@@ -9,7 +9,7 @@
 .td-with-input {
   height: 32px !important;
   margin: 0 !important;
-  padding: 4px !important;
+  padding: 5px !important;
   overflow-x: hidden;
   overflow-y: hidden;
 }
@@ -79,7 +79,7 @@
 
 .header-fixed > tbody > tr > td,
 .header-fixed > thead > tr > th {
-  width: 25%;
+  width: 25% !important;
   float: left;
 }
 

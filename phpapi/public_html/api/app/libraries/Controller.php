@@ -28,11 +28,7 @@ class Controller
     // Load model
     public function model($model)
     {
-        // Require model file
-        require_once APP_ROOT . '/models/' . $model . '.php';
-        $modelWords = explode('/', $model);
-        $modelName = array_pop($modelWords);
-        return new $modelName();
+        return get_model($model);
     }
 
     // Funciones auxiliares
@@ -91,6 +87,15 @@ class Controller
                 unset($data['token']);
             }
             $data_response['data'] = $data;
+        }
+
+        $id_local = $this->get_current_id_local();
+        $notificationsModel = get_model('Notifications');
+        $data_response['notificaciones'] = null;
+        if ($this->is_current_user_admin() && $id_local == 0) {
+            $data_response['notificaciones'] = $notificationsModel->get_for_admin();
+        } else if ($id_local > 0) {
+            $data_response['notificaciones'] = $notificationsModel->get_for_employe($id_local);
         }
         sendResponse($data_response, $error);
     }

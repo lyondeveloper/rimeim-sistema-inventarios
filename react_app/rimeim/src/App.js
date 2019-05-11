@@ -30,6 +30,7 @@ import ShowQuotation from './components/pages/quotes/ShowQuotation';
 // Devolutions
 import Devolutions from './components/pages/devolutions/Devolutions';
 import NewDevolution from './components/pages/devolutions/NewDevolution';
+import ShowDevolution from './components/pages/devolutions/ShowDevolution';
 
 // Orders
 import Orders from './components/pages/orders/Orders';
@@ -56,6 +57,7 @@ import Clients from './components/pages/clients/Clients';
 import Client from './components/pages/clients/Client';
 import NewClient from './components/pages/clients/NewClient';
 import EditClient from './components/pages/clients/EditClient';
+import AddClientsFromExcel from './components/pages/clients/ImportFromExcel';
 
 // Providers
 import NewProvider from './components/pages/providers/NewProvider';
@@ -65,6 +67,7 @@ import Provider from './components/pages/providers/Provider';
 
 // Account
 import ConfigurationView from './components/pages/account/ConfigurationView';
+import Notifications from './components/pages/account/Notifications';
 
 // Custom component for multiple locals or admin user
 import ChoseLocal from './components/pages/auth/ChooseLocal';
@@ -84,16 +87,20 @@ import AdminUsers from './components/pages/admin_area/users/Users';
 import AdminUser from './components/pages/admin_area/users/User';
 import AdminNewUser from './components/pages/admin_area/users/NewUser';
 
+import AdminGlobalVariables from './components/pages/admin_area/globals/GlobalVariables';
+
 import AdminProducts from './components/pages/admin_area/products/Products';
 import AdminAddProductsExcel from './components/pages/admin_area/products/NewProductsFromExcel';
 import AdminNewProduct from './components/pages/admin_area/products/NewProduct';
 import AdminProduct from './components/pages/admin_area/products/Product';
 import AdminEditProduct from './components/pages/admin_area/products/EditProduct';
+import AdminExportProductsToExcel from './components/pages/admin_area/products/ExportProducts';
 
 import AdminSellsReport from './components/pages/admin_area/reports/SellReports';
+import AdminProductsReport from './components/pages/admin_area/reports/ProductsReport';
 
 import AdminConfiguration from './components/pages/admin_area/account/AdminConfiguration';
-
+import AdminNotifications from './components/pages/admin_area/account/Notifications';
 // Custom components
 import PrivateRoute from './components/common/PrivateRoute';
 
@@ -130,6 +137,9 @@ class App extends Component {
             </Switch>
             <Switch>
               <PrivateRoute exact path='/nueva_venta' component={NewSell} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path='/nueva_venta/:id' component={NewSell} />
             </Switch>
             <Switch>
               <PrivateRoute
@@ -169,6 +179,13 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
+                path='/devoluciones/:id'
+                component={ShowDevolution}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
                 path='/nueva_devolucion/:id'
                 component={NewDevolution}
               />
@@ -184,6 +201,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path='/nuevo_pedido' component={NewOrder} />
             </Switch>
+
             <Switch>
               <PrivateRoute
                 exact
@@ -267,6 +285,13 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
+                path='/nuevos_clientes'
+                component={AddClientsFromExcel}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
                 path='/editar_cliente/:id'
                 component={EditClient}
               />
@@ -304,6 +329,13 @@ class App extends Component {
                 exact
                 path='/configuracion'
                 component={ConfigurationView}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path='/notificaciones'
+                component={Notifications}
               />
             </Switch>
 
@@ -424,6 +456,15 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
+                path='/admin/exportar_productos'
+                component={AdminExportProductsToExcel}
+                isAdminRoute={true}
+              />
+            </Switch>
+
+            <Switch>
+              <PrivateRoute
+                exact
                 path='/admin/productos/:id'
                 component={AdminProduct}
                 isAdminRoute={true}
@@ -455,6 +496,24 @@ class App extends Component {
                 isAdminRoute={true}
               />
             </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path='/admin/reportes/productos'
+                component={AdminProductsReport}
+                isAdminRoute={true}
+              />
+            </Switch>
+
+            {/* Global Variables */}
+            <Switch>
+              <PrivateRoute
+                exact
+                path='/admin/empresa'
+                component={AdminGlobalVariables}
+                isAdminRoute={true}
+              />
+            </Switch>
 
             {/* Admin Configuration */}
             <Switch>
@@ -462,6 +521,14 @@ class App extends Component {
                 exact
                 path='/admin/configuracion'
                 component={AdminConfiguration}
+                isAdminRoute={true}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path='/admin/notificaciones'
+                component={AdminNotifications}
                 isAdminRoute={true}
               />
             </Switch>

@@ -1,15 +1,15 @@
-import axios from 'axios';
+import axios from "axios";
 import {
   DEVOLUTION_END_LOADING,
   DEVOLUTION_LOADING,
   GET_DEVOLUTION,
   GET_DEVOLUTIONS
-} from './types';
+} from "./types";
 
-import { clearErrors, handleError } from './errorActions';
+import { clearErrors, handleError } from "./errorActions";
 
-import { configUserFromResponse } from './UserActions';
-import { API_URL } from '../utils/stringUtils';
+import { configUserFromResponse } from "./UserActions";
+import { API_URL } from "../utils/stringUtils";
 
 export const getDevolutions = () => dispatch => {
   dispatchLoadingDevolution(dispatch);

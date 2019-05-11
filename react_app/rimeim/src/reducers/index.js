@@ -10,6 +10,7 @@ import providerReducer from './providerReducer';
 import sellReducer from './sellReducer';
 import orderReducer from './orderReducer';
 import devolutionReducer from './devolutionReducer';
+import globalVariablesReducer from './globalsReducer';
 import errorReducer from './errorReducer';
 
 export default combineReducers({
@@ -24,5 +25,6 @@ export default combineReducers({
   sell: sellReducer,
   order: orderReducer,
   devolution: devolutionReducer,
+  global: globalVariablesReducer,
   errors: errorReducer
 });

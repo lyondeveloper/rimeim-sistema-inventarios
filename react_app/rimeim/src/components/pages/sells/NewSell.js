@@ -19,7 +19,8 @@ import {
 import isEmpty from "../../../actions/isEmpty";
 
 import { getProductByCBForSell } from "../../../actions/productActions";
-import { addNewSell } from "../../../actions/sellActions";
+import { addNewSell, getQuotationById } from "../../../actions/sellActions";
+import { getGlobalVariables } from "../../../actions/globalActons";
 
 // Custom css
 import "../../../public/css/ventas.css";
@@ -44,6 +45,7 @@ class NewSell extends Component {
     input_precio: "inputprec",
     component_message: "",
     guardar_como_cotizacion: false,
+    products_setted_from_quote: false,
     errors: {},
     products: [],
     currentClient: {},
@@ -64,8 +66,13 @@ class NewSell extends Component {
 
   componentDidMount() {
     configMaterialComponents();
-
     document.onkeydown = this.onKeyDownInAllPage;
+    this.props.getGlobalVariables();
+
+    const id_cotizacion = this.props.match.params.id;
+    if (id_cotizacion) {
+      this.props.getQuotationById(id_cotizacion);
+    }
     this.addFreeRowsToState(this.state.count_of_products_to_add);
   }
 
@@ -140,13 +147,47 @@ class NewSell extends Component {
       getModalInstanceById("modal_sell_checkout").close();
       getModalInstanceById("modal_confirmar_evento").open();
     }
+
+    const id_cotizacion = this.props.match.params.id;
+    if (
+      id_cotizacion > 0 &&
+      nextProps.sell.sell &&
+      nextProps.sell.sell.productos &&
+      !this.state.products_setted_from_quote
+    ) {
+      let { products, currentClient } = this.state;
+      for (
+        let index = 0;
+        index < nextProps.sell.sell.productos.length;
+        index++
+      ) {
+        const currentProduct = nextProps.sell.sell.productos[index];
+        products[index] = {
+          local_id: uuid(),
+          id_producto: currentProduct.id_producto,
+          codigo_barra: currentProduct.codigo_barra,
+          cantidad: currentProduct.cantidad,
+          nombre: currentProduct.nombre,
+          precio: currentProduct.precio
+        };
+      }
+      if (nextProps.sell.sell.cliente) {
+        currentClient = nextProps.sell.sell.cliente;
+      }
+      current_row_changed = true;
+      this.setState({
+        products,
+        currentClient,
+        products_setted_from_quote: true
+      });
+    }
   }
 
   onAcceptConfirm = () => {
     if (
       this.state.component_message === "La venta se ha guardado exitosamente"
     ) {
-      window.location.reload();
+      window.location = "/nueva_venta";
     }
   };
 
@@ -465,8 +506,11 @@ class NewSell extends Component {
 
   getValuesForProduct = product => {
     let subtotal = 0;
-    let impuesto = 15;
+    let impuesto = 0;
 
+    const impuesto_porcentaje = this.props.global.values.impuesto
+      ? parseFloat(this.props.global.values.impuesto)
+      : 0.15;
     const cantidad = parseInt(product.cantidad);
     const precio = parseFloat(product.precio);
 
@@ -474,7 +518,7 @@ class NewSell extends Component {
       subtotal += cantidad * precio;
     }
 
-    impuesto = subtotal * 0.15;
+    impuesto = subtotal * impuesto_porcentaje;
     const total = subtotal + impuesto;
     return { subtotal, impuesto, total };
   };
@@ -656,17 +700,21 @@ class NewSell extends Component {
 NewSell.propTypes = {
   errors: PropTypes.object.isRequired,
   product: PropTypes.object.isRequired,
+  global: PropTypes.object.isRequired,
   getProductByCBForSell: PropTypes.func.isRequired,
-  addNewSell: PropTypes.func.isRequired
+  addNewSell: PropTypes.func.isRequired,
+  getQuotationById: PropTypes.func.isRequired,
+  getGlobalVariables: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   sell: state.sell,
   errors: state.errors,
+  global: state.global,
   product: state.product
 });
 
 export default connect(
   mapStateToProps,
-  { getProductByCBForSell, addNewSell }
+  { getProductByCBForSell, addNewSell, getQuotationById, getGlobalVariables }
 )(NewSell);

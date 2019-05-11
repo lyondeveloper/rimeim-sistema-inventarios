@@ -7,10 +7,15 @@ import logo_rimeim from "../../public/img/logo_rimeim.png";
 
 // Functions
 import { logoutUser, setCurrentLocal } from "../../actions/UserActions";
+import isEmpty from "../../actions/isEmpty";
 
 class NavbarAdmin extends Component {
   render() {
-    const { active_nav, has_notifications } = this.props;
+    const {
+      active_nav,
+      user: { user }
+    } = this.props;
+    const has_notifications = !isEmpty(user.notificaciones);
     let mobile_nav = this.props.mobile_nav ? this.props.mobile_nav : null;
 
     return (
@@ -51,6 +56,13 @@ class NavbarAdmin extends Component {
                 </Link>
               </li>
 
+              <li className="bold">
+                <Link to="/admin/empresa">
+                  <i className="material-icons">settings</i>
+                  Configuracion
+                </Link>
+              </li>
+
               <li className={`bold ${active_nav === "PRODUCTOS" && "active"}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   <i className="material-icons">directions_car</i>
@@ -65,7 +77,10 @@ class NavbarAdmin extends Component {
                       <Link to="/admin/nuevo_producto">Nuevo producto</Link>
                     </li>
                     <li>
-                      <Link to="/admin/importar_excel">Importar excel</Link>
+                      <Link to="/admin/importar_excel">Importar Excel</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin/exportar_productos">Exportar Excel</Link>
                     </li>
                   </ul>
                 </div>
@@ -82,16 +97,16 @@ class NavbarAdmin extends Component {
                       <Link to="/admin/reportes/ventas">Ventas</Link>
                     </li>
                     <li>
-                      <a href="#!">Inventario</a>
+                      <Link to="/admin/reportes/productos">Productos</Link>
                     </li>
                   </ul>
                 </div>
               </li>
               <div className="divider" />
-              <li className="bold">
+              <li className={`bold ${active_nav === "CUENTA" && "active"}`}>
                 <a className="collapsible-header" tabIndex="0" href="#!">
                   {has_notifications ? (
-                    <i className="material-icons notifications-active">
+                    <i className="material-icons notifications-active-color">
                       notifications_active
                     </i>
                   ) : (
@@ -102,7 +117,7 @@ class NavbarAdmin extends Component {
                 <div className="collapsible-body">
                   <ul>
                     <li>
-                      <a href="#!">
+                      <Link to="/admin/notificaciones">
                         <i
                           className={`material-icons ${has_notifications &&
                             "notifications-active-color"}`}
@@ -110,7 +125,7 @@ class NavbarAdmin extends Component {
                           notifications
                         </i>
                         Notificaciones
-                      </a>
+                      </Link>
                     </li>
                     <li>
                       <a
@@ -154,13 +169,8 @@ class NavbarAdmin extends Component {
 NavbarAdmin.propTypes = {
   user: PropTypes.object.isRequired,
   active_nav: PropTypes.string,
-  has_notifications: PropTypes.bool.isRequired,
   setCurrentLocal: PropTypes.func.isRequired,
   logoutUser: PropTypes.func.isRequired
-};
-
-NavbarAdmin.defaultProps = {
-  has_notifications: false
 };
 
 const mapStateToProps = state => ({

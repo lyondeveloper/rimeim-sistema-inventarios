@@ -4,7 +4,7 @@
     al servidor referentes a VENTAS
 */
 
-import axios from 'axios';
+import axios from "axios";
 import {
   SELL_LOADING,
   SELL_END_LOADING,
@@ -13,12 +13,12 @@ import {
   SELL_FAILED,
   SELL_SUCCESS,
   GET_SELL_REPORT
-} from '../actions/types';
+} from "../actions/types";
 
-import { configUserFromResponse } from './UserActions';
-import { handleError, clearErrors } from './errorActions';
+import { configUserFromResponse } from "./UserActions";
+import { handleError, clearErrors } from "./errorActions";
 
-import { API_URL } from '../utils/stringUtils';
+import { API_URL } from "../utils/stringUtils";
 
 export const getSells = () => dispatch => {
   dispatchSellLoading(dispatch);
@@ -136,7 +136,7 @@ export const addDevolution = (id_sell, devolutionData, history) => dispatch => {
       const response = res.data;
       configUserFromResponse(response, dispatch);
       dispatch(clearErrors());
-      history.push(`/devoluciones/${response.id}`);
+      history.push(`/devoluciones/${response.data.id}`);
     })
     .catch(err => handleError(err, dispatch, SELL_END_LOADING));
 };

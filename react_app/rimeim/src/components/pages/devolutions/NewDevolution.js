@@ -1,23 +1,24 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import uuid from 'uuid';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import uuid from "uuid";
+import PropTypes from "prop-types";
 
-import NewNavbar from '../../layout/NewNavbar';
-import '../../../public/css/devoluciones.css';
+import NewNavbar from "../../layout/NewNavbar";
+import "../../../public/css/devoluciones.css";
 
 import {
   configMaterialComponents,
   removeMaterialComponents,
   configSelectInputFields
-} from '../../../utils/MaterialFunctions';
-import isEmpty from '../../../actions/isEmpty';
-import { getSellById, addDevolution } from '../../../actions/sellActions';
+} from "../../../utils/MaterialFunctions";
+import isEmpty from "../../../actions/isEmpty";
+import { getSellById, addDevolution } from "../../../actions/sellActions";
+import { getGlobalVariables } from "../../../actions/globalActons";
 
-import { getNumberFormatted } from '../../../utils/stringUtils';
+import { getNumberFormatted } from "../../../utils/stringUtils";
 
-import Spinner from '../../common/Spinner';
-import EmptyIcon from '../../common/EmptyIcon';
+import Spinner from "../../common/Spinner";
+import EmptyIcon from "../../common/EmptyIcon";
 
 class NewDevolution extends Component {
   state = {
@@ -138,9 +139,15 @@ class NewDevolution extends Component {
   onFinallyClick = () => {
     if (this.state.productos_devueltos.length > 0) {
       let total_devuelto = this.getTotalDevuelto();
+      const impuesto_porcentaje = this.props.global.values.impuesto
+        ? parseFloat(this.props.global.values.impuesto)
+        : 0.15;
+      let impuesto_devuelto = total_devuelto * impuesto_porcentaje;
       const devolutionData = {
         id_local: this.props.sell.sell.id_local,
-        total_devuelto: total_devuelto + total_devuelto * 0.15,
+        sub_total_devuelto: total_devuelto,
+        impuesto_devuelto: impuesto_devuelto,
+        total_devuelto: total_devuelto + impuesto_devuelto,
         productos: this.state.productos_devueltos
       };
       this.props.addDevolution(
@@ -183,7 +190,7 @@ class NewDevolution extends Component {
             type="text"
             id={`input${prod.id}`}
             className="special-input browser-default"
-            style={{ maxWidth: '70px' }}
+            style={{ maxWidth: "70px" }}
             defaultValue={this.getProductoDevueltoCantidad(prod.id)}
             onKeyUp={this.onKeyInputUp.bind(this, prod)}
           />
@@ -195,7 +202,10 @@ class NewDevolution extends Component {
     ));
 
     let total_devuelto = this.getTotalDevuelto();
-    let impuesto_devuelto = total_devuelto * 0.15;
+    const impuesto_porcentaje = this.props.global.values.impuesto
+      ? parseFloat(this.props.global.values.impuesto)
+      : 0.15;
+    let impuesto_devuelto = total_devuelto * impuesto_porcentaje;
     return (
       <div className="col s12">
         <div className="card">
@@ -350,15 +360,18 @@ class NewDevolution extends Component {
 
 NewDevolution.propTypes = {
   sell: PropTypes.object.isRequired,
+  global: PropTypes.object.isRequired,
   getSellById: PropTypes.func.isRequired,
-  addDevolution: PropTypes.func.isRequired
+  addDevolution: PropTypes.func.isRequired,
+  getGlobalVariables: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  sell: state.sell
+  sell: state.sell,
+  global: state.global
 });
 
 export default connect(
   mapStateToProps,
-  { getSellById, addDevolution }
+  { getSellById, addDevolution, getGlobalVariables }
 )(NewDevolution);

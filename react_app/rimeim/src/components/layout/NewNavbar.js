@@ -6,18 +6,18 @@ import { connect } from 'react-redux';
 import logo_rimeim from '../../public/img/logo_rimeim.png';
 
 import { logoutUser, setCurrentLocal } from '../../actions/UserActions';
+import isEmpty from '../../actions/isEmpty';
 
 class NewNavbar extends Component {
   render() {
     const {
       active_nav,
-      has_notifications,
       show_more_option,
-      user: {
-        user: { admin }
-      }
+      user: { user }
     } = this.props;
+    const admin = user.admin;
     let mobile_nav = this.props.mobile_nav ? this.props.mobile_nav : null;
+    const has_notifications = !isEmpty(user.notificaciones);
 
     return (
       <header>
@@ -177,7 +177,7 @@ class NewNavbar extends Component {
               <li className={`bold ${active_nav === 'CUENTA' && 'active'}`}>
                 <a className='collapsible-header' tabIndex='0' href='#!'>
                   {has_notifications ? (
-                    <i className='material-icons notifications-active'>
+                    <i className='material-icons notifications-active-color'>
                       notifications_active
                     </i>
                   ) : (
@@ -188,7 +188,7 @@ class NewNavbar extends Component {
                 <div className='collapsible-body'>
                   <ul>
                     <li>
-                      <a href='#!'>
+                      <Link to='/notificaciones'>
                         <i
                           className={`material-icons ${has_notifications &&
                             'notifications-active-color'}`}
@@ -196,7 +196,7 @@ class NewNavbar extends Component {
                           notifications
                         </i>
                         Notificaciones
-                      </a>
+                      </Link>
                     </li>
                     {admin && (
                       <li>

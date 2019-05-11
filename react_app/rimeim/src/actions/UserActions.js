@@ -1,7 +1,7 @@
-import axios from "axios";
-import jwt_decode from "jwt-decode";
-import setAuthToken from "../utils/setAuthToken";
-import setCurrentLocalHeader from "../utils/setCurrentLocalHeader";
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+import setAuthToken from '../utils/setAuthToken';
+import setCurrentLocalHeader from '../utils/setCurrentLocalHeader';
 
 import {
   SET_CURRENT_USER,
@@ -10,12 +10,12 @@ import {
   GET_USERS,
   USER_LOADING,
   USER_END_LOADING
-} from "./types";
+} from './types';
 
-import { handleError, clearErrors } from "./errorActions";
+import { handleError, clearErrors } from './errorActions';
 
-import isEmpty from "./isEmpty";
-import { API_URL } from "../utils/stringUtils";
+import isEmpty from './isEmpty';
+import { API_URL } from '../utils/stringUtils';
 
 export const addUser = (newUserData, history) => dispatch => {
   dispatch(userLoadingObject());
@@ -28,7 +28,7 @@ export const addUser = (newUserData, history) => dispatch => {
       dispatch({
         type: USER_END_LOADING
       });
-      history.push("/admin/usuarios");
+      history.push('/admin/usuarios');
     })
     .catch(err => handleError(err, dispatch, USER_END_LOADING));
 };
@@ -70,9 +70,9 @@ export const setCurrentLocal = local => dispatch => {
   var currentLocal = !isEmpty(local) ? local : {};
   setCurrentLocalHeader(currentLocal);
   if (isEmpty(currentLocal)) {
-    localStorage.removeItem("rimeim_current_local");
+    localStorage.removeItem('rimeim_current_local');
   } else {
-    localStorage.setItem("rimeim_current_local", JSON.stringify(currentLocal));
+    localStorage.setItem('rimeim_current_local', JSON.stringify(currentLocal));
   }
   dispatch(setCurrentLocalToState(currentLocal));
 };
@@ -136,14 +136,14 @@ export const deleteUserById = (id, history) => dispatch => {
       dispatch(clearErrors());
       const response = res.data;
       configUserFromResponse(response, dispatch);
-      history.push("/admin/usuarios");
+      history.push('/admin/usuarios');
     })
     .catch(err => handleError(err, dispatch));
 };
 
 export const getAuthTokenFromResponse = response => {
   const { token } = response;
-  localStorage.setItem("rimeim_token", token);
+  localStorage.setItem('rimeim_token', token);
   setAuthToken(token);
   const decoded = jwt_decode(token);
   return decoded;
@@ -157,6 +157,9 @@ export const configUserFromResponse = (response, dispatch) => {
     response.data.primera_sesion === true
   ) {
     decoded.primera_sesion = true;
+  }
+  if (response.notificaciones) {
+    decoded.notificaciones = response.notificaciones;
   }
   dispatch(setCurrentUser(decoded));
 };
@@ -209,16 +212,16 @@ export const setUsers = users => {
 };
 
 export const logoutUser = () => dispatch => {
-  localStorage.removeItem("rimeim_token");
-  localStorage.removeItem("rimeim_current_local");
+  localStorage.removeItem('rimeim_token');
+  localStorage.removeItem('rimeim_current_local');
   setAuthToken(false);
   setCurrentLocal(null);
   dispatch(setCurrentUser({}));
 };
 
 export const logOutUserWithDispatch = dispatch => {
-  localStorage.removeItem("rimeim_token");
-  localStorage.removeItem("rimeim_current_local");
+  localStorage.removeItem('rimeim_token');
+  localStorage.removeItem('rimeim_current_local');
   setAuthToken(false);
   setCurrentLocal(null);
   dispatch(setCurrentUser({}));
