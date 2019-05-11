@@ -1,24 +1,26 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
 import {
   removeMaterialComponents,
   configMaterialComponents
-} from '../../../../utils/MaterialFunctions';
+} from "../../../../utils/MaterialFunctions";
 import {
   getGlobalVariables,
   updateGlobalVariables
-} from '../../../../actions/globalActons';
+} from "../../../../actions/globalActons";
 
-import NavbarAdmin from '../../../layout/NewNavbarAdmin';
-import TextInputField from '../../../common/TextInputField';
-import Spinner from '../../../common/Spinner';
+import NavbarAdmin from "../../../layout/NewNavbarAdmin";
+import TextInputField from "../../../common/TextInputField";
+import Spinner from "../../../common/Spinner";
+import isEmpty from "../../../../actions/isEmpty";
 
 class GlobalVariables extends Component {
   state = {
-    impuesto: '',
-    rtn: '',
+    impuesto: "",
+    rtn: "",
+    correo: "",
     loading: true
   };
 
@@ -28,14 +30,21 @@ class GlobalVariables extends Component {
 
   componentDidMount() {
     configMaterialComponents();
+    this.props.getGlobalVariables();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.global.values && this.state.loading) {
-      const { impuesto, rtn } = nextProps.global.values;
+    if (
+      nextProps.global.values &&
+      !nextProps.global.loading &&
+      !isEmpty(nextProps.global.values) &&
+      this.state.loading
+    ) {
+      const { impuesto, rtn, correo } = nextProps.global.values;
       this.setState({
         impuesto,
         rtn,
+        correo,
         loading: false
       });
     }
@@ -44,13 +53,13 @@ class GlobalVariables extends Component {
   onChangeTextInput = e => this.setState({ [e.target.name]: e.target.value });
 
   onSaveValues = () => {
-    const { impuesto, rtn } = this.state;
-    this.props.updateGlobalVariables({ impuesto, rtn });
+    const { impuesto, rtn, correo } = this.state;
+    this.props.updateGlobalVariables({ impuesto, rtn, correo });
     this.setState({ loading: true });
   };
 
   render() {
-    const { rtn, impuesto } = this.state;
+    const { rtn, impuesto, correo } = this.state;
     return (
       <React.Fragment>
         <NavbarAdmin>
@@ -84,6 +93,17 @@ class GlobalVariables extends Component {
                       label="RTN de empresa"
                       onchange={this.onChangeTextInput}
                       value={rtn}
+                      active_label={true}
+                    />
+                  </div>
+
+                  <div className="row">
+                    <TextInputField
+                      id="correo"
+                      label="Correo de empresa"
+                      onchange={this.onChangeTextInput}
+                      value={correo}
+                      active_label={true}
                     />
                   </div>
 
@@ -94,6 +114,7 @@ class GlobalVariables extends Component {
                       onchange={this.onChangeTextInput}
                       value={impuesto}
                       type="number"
+                      active_label={true}
                     />
                   </div>
                 </div>
@@ -106,7 +127,7 @@ class GlobalVariables extends Component {
   }
 }
 
-mapStateToProps.propTypes = {
+GlobalVariables.propTypes = {
   global: PropTypes.object.isRequired,
   getGlobalVariables: PropTypes.func.isRequired,
   updateGlobalVariables: PropTypes.func.isRequired

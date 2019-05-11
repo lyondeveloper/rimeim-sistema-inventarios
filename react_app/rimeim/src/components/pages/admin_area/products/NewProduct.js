@@ -1,46 +1,46 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import NavbarAdmin from '../../../layout/NewNavbarAdmin';
-import uuid from 'uuid';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import NavbarAdmin from "../../../layout/NewNavbarAdmin";
+import uuid from "uuid";
 
 import {
   configMaterialComponents,
   removeMaterialComponents,
   configSelectInputFields,
   getModalInstanceById
-} from '../../../../utils/MaterialFunctions';
+} from "../../../../utils/MaterialFunctions";
 
-import Spinner from '../../../common/Spinner';
-import TextInputField from '../../../common/TextInputField';
-import TextAreaInputField from '../../../common/TextAreaInputField';
-import CheckInputField from '../../../common/CheckInputField';
-import SelectInputField from '../../../common/SelectInputField';
-import SelectFiles from '../../../common/SelectFiles';
+import Spinner from "../../../common/Spinner";
+import TextInputField from "../../../common/TextInputField";
+import TextAreaInputField from "../../../common/TextAreaInputField";
+import CheckInputField from "../../../common/CheckInputField";
+import SelectInputField from "../../../common/SelectInputField";
+import SelectFiles from "../../../common/SelectFiles";
 
-import { addNewProduct } from '../../../../actions/productActions';
-import { getLocals } from '../../../../actions/LocalActions';
-import { getBrands } from '../../../../actions/brandActions';
-import { getVehicles } from '../../../../actions/vehicleActions';
+import { addNewProduct } from "../../../../actions/productActions";
+import { getLocals } from "../../../../actions/LocalActions";
+import { getBrands } from "../../../../actions/brandActions";
+import { getVehicles } from "../../../../actions/vehicleActions";
 
-import isEmpty from '../../../../actions/isEmpty';
-import getFilesFromInput from '../../../../utils/getFilesFromInput';
+import isEmpty from "../../../../actions/isEmpty";
+import getFilesFromInput from "../../../../utils/getFilesFromInput";
 
 class NewProduct extends Component {
   state = {
-    codigo_barra: '',
-    nombre: '',
-    marca: '0',
-    tipo_vehiculo: '0',
-    descripcion: '',
-    precio: '0',
-    existencia: '0',
-    cantidad_minima: '0',
+    codigo_barra: "",
+    nombre: "",
+    marca: "0",
+    tipo_vehiculo: "0",
+    descripcion: "",
+    precio: "0",
+    existencia: "0",
+    cantidad_minima: "0",
     es_raro: false,
-    local_seleccionado: '0',
-    local_cantidad: '0',
-    local_cantidad_minima: '0',
-    local_ubicacion: '',
+    local_seleccionado: "0",
+    local_cantidad: "0",
+    local_cantidad_minima: "0",
+    local_ubicacion: "",
     locals_product: [],
     locals: [],
     imagenes: [],
@@ -108,7 +108,7 @@ class NewProduct extends Component {
   }
 
   onChangeTextInput = e => {
-    if (e.target.name === 'local_seleccionado' && this.state.is_modal_editing)
+    if (e.target.name === "local_seleccionado" && this.state.is_modal_editing)
       return;
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -120,9 +120,9 @@ class NewProduct extends Component {
 
   hadleModalState = hide => {
     if (hide) {
-      getModalInstanceById('modal_local_producto').close();
+      getModalInstanceById("modal_local_producto").close();
     } else {
-      getModalInstanceById('modal_local_producto').open();
+      getModalInstanceById("modal_local_producto").open();
     }
   };
 
@@ -183,28 +183,28 @@ class NewProduct extends Component {
       local_cantidad_int + existencia_asignada > existencia
     ) {
       errors.local_cantidad_error =
-        'La cantidad excede el inventario del producto';
+        "La cantidad excede el inventario del producto";
       is_valid = false;
     } else if (local_cantidad_int < 0) {
-      errors.local_cantidad_error = 'La cantidad es invalida';
+      errors.local_cantidad_error = "La cantidad es invalida";
       is_valid = false;
     } else {
       delete errors.local_cantidad_error;
     }
 
     if (local_cantidad_minima_int < 0) {
-      errors.local_cantidad_minima_error = 'Cantidad invalida';
+      errors.local_cantidad_minima_error = "Cantidad invalida";
       is_valid = false;
     } else if (local_cantidad_minima_int > local_cantidad_int) {
       errors.local_cantidad_minima_error =
-        'La cantidad minima excede el total del local';
+        "La cantidad minima excede el total del local";
       is_valid = false;
     } else {
       delete errors.local_cantidad_minima_error;
     }
 
     if (isEmpty(local_ubicacion)) {
-      errors.local_ubicacion_error = 'Ubicacion invalida';
+      errors.local_ubicacion_error = "Ubicacion invalida";
       is_valid = false;
     } else {
       delete errors.local_ubicacion_error;
@@ -227,15 +227,15 @@ class NewProduct extends Component {
 
         this.setState({
           locals_product,
-          local_cantidad: '0',
-          local_ubicacion: '',
-          local_cantidad_minima: '0',
-          local_seleccionado: '0'
+          local_cantidad: "0",
+          local_ubicacion: "",
+          local_cantidad_minima: "0",
+          local_seleccionado: "0"
         });
         this.hadleModalState(true);
       }
     } else {
-      if (local_seleccionado !== '0' && is_valid) {
+      if (local_seleccionado !== "0" && is_valid) {
         const new_product_local = {
           id_local: local_seleccionado,
           local: this.state.locals.find(l => l.id === local_seleccionado),
@@ -249,10 +249,10 @@ class NewProduct extends Component {
 
         this.setState({
           locals_product,
-          local_cantidad: '0',
-          local_ubicacion: '',
-          local_cantidad_minima: '0',
-          local_seleccionado: '0'
+          local_cantidad: "0",
+          local_ubicacion: "",
+          local_cantidad_minima: "0",
+          local_seleccionado: "0"
         });
 
         this.hadleModalState(true);
@@ -279,10 +279,10 @@ class NewProduct extends Component {
 
   onAddLocalProductClick = () => {
     this.setState({
-      local_cantidad: '0',
-      local_ubicacion: '',
-      local_cantidad_minima: '0',
-      local_seleccionado: '0',
+      local_cantidad: "0",
+      local_ubicacion: "",
+      local_cantidad_minima: "0",
+      local_seleccionado: "0",
       is_modal_editing: false,
       needs_config_selects: true
     });
@@ -319,10 +319,10 @@ class NewProduct extends Component {
     }
     this.setState({
       locals,
-      local_cantidad: '0',
-      local_ubicacion: '',
-      local_cantidad_minima: '0',
-      local_seleccionado: '0',
+      local_cantidad: "0",
+      local_ubicacion: "",
+      local_cantidad_minima: "0",
+      local_seleccionado: "0",
       is_modal_editing: false,
       needs_config_selects: true,
       locals_product: locals_product.filter(
@@ -364,19 +364,19 @@ class NewProduct extends Component {
       const newProductData = new FormData();
 
       imagenes.forEach(img =>
-        newProductData.append('file_uploads[]', img.file, img.name)
+        newProductData.append("file_uploads[]", img.file, img.name)
       );
-      newProductData.append('json_data', JSON.stringify(newProduct));
+      newProductData.append("json_data", JSON.stringify(newProduct));
       this.props.addNewProduct(
         newProductData,
         this.props.history,
-        '/admin/productos'
+        "/admin/productos"
       );
     } else {
       this.props.addNewProduct(
         newProduct,
         this.props.history,
-        '/admin/productos'
+        "/admin/productos"
       );
     }
   };
@@ -449,6 +449,7 @@ class NewProduct extends Component {
             <div className="col s12">
               <div className="card">
                 <div className="card-content">
+                  {this.props.product.loading && <Spinner />}
                   <div className="row">
                     <SelectFiles
                       id="imagenes"
@@ -604,14 +605,14 @@ class NewProduct extends Component {
                     name="local_seleccionado"
                     onChange={this.onChangeTextInput}
                     value={local_seleccionado}
-                    disabled={this.state.is_modal_editing ? 'disabled' : ''}
+                    disabled={this.state.is_modal_editing ? "disabled" : ""}
                   >
                     <option value="0">Seleccionar</option>
                     {locals.map(local => (
                       <option
                         value={local.id}
                         key={`local${local.id}`}
-                        disabled={local.disabled ? 'disabled' : ''}
+                        disabled={local.disabled ? "disabled" : ""}
                       >
                         {local.nombre}
                       </option>

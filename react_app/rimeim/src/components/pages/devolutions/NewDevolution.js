@@ -13,6 +13,7 @@ import {
 } from "../../../utils/MaterialFunctions";
 import isEmpty from "../../../actions/isEmpty";
 import { getSellById, addDevolution } from "../../../actions/sellActions";
+import { getGlobalVariables } from "../../../actions/globalActons";
 
 import { getNumberFormatted } from "../../../utils/stringUtils";
 
@@ -138,7 +139,10 @@ class NewDevolution extends Component {
   onFinallyClick = () => {
     if (this.state.productos_devueltos.length > 0) {
       let total_devuelto = this.getTotalDevuelto();
-      let impuesto_devuelto = total_devuelto * 0.15;
+      const impuesto_porcentaje = this.props.global.values.impuesto
+        ? parseFloat(this.props.global.values.impuesto)
+        : 0.15;
+      let impuesto_devuelto = total_devuelto * impuesto_porcentaje;
       const devolutionData = {
         id_local: this.props.sell.sell.id_local,
         sub_total_devuelto: total_devuelto,
@@ -198,7 +202,10 @@ class NewDevolution extends Component {
     ));
 
     let total_devuelto = this.getTotalDevuelto();
-    let impuesto_devuelto = total_devuelto * 0.15;
+    const impuesto_porcentaje = this.props.global.values.impuesto
+      ? parseFloat(this.props.global.values.impuesto)
+      : 0.15;
+    let impuesto_devuelto = total_devuelto * impuesto_porcentaje;
     return (
       <div className="col s12">
         <div className="card">
@@ -353,15 +360,18 @@ class NewDevolution extends Component {
 
 NewDevolution.propTypes = {
   sell: PropTypes.object.isRequired,
+  global: PropTypes.object.isRequired,
   getSellById: PropTypes.func.isRequired,
-  addDevolution: PropTypes.func.isRequired
+  addDevolution: PropTypes.func.isRequired,
+  getGlobalVariables: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  sell: state.sell
+  sell: state.sell,
+  global: state.global
 });
 
 export default connect(
   mapStateToProps,
-  { getSellById, addDevolution }
+  { getSellById, addDevolution, getGlobalVariables }
 )(NewDevolution);

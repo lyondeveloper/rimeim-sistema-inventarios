@@ -10,7 +10,7 @@ class GlobalValues
     public function get()
     {
         $this->db->query('call proc_get_global_variables();');
-        return $this->db->result();
+        return $this->db->resultSet();
     }
 
     public function get_by_key($key)

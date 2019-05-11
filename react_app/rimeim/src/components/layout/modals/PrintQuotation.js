@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import uuid from "uuid";
+import { connect } from "react-redux";
 
 import { getModalInstanceById } from "../../../utils/MaterialFunctions";
+import { getGlobalVariables } from "../../../actions/globalActons";
 import { getNumberFormatted } from "../../../utils/stringUtils";
 import { printQuotation } from "../../../utils/printPdf";
 import { getCurrentDateToInput } from "../../../utils/dateFormat";
@@ -18,12 +20,29 @@ class PrintQuotation extends Component {
       "Representaciones Industriales, Mantenimiento, Exportaciones, Importaciones, Maquinaria",
     empresa_ubicacion: "",
     empresa_telefono: "SPS +504 9481-4706 | Tegus +504 9751-2044 Honduras C.A",
-    empresa_email: "ventasrimeim@gmail.com",
+    empresa_email: "",
     cliente_nombre: "",
     cliente_rtn: ""
   };
 
+  componentDidMount() {
+    this.props.getGlobalVariables();
+  }
+
   componentWillReceiveProps(nextProps) {
+    if (nextProps.global && !nextProps.global.loading) {
+      let { empresa_rtn, empresa_email } = this.state;
+      if (nextProps.global.values.correo) {
+        empresa_email = nextProps.global.values.correo;
+      }
+      if (nextProps.global.values.rtn) {
+        empresa_rtn = nextProps.global.values.rtn;
+      }
+      this.setState({
+        empresa_rtn,
+        empresa_email
+      });
+    }
     if (nextProps.cotizacion && nextProps.cotizacion.cliente) {
       const { nombre, rtn } = nextProps.cotizacion.cliente;
       if (nombre && rtn) {
@@ -277,7 +296,15 @@ class PrintQuotation extends Component {
 
 PrintQuotation.propTypes = {
   cotizacion: PropTypes.object.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
+  getGlobalVariables: PropTypes.func.isRequired
 };
 
-export default PrintQuotation;
+const mapStateToProps = state => ({
+  global: state.global
+});
+
+export default connect(
+  mapStateToProps,
+  { getGlobalVariables }
+)(PrintQuotation);

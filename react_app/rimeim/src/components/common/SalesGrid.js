@@ -4,6 +4,7 @@ import uuid from "uuid";
 import PropTypes from "prop-types";
 
 import { getProductByCBForSell } from "../../actions/productActions";
+import { getGlobalVariables } from "../../actions/globalActons";
 
 // Custom components
 import SellColumnsDetails from "./SellColumnsDetails";
@@ -31,6 +32,7 @@ class SalesGrid extends Component {
 
   componentDidMount() {
     this.addFreeRowsToState(this.state.count_of_products_to_add);
+    this.props.getGlobalVariables();
   }
   componentWillReceiveProps(nextProps) {
     if (
@@ -432,8 +434,11 @@ class SalesGrid extends Component {
 
   getValuesForProduct = product => {
     let subtotal = 0;
-    let impuesto = 15;
+    let impuesto = 0;
 
+    const impuesto_porcentaje = this.props.global.values.impuesto
+      ? parseFloat(this.props.global.values.impuesto)
+      : 0.15;
     const cantidad = parseInt(product.cantidad);
     const precio = parseFloat(product.precio);
 
@@ -441,7 +446,7 @@ class SalesGrid extends Component {
       subtotal += cantidad * precio;
     }
 
-    impuesto = subtotal * 0.15;
+    impuesto = subtotal * impuesto_porcentaje;
     const total = subtotal + impuesto;
     return { subtotal, impuesto, total };
   };
@@ -498,21 +503,25 @@ class SalesGrid extends Component {
 SalesGrid.propTypes = {
   sell: PropTypes.object.isRequired,
   product: PropTypes.object.isRequired,
+  global: PropTypes.object.isRequired,
   currentClient: PropTypes.object.isRequired,
   returnProducts: PropTypes.bool.isRequired,
   returnProductsFunction: PropTypes.func.isRequired,
   needsFocusOnRow: PropTypes.bool.isRequired,
-  needsClearAll: PropTypes.bool.isRequired
+  needsClearAll: PropTypes.bool.isRequired,
+  getGlobalVariables: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   sell: state.sell,
-  product: state.product
+  product: state.product,
+  global: state.global
 });
 
 export default connect(
   mapStateToProps,
   {
-    getProductByCBForSell
+    getProductByCBForSell,
+    getGlobalVariables
   }
 )(SalesGrid);

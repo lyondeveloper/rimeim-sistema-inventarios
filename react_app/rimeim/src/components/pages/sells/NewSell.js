@@ -20,6 +20,7 @@ import isEmpty from "../../../actions/isEmpty";
 
 import { getProductByCBForSell } from "../../../actions/productActions";
 import { addNewSell, getQuotationById } from "../../../actions/sellActions";
+import { getGlobalVariables } from "../../../actions/globalActons";
 
 // Custom css
 import "../../../public/css/ventas.css";
@@ -66,6 +67,7 @@ class NewSell extends Component {
   componentDidMount() {
     configMaterialComponents();
     document.onkeydown = this.onKeyDownInAllPage;
+    this.props.getGlobalVariables();
 
     const id_cotizacion = this.props.match.params.id;
     if (id_cotizacion) {
@@ -504,8 +506,11 @@ class NewSell extends Component {
 
   getValuesForProduct = product => {
     let subtotal = 0;
-    let impuesto = 15;
+    let impuesto = 0;
 
+    const impuesto_porcentaje = this.props.global.values.impuesto
+      ? parseFloat(this.props.global.values.impuesto)
+      : 0.15;
     const cantidad = parseInt(product.cantidad);
     const precio = parseFloat(product.precio);
 
@@ -513,7 +518,7 @@ class NewSell extends Component {
       subtotal += cantidad * precio;
     }
 
-    impuesto = subtotal * 0.15;
+    impuesto = subtotal * impuesto_porcentaje;
     const total = subtotal + impuesto;
     return { subtotal, impuesto, total };
   };
@@ -695,18 +700,21 @@ class NewSell extends Component {
 NewSell.propTypes = {
   errors: PropTypes.object.isRequired,
   product: PropTypes.object.isRequired,
+  global: PropTypes.object.isRequired,
   getProductByCBForSell: PropTypes.func.isRequired,
   addNewSell: PropTypes.func.isRequired,
-  getQuotationById: PropTypes.func.isRequired
+  getQuotationById: PropTypes.func.isRequired,
+  getGlobalVariables: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   sell: state.sell,
   errors: state.errors,
+  global: state.global,
   product: state.product
 });
 
 export default connect(
   mapStateToProps,
-  { getProductByCBForSell, addNewSell, getQuotationById }
+  { getProductByCBForSell, addNewSell, getQuotationById, getGlobalVariables }
 )(NewSell);

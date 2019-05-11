@@ -4,17 +4,18 @@ class Globals extends Controller
 {
     private $key_impuesto = "K_IMPUESTO";
     private $key_rtn = "K_RTN";
-
+    private $key_correo = "K_CORREO";
 
     public function __construct()
     {
-        $this->initController(CTR_ADMIN);
+        $this->initController();
         $this->globalV = $this->model('GlobalValues');
     }
 
     public function get()
     {
         $this->useGetRequest();
+        $this->private_route(CTR_EMPLEADO);
         $this->send_values();
     }
 
@@ -24,13 +25,25 @@ class Globals extends Controller
 
         $v_response = [
             'rtn' => "",
-            'impuesto' => "0.15"
+            'impuesto' => "",
+            'correo' => ""
         ];
         foreach ($values as $value) {
-            if ($value->key == $this->key_impuesto) {
-                $v_response['impuesto'] = $value->valor;
-            } elseif ($value->key == $this->key_rtn) {
-                $v_response['rtn'] = $value->valor;
+            switch ($value->clave) {
+                case $this->key_impuesto:
+                    $v_response['impuesto'] = $value->valor;
+                    break;
+
+                case $this->key_rtn:
+                    $v_response['rtn'] = $value->valor;
+                    break;
+
+                case $this->key_correo:
+                    $v_response['correo'] = $value->valor;
+                    break;
+
+                default:
+                    break;
             }
         }
         $this->response($v_response);
@@ -39,6 +52,7 @@ class Globals extends Controller
     public function update()
     {
         $this->usePutRequest();
+        $this->private_route(CTR_ADMIN);
         $data = getJsonData();
         if (
             isset($data->impuesto) &&
@@ -52,6 +66,14 @@ class Globals extends Controller
             !empty($data->rtn)
         ) {
             $this->globalV->update($this->key_rtn, $data->rtn);
+        }
+
+        if (
+            isset($data->correo) &&
+            !empty($data->correo) &&
+            isEmail($data->correo)
+        ) {
+            $this->globalV->update($this->key_correo, $data->correo);
         }
         $this->send_values();
     }
