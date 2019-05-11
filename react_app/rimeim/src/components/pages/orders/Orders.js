@@ -6,6 +6,7 @@ import uuid from 'uuid';
 import OrderCard from '../../common/OrderCard';
 import Spinner from '../../common/Spinner';
 import NewNavbar from '../../layout/NewNavbar';
+import SearchOrderModel from '../../layout/modals/SearchOrderModel';
 
 import {
   configMaterialComponents,
