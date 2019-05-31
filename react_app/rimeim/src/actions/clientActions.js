@@ -1,16 +1,16 @@
-import axios from "axios";
+import axios from 'axios';
 
 import {
   CLIENT_LOADING,
   GET_CLIENT,
   GET_CLIENTS,
   CLIENT_LOADING_END
-} from "./types";
+} from './types';
 
-import { clearErrors, handleError } from "./errorActions";
+import { clearErrors, handleError } from './errorActions';
 
-import { configUserFromResponse } from "./UserActions";
-import { API_URL } from "../utils/stringUtils";
+import { configUserFromResponse } from './UserActions';
+import { API_URL } from '../utils/stringUtils';
 
 export const createClient = (data, history, newUrl) => dispatch => {
   dispatch(clearErrors());
@@ -93,13 +93,12 @@ export const searchClient = searchJson => dispatch => {
         type: GET_CLIENTS,
         payload: response.data
       });
-      setTimeout(() => clientLoadingEnd(), 10);
+      dispatch(clientLoadingEnd());
     })
     .catch(err => handleError(err, dispatch));
 };
 export const deleteClient = (id, history, newUrl) => dispatch => {
   dispatch(clearErrors());
-  dispatch(clientLoading());
   axios
     .delete(`${API_URL}/clients/delete/${id}`)
     .then(res => {
@@ -107,7 +106,6 @@ export const deleteClient = (id, history, newUrl) => dispatch => {
       configUserFromResponse(response, dispatch);
       dispatch(getClients());
       history.push(newUrl);
-      setTimeout(() => clientLoadingEnd(), 10);
     })
     .catch(err => handleError(err, dispatch));
 };

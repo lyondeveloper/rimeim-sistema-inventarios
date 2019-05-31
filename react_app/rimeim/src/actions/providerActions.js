@@ -23,8 +23,6 @@ export const addProvider = (data, history) => dispatch => {
 
       configUserFromResponse(response, dispatch);
 
-      dispatch(clientLoadingEnd);
-
       history.push('/proveedores');
     })
     .catch(err => handleError(err, dispatch));
@@ -75,7 +73,7 @@ export const getProviders = () => dispatch => {
         payload: response.data
       });
 
-      setTimeout(() => providerLoadingEnd(), 10);
+      dispatch(providerLoadingEnd());
     })
     .catch(err => handleError(err, dispatch));
 };
@@ -93,7 +91,7 @@ export const searchProvider = data => dispatch => {
         payload: response.data
       });
 
-      setTimeout(() => providerLoadingEnd(), 10);
+      dispatch(providerLoadingEnd());
     })
     .catch(err => handleError(err, dispatch));
 };

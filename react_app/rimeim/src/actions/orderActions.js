@@ -68,7 +68,7 @@ export const markReceived = (id, history, newUrl) => dispatch => {
       configUserFromResponse(response, dispatch);
       dispatch(getOrder(id));
       history.push(`/pedidos/${response.data.id}`);
-      setTimeout(() => orderEndLoading(), 10);
+      dispatch(orderEndLoading());
     })
     .catch(err => handleError(err, dispatch));
 };
@@ -121,7 +121,7 @@ export const deleteOrder = (id, history, newUrl) => dispatch => {
       configUserFromResponse(response, dispatch);
       dispatch(getOrders());
       history.push(newUrl);
-      setTimeout(() => orderEndLoading(), 10);
+      dispatch(orderEndLoading());
     })
     .catch(err => handleError(err, dispatch));
 };
